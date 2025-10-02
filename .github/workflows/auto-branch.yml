@@ -1,0 +1,50 @@
+name: Auto Branch on In Progress
+
+on:
+  workflow_dispatch: # for manual test runs
+  issues:
+    types: [edited] # detects when fields like project status change
+
+jobs:
+  check-status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if issue moved to In Progress
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            if (!issue) return;
+            
+            // Fetch project items for this issue via GraphQL
+            const query = `
+              query($id: ID!) {
+                node(id: $id) {
+                  ... on Issue {
+                    projectItems(first: 10) {
+                      nodes {
+                        fieldValueByName(name: "Status") {
+                          ... on ProjectV2ItemFieldSingleSelectValue {
+                            name
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
+            const variables = { id: issue.node_id };
+            const result = await github.graphql(query, variables);
+            const status = result.node.projectItems.nodes[0].fieldValueByName?.name;
+
+            if (status === "In Progress") {
+              core.setOutput("create_branch", "true");
+            }
+
+      - name: Create branch
+        if: steps.check-status.outputs.create_branch == 'true'
+        uses: peter-evans/create-issue-branch@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch-name: feature/issue-${{ github.event.issue.number }}
