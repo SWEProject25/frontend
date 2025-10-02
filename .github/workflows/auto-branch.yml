@@ -1,50 +1,44 @@
-name: Auto Branch on In Progress
+name: Create Branch When Issue Moves To In Progress
 
 on:
-  workflow_dispatch: # for manual test runs
-  issues:
-    types: [edited] # detects when fields like project status change
+  projects_v2_item:
+    types: [edited]
 
 jobs:
   check-status:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if issue moved to In Progress
+      - name: Check if Status moved from To Do → In Progress
         uses: actions/github-script@v7
+        id: check
         with:
           script: |
-            const issue = context.payload.issue;
-            if (!issue) return;
-            
-            // Fetch project items for this issue via GraphQL
-            const query = `
-              query($id: ID!) {
-                node(id: $id) {
-                  ... on Issue {
-                    projectItems(first: 10) {
-                      nodes {
-                        fieldValueByName(name: "Status") {
-                          ... on ProjectV2ItemFieldSingleSelectValue {
-                            name
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            `;
-            const variables = { id: issue.node_id };
-            const result = await github.graphql(query, variables);
-            const status = result.node.projectItems.nodes[0].fieldValueByName?.name;
+            const payload = context.payload;
 
-            if (status === "In Progress") {
-              core.setOutput("create_branch", "true");
+            // Ensure it's linked to an Issue
+            if (!payload.projects_v2_item.content?.type || payload.projects_v2_item.content?.type !== "Issue") {
+              console.log("Not an issue, skipping.");
+              return;
             }
 
+            // Get before/after changes for the Status field
+            const changes = payload.changes?.field_value_by_name;
+            if (!changes) {
+              console.log("No status change detected.");
+              return;
+            }
+
+            const previous = changes.Status?.from;
+            const current = changes.Status?.to;
+
+            console.log(`Previous: ${previous}, Current: ${current}`);
+
+            if (previous === "To Do" && current === "In Progress") {
+              core.setOutput("create_branch", "true");
+            }
       - name: Create branch
-        if: steps.check-status.outputs.create_branch == 'true'
+        if: steps.check.outputs.create_branch == 'true'
         uses: peter-evans/create-issue-branch@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch-name: feature/issue-${{ github.event.issue.number }}
+          branch-name: feature/issue-${{ github.event.projects_v2_item.content.number }}
