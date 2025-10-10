@@ -15,10 +15,13 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@heroui/react": "^2.8.5",
     "@tanstack/react-query": "^5.90.2",
+    "lucide-react": "^0.545.0",
     "next": "15.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-icons": "^5.5.0",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
