@@ -1,14 +1,7 @@
 import React from 'react';
 import { AuthButton } from '@/components/ui/AuthButton';
 import { Divider } from '@/components/ui/Divider';
-import { SocialProvider } from '../types';
-
-interface SocialLoginSectionProps {
-  socialProviders: readonly SocialProvider[];
-  showDivider: boolean;
-  loading: boolean;
-  onSocialLogin: (providerId: string) => void;
-}
+import { SocialLoginSectionProps } from '../types';
 
 export function SocialLoginSection({
   socialProviders,

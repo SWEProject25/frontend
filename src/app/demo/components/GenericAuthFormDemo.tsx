@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { GenericAuthForm, authFormConfigs } from '@/components/ui/forms';
+import { FormContainer, authFormConfigs } from '@/components/ui/forms';
 import { AuthButton } from '@/components/ui/AuthButton';
 import { Divider } from '@/components/ui/Divider';
 import {
@@ -413,7 +413,7 @@ export function GenericAuthFormDemo() {
 
         {/* Form Modals */}
         {activeForm === 'login' && (
-          <GenericAuthForm
+          <FormContainer
             {...authFormConfigs.login}
             onSubmit={handleSubmit}
             onSocialLogin={handleSocialLogin}
@@ -425,7 +425,7 @@ export function GenericAuthFormDemo() {
         )}
 
         {activeForm === 'register' && (
-          <GenericAuthForm
+          <FormContainer
             {...authFormConfigs.register}
             onSubmit={handleSubmit}
             onSocialLogin={handleSocialLogin}
@@ -436,7 +436,7 @@ export function GenericAuthFormDemo() {
         )}
 
         {activeForm === 'forgotPassword' && (
-          <GenericAuthForm
+          <FormContainer
             {...authFormConfigs.forgotPassword}
             onSubmit={handleSubmit}
             onClose={closeModal}
@@ -446,7 +446,7 @@ export function GenericAuthFormDemo() {
         )}
 
         {activeForm === 'contact' && (
-          <GenericAuthForm
+          <FormContainer
             title="Contact Us"
             subtitle="Get in touch with our team"
             fields={[
@@ -506,7 +506,7 @@ export function GenericAuthFormDemo() {
         )}
 
         {activeForm === 'newsletter' && (
-          <GenericAuthForm
+          <FormContainer
             title="Newsletter Subscription"
             subtitle="Stay updated with our latest news and updates"
             fields={[
@@ -551,7 +551,7 @@ export function GenericAuthFormDemo() {
         )}
 
         {activeForm === 'feedback' && (
-          <GenericAuthForm
+          <FormContainer
             title="Feedback Form"
             subtitle="Help us improve by sharing your thoughts"
             fields={[
@@ -602,7 +602,7 @@ export function GenericAuthFormDemo() {
         )}
 
         {activeForm === 'survey' && (
-          <GenericAuthForm
+          <FormContainer
             title="User Survey"
             subtitle="Help us understand your needs better"
             fields={[
@@ -654,7 +654,7 @@ export function GenericAuthFormDemo() {
         )}
 
         {activeForm === 'support' && (
-          <GenericAuthForm
+          <FormContainer
             title="Technical Support"
             subtitle="Describe your issue and we'll help you resolve it"
             fields={[
@@ -712,7 +712,7 @@ export function GenericAuthFormDemo() {
         )}
 
         {activeForm === 'newsletter-signup' && (
-          <GenericAuthForm
+          <FormContainer
             title="Newsletter Signup"
             subtitle="Get the latest updates delivered to your inbox"
             fields={[
@@ -744,7 +744,7 @@ export function GenericAuthFormDemo() {
         )}
 
         {activeForm === 'user-profile' && (
-          <GenericAuthForm
+          <FormContainer
             title="Update Profile"
             subtitle="Keep your profile information up to date"
             fields={[

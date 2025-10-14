@@ -1,5 +1,5 @@
 // Main component
-export { GenericAuthForm } from './GenericAuthForm';
+export { FormContainer } from './components/FormContainer';
 
 // Types
 export type {
@@ -16,14 +16,7 @@ export type {
 // Configurations
 export { authFormConfigs } from './configs/authFormConfigs';
 
-// Hooks
-export { useGenericAuthForm } from './hooks/useGenericAuthForm';
-export { useFormState } from './hooks/useFormState';
-export { useFormValidation } from './hooks/useFormValidation';
-export { useResponsiveMode } from './hooks/useResponsiveMode';
-
 // Components (for advanced usage)
-export { FormContainer } from './components/FormContainer';
 export { FormContent } from './components/FormContent';
 export { FormHeader } from './components/FormHeader';
 export { SocialLoginSection } from './components/SocialLoginSection';

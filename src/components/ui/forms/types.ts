@@ -10,6 +10,12 @@ export interface FormField {
   showPasswordToggle?: boolean;
   options?: { value: string; label: string }[];
   validation?: (value: string) => string | undefined;
+  group?: {
+    id: string;
+    title: string;
+    description?: string;
+    layout: 'horizontal' | 'vertical';
+  };
 }
 
 export interface SocialProvider {
@@ -42,7 +48,11 @@ export interface GenericAuthFormProps {
   onSocialLogin?: (providerId: string) => void;
   onForgotPassword?: () => void;
   onClose?: () => void;
+  onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
   loading?: boolean;
+  error?: string | null;
+  success?: boolean;
+  onClearState?: () => void;
   className?: string;
   mode?: 'modal' | 'fullpage' | 'responsive';
 }
@@ -67,7 +77,6 @@ export interface FormContainerProps
     FormState,
     FormHandlers {
   displayMode: 'modal' | 'fullpage';
-  isRegisterForm: boolean;
   onClose?: () => void;
   className?: string;
 }
@@ -81,7 +90,6 @@ export interface FormFieldsProps {
     fieldName: string
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   onBlur: (fieldName: string) => () => void;
-  isRegisterForm: boolean;
 }
 
 export interface FormHeaderProps {
@@ -91,6 +99,7 @@ export interface FormHeaderProps {
 
 export interface FormFooterProps {
   footerLinks: readonly FooterLink[];
+  onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
 }
 
 export interface FormActionsProps {
@@ -111,5 +120,5 @@ export interface FormContentProps
   extends GenericAuthFormProps,
     FormState,
     FormHandlers {
-  isRegisterForm: boolean;
+  onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
 }
