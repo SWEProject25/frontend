@@ -14,6 +14,8 @@ export {
   MailIcon,
   ChatIcon,
   ListIcon,
+  CloseXIcon,
+  XLogoIcon,
 } from './UIIcons';
 
 // Brand Icons

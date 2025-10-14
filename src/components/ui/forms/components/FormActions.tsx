@@ -1,13 +1,6 @@
 import React from 'react';
 import { AuthButton } from '@/components/ui/AuthButton';
-import { SubmitButton } from '../types';
-
-interface FormActionsProps {
-  submitButton: SubmitButton;
-  loading: boolean;
-  showForgotPassword: boolean;
-  onForgotPassword?: () => void;
-}
+import { FormActionsProps } from '../types';
 
 export function FormActions({
   submitButton,

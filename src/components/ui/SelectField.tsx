@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 import { cn, getSelectFieldWidthClass } from '@/lib/utils';
 import { SelectProps } from '@/types/ui';
 import { ChevronDownIcon } from './icons';
@@ -14,7 +16,6 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
     {
       className,
       label,
-      error,
       options,
       value,
       fullWidth = false,
@@ -30,13 +31,17 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
       onBlur,
     });
 
+    // Sync field state with actual value changes
+    useEffect(() => {
+      fieldState.handleValueChange(value || '');
+    }, [value, fieldState]);
+
     // Calculate width class using utility function
     const widthClass = React.useMemo(() => {
       return getSelectFieldWidthClass(options, label, fullWidth);
     }, [options, label, fullWidth]);
 
     const styleProps = {
-      error,
       isFocused: fieldState.isFocused,
       hasValue: fieldState.hasValue,
       shouldFloatLabel: fieldState.shouldFloatLabel,
@@ -94,10 +99,6 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
           >
             {label}
           </label>
-        )}
-
-        {error && (
-          <p className="mt-2 text-sm text-error font-medium">{error}</p>
         )}
       </div>
     );

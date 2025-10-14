@@ -4,14 +4,7 @@ import { SocialLoginSection } from './SocialLoginSection';
 import { FormFields } from './FormFields';
 import { FormActions } from './FormActions';
 import { FormFooter } from './FormFooter';
-import { GenericAuthFormProps, FormState, FormHandlers } from '../types';
-
-interface FormContentProps
-  extends GenericAuthFormProps,
-    FormState,
-    FormHandlers {
-  isRegisterForm: boolean;
-}
+import { FormContentProps } from '../types';
 
 export function FormContent({
   title,
@@ -31,7 +24,7 @@ export function FormContent({
   handleSubmit,
   handleSocialLogin,
   onForgotPassword,
-  isRegisterForm,
+  onSwitchModal,
 }: FormContentProps) {
   return (
     <>
@@ -52,7 +45,6 @@ export function FormContent({
           touched={touched}
           onInputChange={handleInputChange}
           onBlur={handleBlur}
-          isRegisterForm={isRegisterForm}
         />
 
         <FormActions
@@ -63,7 +55,7 @@ export function FormContent({
         />
       </form>
 
-      <FormFooter footerLinks={footerLinks} />
+      <FormFooter footerLinks={footerLinks} onSwitchModal={onSwitchModal} />
     </>
   );
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { InputProps } from '@/types/ui';
 import { useFieldState } from '@/lib/formUtils';

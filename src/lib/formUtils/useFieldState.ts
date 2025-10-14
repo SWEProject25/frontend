@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useCallback } from 'react';
 
 export interface UseFieldStateProps<T extends HTMLElement = HTMLElement> {
