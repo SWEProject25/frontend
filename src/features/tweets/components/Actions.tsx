@@ -91,7 +91,7 @@ export default function Actions({
             color={ACTIONS_META[3].color}
           />
         </div>
-        <div className="flex min-w-[120px] justify-end ">
+        <div className="flex min-w-[100px] justify-end ">
           <Action
             icon={SECONDARY_ACTIONS_META[0].icon}
             label={SECONDARY_ACTIONS_META[0].label}
@@ -123,7 +123,7 @@ function Action({
   const colorMap: Record<string, string> = {
     blue: 'group-hover:text-blue-500',
     green: 'group-hover:text-green-500',
-    rose: 'group-hover:text-rose-400', // Tailwind rose-400 is a pinkish-red
+    rose: 'group-hover:text-rose-400',
   };
   const countColorMap: Record<string, string> = {
     blue: 'group-hover:text-blue-500',
@@ -136,15 +136,17 @@ function Action({
     green: 'group-hover:before:bg-green-500/20',
     rose: 'group-hover:before:bg-rose-400/20',
   };
-  const labelBgMap: Record<string, string> = {
-    blue: 'bg-blue-500',
-    green: 'bg-green-500',
-    rose: 'bg-rose-400',
-  };
-
+  // All hints gray, text white
   return (
-    <div className="flex flex-col items-center min-w-[48px] group relative">
-      <div className="relative flex items-center gap-1 cursor-pointer transition-colors p-2">
+    <div className="flex flex-col items-center group relative">
+      <div
+        className="relative flex items-center cursor-pointer transition-colors p-2"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          alert(label);
+        }}
+      >
         {/* Glow circle only around icon, sharp edge, only on hover */}
         <span
           className={`
@@ -157,7 +159,7 @@ function Action({
             before:rounded-full
             before:opacity-0
             group-hover:before:opacity-100
-            before:z-[-1]
+            before:z-[1]
             ${glowMap[color]}
             transition-all
           `}
@@ -170,7 +172,7 @@ function Action({
           </span>
         )}
       </div>
-      {/* Label on hover */}
+      {/* Label on hover: gray bg, white text */}
       <div
         className={`
           absolute left-1/2 -translate-x-1/2 top-10
@@ -178,7 +180,7 @@ function Action({
           pointer-events-none
           transition-opacity
           text-white text-xs px-2 py-1 rounded
-          ${labelBgMap[color]}
+          bg-gray-700
           shadow
           z-10
           whitespace-nowrap

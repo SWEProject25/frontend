@@ -1,30 +1,22 @@
 import React from 'react';
-import Image from 'next/image';
+import Avatar from './Avatar';
+import UserInfo from './UserInfo';
 
-export default function Header({ image }: { image?: string }) {
+export default function Header({
+  image,
+  name,
+  username,
+  isVerified,
+}: {
+  image?: string;
+  name: string;
+  username: string;
+  isVerified: boolean;
+}) {
   return (
-    <div>
-      <Image
-        width={48}
-        height={48}
-        src={image || '/default-avatar.png'}
-        alt="User avatar"
-        className="w-12 h-12 rounded-full"
-      />
+    <div className="flex flex-row items-start gap-3">
+      <Avatar image={image} />
+      <UserInfo name={name} username={username} isVerified={isVerified} />
     </div>
   );
 }
-// }
-//       {/* Name and Username beside avatar */}
-//       <div className="flex">
-//         <Link href="/profile" className="font-bold flex items-center gap-1">
-//           <span className="hover:underline">{data.user.name}</span>
-//           {data.user.isVerified && (
-//             <FaCheckCircle className="inline text-blue-500" size={16} />
-//           )}
-//           <span className="text-gray-400 text-sm">{data.user.username}</span>
-//         </Link>
-//       </div>
-//     </div>
-//   );
-// }
