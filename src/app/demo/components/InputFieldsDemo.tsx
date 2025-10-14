@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { InputField } from '@/components/ui/input';
+import { InputField, SearchInput } from '@/components/ui/input';
 import { SelectField } from '@/components/ui/SelectField';
 import { Divider } from '@/components/ui/Divider';
 import { XLogo, EyeIcon } from '@/components/ui/icons';
@@ -22,6 +22,8 @@ export function InputFieldsDemo() {
     tel: '',
     url: '',
   });
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [selectData, setSelectData] = useState({
     basic: '',
@@ -240,6 +242,32 @@ export function InputFieldsDemo() {
               maxLength={20}
               showCharCount
             />
+          </div>
+        </div>
+
+        <Divider className="my-12" />
+
+        {/* Search Input */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-white mb-8 text-center">
+            Search Input
+          </h2>
+          <div className="max-w-md mx-auto space-y-6">
+            <SearchInput
+              placeholder="Search Settings"
+              value={searchQuery}
+              onChange={setSearchQuery}
+            />
+
+            <SearchInput
+              placeholder="Search with custom placeholder"
+              value={searchQuery}
+              onChange={setSearchQuery}
+            />
+
+            <div className="text-center text-gray-400 mt-4">
+              Current search: {searchQuery || '(empty)'}
+            </div>
           </div>
         </div>
 

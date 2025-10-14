@@ -14,6 +14,9 @@ export {
   MailIcon,
   ChatIcon,
   ListIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  SearchIcon,
 } from './UIIcons';
 
 // Brand Icons

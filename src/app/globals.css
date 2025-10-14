@@ -24,9 +24,12 @@
   --color-text-button: #0f1419;
   --color-text-placeholder: #8b98a5;
   --color-text-counter: #536471;
+  --color-text-secondary: #71767b;
 
   --font-sans: var(--font-geist-sans, system-ui, sans-serif);
   --font-mono: var(--font-geist-mono, monospace);
+
+  --breakpoint-xs: 480px;
 }
 
 /* 🌚 Dark Theme */

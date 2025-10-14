@@ -1,7 +1,10 @@
 'use client';
 
-import Link from 'next/link';
+import { useState, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
+import Breadcrumb from '@/components/ui/Breadcrumb';
+import SettingsListItem from '@/components/ui/ListItem';
+import { SearchInput } from '@/components/ui/input';
 import type { SettingsOption } from '@/constants/SETTINGs_ITEMS';
 
 interface SettingsListProps {
@@ -10,36 +13,64 @@ interface SettingsListProps {
 
 export default function SettingsList({ options }: SettingsListProps) {
   const pathname = usePathname();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleBack = () => {
+    window.history.back();
+  };
+
+  // Filter options based on search query
+  const filteredOptions = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return options;
+    }
+
+    const query = searchQuery.toLowerCase();
+    return options.filter((option) =>
+      option.label.toLowerCase().includes(query)
+    );
+  }, [options, searchQuery]);
 
   return (
     <div className="border-r border-border min-h-screen w-full">
-      <div className="p-4">
-        <h1 className="text-2xl font-bold mb-6 text-text-active">Settings</h1>
-        <nav className="space-y-1">
-          {options.map((option) => {
-            const isActive = pathname.startsWith(`/settings/${option.id}`);
+      <div className="">
+        <Breadcrumb
+          title="Settings"
+          subtitle="@ahmedfathy0-0"
+          onBack={handleBack}
+          showSubtitleOnMobile={false}
+        />
 
-            return (
-              <Link
-                key={option.id}
-                href={option.subOptions[0]?.path || '#'}
-                className={`
-                  block px-4 py-3 rounded-lg transition-colors
-                  hover:bg-muted
-                  ${isActive ? 'bg-muted' : ''}
-                `}
-              >
-                <div className="font-semibold text-text-active">
-                  {option.label}
-                </div>
-                {option.description && (
-                  <div className="text-sm text-text-inactive mt-1">
-                    {option.description}
-                  </div>
-                )}
-              </Link>
-            );
-          })}
+        {/* Search Input */}
+        <div className="px-2 mb-2">
+          <SearchInput
+            placeholder="Search Settings"
+            value={searchQuery}
+            onChange={setSearchQuery}
+          />
+        </div>
+
+        {/* Settings List */}
+        <nav className="flex flex-col">
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map((option) => {
+              const isActive = pathname.startsWith(`/settings/${option.id}`);
+
+              return (
+                <SettingsListItem
+                  key={option.id}
+                  label={option.label}
+                  href={option.subOptions[0]?.path || '#'}
+                  isActive={isActive}
+                  showArrow={true}
+                />
+              );
+            })
+          ) : (
+            <div className="px-4 py-8 text-center text-text-inactive">
+              No settings found matching &quot;{searchQuery}&quot;
+            </div>
+          )}
         </nav>
       </div>
     </div>

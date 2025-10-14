@@ -16,7 +16,7 @@ export interface SettingsOption {
 export const SETTINGS_ITEMS: SettingsOption[] = [
   {
     id: 'account',
-    label: 'Your Account',
+    label: 'Your account',
     description: 'Manage your account information',
     subOptions: [
       {
