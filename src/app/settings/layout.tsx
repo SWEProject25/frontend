@@ -1,3 +1,4 @@
+import LayoutWrapper from '@/features/layout/components/LayoutWrapper';
 import { SettingsLayout } from '@/features/settings/components';
 
 export default function SettingsRootLayout({
@@ -5,5 +6,9 @@ export default function SettingsRootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <SettingsLayout>{children}</SettingsLayout>;
+  return (
+    <LayoutWrapper showRightSidebar={false}>
+      <SettingsLayout>{children}</SettingsLayout>
+    </LayoutWrapper>
+  );
 }

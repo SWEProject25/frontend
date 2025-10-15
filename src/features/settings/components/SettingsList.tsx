@@ -32,7 +32,7 @@ export default function SettingsList({ options }: SettingsListProps) {
   }, [options, searchQuery]);
 
   return (
-    <div className="border-r border-border min-h-screen w-full">
+    <div className="border-r border-border min-h-screen">
       <div className="">
         <Breadcrumb
           title="Settings"
@@ -54,7 +54,9 @@ export default function SettingsList({ options }: SettingsListProps) {
         <nav className="flex flex-col">
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option) => {
-              const isActive = pathname.startsWith(`/settings/${option.id}`);
+              const isActive = pathname
+                ? pathname.startsWith(`/settings/${option.id}`)
+                : false;
 
               return (
                 <ListItem

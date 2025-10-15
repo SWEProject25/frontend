@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import XModal from '@/components/ui/XModal';
+import XModal from '@/components/ui/hoc/XModal';
 import Button from '@/components/ui/Button';
 import { InputField } from '@/components/ui/input';
 import { Divider } from '@/components/ui/Divider';
