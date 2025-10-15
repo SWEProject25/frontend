@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { UseFieldStateProps } from '../types/formUtils';
+import { UseFieldStateProps } from '@/types/formUtils';
 
 export function useFieldState<T extends HTMLElement = HTMLElement>({
   value = '',

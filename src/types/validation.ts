@@ -1,4 +1,4 @@
-// Validation Hook Types
+// Validation Types
 export interface ValidationRule {
   type: 'email' | 'custom';
   message: string;

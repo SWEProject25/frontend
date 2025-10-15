@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { AUTH_API_CONFIG } from '@/features/authentication/constants/api';
-import { UseValidationOptions, ValidationState } from './types/validation';
+import { UseValidationOptions, ValidationState } from '@/types/validation';
 
 const API_BASE_URL = AUTH_API_CONFIG.BASE_URL || 'http://localhost:5000';
 

@@ -11,7 +11,7 @@ import {
   EXTERNAL_LINKS,
 } from '../constants';
 import { SOCIAL_PROVIDERS } from '@/features/authentication/constants';
-import { ValidationRule } from '@/hooks/types/validation';
+import { ValidationRule } from '@/types/validation';
 import { AUTH_ENDPOINTS } from '@/features/authentication/constants/api';
 
 export const authFormConfigs = {

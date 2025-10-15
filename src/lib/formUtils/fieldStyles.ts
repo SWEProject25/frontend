@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { FieldStyleProps } from '../types/formUtils';
+import { FieldStyleProps } from '@/types/formUtils';
 
 export function getFieldBaseStyles({
   error,

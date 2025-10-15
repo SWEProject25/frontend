@@ -15,7 +15,7 @@ export interface ButtonProps {
   icon?: React.ReactNode;
 }
 
-import { ValidationRule } from '@/hooks/types/validation';
+import { ValidationRule } from './validation';
 
 export interface InputProps {
   label?: string;

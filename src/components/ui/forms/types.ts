@@ -1,4 +1,4 @@
-import { ValidationRule } from '@/hooks/types/validation';
+import { ValidationRule } from '@/types/validation';
 
 // Form-specific types
 export interface FormField {
