@@ -23,13 +23,20 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
     selectedOption.subOptions.length > 0 &&
     pathname === selectedOption.subOptions[0].path;
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-[350px_1fr] min-h-screen">
-      {/* First Column - Main Options */}
-      <SettingsList options={SETTINGS_ITEMS} />
+  // Check if we're on main settings page (no category selected)
+  const isMainPage = pathname === '/settings';
 
-      {/* Second Column - Show suboptions list or page content */}
-      <div>
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr] min-h-screen">
+      {/* First Column - Main Options (hide on mobile when option is selected) */}
+      <div
+        className={`${!isMainPage && selectedOption ? 'hidden lg:block' : 'block'}`}
+      >
+        <SettingsList options={SETTINGS_ITEMS} />
+      </div>
+
+      {/* Second Column - Show suboptions list or page content (hide on mobile when on main page) */}
+      <div className={`${isMainPage ? 'hidden lg:block' : 'block'}`}>
         {isShowingSuboptions ? (
           <SettingsDetail selectedOption={selectedOption} />
         ) : (
