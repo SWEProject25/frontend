@@ -28,7 +28,7 @@ export default function Breadcrumb({
             <ArrowLeftIcon className="w-5 h-5 text-text-active" />
           </button>
         )}
-        <div className="flex-1">
+        <div className="flex flex-col gap-0">
           <h1 className="xs:text-[20px] xs:p-2 text-[17px] mt-2 xs:mt-0 font-bold text-text-active">
             {title}
           </h1>
@@ -44,7 +44,7 @@ export default function Breadcrumb({
         </div>
       </div>
       {description && (
-        <p className="text-[13px] text-text-secondary mt-2 px-2">
+        <p className="text-[13px] text-text-secondary mt-4 px-2">
           {description}
         </p>
       )}

@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
-import SettingsListItem from '@/components/ui/ListItem';
+import ListItem from '@/components/ui/ListItem';
 import { SearchInput } from '@/components/ui/input';
 import type { SettingsOption } from '@/constants/SETTINGs_ITEMS';
 
@@ -57,7 +57,7 @@ export default function SettingsList({ options }: SettingsListProps) {
               const isActive = pathname.startsWith(`/settings/${option.id}`);
 
               return (
-                <SettingsListItem
+                <ListItem
                   key={option.id}
                   label={option.label}
                   href={option.subOptions[0]?.path || '#'}

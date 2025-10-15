@@ -11,6 +11,7 @@ export {
   LoginIcon,
   UserIcon,
   KeyIcon,
+  InstallIcon,
   MailIcon,
   ChatIcon,
   ListIcon,

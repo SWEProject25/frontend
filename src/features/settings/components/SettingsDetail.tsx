@@ -2,8 +2,13 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
-import SubOptionItem from '@/components/ui/SubOptionItem';
-import { UserIcon, KeyIcon, ChatIcon } from '@/components/ui/icons';
+import ListItem from '@/components/ui/ListItem';
+import {
+  UserIcon,
+  KeyIcon,
+  ChatIcon,
+  InstallIcon,
+} from '@/components/ui/icons';
 import type { SettingsOption } from '@/constants/SETTINGs_ITEMS';
 
 interface SettingsDetailProps {
@@ -13,21 +18,21 @@ interface SettingsDetailProps {
 // Map suboption IDs to icons
 const getIconForSubOption = (subOptionId: string) => {
   const iconMap: Record<string, React.ReactNode> = {
-    'account-info': <UserIcon className="w-5 h-5" />,
-    'change-password': <KeyIcon className="w-5 h-5" />,
-    'download-archive': <UserIcon className="w-5 h-5" />,
-    'security-overview': <KeyIcon className="w-5 h-5" />,
-    'two-factor': <KeyIcon className="w-5 h-5" />,
-    'connected-apps': <UserIcon className="w-5 h-5" />,
-    audience: <UserIcon className="w-5 h-5" />,
-    'content-preferences': <UserIcon className="w-5 h-5" />,
-    'mute-block': <UserIcon className="w-5 h-5" />,
-    'direct-messages': <ChatIcon className="w-5 h-5" />,
-    filters: <UserIcon className="w-5 h-5" />,
-    preferences: <UserIcon className="w-5 h-5" />,
-    'push-notifications': <UserIcon className="w-5 h-5" />,
+    'account-info': <UserIcon className="w-4 h-4" />,
+    'change-password': <KeyIcon className="w-4 h-4" />,
+    'download-archive': <InstallIcon className="w-4 h-4" />,
+    'security-overview': <KeyIcon className="w-4 h-4" />,
+    'two-factor': <KeyIcon className="w-4 h-4" />,
+    'connected-apps': <UserIcon className="w-4 h-4" />,
+    audience: <UserIcon className="w-4 h-4" />,
+    'content-preferences': <UserIcon className="w-4 h-4" />,
+    'mute-block': <UserIcon className="w-4 h-4" />,
+    'direct-messages': <ChatIcon className="w-4 h-4" />,
+    filters: <UserIcon className="w-4 h-4" />,
+    preferences: <UserIcon className="w-4 h-4" />,
+    'push-notifications': <UserIcon className="w-4 h-4" />,
   };
-  return iconMap[subOptionId] || <UserIcon className="w-5 h-5" />;
+  return iconMap[subOptionId] || <UserIcon className="w-4 h-4" />;
 };
 
 export default function SettingsDetail({
@@ -53,6 +58,7 @@ export default function SettingsDetail({
       <div className="">
         <Breadcrumb
           title={selectedOption.label}
+          subtitle="@ahmedfathy0-0"
           description={selectedOption.description}
           onBack={handleBack}
         />
@@ -61,7 +67,7 @@ export default function SettingsDetail({
             const isActive = pathname === subOption.path;
 
             return (
-              <SubOptionItem
+              <ListItem
                 key={subOption.id}
                 label={subOption.label}
                 description={subOption.description}
