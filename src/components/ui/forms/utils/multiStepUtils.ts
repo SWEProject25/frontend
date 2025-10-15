@@ -6,12 +6,12 @@ import { AllSteps } from '../types/components';
 export const getConfigKey = (
   step: AllSteps,
   type: 'login' | 'createAccount' | 'signup' | 'forgotPassword'
-): keyof typeof import('../configs/authFormConfigs').authFormConfigs => {
+): keyof typeof import('@/features/authentication/configs/authFormConfigs').authFormConfigs => {
   if (step === 'email') return 'login';
   if (step === 'password' && type === 'login') return 'loginPassword';
   if (step === 'signup') return 'signup';
   if (step === 'forgotPassword') return 'forgotPassword';
-  return step as keyof typeof import('../configs/authFormConfigs').authFormConfigs;
+  return step as keyof typeof import('@/features/authentication/configs/authFormConfigs').authFormConfigs;
 };
 
 /**

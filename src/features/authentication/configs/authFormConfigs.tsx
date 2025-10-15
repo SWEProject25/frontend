@@ -9,10 +9,9 @@ import {
   FOOTER_LINK_TEXTS,
   FOOTER_LINK_ACTIONS,
   EXTERNAL_LINKS,
-} from '../constants';
-import { SOCIAL_PROVIDERS } from '@/features/authentication/constants';
-import { ValidationRule } from '@/types/validation';
-import { AUTH_ENDPOINTS } from '@/features/authentication/constants/api';
+} from '@/components/ui/forms/constants';
+import { SOCIAL_PROVIDERS } from '../constants';
+import { AUTH_ENDPOINTS } from '../constants/api';
 
 export const authFormConfigs = {
   login: {
@@ -117,17 +116,15 @@ export const authFormConfigs = {
         label: 'Email',
         type: FIELD_TYPES.EMAIL,
         required: true,
-        validationRules: [
-          {
-            type: 'email' as const,
-            message: 'Please enter a valid email.',
+        // Email validation configuration for create account
+        validation: {
+          enableRealTimeValidation: true,
+          apiEndpoint: AUTH_ENDPOINTS.CHECK_EMAIL,
+          messages: {
+            invalidFormat: 'Please enter a valid email.',
+            alreadyTaken: 'Email has already been taken.',
           },
-          {
-            type: 'email' as const,
-            message: 'Email has already been taken.',
-            apiEndpoint: AUTH_ENDPOINTS.CHECK_EMAIL,
-          },
-        ] as ValidationRule[],
+        },
       },
       {
         name: 'birthMonth',

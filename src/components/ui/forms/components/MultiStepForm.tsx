@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { authFormConfigs } from '@/components/ui/forms/configs/authFormConfigs';
+import { authFormConfigs } from '@/features/authentication/configs/authFormConfigs';
 import { FormContainer } from '@/components/ui/forms/components/FormContainer';
 import { MultiStepFormProps } from '../types/components';
 import { getConfigKey } from '../utils';

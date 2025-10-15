@@ -1,5 +1,3 @@
-import { ValidationRule } from '@/types/validation';
-
 // Form-specific types
 export interface FormField {
   name: string;
@@ -12,7 +10,14 @@ export interface FormField {
   showPasswordToggle?: boolean;
   disabled?: boolean;
   options?: { value: string; label: string }[];
-  validationRules?: ValidationRule[];
+  validation?: {
+    enableRealTimeValidation?: boolean;
+    apiEndpoint?: string;
+    messages?: {
+      invalidFormat?: string;
+      alreadyTaken?: string;
+    };
+  };
   group?: {
     id: string;
     title: string;

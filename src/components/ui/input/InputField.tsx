@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { InputProps } from '@/types/ui';
 import { useFieldState } from '@/lib/formUtils';
-import { useValidation } from '@/hooks/useValidation';
 import { InputBase } from './components/InputBase';
 import { InputLabel } from './components/InputLabel';
 import { PasswordToggle } from './components/PasswordToggle';
@@ -24,8 +23,6 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
       onFocus,
       onBlur,
       onChange,
-      validationRules,
-      onValidationChange,
       ...props
     },
     ref
@@ -38,28 +35,6 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
       onBlur,
     });
 
-    // Use validation hook if rules are provided
-    const validation = useValidation({
-      rules: validationRules || [],
-      onValidationChange,
-    });
-
-    // Handle input change with validation
-    const handleInputChange = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-
-        // Call original onChange
-        onChange?.(e);
-
-        // Trigger validation if rules exist
-        if (validationRules && validationRules.length > 0) {
-          validation.validateWithDebounce(newValue);
-        }
-      },
-      [onChange, validationRules, validation]
-    );
-
     const currentLength = typeof value === 'string' ? value.length : 0;
     const inputType = showPasswordToggle
       ? showPassword
@@ -68,7 +43,7 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
       : type;
 
     const styleProps = {
-      error: error || validation.error,
+      error,
       isFocused: fieldState.isFocused,
       hasValue: fieldState.hasValue,
       shouldFloatLabel: fieldState.shouldFloatLabel,
@@ -100,39 +75,24 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
             inputRef={ref}
             onFocus={fieldState.handleFocus}
             onBlur={fieldState.handleBlur}
-            onChange={handleInputChange}
+            onChange={onChange}
             className={className}
             {...props}
           />
 
-          {/* Loading spinner for validation */}
-          {validation.isValidating && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-            </div>
+          {/* Password Toggle Button */}
+          {showPasswordToggle && fieldState.isFocused && (
+            <PasswordToggle
+              showPassword={showPassword}
+              onToggle={() => setShowPassword(!showPassword)}
+              inputRef={ref as React.RefObject<HTMLInputElement>}
+            />
           )}
 
-          {/* Password Toggle Button - Only show when focused and not validating */}
-          {showPasswordToggle &&
-            fieldState.isFocused &&
-            !validation.isValidating && (
-              <PasswordToggle
-                showPassword={showPassword}
-                onToggle={() => setShowPassword(!showPassword)}
-                inputRef={ref as React.RefObject<HTMLInputElement>}
-              />
-            )}
-
-          {/* Character Counter - Only show when focused and not validating */}
-          {showCharCount &&
-            maxLength &&
-            fieldState.isFocused &&
-            !validation.isValidating && (
-              <CharCounter
-                currentLength={currentLength}
-                maxLength={maxLength}
-              />
-            )}
+          {/* Character Counter */}
+          {showCharCount && maxLength && fieldState.isFocused && (
+            <CharCounter currentLength={currentLength} maxLength={maxLength} />
+          )}
 
           {label && (
             <InputLabel
@@ -142,9 +102,7 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
             />
           )}
         </div>
-        {(error || validation.error) && (
-          <p className="mt-2 text-sm text-error">{error || validation.error}</p>
-        )}
+        {error && <p className="mt-2 text-sm text-error">{error}</p>}
       </div>
     );
   }

@@ -15,8 +15,6 @@ export interface ButtonProps {
   icon?: React.ReactNode;
 }
 
-import { ValidationRule } from './validation';
-
 export interface InputProps {
   label?: string;
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url';
@@ -34,8 +32,6 @@ export interface InputProps {
   showPasswordToggle?: boolean;
   icon?: React.ReactNode;
   className?: string;
-  validationRules?: ValidationRule[];
-  onValidationChange?: (isValid: boolean, error?: string) => void;
 }
 
 export interface SelectProps {

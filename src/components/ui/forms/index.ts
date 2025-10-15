@@ -14,7 +14,7 @@ export type {
 } from './types';
 
 // Configurations
-export { authFormConfigs } from './configs/authFormConfigs';
+export { authFormConfigs } from '@/features/authentication/configs/authFormConfigs';
 
 // Components (for advanced usage)
 export { FormContent } from './components/FormContent';
