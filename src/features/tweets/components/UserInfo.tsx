@@ -11,12 +11,14 @@ export default function UserInfo({
   isVerified: boolean;
 }) {
   return (
-    <Link href="/profile" className="flex items-center gap-1">
-      <span className="font-bold hover:underline">{name}</span>
-      {isVerified && (
-        <FaCheckCircle className="inline text-blue-500" size={16} />
-      )}
-      <span className="text-gray-400 text-sm">{username}</span>
-    </Link>
+    <div className="flex items-center gap-1">
+      <Link href="/profile" className="flex items-center gap-1">
+        <span className="font-bold hover:underline">{name}</span>
+        {isVerified && (
+          <FaCheckCircle className="inline text-blue-500" size={16} />
+        )}
+        <span className="text-gray-400 text-sm">{username}</span>
+      </Link>
+    </div>
   );
 }

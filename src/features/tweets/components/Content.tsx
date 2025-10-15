@@ -9,12 +9,11 @@ export default function Content({
   image: string;
 }) {
   return (
-    <div>
+    <div className="">
       <p className="text-gray-200">{text}</p>
-      <div className="mt-3 rounded-xl overflow-hidden">
+      <div className="mt-3 rounded-xl overflow-auto relative h-70 w-full">
         <Image
-          width={600}
-          height={400}
+          fill
           src={image}
           alt="Tweet image"
           className="w-full h-auto rounded-xl object-cover"
