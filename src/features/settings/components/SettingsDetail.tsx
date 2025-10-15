@@ -42,7 +42,7 @@ export default function SettingsDetail({
   const router = useRouter();
 
   const handleBack = () => {
-    router.back();
+    router.push('/settings');
   };
 
   if (!selectedOption) {

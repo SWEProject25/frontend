@@ -9,6 +9,7 @@ export interface SettingsOption {
   id: string;
   label: string;
   description?: string;
+  path?: string;
   icon?: string;
   subOptions: SettingsSubOption[];
 }
@@ -18,26 +19,27 @@ export const SETTINGS_ITEMS: SettingsOption[] = [
     id: 'account',
     label: 'Your account',
     description: 'Manage your account information',
+    path: '/settings/account',
     subOptions: [
       {
         id: 'account-info',
         label: 'Account Information',
         description:
           'See your account information like your phone number and email address.',
-        path: '/settings/account',
+        path: '/settings/accountinfo',
       },
       {
         id: 'change-password',
         label: 'Change your password',
         description: 'Change your password at any time.',
-        path: '/settings/account/password',
+        path: '/settings/password',
       },
       {
         id: 'download-archive',
         label: 'Download an archive of your data',
         description:
           'Get insights into the type of information stored for your account.',
-        path: '/settings/account/download',
+        path: '/settings/download',
       },
     ],
   },
@@ -45,6 +47,7 @@ export const SETTINGS_ITEMS: SettingsOption[] = [
     id: 'security',
     label: 'Security and account access',
     description: 'Manage your account security',
+    path: '/settings/security_and_account_access',
     subOptions: [
       {
         id: 'security-overview',
@@ -70,6 +73,7 @@ export const SETTINGS_ITEMS: SettingsOption[] = [
     id: 'privacy',
     label: 'Privacy and safety',
     description: 'Manage what information you see and share',
+    path: '/settings/privacy_and_safety',
     subOptions: [
       {
         id: 'audience',
@@ -103,6 +107,7 @@ export const SETTINGS_ITEMS: SettingsOption[] = [
     id: 'notifications',
     label: 'Notifications',
     description: 'Select the kinds of notifications you get',
+    path: '/settings/notifications',
     subOptions: [
       {
         id: 'filters',

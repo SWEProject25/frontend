@@ -17,11 +17,10 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
     pathname.startsWith(`/settings/${option.id}`)
   );
 
-  // Check if current path is a main category path (first suboption of a category)
-  const isShowingSuboptions =
-    selectedOption &&
-    selectedOption.subOptions.length > 0 &&
-    pathname === selectedOption.subOptions[0].path;
+  // Check if current path is a main category path (e.g., /settings/account)
+  // These should show the SettingsDetail with suboptions
+  const isMainCategoryPage =
+    selectedOption && pathname === `/settings/${selectedOption.id}`;
 
   // Check if we're on main settings page (no category selected)
   const isMainPage = pathname === '/settings';
@@ -37,7 +36,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
 
       {/* Second Column - Show suboptions list or page content (hide on mobile when on main page) */}
       <div className={`${isMainPage ? 'hidden lg:block' : 'block'}`}>
-        {isShowingSuboptions ? (
+        {isMainCategoryPage ? (
           <SettingsDetail selectedOption={selectedOption} />
         ) : (
           children

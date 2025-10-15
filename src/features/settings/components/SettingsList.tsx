@@ -60,7 +60,7 @@ export default function SettingsList({ options }: SettingsListProps) {
                 <ListItem
                   key={option.id}
                   label={option.label}
-                  href={option.subOptions[0]?.path || '#'}
+                  href={option.path || '#'}
                   isActive={isActive}
                   showArrow={true}
                 />
