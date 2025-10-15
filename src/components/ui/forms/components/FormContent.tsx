@@ -15,7 +15,7 @@ export function FormContent({
   showDivider = true,
   showForgotPassword = false,
   footerLinks = [],
-  loading = false,
+  formState,
   formData,
   errors,
   touched,
@@ -33,7 +33,7 @@ export function FormContent({
       <SocialLoginSection
         socialProviders={socialProviders}
         showDivider={showDivider}
-        loading={loading}
+        loading={formState.isLoading}
         onSocialLogin={handleSocialLogin}
       />
 
@@ -49,7 +49,7 @@ export function FormContent({
 
         <FormActions
           submitButton={submitButton}
-          loading={loading}
+          loading={formState.isLoading}
           showForgotPassword={showForgotPassword}
           onForgotPassword={onForgotPassword}
         />

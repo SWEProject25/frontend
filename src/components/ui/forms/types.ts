@@ -1,3 +1,5 @@
+import { ValidationRule } from '@/hooks/types/validation';
+
 // Form-specific types
 export interface FormField {
   name: string;
@@ -8,8 +10,9 @@ export interface FormField {
   maxLength?: number;
   showCharCount?: boolean;
   showPasswordToggle?: boolean;
+  disabled?: boolean;
   options?: { value: string; label: string }[];
-  validation?: (value: string) => string | undefined;
+  validationRules?: ValidationRule[];
   group?: {
     id: string;
     title: string;
@@ -49,12 +52,15 @@ export interface GenericAuthFormProps {
   onForgotPassword?: () => void;
   onClose?: () => void;
   onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
-  loading?: boolean;
-  error?: string | null;
-  success?: boolean;
+  formState: {
+    isLoading: boolean;
+    error: string | null;
+    success: boolean;
+  };
   onClearState?: () => void;
   className?: string;
   mode?: 'modal' | 'fullpage' | 'responsive';
+  initialValues?: Record<string, string>;
 }
 
 export interface FormState {
@@ -122,3 +128,7 @@ export interface FormContentProps
     FormHandlers {
   onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
 }
+
+// Re-export types from organized files
+export * from './types/components';
+export * from './types/hooks';

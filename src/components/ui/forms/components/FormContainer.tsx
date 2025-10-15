@@ -1,18 +1,32 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { XLogo, CloseIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/utils';
 import { FormContent } from './FormContent';
 import { GenericAuthFormProps } from '../types';
+import { handleOverlayClick, handleModalKeyDown } from '../utils';
 
 export function FormContainer(props: GenericAuthFormProps) {
-  const { onSubmit, onSocialLogin, mode = 'modal', onClose, className } = props;
+  const {
+    onSubmit,
+    onSocialLogin,
+    mode = 'modal',
+    onClose,
+    initialValues = {},
+    className,
+  } = props;
 
   // Simple form state management
-  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [formData, setFormData] =
+    useState<Record<string, string>>(initialValues);
   const [errors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  // Update formData when initialValues change
+  useEffect(() => {
+    setFormData(initialValues);
+  }, [initialValues]);
 
   // Event handlers
   const handleInputChange = useCallback(
@@ -48,18 +62,6 @@ export function FormContainer(props: GenericAuthFormProps) {
 
   const displayMode = mode === 'responsive' ? 'modal' : mode;
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && onClose) {
-      onClose();
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape' && onClose) {
-      onClose();
-    }
-  };
-
   if (displayMode === 'fullpage') {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -93,8 +95,8 @@ export function FormContainer(props: GenericAuthFormProps) {
         className
       )}
       style={{ backgroundColor: 'rgba(91, 112, 131, 0.4)' }}
-      onClick={handleOverlayClick}
-      onKeyDown={handleKeyDown}
+      onClick={(e) => onClose && handleOverlayClick(e, onClose)}
+      onKeyDown={(e) => onClose && handleModalKeyDown(e, onClose)}
       tabIndex={-1}
     >
       <div

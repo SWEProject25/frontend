@@ -1,10 +1,9 @@
 'use client';
 
-import React from 'react';
 import { AuthLayout } from './AuthLayout';
 import { AuthForm } from './AuthForm';
 import { WelcomeContent } from './WelcomeContent';
-import { useAuthModals, useAuthHandlers } from '../hooks';
+import { useAuthModals, useAuthHandlers, AuthModalType } from '../hooks';
 
 export function WelcomePage() {
   const {
@@ -25,74 +24,42 @@ export function WelcomePage() {
     clearFormState,
   } = useAuthHandlers();
 
-  // Show full-screen form on mobile
-  if (showFullScreenForm) {
-    return (
-      <AuthForm
-        type={showFullScreenForm}
-        isOpen={true}
-        onClose={closeFullScreenForm}
-        onSwitchModal={switchModal}
-        mode="fullpage"
-        formState={formState}
-        handleSocialLogin={handleSocialLogin}
-        handleLogin={handleLogin}
-        handleSignup={handleSignup}
-        handleForgotPassword={handleForgotPassword}
-        clearFormState={clearFormState}
-      />
-    );
-  }
+  // Determine the active form type and mode
+  const activeFormType = showFullScreenForm || modalType;
+  const isFormOpen = !!activeFormType;
+  const formMode = showFullScreenForm ? 'fullpage' : 'modal';
+  const formCloseHandler = showFullScreenForm
+    ? closeFullScreenForm
+    : closeModal;
 
   return (
     <>
-      <AuthLayout>
-        <WelcomeContent
-          onCreateAccount={() => openModal('createAccount')}
-          onLogin={() => openModal('login')}
-        />
-      </AuthLayout>
+      {/* Welcome Content - only show when no form is open */}
+      {!isFormOpen && (
+        <AuthLayout>
+          <WelcomeContent
+            onCreateAccount={() => openModal('createAccount')}
+            onLogin={() => openModal('login')}
+          />
+        </AuthLayout>
+      )}
 
-      {/* Desktop Modals */}
-      <AuthForm
-        type="login"
-        isOpen={modalType === 'login'}
-        onClose={closeModal}
-        onSwitchModal={switchModal}
-        mode="modal"
-        formState={formState}
-        handleSocialLogin={handleSocialLogin}
-        handleLogin={handleLogin}
-        handleSignup={handleSignup}
-        handleForgotPassword={handleForgotPassword}
-        clearFormState={clearFormState}
-      />
-      <AuthForm
-        type="signup"
-        isOpen={modalType === 'signup'}
-        onClose={closeModal}
-        onSwitchModal={switchModal}
-        mode="modal"
-        formState={formState}
-        handleSocialLogin={handleSocialLogin}
-        handleLogin={handleLogin}
-        handleSignup={handleSignup}
-        handleForgotPassword={handleForgotPassword}
-        clearFormState={clearFormState}
-      />
-      <AuthForm
-        type="createAccount"
-        isOpen={modalType === 'createAccount'}
-        onClose={closeModal}
-        onSwitchModal={switchModal}
-        mode="modal"
-        formState={formState}
-        handleSocialLogin={handleSocialLogin}
-        handleLogin={handleLogin}
-        handleSignup={handleSignup}
-        handleForgotPassword={handleForgotPassword}
-        clearFormState={clearFormState}
-      />
+      {/* Auth Form - show when any form is active */}
+      {isFormOpen && (
+        <AuthForm
+          type={activeFormType as AuthModalType}
+          isOpen={true}
+          onClose={formCloseHandler}
+          onSwitchModal={switchModal}
+          mode={formMode}
+          formState={formState}
+          handleSocialLogin={handleSocialLogin}
+          handleLogin={handleLogin}
+          handleSignup={handleSignup}
+          handleForgotPassword={handleForgotPassword}
+          clearFormState={clearFormState}
+        />
+      )}
     </>
   );
 }

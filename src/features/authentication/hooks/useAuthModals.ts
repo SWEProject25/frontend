@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { AUTH_MODAL_TYPES, BREAKPOINTS } from '../constants';
+import { AUTH_MODAL_TYPES } from '../constants';
+import { isMobileScreen, getModalType, getFullScreenFormType } from '../utils';
 
 export type AuthModalType =
   (typeof AUTH_MODAL_TYPES)[keyof typeof AUTH_MODAL_TYPES];
@@ -11,7 +12,7 @@ export function useAuthModals() {
   // Handle responsive behavior
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < BREAKPOINTS.MOBILE);
+      setIsMobile(isMobileScreen());
     };
 
     checkScreenSize();
@@ -33,8 +34,8 @@ export function useAuthModals() {
   };
 
   return {
-    modalType: isMobile ? null : activeModal,
-    showFullScreenForm: isMobile ? activeModal : null,
+    modalType: getModalType(activeModal),
+    showFullScreenForm: getFullScreenFormType(activeModal, isMobile),
     isMobile,
     openModal,
     closeModal,

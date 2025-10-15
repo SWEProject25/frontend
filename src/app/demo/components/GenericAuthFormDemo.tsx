@@ -33,14 +33,27 @@ export function GenericAuthFormDemo() {
     string,
     string
   > | null>(null);
+  const [formState, setFormState] = useState({
+    isLoading: false,
+    error: null as string | null,
+    success: false,
+  });
 
   const handleSubmit = (data: Record<string, string>) => {
     console.log('Form submitted:', data);
-    setSubmittedData(data);
+    setFormState({ isLoading: true, error: null, success: false });
+
+    // Simulate API call
     setTimeout(() => {
-      setSubmittedData(null);
-      setActiveForm(null);
-    }, 2000);
+      setFormState({ isLoading: false, error: null, success: true });
+      setSubmittedData(data);
+
+      setTimeout(() => {
+        setSubmittedData(null);
+        setActiveForm(null);
+        setFormState({ isLoading: false, error: null, success: false });
+      }, 2000);
+    }, 1000);
   };
 
   const handleSocialLogin = (providerId: string) => {
@@ -56,6 +69,11 @@ export function GenericAuthFormDemo() {
 
   const closeModal = () => {
     setActiveForm(null);
+    setFormState({ isLoading: false, error: null, success: false });
+  };
+
+  const clearFormState = () => {
+    setFormState({ isLoading: false, error: null, success: false });
   };
 
   return (
@@ -421,6 +439,8 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
@@ -432,6 +452,8 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
@@ -442,6 +464,8 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
@@ -502,6 +526,8 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
@@ -547,6 +573,8 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
@@ -598,6 +626,8 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
@@ -650,6 +680,8 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
@@ -708,6 +740,8 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
@@ -740,6 +774,8 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
@@ -788,6 +824,8 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
       </div>

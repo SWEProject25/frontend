@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { AuthButton } from '@/components/ui/AuthButton';
 import { Divider } from '@/components/ui/Divider';
 import { GoogleIcon, GitHubIcon } from '@/components/ui/icons';

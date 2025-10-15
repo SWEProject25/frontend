@@ -1,0 +1,112 @@
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { UserResponse, LoginDto, CreateUserDto } from '../types/api';
+import { AuthStore } from '../types/store';
+import { authApi } from '../services/authApi';
+
+export const useAuthStore = create<AuthStore>()(
+  persist(
+    (set) => ({
+      // State
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      error: null,
+
+      // Actions
+      setUser: (user: UserResponse) => {
+        set({ user, isAuthenticated: true, error: null });
+      },
+
+      clearUser: () => {
+        set({ user: null, isAuthenticated: false, error: null });
+      },
+
+      setLoading: (loading: boolean) => {
+        set({ isLoading: loading });
+      },
+
+      setError: (error: string | null) => {
+        set({ error });
+      },
+
+      login: async (credentials: LoginDto) => {
+        try {
+          set({ isLoading: true, error: null });
+
+          const response = await authApi.login(credentials);
+
+          set({
+            user: response.user,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+          });
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : 'Login failed';
+          set({
+            isLoading: false,
+            error: errorMessage,
+            isAuthenticated: false,
+          });
+          throw error;
+        }
+      },
+
+      register: async (userData: CreateUserDto) => {
+        try {
+          set({ isLoading: true, error: null });
+
+          const response = await authApi.register(userData);
+
+          set({
+            user: response.user,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+          });
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : 'Registration failed';
+          set({
+            isLoading: false,
+            error: errorMessage,
+            isAuthenticated: false,
+          });
+          throw error;
+        }
+      },
+
+      logout: async () => {
+        try {
+          set({ isLoading: true });
+
+          await authApi.logout();
+
+          set({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+            error: null,
+          });
+        } catch {
+          // Even if logout fails on server, clear local state
+          set({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+            error: null,
+          });
+        }
+      },
+    }),
+    {
+      name: 'auth-storage',
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
+    }
+  )
+);

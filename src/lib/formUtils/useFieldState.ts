@@ -1,12 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-
-export interface UseFieldStateProps<T extends HTMLElement = HTMLElement> {
-  value?: string;
-  onFocus?: (e: React.FocusEvent<T>) => void;
-  onBlur?: (e: React.FocusEvent<T>) => void;
-}
+import { UseFieldStateProps } from '../types/formUtils';
 
 export function useFieldState<T extends HTMLElement = HTMLElement>({
   value = '',

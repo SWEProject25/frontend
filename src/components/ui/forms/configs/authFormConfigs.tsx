@@ -1,7 +1,18 @@
 import React from 'react';
 import { GoogleIcon, GitHubIcon } from '@/components/ui/icons';
-import { MONTHS, DAYS, YEARS, FIELD_TYPES } from '../constants';
+import {
+  MONTHS,
+  DAYS,
+  YEARS,
+  FIELD_TYPES,
+  MODAL_LINKS,
+  FOOTER_LINK_TEXTS,
+  FOOTER_LINK_ACTIONS,
+  EXTERNAL_LINKS,
+} from '../constants';
 import { SOCIAL_PROVIDERS } from '@/features/authentication/constants';
+import { ValidationRule } from '@/hooks/types/validation';
+import { AUTH_ENDPOINTS } from '@/features/authentication/constants/api';
 
 export const authFormConfigs = {
   login: {
@@ -27,6 +38,34 @@ export const authFormConfigs = {
         icon: <GitHubIcon className="w-5 h-5" />,
       },
     ],
+    footerLinks: [
+      {
+        text: FOOTER_LINK_TEXTS.DONT_HAVE_ACCOUNT,
+        linkText: FOOTER_LINK_ACTIONS.SIGN_UP,
+        href: MODAL_LINKS.SIGNUP,
+      },
+    ],
+    showForgotPassword: true,
+  },
+
+  loginPassword: {
+    title: 'Enter your password',
+    fields: [
+      {
+        name: 'email',
+        label: 'Email',
+        type: FIELD_TYPES.EMAIL,
+        required: true,
+        disabled: true,
+      },
+      {
+        name: 'password',
+        label: 'Password',
+        type: FIELD_TYPES.PASSWORD,
+        required: true,
+      },
+    ],
+    submitButton: { text: 'Log in' },
     footerLinks: [
       {
         text: "Don't have an account?",
@@ -55,9 +94,9 @@ export const authFormConfigs = {
     submitButton: { text: 'Create account' },
     footerLinks: [
       {
-        text: 'Have an account already?',
-        linkText: 'Log in',
-        href: 'modal:login',
+        text: FOOTER_LINK_TEXTS.HAVE_ACCOUNT,
+        linkText: FOOTER_LINK_ACTIONS.LOG_IN,
+        href: MODAL_LINKS.LOGIN,
       },
     ],
   },
@@ -78,6 +117,17 @@ export const authFormConfigs = {
         label: 'Email',
         type: FIELD_TYPES.EMAIL,
         required: true,
+        validationRules: [
+          {
+            type: 'email' as const,
+            message: 'Please enter a valid email.',
+          },
+          {
+            type: 'email' as const,
+            message: 'Email has already been taken.',
+            apiEndpoint: AUTH_ENDPOINTS.CHECK_EMAIL,
+          },
+        ] as ValidationRule[],
       },
       {
         name: 'birthMonth',
@@ -125,9 +175,87 @@ export const authFormConfigs = {
     submitButton: { text: 'Next' },
     footerLinks: [
       {
-        text: 'Already have an account?',
-        linkText: 'Sign in',
-        href: 'modal:login',
+        text: FOOTER_LINK_TEXTS.ALREADY_HAVE_ACCOUNT,
+        linkText: FOOTER_LINK_ACTIONS.SIGN_IN,
+        href: MODAL_LINKS.LOGIN,
+      },
+    ],
+  },
+
+  // Step 2: Captcha
+  captcha: {
+    title: "Verify you're human",
+    subtitle: 'Complete the security check to continue',
+    fields: [
+      {
+        name: 'captcha',
+        label: 'Security Check',
+        type: FIELD_TYPES.TEXT,
+        required: true,
+        placeholder: 'Enter the code shown above',
+      },
+    ],
+    submitButton: { text: 'Verify' },
+    footerLinks: [
+      {
+        text: FOOTER_LINK_TEXTS.ALREADY_HAVE_ACCOUNT,
+        linkText: FOOTER_LINK_ACTIONS.SIGN_IN,
+        href: MODAL_LINKS.LOGIN,
+      },
+    ],
+  },
+
+  // Step 3: OTP Verification
+  otp: {
+    title: 'Verify your email',
+    subtitle: 'We sent a verification code to your email',
+    fields: [
+      {
+        name: 'otp',
+        label: 'Verification Code',
+        type: FIELD_TYPES.TEXT,
+        required: true,
+        placeholder: 'Enter 6-digit code',
+        maxLength: 6,
+        showCharCount: true,
+      },
+    ],
+    submitButton: { text: 'Verify Email' },
+    footerLinks: [
+      {
+        text: FOOTER_LINK_TEXTS.DIDNT_RECEIVE_CODE,
+        linkText: FOOTER_LINK_ACTIONS.RESEND,
+        href: EXTERNAL_LINKS.RESEND_OTP,
+      },
+    ],
+  },
+
+  // Step 4: Password Setup
+  password: {
+    title: 'Create a password',
+    subtitle: 'Choose a strong password to secure your account',
+    fields: [
+      {
+        name: 'password',
+        label: 'Password',
+        type: FIELD_TYPES.PASSWORD,
+        required: true,
+        showPasswordToggle: true,
+      },
+      {
+        name: 'confirmPassword',
+        label: 'Confirm Password',
+        type: FIELD_TYPES.PASSWORD,
+        required: true,
+        showPasswordToggle: true,
+      },
+    ],
+    submitButton: { text: 'Create Account' },
+    footerLinks: [
+      {
+        text: FOOTER_LINK_TEXTS.ALREADY_HAVE_ACCOUNT,
+        linkText: FOOTER_LINK_ACTIONS.SIGN_IN,
+        href: MODAL_LINKS.LOGIN,
       },
     ],
   },
@@ -146,9 +274,9 @@ export const authFormConfigs = {
     submitButton: { text: 'Send Reset Link' },
     footerLinks: [
       {
-        text: 'Remember your password?',
-        linkText: 'Sign in',
-        href: 'modal:login',
+        text: FOOTER_LINK_TEXTS.REMEMBER_PASSWORD,
+        linkText: FOOTER_LINK_ACTIONS.SIGN_IN,
+        href: MODAL_LINKS.LOGIN,
       },
     ],
   },

@@ -1,6 +1,8 @@
 import React from 'react';
 import { InputField } from '@/components/ui/input';
 import { SelectField } from '@/components/ui/SelectField';
+import { CaptchaComponent } from './CaptchaComponent';
+import { OTPInput } from './OTPInput';
 import { FormFieldsProps } from '../types';
 
 export function FormFields({
@@ -64,6 +66,37 @@ export function FormFields({
   );
 
   function renderField(field: (typeof fields)[0]) {
+    // Special field types
+    if (field.name === 'captcha') {
+      return (
+        <CaptchaComponent
+          key={field.name}
+          onVerify={(isValid) => {
+            // Handle captcha verification
+            if (isValid) {
+              onInputChange(field.name)({
+                target: { value: 'verified' },
+              } as React.ChangeEvent<HTMLInputElement>);
+            }
+          }}
+        />
+      );
+    }
+
+    if (field.name === 'otp') {
+      return (
+        <OTPInput
+          key={field.name}
+          onComplete={(otp) => {
+            onInputChange(field.name)({
+              target: { value: otp },
+            } as React.ChangeEvent<HTMLInputElement>);
+          }}
+          email={formData.email}
+        />
+      );
+    }
+
     if (field.type === 'select' && field.options) {
       return (
         <SelectField
@@ -80,6 +113,9 @@ export function FormFields({
       );
     }
 
+    // Regular input field
+    const validationRules = field.validationRules || [];
+
     return (
       <InputField
         key={field.name}
@@ -94,6 +130,8 @@ export function FormFields({
         showCharCount={field.showCharCount}
         showPasswordToggle={field.showPasswordToggle}
         required={field.required}
+        disabled={field.disabled}
+        validationRules={validationRules}
       />
     );
   }

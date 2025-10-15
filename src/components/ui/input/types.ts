@@ -1,4 +1,4 @@
-import { FieldStyleProps } from '@/lib/formUtils';
+import { FieldStyleProps } from '@/lib/types/formUtils';
 
 // Input-specific component types
 export interface InputLabelProps extends FieldStyleProps {
