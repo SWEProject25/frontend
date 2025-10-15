@@ -26,20 +26,20 @@ export const SETTINGS_ITEMS: SettingsOption[] = [
         label: 'Account Information',
         description:
           'See your account information like your phone number and email address.',
-        path: '/settings/accountinfo',
+        path: '/settings/account/accountinfo',
       },
       {
         id: 'change-password',
         label: 'Change your password',
         description: 'Change your password at any time.',
-        path: '/settings/password',
+        path: '/settings/account/password',
       },
       {
         id: 'download-archive',
         label: 'Download an archive of your data',
         description:
           'Get insights into the type of information stored for your account.',
-        path: '/settings/download',
+        path: '/settings/account/download',
       },
     ],
   },
