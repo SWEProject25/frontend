@@ -18,6 +18,7 @@ export default function AccountInformationList() {
         title="Account information"
         subtitle={userData.username}
         onBack={handleBack}
+        showArrow={true}
       />
       <nav className="flex flex-col">
         {accountInfoItems.map((item) => (

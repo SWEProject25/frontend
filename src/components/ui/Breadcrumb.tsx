@@ -6,6 +6,7 @@ interface BreadcrumbProps {
   subtitle?: string;
   description?: string;
   onBack?: () => void;
+  showArrow?: boolean;
   showSubtitleOnMobile?: boolean;
 }
 
@@ -14,6 +15,7 @@ export default function Breadcrumb({
   subtitle,
   description,
   onBack,
+  showArrow,
   showSubtitleOnMobile = false,
 }: BreadcrumbProps) {
   return (
@@ -22,7 +24,7 @@ export default function Breadcrumb({
         {onBack && (
           <button
             onClick={onBack}
-            className="lg:hidden p-4 hover:bg-muted rounded-full transition-colors"
+            className={`${showArrow && showArrow == true ? '' : 'lg:hidden'} p-4 hover:bg-muted rounded-full transition-colors`}
             aria-label="Go back"
           >
             <ArrowLeftIcon className="w-5 h-5 text-text-active" />
