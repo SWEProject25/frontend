@@ -29,7 +29,7 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
     const [showPassword, setShowPassword] = useState(false);
 
     const fieldState = useFieldState<HTMLInputElement>({
-      initialValue: value,
+      value: value,
       onFocus,
       onBlur,
     });
