@@ -1,0 +1,45 @@
+import React from 'react';
+import { AuthButton } from '@/components/ui/AuthButton';
+import { SubmitButton } from '../types';
+
+interface FormActionsProps {
+  submitButton: SubmitButton;
+  loading: boolean;
+  showForgotPassword: boolean;
+  onForgotPassword?: () => void;
+}
+
+export function FormActions({
+  submitButton,
+  loading,
+  showForgotPassword,
+  onForgotPassword,
+}: FormActionsProps) {
+  return (
+    <>
+      {/* Submit Button */}
+      <AuthButton
+        type="submit"
+        variant="primary"
+        size="lg"
+        loading={loading}
+        className="w-full"
+      >
+        {submitButton.text}
+      </AuthButton>
+
+      {/* Forgot Password Button */}
+      {showForgotPassword && (
+        <AuthButton
+          type="button"
+          variant="outline"
+          size="lg"
+          className="w-full"
+          onClick={onForgotPassword}
+        >
+          Forgot password?
+        </AuthButton>
+      )}
+    </>
+  );
+}
