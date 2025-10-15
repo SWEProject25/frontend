@@ -1,18 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AuthButton } from '@/components/ui/AuthButton';
+import Button from '@/components/ui/Button';
 import { Divider } from '@/components/ui/Divider';
-import {
-  GoogleIcon,
-  AppleIcon,
-  GrokIcon,
-  FacebookIcon,
-  GitHubIcon,
-  XLogo,
-} from '@/components/ui/icons';
+import { XLogo } from '@/components/ui/icons';
 
-export function AuthButtonsDemo() {
+export function ButtonsDemo() {
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleButtonClick = (buttonName: string) => {
@@ -28,79 +21,13 @@ export function AuthButtonsDemo() {
             <XLogo className="w-12 h-12" />
           </div>
           <h1 className="text-4xl font-bold text-white mb-4">
-            Button Components Demo
+            General Button Components
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Explore all button variants with different states, sizes, and use
-            cases. All buttons follow X/Twitter design patterns and are fully
-            interactive.
+            Explore all button variants including primary, secondary, outline,
+            and ghost buttons with different states and sizes.
           </p>
         </div>
-
-        {/* Social Login Buttons Section */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-bold text-white mb-8 text-center">
-            Social Login Buttons
-          </h2>
-          <div className="max-w-md mx-auto space-y-4">
-            <AuthButton
-              variant="social"
-              size="lg"
-              icon={<GoogleIcon className="w-5 h-5" />}
-              className="w-full"
-              onClick={() => handleButtonClick('google')}
-              loading={loading === 'google'}
-            >
-              Sign in with Google
-            </AuthButton>
-
-            <AuthButton
-              variant="social"
-              size="lg"
-              icon={<AppleIcon className="w-5 h-5" />}
-              className="w-full"
-              onClick={() => handleButtonClick('apple')}
-              loading={loading === 'apple'}
-            >
-              Sign in with Apple
-            </AuthButton>
-
-            <AuthButton
-              variant="social"
-              size="lg"
-              icon={<GrokIcon className="w-5 h-5" />}
-              className="w-full"
-              onClick={() => handleButtonClick('grok')}
-              loading={loading === 'grok'}
-            >
-              Sign in with Grok
-            </AuthButton>
-
-            <AuthButton
-              variant="social"
-              size="lg"
-              icon={<FacebookIcon className="w-5 h-5" />}
-              className="w-full"
-              onClick={() => handleButtonClick('facebook')}
-              loading={loading === 'facebook'}
-            >
-              Sign in with Facebook
-            </AuthButton>
-
-            <AuthButton
-              variant="social"
-              size="lg"
-              icon={<GitHubIcon className="w-5 h-5" />}
-              className="w-full"
-              onClick={() => handleButtonClick('github')}
-              loading={loading === 'github'}
-            >
-              Sign in with GitHub
-            </AuthButton>
-          </div>
-        </div>
-
-        <Divider className="my-12" />
 
         {/* Primary Buttons Section */}
         <div className="mb-16">
@@ -108,35 +35,35 @@ export function AuthButtonsDemo() {
             Primary Buttons
           </h2>
           <div className="max-w-md mx-auto space-y-4">
-            <AuthButton
+            <Button
               variant="primary"
               size="lg"
-              className="w-full"
+              fullWidth
               onClick={() => handleButtonClick('primary-lg')}
               loading={loading === 'primary-lg'}
             >
-              Create Account
-            </AuthButton>
+              Large Primary Button
+            </Button>
 
-            <AuthButton
+            <Button
               variant="primary"
               size="md"
-              className="w-full"
+              fullWidth
               onClick={() => handleButtonClick('primary-md')}
               loading={loading === 'primary-md'}
             >
-              Sign In
-            </AuthButton>
+              Medium Primary Button
+            </Button>
 
-            <AuthButton
+            <Button
               variant="primary"
               size="sm"
-              className="w-full"
+              fullWidth
               onClick={() => handleButtonClick('primary-sm')}
               loading={loading === 'primary-sm'}
             >
-              Continue
-            </AuthButton>
+              Small Primary Button
+            </Button>
           </div>
         </div>
 
@@ -148,35 +75,35 @@ export function AuthButtonsDemo() {
             Secondary Buttons
           </h2>
           <div className="max-w-md mx-auto space-y-4">
-            <AuthButton
+            <Button
               variant="secondary"
               size="lg"
-              className="w-full"
+              fullWidth
               onClick={() => handleButtonClick('secondary-lg')}
               loading={loading === 'secondary-lg'}
             >
-              Learn More
-            </AuthButton>
+              Large Secondary Button
+            </Button>
 
-            <AuthButton
+            <Button
               variant="secondary"
               size="md"
-              className="w-full"
+              fullWidth
               onClick={() => handleButtonClick('secondary-md')}
               loading={loading === 'secondary-md'}
             >
-              Get Started
-            </AuthButton>
+              Medium Secondary Button
+            </Button>
 
-            <AuthButton
+            <Button
               variant="secondary"
               size="sm"
-              className="w-full"
+              fullWidth
               onClick={() => handleButtonClick('secondary-sm')}
               loading={loading === 'secondary-sm'}
             >
-              Explore
-            </AuthButton>
+              Small Secondary Button
+            </Button>
           </div>
         </div>
 
@@ -188,35 +115,35 @@ export function AuthButtonsDemo() {
             Outline Buttons
           </h2>
           <div className="max-w-md mx-auto space-y-4">
-            <AuthButton
+            <Button
               variant="outline"
               size="lg"
-              className="w-full"
+              fullWidth
               onClick={() => handleButtonClick('outline-lg')}
               loading={loading === 'outline-lg'}
             >
-              View Profile
-            </AuthButton>
+              Large Outline Button
+            </Button>
 
-            <AuthButton
+            <Button
               variant="outline"
               size="md"
-              className="w-full"
+              fullWidth
               onClick={() => handleButtonClick('outline-md')}
               loading={loading === 'outline-md'}
             >
-              Edit Settings
-            </AuthButton>
+              Medium Outline Button
+            </Button>
 
-            <AuthButton
+            <Button
               variant="outline"
               size="sm"
-              className="w-full"
+              fullWidth
               onClick={() => handleButtonClick('outline-sm')}
               loading={loading === 'outline-sm'}
             >
-              Share
-            </AuthButton>
+              Small Outline Button
+            </Button>
           </div>
         </div>
 
@@ -228,35 +155,35 @@ export function AuthButtonsDemo() {
             Ghost Buttons
           </h2>
           <div className="max-w-md mx-auto space-y-4">
-            <AuthButton
+            <Button
               variant="ghost"
               size="lg"
-              className="w-full"
+              fullWidth
               onClick={() => handleButtonClick('ghost-lg')}
               loading={loading === 'ghost-lg'}
             >
-              Follow
-            </AuthButton>
+              Large Ghost Button
+            </Button>
 
-            <AuthButton
+            <Button
               variant="ghost"
               size="md"
-              className="w-full"
+              fullWidth
               onClick={() => handleButtonClick('ghost-md')}
               loading={loading === 'ghost-md'}
             >
-              Message
-            </AuthButton>
+              Medium Ghost Button
+            </Button>
 
-            <AuthButton
+            <Button
               variant="ghost"
               size="sm"
-              className="w-full"
+              fullWidth
               onClick={() => handleButtonClick('ghost-sm')}
               loading={loading === 'ghost-sm'}
             >
-              Like
-            </AuthButton>
+              Small Ghost Button
+            </Button>
           </div>
         </div>
 
@@ -268,31 +195,21 @@ export function AuthButtonsDemo() {
             Button States
           </h2>
           <div className="max-w-md mx-auto space-y-4">
-            <AuthButton variant="primary" size="lg" className="w-full" disabled>
-              Disabled Button
-            </AuthButton>
+            <Button variant="primary" size="lg" fullWidth>
+              Normal State
+            </Button>
 
-            <AuthButton
-              variant="primary"
-              size="lg"
-              className="w-full"
-              loading={true}
-            >
-              Loading Button
-            </AuthButton>
+            <Button variant="primary" size="lg" fullWidth disabled>
+              Disabled State
+            </Button>
 
-            <AuthButton
-              variant="primary"
-              size="lg"
-              className="w-full"
-              icon={<XLogo className="w-5 h-5" />}
-              onClick={() => handleButtonClick('with-icon')}
-              loading={loading === 'with-icon'}
-            >
-              Button with Icon
-            </AuthButton>
+            <Button variant="primary" size="lg" fullWidth loading={true}>
+              Loading State
+            </Button>
           </div>
         </div>
+
+        <Divider className="my-12" />
 
         {/* Usage Examples */}
         <div className="mb-16">
@@ -304,52 +221,56 @@ export function AuthButtonsDemo() {
               <div className="bg-gray-900 p-6 rounded-xl border border-gray-800">
                 <h3 className="text-white font-semibold mb-4">Form Actions</h3>
                 <div className="space-y-3">
-                  <AuthButton
+                  <Button
                     variant="primary"
-                    size="lg"
-                    className="w-full"
-                    type="submit"
-                    onClick={() => handleButtonClick('submit')}
-                    loading={loading === 'submit'}
+                    size="md"
+                    fullWidth
+                    onClick={() => handleButtonClick('save')}
+                    loading={loading === 'save'}
                   >
-                    Submit Form
-                  </AuthButton>
-                  <AuthButton
+                    Save Changes
+                  </Button>
+                  <Button
                     variant="outline"
-                    size="lg"
-                    className="w-full"
-                    type="button"
+                    size="md"
+                    fullWidth
                     onClick={() => handleButtonClick('cancel')}
                     loading={loading === 'cancel'}
                   >
                     Cancel
-                  </AuthButton>
+                  </Button>
                 </div>
               </div>
 
               <div className="bg-gray-900 p-6 rounded-xl border border-gray-800">
                 <h3 className="text-white font-semibold mb-4">
-                  Social Actions
+                  Multiple Buttons
                 </h3>
-                <div className="space-y-3">
-                  <AuthButton
+                <div className="flex gap-3">
+                  <Button
+                    variant="primary"
+                    size="md"
+                    onClick={() => handleButtonClick('yes')}
+                    loading={loading === 'yes'}
+                  >
+                    Yes
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    onClick={() => handleButtonClick('no')}
+                    loading={loading === 'no'}
+                  >
+                    No
+                  </Button>
+                  <Button
                     variant="ghost"
                     size="md"
-                    className="w-full"
-                    onClick={() => handleButtonClick('follow')}
-                    loading={loading === 'follow'}
+                    onClick={() => handleButtonClick('maybe')}
+                    loading={loading === 'maybe'}
                   >
-                    Follow @username
-                  </AuthButton>
-                  <AuthButton
-                    variant="outline"
-                    size="md"
-                    className="w-full"
-                    onClick={() => handleButtonClick('message')}
-                    loading={loading === 'message'}
-                  >
-                    Send Message
-                  </AuthButton>
+                    Maybe
+                  </Button>
                 </div>
               </div>
             </div>
@@ -372,10 +293,10 @@ export function AuthButtonsDemo() {
               ← Buttons Home
             </a>
             <a
-              href="/demo/buttons/general"
+              href="/demo/buttons/auth"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
-              ← General Buttons
+              Auth Buttons →
             </a>
           </div>
         </div>
