@@ -113,6 +113,38 @@ export default function DemoIndexPage() {
               View Inputs →
             </div>
           </Link>
+
+          {/* Modal Components */}
+          <Link
+            href="/demo/modals"
+            className="group block p-8 bg-muted rounded-xl border border-border hover:bg-border-hover hover:border-border-hover transition-all duration-200"
+          >
+            <div className="mb-4">
+              <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
+                <svg
+                  className="w-6 h-6 text-primary"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+            </div>
+            <h2 className="text-foreground text-xl font-bold mb-3">
+              Modal Components
+            </h2>
+            <p className="text-text-inactive mb-4 text-sm">
+              Confirmation, info, error, success, warning, and form modals with
+              multiple size variations and interactive examples.
+            </p>
+            <div className="text-primary font-medium group-hover:text-primary-hover transition-colors">
+              View Modals →
+            </div>
+          </Link>
         </div>
 
         {/* Features Section */}

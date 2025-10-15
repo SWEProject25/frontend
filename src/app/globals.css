@@ -14,6 +14,7 @@
   --color-border: #e1e8ed;
   --color-border-hover: #ccd6dd;
   --color-muted: #f7f9f9;
+  --color-modal-bg: #ffffff;
   --color-input-border: #536471;
   --color-input-border-focus: #1d9bf0;
   --color-input-bg-hover: #16181c;
@@ -47,6 +48,7 @@
     --color-border: #2f3336;
     --color-border-hover: #3e4144;
     --color-muted: #16181c;
+    --color-modal-bg: #0f1419;
     --color-input-border: #2f3336;
     --color-input-border-focus: #1d9bf0;
     --color-input-bg-hover: #1c1f23;
