@@ -35,23 +35,23 @@ export function GenericAuthFormDemo() {
   > | null>(null);
   const [formState, setFormState] = useState({
     isLoading: false,
-    error: null as string | null,
+    errors: {},
     success: false,
   });
 
   const handleSubmit = (data: Record<string, string>) => {
     console.log('Form submitted:', data);
-    setFormState({ isLoading: true, error: null, success: false });
+    setFormState({ isLoading: true, errors: {}, success: false });
 
     // Simulate API call
     setTimeout(() => {
-      setFormState({ isLoading: false, error: null, success: true });
+      setFormState({ isLoading: false, errors: {}, success: true });
       setSubmittedData(data);
 
       setTimeout(() => {
         setSubmittedData(null);
         setActiveForm(null);
-        setFormState({ isLoading: false, error: null, success: false });
+        setFormState({ isLoading: false, errors: {}, success: false });
       }, 2000);
     }, 1000);
   };
@@ -69,11 +69,11 @@ export function GenericAuthFormDemo() {
 
   const closeModal = () => {
     setActiveForm(null);
-    setFormState({ isLoading: false, error: null, success: false });
+    setFormState({ isLoading: false, errors: {}, success: false });
   };
 
   const clearFormState = () => {
-    setFormState({ isLoading: false, error: null, success: false });
+    setFormState({ isLoading: false, errors: {}, success: false });
   };
 
   return (

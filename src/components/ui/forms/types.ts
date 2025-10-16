@@ -59,8 +59,8 @@ export interface GenericAuthFormProps {
   onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
   formState: {
     isLoading: boolean;
-    error: string | null;
     success: boolean;
+    errors: Record<string, string>;
   };
   onClearState?: () => void;
   className?: string;
@@ -81,6 +81,7 @@ export interface FormHandlers {
   handleBlur: (fieldName: string) => () => void;
   handleSubmit: (e: React.FormEvent) => void;
   handleSocialLogin: (providerId: string) => void;
+  onClearState?: () => void;
 }
 
 export interface FormContainerProps
@@ -101,6 +102,7 @@ export interface FormFieldsProps {
     fieldName: string
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   onBlur: (fieldName: string) => () => void;
+  onClearState?: () => void;
 }
 
 export interface FormHeaderProps {
@@ -132,6 +134,7 @@ export interface FormContentProps
     FormState,
     FormHandlers {
   onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
+  loading: boolean;
 }
 
 // Re-export types from organized files

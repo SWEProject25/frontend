@@ -3,6 +3,10 @@ import {
   LoginDto,
   RegisterResponseDto,
   LoginResponseDto,
+  SendOTPDto,
+  SendOTPResponseDto,
+  VerifyOTPDto,
+  VerifyOTPResponseDto,
 } from '../types/api';
 import { AUTH_API_CONFIG, AUTH_ENDPOINTS } from '../constants/api';
 
@@ -93,5 +97,37 @@ export const authApi = {
     }
 
     // No need to parse response body for logout endpoint
+  },
+
+  async sendOTP(emailData: SendOTPDto): Promise<SendOTPResponseDto> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.VERIFICATION_OTP}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Important for HTTPOnly cookies
+        body: JSON.stringify(emailData),
+      }
+    );
+
+    return handleResponse<SendOTPResponseDto>(response);
+  },
+
+  async verifyOTP(otpData: VerifyOTPDto): Promise<VerifyOTPResponseDto> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.VERIFY_OTP}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Important for HTTPOnly cookies
+        body: JSON.stringify(otpData),
+      }
+    );
+
+    return handleResponse<VerifyOTPResponseDto>(response);
   },
 };

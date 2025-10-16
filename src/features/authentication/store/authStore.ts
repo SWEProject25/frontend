@@ -1,6 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { UserResponse, LoginDto, CreateUserDto } from '../types/api';
+import {
+  UserResponse,
+  LoginDto,
+  CreateUserDto,
+  SendOTPDto,
+  VerifyOTPDto,
+} from '../types/api';
 import { AuthStore } from '../types/store';
 import { authApi } from '../services/authApi';
 
@@ -98,6 +104,48 @@ export const useAuthStore = create<AuthStore>()(
             isLoading: false,
             error: null,
           });
+        }
+      },
+
+      sendOTP: async (emailData: SendOTPDto) => {
+        try {
+          set({ isLoading: true, error: null });
+
+          await authApi.sendOTP(emailData);
+
+          set({
+            isLoading: false,
+            error: null,
+          });
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : 'Failed to send OTP';
+          set({
+            isLoading: false,
+            error: errorMessage,
+          });
+          throw error;
+        }
+      },
+
+      verifyOTP: async (otpData: VerifyOTPDto) => {
+        try {
+          set({ isLoading: true, error: null });
+
+          await authApi.verifyOTP(otpData);
+
+          set({
+            isLoading: false,
+            error: null,
+          });
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : 'OTP verification failed';
+          set({
+            isLoading: false,
+            error: errorMessage,
+          });
+          throw error;
         }
       },
     }),

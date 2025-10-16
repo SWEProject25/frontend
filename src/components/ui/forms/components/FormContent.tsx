@@ -15,7 +15,7 @@ export function FormContent({
   showDivider = true,
   showForgotPassword = false,
   footerLinks = [],
-  formState,
+  loading,
   formData,
   errors,
   touched,
@@ -25,6 +25,7 @@ export function FormContent({
   handleSocialLogin,
   onForgotPassword,
   onSwitchModal,
+  onClearState,
 }: FormContentProps) {
   return (
     <>
@@ -33,7 +34,7 @@ export function FormContent({
       <SocialLoginSection
         socialProviders={socialProviders}
         showDivider={showDivider}
-        loading={formState.isLoading}
+        loading={loading}
         onSocialLogin={handleSocialLogin}
       />
 
@@ -45,11 +46,12 @@ export function FormContent({
           touched={touched}
           onInputChange={handleInputChange}
           onBlur={handleBlur}
+          onClearState={onClearState}
         />
 
         <FormActions
           submitButton={submitButton}
-          loading={formState.isLoading}
+          loading={loading}
           showForgotPassword={showForgotPassword}
           onForgotPassword={onForgotPassword}
         />

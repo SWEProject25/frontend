@@ -72,6 +72,3 @@ export {
 
 // Re-export captcha constants
 export { CAPTCHA_CONSTANTS } from './captcha';
-
-// Re-export OTP constants
-export { OTP_CONSTANTS } from './otp';

@@ -17,6 +17,7 @@ export function AuthForm({
   handleSignup,
   handleForgotPassword,
   clearFormState,
+  clearFieldError,
 }: AuthFormProps) {
   if (!isOpen) return null;
 
@@ -37,7 +38,7 @@ export function AuthForm({
     onForgotPassword: handleForgotPassword,
     onSubmit,
     formState,
-    onClearState: clearFormState,
+    onClearState: () => clearFieldError('otp'),
     type: type === 'loginPassword' ? 'login' : type,
   };
 

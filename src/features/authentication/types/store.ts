@@ -1,4 +1,10 @@
-import { UserResponse, LoginDto, CreateUserDto } from './api';
+import {
+  UserResponse,
+  LoginDto,
+  CreateUserDto,
+  SendOTPDto,
+  VerifyOTPDto,
+} from './api';
 
 // Auth Store Types
 export interface AuthState {
@@ -16,6 +22,8 @@ export interface AuthActions {
   login: (credentials: LoginDto) => Promise<void>;
   register: (userData: CreateUserDto) => Promise<void>;
   logout: () => Promise<void>;
+  sendOTP: (emailData: SendOTPDto) => Promise<void>;
+  verifyOTP: (otpData: VerifyOTPDto) => Promise<void>;
 }
 
 export interface AuthStore extends AuthState, AuthActions {}

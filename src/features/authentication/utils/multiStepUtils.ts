@@ -1,4 +1,4 @@
-import { AllSteps } from '../types/components';
+import { AllSteps } from '@/components/ui/forms/types/components';
 
 /**
  * Maps step names to configuration keys for authFormConfigs

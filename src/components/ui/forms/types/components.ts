@@ -6,11 +6,11 @@ export interface MultiStepFormProps {
   onSocialLogin?: (providerId: string) => void;
   onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
   onForgotPassword?: () => void;
-  onSubmit: (data: Record<string, string>) => void;
+  onSubmit: (data: Record<string, string>, step?: AllSteps) => Promise<boolean>;
   formState: {
     isLoading: boolean;
-    error: string | null;
     success: boolean;
+    errors: Record<string, string>;
   };
   onClearState?: () => void;
   type: 'login' | 'createAccount' | 'signup' | 'forgotPassword';
@@ -24,13 +24,6 @@ export type AllSteps = LoginStep | CreateAccountStep | SingleStep;
 // Captcha Component Types
 export interface CaptchaComponentProps {
   onVerify: (isValid: boolean) => void;
-}
-
-// OTP Input Types
-export interface OTPInputProps {
-  length?: number;
-  onComplete: (otp: string) => void;
-  email?: string;
 }
 
 // Password Strength Indicator Types

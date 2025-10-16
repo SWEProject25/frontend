@@ -28,3 +28,22 @@ export interface LoginResponseDto {
   message: string;
   user: UserResponse;
 }
+
+export interface SendOTPDto {
+  email: string;
+}
+
+export interface SendOTPResponseDto {
+  status: string;
+  message: string;
+}
+
+export interface VerifyOTPDto {
+  email: string;
+  otp: string;
+}
+
+export interface VerifyOTPResponseDto {
+  status: string;
+  message: string;
+}

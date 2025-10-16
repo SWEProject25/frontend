@@ -22,6 +22,7 @@ export function WelcomePage() {
     handleSignup,
     handleForgotPassword,
     clearFormState,
+    clearFieldError,
   } = useAuthHandlers();
 
   // Determine the active form type and mode
@@ -58,6 +59,7 @@ export function WelcomePage() {
           handleSignup={handleSignup}
           handleForgotPassword={handleForgotPassword}
           clearFormState={clearFormState}
+          clearFieldError={clearFieldError}
         />
       )}
     </>

@@ -1,4 +1,4 @@
-import { OTP_CONSTANTS } from '@/components/ui/forms/constants';
+import { OTP_CONSTANTS } from '../constants';
 
 /**
  * Validates OTP input (only single digits allowed)

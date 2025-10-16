@@ -29,15 +29,24 @@ export const handleFormClose = (
  */
 export const getSubmitHandler = (
   type: string,
-  handleLogin: (data: Record<string, string>) => void,
-  handleSignup: (data: Record<string, string>) => void,
+  handleLogin: (
+    data: Record<string, string>,
+    step?: string
+  ) => Promise<boolean>,
+  handleSignup: (
+    data: Record<string, string>,
+    step?: string
+  ) => Promise<boolean>,
   onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void
 ) => {
   if (type === 'login') {
     return handleLogin;
   }
   if (type === 'signup') {
-    return () => handleCreateAccount(onSwitchModal);
+    return async () => {
+      handleCreateAccount(onSwitchModal);
+      return true;
+    };
   }
   return handleSignup;
 };

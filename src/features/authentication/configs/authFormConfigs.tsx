@@ -1,15 +1,13 @@
-import React from 'react';
-import { GoogleIcon, GitHubIcon } from '@/components/ui/icons';
 import {
-  MONTHS,
   DAYS,
-  YEARS,
   FIELD_TYPES,
-  MODAL_LINKS,
-  FOOTER_LINK_TEXTS,
   FOOTER_LINK_ACTIONS,
-  EXTERNAL_LINKS,
+  FOOTER_LINK_TEXTS,
+  MODAL_LINKS,
+  MONTHS,
+  YEARS,
 } from '@/components/ui/forms/constants';
+import { GitHubIcon, GoogleIcon } from '@/components/ui/icons';
 import { SOCIAL_PROVIDERS } from '../constants';
 import { AUTH_ENDPOINTS } from '../constants/api';
 
@@ -62,6 +60,7 @@ export const authFormConfigs = {
         label: 'Password',
         type: FIELD_TYPES.PASSWORD,
         required: true,
+        showPasswordToggle: true,
       },
     ],
     submitButton: { text: 'Log in' },
@@ -218,13 +217,7 @@ export const authFormConfigs = {
       },
     ],
     submitButton: { text: 'Verify Email' },
-    footerLinks: [
-      {
-        text: FOOTER_LINK_TEXTS.DIDNT_RECEIVE_CODE,
-        linkText: FOOTER_LINK_ACTIONS.RESEND,
-        href: EXTERNAL_LINKS.RESEND_OTP,
-      },
-    ],
+    footerLinks: [],
   },
 
   // Step 4: Password Setup

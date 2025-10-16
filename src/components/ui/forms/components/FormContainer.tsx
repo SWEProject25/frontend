@@ -7,7 +7,16 @@ import { FormContent } from './FormContent';
 import { GenericAuthFormProps } from '../types';
 import { handleOverlayClick, handleModalKeyDown } from '../utils';
 
-export function FormContainer(props: GenericAuthFormProps) {
+export function FormContainer(
+  props: GenericAuthFormProps & {
+    formState?: {
+      isLoading: boolean;
+      success: boolean;
+      errors?: Record<string, string>;
+    };
+    onClearState?: () => void;
+  }
+) {
   const {
     onSubmit,
     onSocialLogin,
@@ -15,12 +24,13 @@ export function FormContainer(props: GenericAuthFormProps) {
     onClose,
     initialValues = {},
     className,
+    formState,
+    onClearState,
   } = props;
 
   // Simple form state management
   const [formData, setFormData] =
     useState<Record<string, string>>(initialValues);
-  const [errors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   // Update formData when initialValues change
@@ -74,12 +84,14 @@ export function FormContainer(props: GenericAuthFormProps) {
               <FormContent
                 {...props}
                 formData={formData}
-                errors={errors}
+                errors={formState?.errors || {}}
                 touched={touched}
                 handleInputChange={handleInputChange}
                 handleBlur={handleBlur}
                 handleSubmit={handleSubmit}
                 handleSocialLogin={handleSocialLogin}
+                loading={formState?.isLoading || false}
+                onClearState={onClearState}
               />
             </div>
           </div>
@@ -125,12 +137,14 @@ export function FormContainer(props: GenericAuthFormProps) {
           <FormContent
             {...props}
             formData={formData}
-            errors={errors}
+            errors={formState?.errors || {}}
             touched={touched}
             handleInputChange={handleInputChange}
             handleBlur={handleBlur}
             handleSubmit={handleSubmit}
             handleSocialLogin={handleSocialLogin}
+            loading={formState?.isLoading || false}
+            onClearState={onClearState}
           />
         </div>
       </div>

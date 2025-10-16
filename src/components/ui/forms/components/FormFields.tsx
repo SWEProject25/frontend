@@ -2,7 +2,7 @@ import React from 'react';
 import { InputField } from '@/components/ui/input';
 import { SelectField } from '@/components/ui/SelectField';
 import { CaptchaComponent } from './CaptchaComponent';
-import { OTPInput } from './OTPInput';
+import { OTPInput } from '@/features/authentication/components/OTPInput';
 import { EmailInputField } from '@/features/authentication/components/EmailInputField';
 import { FormFieldsProps } from '../types';
 
@@ -13,6 +13,7 @@ export function FormFields({
   touched,
   onInputChange,
   onBlur,
+  onClearState,
 }: FormFieldsProps) {
   // Group fields by their group.id
   const fieldGroups = fields.reduce(
@@ -94,6 +95,8 @@ export function FormFields({
             } as React.ChangeEvent<HTMLInputElement>);
           }}
           email={formData.email}
+          error={errors.otp || undefined}
+          onClearError={onClearState}
         />
       );
     }

@@ -4,7 +4,7 @@ import React from 'react';
 import { authFormConfigs } from '@/features/authentication/configs/authFormConfigs';
 import { FormContainer } from '@/components/ui/forms/components/FormContainer';
 import { MultiStepFormProps } from '../types/components';
-import { getConfigKey } from '../utils';
+import { getConfigKey } from '@/features/authentication/utils';
 import { useMultiStepForm } from '../hooks';
 
 export function MultiStepForm({

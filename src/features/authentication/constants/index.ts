@@ -44,3 +44,6 @@ export const BREAKPOINTS = {
 
 // Re-export API constants
 export { AUTH_API_CONFIG, AUTH_ENDPOINTS, AUTH_CONSTANTS } from './api';
+
+// Re-export OTP constants
+export { OTP_CONSTANTS } from './otp';

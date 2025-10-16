@@ -141,18 +141,21 @@ function AuthDemoContent() {
               <strong>Loading:</strong> {formState.isLoading ? 'Yes' : 'No'}
             </p>
             <p>
-              <strong>Error:</strong> {formState.error || 'None'}
+              <strong>Errors:</strong>{' '}
+              {Object.keys(formState.errors).length > 0
+                ? JSON.stringify(formState.errors)
+                : 'None'}
             </p>
             <p>
               <strong>Success:</strong> {formState.success ? 'Yes' : 'No'}
             </p>
           </div>
-          {formState.error && (
+          {Object.keys(formState.errors).length > 0 && (
             <button
               onClick={clearFormState}
               className="mt-2 bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600"
             >
-              Clear Error
+              Clear Errors
             </button>
           )}
         </div>

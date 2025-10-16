@@ -17,3 +17,4 @@ export {
   handleFormClose,
   getSubmitHandler,
 } from './authFormUtils';
+export { getConfigKey, getInitialValues } from './multiStepUtils';

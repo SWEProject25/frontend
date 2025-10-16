@@ -9,6 +9,8 @@ export const AUTH_ENDPOINTS = {
   REGISTER: `/api/${AUTH_API_CONFIG.VERSION}/auth/register`,
   LOGIN: `/api/${AUTH_API_CONFIG.VERSION}/auth/login`,
   LOGOUT: `/api/${AUTH_API_CONFIG.VERSION}/auth/logout`,
+  VERIFICATION_OTP: `/api/${AUTH_API_CONFIG.VERSION}/auth/verification-otp`,
+  VERIFY_OTP: `/api/${AUTH_API_CONFIG.VERSION}/auth/verify-otp`,
   TEST: `/api/${AUTH_API_CONFIG.VERSION}/auth/test`,
   CHECK_EMAIL: `/api/${AUTH_API_CONFIG.VERSION}/auth/check-email`,
 } as const;

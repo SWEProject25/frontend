@@ -3,8 +3,8 @@ import { AuthModalType } from '../hooks/useAuthModals';
 // Form State Types
 export interface FormState {
   isLoading: boolean;
-  error: string | null;
   success: boolean;
+  errors: Record<string, string>;
 }
 
 // Authentication Form Props (unified for both modal and fullpage modes)
@@ -16,10 +16,17 @@ export interface AuthFormProps {
   mode: 'modal' | 'fullpage';
   formState: FormState;
   handleSocialLogin: (providerId: string) => void;
-  handleLogin: (data: Record<string, string>) => void;
-  handleSignup: (data: Record<string, string>) => void;
+  handleLogin: (
+    data: Record<string, string>,
+    step?: string
+  ) => Promise<boolean>;
+  handleSignup: (
+    data: Record<string, string>,
+    step?: string
+  ) => Promise<boolean>;
   handleForgotPassword: () => void;
   clearFormState: () => void;
+  clearFieldError: (fieldName: string) => void;
 }
 
 // Welcome Content Props

@@ -1,29 +1,23 @@
-import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from './useAuth';
-import { LoginDto, CreateUserDto } from '../types/api';
+import { useCallback, useState } from 'react';
+import { CreateUserDto, LoginDto, VerifyOTPDto } from '../types/api';
 import { FormState } from '../types/hooks';
+import { useAuth } from './useAuth';
 
 export function useAuthHandlers() {
   const router = useRouter();
   const [formState, setFormState] = useState<FormState>({
     isLoading: false,
-    error: null,
     success: false,
+    errors: {},
   });
 
-  const {
-    login,
-    register,
-    isLoginLoading,
-    isRegisterLoading,
-    error: authError,
-  } = useAuth();
+  const { login, register, verifyOTP, isLoginLoading, isRegisterLoading } =
+    useAuth();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleSocialLogin = useCallback(async (providerId: string) => {
+  const handleSocialLogin = useCallback(async (_providerId: string) => {
     try {
-      setFormState((prev) => ({ ...prev, isLoading: true, error: null }));
+      setFormState((prev) => ({ ...prev, isLoading: true }));
 
       // TODO: Implement social login logic when backend supports it
       // providerId will be used to determine which provider (Google, GitHub, etc.)
@@ -31,101 +25,234 @@ export function useAuthHandlers() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       setFormState((prev) => ({ ...prev, isLoading: false, success: true }));
-    } catch (error) {
+    } catch (_error) {
       setFormState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Social login failed',
+        errors: { social: 'Social login failed. Please try again.' },
       }));
     }
   }, []);
 
+  const setFieldError = useCallback(
+    (fieldName: string, error: string | null) => {
+      setFormState((prev) => ({
+        ...prev,
+        errors: {
+          ...prev.errors,
+          [fieldName]: error || '',
+        },
+      }));
+    },
+    []
+  );
+
+  const clearFieldError = useCallback((fieldName: string) => {
+    setFormState((prev) => {
+      const newErrors = { ...prev.errors };
+      delete newErrors[fieldName];
+      return {
+        ...prev,
+        errors: newErrors,
+      };
+    });
+  }, []);
+
   const handleLogin = useCallback(
-    async (data: Record<string, string>) => {
+    async (data: Record<string, string>, step?: string): Promise<boolean> => {
       try {
-        setFormState((prev) => ({ ...prev, isLoading: true, error: null }));
+        setFormState((prev) => ({ ...prev, isLoading: true }));
 
-        // MultiStepForm handles step transitions internally
-        const loginData: LoginDto = {
-          email: data.identifier || data.email, // Handle both step formats
-          password: data.password,
-        };
+        // Use the step parameter to determine what action to take
+        switch (step) {
+          case 'email':
+            // Email step - just proceed to password step
+            setFormState((prev) => ({
+              ...prev,
+              isLoading: false,
+              success: true,
+            }));
+            return true;
 
-        await login(loginData);
-        setFormState((prev) => ({
-          ...prev,
-          isLoading: false,
-          success: true,
-        }));
+          case 'password':
+            // Password step - make actual login request
+            const loginData: LoginDto = {
+              email: data.identifier || data.email, // Handle both step formats
+              password: data.password,
+            };
 
-        // Redirect to demo page with success message
-        setTimeout(() => {
-          router.push('/auth-demo?login=success');
-        }, 1000); // Small delay to show success state
+            await login(loginData);
+            setFormState((prev) => ({
+              ...prev,
+              isLoading: false,
+              success: true,
+            }));
+
+            // Redirect to demo page with success message
+            setTimeout(() => {
+              router.push('/auth-demo?login=success');
+            }, 1000); // Small delay to show success state
+            return true;
+
+          default:
+            // Fallback - make login request
+            const fallbackLoginData: LoginDto = {
+              email: data.identifier || data.email,
+              password: data.password,
+            };
+
+            await login(fallbackLoginData);
+            setFormState((prev) => ({
+              ...prev,
+              isLoading: false,
+              success: true,
+            }));
+
+            // Redirect to demo page with success message
+            setTimeout(() => {
+              router.push('/auth-demo?login=success');
+            }, 1000);
+            return true;
+        }
       } catch (error) {
         setFormState((prev) => ({
           ...prev,
           isLoading: false,
-          error:
-            authError ||
-            (error instanceof Error ? error.message : 'Login failed'),
+          errors: {
+            login: error instanceof Error ? error.message : 'Login failed',
+          },
         }));
+        return false;
       }
     },
-    [login, authError, router]
+    [login, router]
   );
 
   const handleSignup = useCallback(
-    async (data: Record<string, string>) => {
+    async (data: Record<string, string>, step?: string): Promise<boolean> => {
       try {
-        setFormState((prev) => ({ ...prev, isLoading: true, error: null }));
+        setFormState((prev) => ({ ...prev, isLoading: true }));
 
-        const signupData: CreateUserDto = {
-          name: data.name,
-          email: data.email,
-          password: data.password,
-        };
+        // Use the step parameter to determine what action to take
+        switch (step) {
+          case 'register':
+            // Register step - just proceed to captcha
+            setFormState((prev) => ({
+              ...prev,
+              isLoading: false,
+              success: true,
+            }));
+            return true;
 
-        await register(signupData);
-        setFormState((prev) => ({ ...prev, isLoading: false, success: true }));
+          case 'captcha':
+            // Captcha step - just verify captcha and proceed to OTP step
+            // OTP will be sent automatically when OTP step loads
+            setFormState((prev) => ({
+              ...prev,
+              isLoading: false,
+              success: true,
+            }));
+            return true;
 
-        // Redirect to demo page with success message
-        setTimeout(() => {
-          router.push('/auth-demo?register=success');
-        }, 1000); // Small delay to show success state
+          case 'otp':
+            // OTP verification step - verify the OTP when button is clicked
+            const verifyOtpData: VerifyOTPDto = {
+              email: data.email,
+              otp: data.otp,
+            };
+
+            try {
+              await verifyOTP(verifyOtpData);
+              setFormState((prev) => ({
+                ...prev,
+                isLoading: false,
+                success: true,
+              }));
+              clearFieldError('otp'); // Clear OTP field error on success
+              return true; // Success - proceed to next step
+            } catch {
+              // OTP verification failed - stay on OTP step and show error
+              setFieldError(
+                'otp',
+                'Invalid verification code. Please check the code and try again.'
+              );
+              setFormState((prev) => ({
+                ...prev,
+                isLoading: false,
+                success: false,
+              }));
+              return false; // Failure - don't proceed to next step
+            }
+
+          case 'password':
+            // Final step: complete registration
+            const signupData: CreateUserDto = {
+              name: data.name,
+              email: data.email,
+              password: data.password,
+            };
+
+            await register(signupData);
+            setFormState((prev) => ({
+              ...prev,
+              isLoading: false,
+              success: true,
+            }));
+
+            // Redirect to demo page with success message
+            setTimeout(() => {
+              router.push('/auth-demo?register=success');
+            }, 1000); // Small delay to show success state
+            return true;
+
+          default:
+            // Handle other cases
+            setFormState((prev) => ({
+              ...prev,
+              isLoading: false,
+              success: true,
+            }));
+            return true;
+        }
       } catch (error) {
         setFormState((prev) => ({
           ...prev,
           isLoading: false,
-          error:
-            authError ||
-            (error instanceof Error ? error.message : 'Signup failed'),
+          errors: {
+            signup: error instanceof Error ? error.message : 'Signup failed',
+          },
         }));
+        return false; // Return false on any error
       }
     },
-    [register, authError, router]
+    [register, verifyOTP, router, clearFieldError, setFieldError]
   );
 
-  const handleForgotPassword = useCallback(async () => {
+  const handleForgotPassword = useCallback(async (): Promise<boolean> => {
     try {
-      setFormState((prev) => ({ ...prev, isLoading: true, error: null }));
+      setFormState((prev) => ({ ...prev, isLoading: true }));
 
       // TODO: Implement forgot password logic when backend supports it
       // For now, just simulate success
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       setFormState((prev) => ({ ...prev, isLoading: false, success: true }));
+      return true;
     } catch (error) {
       setFormState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Password reset failed',
+        errors: {
+          forgotPassword:
+            error instanceof Error ? error.message : 'Password reset failed',
+        },
       }));
+      return false;
     }
   }, []);
 
   const clearFormState = useCallback(() => {
-    setFormState({ isLoading: false, error: null, success: false });
+    setFormState({ isLoading: false, success: false, errors: {} });
   }, []);
 
   return {
@@ -138,5 +265,7 @@ export function useAuthHandlers() {
     handleSignup,
     handleForgotPassword,
     clearFormState,
+    setFieldError,
+    clearFieldError,
   };
 }
