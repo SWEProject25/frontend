@@ -70,9 +70,28 @@ export const authApi = {
   },
 
   async logout(): Promise<void> {
-    // Since logout is handled by clearing HTTPOnly cookies on the server,
-    // we just need to clear local state
-    // The actual logout endpoint would be called here if it existed
-    return Promise.resolve();
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.LOGOUT}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Important for HTTPOnly cookies
+      }
+    );
+
+    if (!response.ok) {
+      let errorMessage = 'Logout failed';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch {
+        errorMessage = response.statusText || errorMessage;
+      }
+      throw new ApiError(errorMessage, response.status);
+    }
+
+    // No need to parse response body for logout endpoint
   },
 };
