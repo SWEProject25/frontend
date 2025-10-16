@@ -25,8 +25,7 @@ export interface AuthFormProps {
     step?: string
   ) => Promise<boolean>;
   handleForgotPassword: () => void;
-  clearFormState: () => void;
-  clearFieldError: (fieldName: string) => void;
+  clearFormState: (fieldName?: string) => void;
 }
 
 // Welcome Content Props

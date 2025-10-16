@@ -50,7 +50,9 @@ export const useAuthStore = create<AuthStore>()(
           });
         } catch (error) {
           const errorMessage =
-            error instanceof Error ? error.message : 'Login failed';
+            error instanceof Error
+              ? error.message
+              : 'Invalid email or password, please try again';
           set({
             isLoading: false,
             error: errorMessage,

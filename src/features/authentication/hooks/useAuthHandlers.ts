@@ -34,30 +34,6 @@ export function useAuthHandlers() {
     }
   }, []);
 
-  const setFieldError = useCallback(
-    (fieldName: string, error: string | null) => {
-      setFormState((prev) => ({
-        ...prev,
-        errors: {
-          ...prev.errors,
-          [fieldName]: error || '',
-        },
-      }));
-    },
-    []
-  );
-
-  const clearFieldError = useCallback((fieldName: string) => {
-    setFormState((prev) => {
-      const newErrors = { ...prev.errors };
-      delete newErrors[fieldName];
-      return {
-        ...prev,
-        errors: newErrors,
-      };
-    });
-  }, []);
-
   const handleLogin = useCallback(
     async (data: Record<string, string>, step?: string): Promise<boolean> => {
       try {
@@ -117,7 +93,9 @@ export function useAuthHandlers() {
       } catch (error) {
         // Set error as 'login' for general form error display
         const errorMessage =
-          error instanceof Error ? error.message : 'Login failed';
+          error instanceof Error
+            ? error.message
+            : 'Invalid email or password, please try again';
         setFormState((prev) => ({
           ...prev,
           isLoading: false,
@@ -171,18 +149,17 @@ export function useAuthHandlers() {
                 isLoading: false,
                 success: true,
               }));
-              clearFieldError('otp'); // Clear OTP field error on success
               return true; // Success - proceed to next step
             } catch {
               // OTP verification failed - stay on OTP step and show error
-              setFieldError(
-                'otp',
-                'Invalid verification code. Please check the code and try again.'
-              );
               setFormState((prev) => ({
                 ...prev,
                 isLoading: false,
                 success: false,
+                errors: {
+                  ...prev.errors,
+                  otp: 'Invalid verification code. Please check the code and try again.',
+                },
               }));
               return false; // Failure - don't proceed to next step
             }
@@ -228,7 +205,7 @@ export function useAuthHandlers() {
         return false; // Return false on any error
       }
     },
-    [register, verifyOTP, router, clearFieldError, setFieldError]
+    [register, verifyOTP, router]
   );
 
   const handleForgotPassword = useCallback(async (): Promise<boolean> => {
@@ -281,7 +258,5 @@ export function useAuthHandlers() {
     handleSignup,
     handleForgotPassword,
     clearFormState,
-    setFieldError,
-    clearFieldError,
   };
 }

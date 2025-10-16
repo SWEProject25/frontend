@@ -60,9 +60,9 @@ export function OTPInput({
   const handleChange = (index: number, value: string) => {
     if (!isValidOTPInput(value)) return;
 
-    // Clear error when user starts typing (any change, not just when value exists)
-    if (error) {
-      onClearError?.();
+    // Clear error when user starts typing
+    if (error && onClearError) {
+      onClearError();
     }
 
     const newOtp = [...otp];
@@ -85,8 +85,8 @@ export function OTPInput({
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
     if (e.key === 'Backspace') {
       // Clear error when user starts editing (backspace)
-      if (error) {
-        onClearError?.();
+      if (error && onClearError) {
+        onClearError();
       }
 
       if (!otp[index] && index > 0) {
@@ -107,8 +107,8 @@ export function OTPInput({
     e.preventDefault();
 
     // Clear error when user pastes
-    if (error) {
-      onClearError?.();
+    if (error && onClearError) {
+      onClearError();
     }
 
     const pastedData = e.clipboardData.getData('text').slice(0, length);
@@ -189,7 +189,7 @@ export function OTPInput({
             onPaste={handlePaste}
             className={`${OTP_CONSTANTS.INPUT_SIZE} text-center text-2xl font-bold border-2 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 ${
               error
-                ? 'border-error focus:border-error'
+                ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 focus:ring-red-500 focus:border-red-500'
                 : digit
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 focus:ring-blue-500'
                   : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-blue-500'
@@ -198,13 +198,6 @@ export function OTPInput({
           />
         ))}
       </div>
-
-      {/* Error Message */}
-      {error && (
-        <div className="text-center">
-          <p className="text-sm text-error">{error}</p>
-        </div>
-      )}
 
       {/* Instructions */}
       <div className="text-center">

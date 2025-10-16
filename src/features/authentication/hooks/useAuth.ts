@@ -20,7 +20,11 @@ export const useLoginMutation = () => {
       queryClient.setQueryData(authKeys.user(), data.user);
     },
     onError: (error) => {
-      setError(error instanceof Error ? error.message : 'Login failed');
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Invalid email or password, please try again'
+      );
     },
   });
 };

@@ -60,6 +60,7 @@ export function FormContent({
             'signup',
             'forgotPassword',
             'social',
+            'otp',
           ];
           const generalError = generalErrorKeys.find((key) => errors[key]);
 

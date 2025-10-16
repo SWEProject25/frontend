@@ -34,6 +34,14 @@ async function handleResponse<T>(response: Response): Promise<T> {
       errorMessage = response.statusText || errorMessage;
     }
 
+    // Provide user-friendly error messages for common login errors
+    if (
+      statusCode === 401 &&
+      errorMessage.toLowerCase().includes('invalid credentials')
+    ) {
+      errorMessage = 'Invalid email or password, please try again';
+    }
+
     throw new ApiError(errorMessage, statusCode);
   }
 
