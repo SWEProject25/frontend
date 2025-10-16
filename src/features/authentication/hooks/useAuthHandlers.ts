@@ -115,11 +115,14 @@ export function useAuthHandlers() {
             return true;
         }
       } catch (error) {
+        // Set error as 'login' for general form error display
+        const errorMessage =
+          error instanceof Error ? error.message : 'Login failed';
         setFormState((prev) => ({
           ...prev,
           isLoading: false,
           errors: {
-            login: error instanceof Error ? error.message : 'Login failed',
+            login: errorMessage,
           },
         }));
         return false;
@@ -251,8 +254,21 @@ export function useAuthHandlers() {
     }
   }, []);
 
-  const clearFormState = useCallback(() => {
-    setFormState({ isLoading: false, success: false, errors: {} });
+  const clearFormState = useCallback((fieldName?: string) => {
+    if (fieldName) {
+      // Clear specific field error
+      setFormState((prev) => {
+        const newErrors = { ...prev.errors };
+        delete newErrors[fieldName];
+        return {
+          ...prev,
+          errors: newErrors,
+        };
+      });
+    } else {
+      // Clear all form state
+      setFormState({ isLoading: false, success: false, errors: {} });
+    }
   }, []);
 
   return {

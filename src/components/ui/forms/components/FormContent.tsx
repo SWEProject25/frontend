@@ -52,6 +52,28 @@ export function FormContent({
           onEmailValidationChange={onEmailValidationChange}
         />
 
+        {/* General form errors */}
+        {(() => {
+          // Find the first general error (not field-specific)
+          const generalErrorKeys = [
+            'login',
+            'signup',
+            'forgotPassword',
+            'social',
+          ];
+          const generalError = generalErrorKeys.find((key) => errors[key]);
+
+          if (!generalError) return null;
+
+          return (
+            <div className="text-center">
+              <p className="text-sm" style={{ color: 'var(--color-error)' }}>
+                {errors[generalError]}
+              </p>
+            </div>
+          );
+        })()}
+
         <FormActions
           submitButton={submitButton}
           loading={loading}

@@ -62,7 +62,7 @@ export interface GenericAuthFormProps {
     success: boolean;
     errors: Record<string, string>;
   };
-  onClearState?: () => void;
+  onClearState?: (fieldName?: string) => void;
   className?: string;
   mode?: 'modal' | 'fullpage' | 'responsive';
   initialValues?: Record<string, string>;
@@ -81,7 +81,7 @@ export interface FormHandlers {
   handleBlur: (fieldName: string) => () => void;
   handleSubmit: (e: React.FormEvent) => void;
   handleSocialLogin: (providerId: string) => void;
-  onClearState?: () => void;
+  onClearState?: (fieldName?: string) => void;
   onEmailValidationChange?: (isValid: boolean, isValidating: boolean) => void;
 }
 
@@ -103,7 +103,7 @@ export interface FormFieldsProps {
     fieldName: string
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   onBlur: (fieldName: string) => () => void;
-  onClearState?: () => void;
+  onClearState?: (fieldName?: string) => void;
   onEmailValidationChange?: (isValid: boolean, isValidating: boolean) => void;
 }
 

@@ -6,6 +6,7 @@ export { GoogleIcon, AppleIcon, FacebookIcon, GitHubIcon } from './SocialIcons';
 
 // UI Icons
 export {
+  CheckIcon,
   SpinnerIcon,
   CloseIcon,
   LoginIcon,
