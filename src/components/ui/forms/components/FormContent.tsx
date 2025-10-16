@@ -26,6 +26,8 @@ export function FormContent({
   onForgotPassword,
   onSwitchModal,
   onClearState,
+  isFormValid,
+  onEmailValidationChange,
 }: FormContentProps) {
   return (
     <>
@@ -47,6 +49,7 @@ export function FormContent({
           onInputChange={handleInputChange}
           onBlur={handleBlur}
           onClearState={onClearState}
+          onEmailValidationChange={onEmailValidationChange}
         />
 
         <FormActions
@@ -54,6 +57,7 @@ export function FormContent({
           loading={loading}
           showForgotPassword={showForgotPassword}
           onForgotPassword={onForgotPassword}
+          isFormValid={isFormValid}
         />
       </form>
 

@@ -2,18 +2,24 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { AUTH_API_CONFIG, AUTH_ENDPOINTS } from '../constants/api';
-
-interface EmailValidationState {
-  isValidating: boolean;
-  error: string | undefined;
-  isValid: boolean;
-}
-
-interface UseEmailValidationOptions {
-  onValidationChange?: (isValid: boolean, error?: string) => void;
-}
+import {
+  EmailValidationState,
+  UseEmailValidationOptions,
+} from '../types/hooks';
 
 const API_BASE_URL = AUTH_API_CONFIG.BASE_URL;
+
+// Map backend validation errors to user-friendly messages
+const getFriendlyErrorMessage = (backendMessage: string): string => {
+  const message = backendMessage.toLowerCase();
+
+  if (message.includes('email must be an email')) {
+    return 'Please enter a valid email';
+  }
+
+  // Default fallback for other validation errors
+  return 'Please enter a valid email';
+};
 
 export function useEmailValidation({
   onValidationChange,
@@ -83,14 +89,42 @@ export function useEmailValidation({
           });
           onValidationChange?.(true);
         } else if (response.status === 409) {
+          // Email already taken
           setValidationState({
             isValidating: false,
             error: 'Email has already been taken.',
             isValid: false,
           });
           onValidationChange?.(false, 'Email has already been taken.');
+        } else if (response.status === 400) {
+          // Backend validation error (e.g., "email must be an email")
+          try {
+            const errorData = await response.json();
+            const backendMessage =
+              errorData.message?.[0] ||
+              errorData.message ||
+              'Invalid email format';
+            const friendlyMessage = getFriendlyErrorMessage(backendMessage);
+            setValidationState({
+              isValidating: false,
+              error: friendlyMessage,
+              isValid: false,
+            });
+            onValidationChange?.(false, friendlyMessage);
+          } catch {
+            // If we can't parse the error response, use a generic message
+            const friendlyMessage = getFriendlyErrorMessage(
+              'Invalid email format'
+            );
+            setValidationState({
+              isValidating: false,
+              error: friendlyMessage,
+              isValid: false,
+            });
+            onValidationChange?.(false, friendlyMessage);
+          }
         } else {
-          // API error - don't show error, just don't validate
+          // Other API errors - don't show error, just don't validate
           setValidationState({
             isValidating: false,
             error: undefined,

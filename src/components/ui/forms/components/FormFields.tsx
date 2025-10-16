@@ -14,6 +14,7 @@ export function FormFields({
   onInputChange,
   onBlur,
   onClearState,
+  onEmailValidationChange,
 }: FormFieldsProps) {
   // Group fields by their group.id
   const fieldGroups = fields.reduce(
@@ -134,6 +135,7 @@ export function FormFields({
           required={field.required}
           disabled={field.disabled}
           validation={field.validation}
+          onValidationChange={onEmailValidationChange}
         />
       );
     }

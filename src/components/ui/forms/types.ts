@@ -82,6 +82,7 @@ export interface FormHandlers {
   handleSubmit: (e: React.FormEvent) => void;
   handleSocialLogin: (providerId: string) => void;
   onClearState?: () => void;
+  onEmailValidationChange?: (isValid: boolean, isValidating: boolean) => void;
 }
 
 export interface FormContainerProps
@@ -103,6 +104,7 @@ export interface FormFieldsProps {
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   onBlur: (fieldName: string) => () => void;
   onClearState?: () => void;
+  onEmailValidationChange?: (isValid: boolean, isValidating: boolean) => void;
 }
 
 export interface FormHeaderProps {
@@ -120,6 +122,7 @@ export interface FormActionsProps {
   loading: boolean;
   showForgotPassword: boolean;
   onForgotPassword?: () => void;
+  isFormValid: boolean;
 }
 
 export interface SocialLoginSectionProps {
@@ -135,6 +138,7 @@ export interface FormContentProps
     FormHandlers {
   onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
   loading: boolean;
+  isFormValid: boolean;
 }
 
 // Re-export types from organized files

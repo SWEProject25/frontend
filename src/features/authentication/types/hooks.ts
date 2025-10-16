@@ -40,3 +40,14 @@ export interface AuthLayoutProps {
   children: React.ReactNode;
   showLogo?: boolean;
 }
+
+// Email Validation Hook Types
+export interface EmailValidationState {
+  isValidating: boolean;
+  error: string | undefined;
+  isValid: boolean;
+}
+
+export interface UseEmailValidationOptions {
+  onValidationChange?: (isValid: boolean, error?: string) => void;
+}

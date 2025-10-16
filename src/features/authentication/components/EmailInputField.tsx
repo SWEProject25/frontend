@@ -1,26 +1,9 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { InputField } from '@/components/ui/input';
 import { useEmailValidation } from '@/features/authentication/hooks';
-
-interface EmailInputFieldProps {
-  label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur: () => void;
-  placeholder?: string;
-  required?: boolean;
-  disabled?: boolean;
-  validation?: {
-    enableRealTimeValidation?: boolean;
-    apiEndpoint?: string;
-    messages?: {
-      invalidFormat?: string;
-      alreadyTaken?: string;
-    };
-  };
-}
+import { EmailInputFieldProps } from '../types';
 
 export function EmailInputField({
   label,
@@ -31,22 +14,17 @@ export function EmailInputField({
   required,
   disabled,
   validation,
+  onValidationChange,
 }: EmailInputFieldProps) {
-  const [localError, setLocalError] = useState<string | null>(null);
-
-  const handleValidationChange = useCallback(
-    (isValid: boolean, error?: string) => {
-      setLocalError(error || null);
-    },
-    []
-  );
-
   const {
     isValidating,
     error: validationError,
     validateWithDebounce,
   } = useEmailValidation({
-    onValidationChange: handleValidationChange,
+    onValidationChange: (isValid) => {
+      // Report validation state to parent form for submit button control
+      onValidationChange?.(isValid, isValidating);
+    },
   });
 
   const handleChange = useCallback(
@@ -76,7 +54,7 @@ export function EmailInputField({
   ]);
 
   // Determine the error to show
-  const error = localError || validationError;
+  const error = validationError;
 
   return (
     <div className="relative">

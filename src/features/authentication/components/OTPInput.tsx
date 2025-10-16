@@ -60,8 +60,8 @@ export function OTPInput({
   const handleChange = (index: number, value: string) => {
     if (!isValidOTPInput(value)) return;
 
-    // Clear error when user starts typing
-    if (error && value) {
+    // Clear error when user starts typing (any change, not just when value exists)
+    if (error) {
       onClearError?.();
     }
 
@@ -84,6 +84,11 @@ export function OTPInput({
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
     if (e.key === 'Backspace') {
+      // Clear error when user starts editing (backspace)
+      if (error) {
+        onClearError?.();
+      }
+
       if (!otp[index] && index > 0) {
         // Move to previous input if current is empty
         const prevIndex = getPreviousOTPIndex(index);
@@ -100,6 +105,12 @@ export function OTPInput({
 
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
+
+    // Clear error when user pastes
+    if (error) {
+      onClearError?.();
+    }
+
     const pastedData = e.clipboardData.getData('text').slice(0, length);
     const pastedArray = processPastedOTP(pastedData, length);
 

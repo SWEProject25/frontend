@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { XLogo, CloseIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/utils';
 import { FormContent } from './FormContent';
 import { GenericAuthFormProps } from '../types';
-import { handleOverlayClick, handleModalKeyDown } from '../utils';
+import { handleOverlayClick, handleModalKeyDown, isFormValid } from '../utils';
 
 export function FormContainer(
   props: GenericAuthFormProps & {
@@ -18,6 +18,7 @@ export function FormContainer(
   }
 ) {
   const {
+    fields,
     onSubmit,
     onSocialLogin,
     mode = 'modal',
@@ -25,13 +26,27 @@ export function FormContainer(
     initialValues = {},
     className,
     formState,
-    onClearState,
   } = props;
 
   // Simple form state management
   const [formData, setFormData] =
     useState<Record<string, string>>(initialValues);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [emailValidationState, setEmailValidationState] = useState<{
+    isValid: boolean;
+    isValidating: boolean;
+  }>({ isValid: true, isValidating: false });
+
+  // Calculate form validity - check form state errors AND email validation
+  const isFormValidState = useMemo(() => {
+    const formValid = isFormValid(fields, formData, formState?.errors || {});
+    // Form is only valid if both form validation AND email validation pass
+    return (
+      formValid &&
+      emailValidationState.isValid &&
+      !emailValidationState.isValidating
+    );
+  }, [fields, formData, formState?.errors, emailValidationState]);
 
   // Update formData when initialValues change
   useEffect(() => {
@@ -70,6 +85,13 @@ export function FormContainer(
     [onSocialLogin]
   );
 
+  const handleEmailValidationChange = useCallback(
+    (isValid: boolean, isValidating: boolean) => {
+      setEmailValidationState({ isValid, isValidating });
+    },
+    []
+  );
+
   const displayMode = mode === 'responsive' ? 'modal' : mode;
 
   if (displayMode === 'fullpage') {
@@ -91,7 +113,8 @@ export function FormContainer(
                 handleSubmit={handleSubmit}
                 handleSocialLogin={handleSocialLogin}
                 loading={formState?.isLoading || false}
-                onClearState={onClearState}
+                isFormValid={isFormValidState}
+                onEmailValidationChange={handleEmailValidationChange}
               />
             </div>
           </div>
@@ -144,7 +167,8 @@ export function FormContainer(
             handleSubmit={handleSubmit}
             handleSocialLogin={handleSocialLogin}
             loading={formState?.isLoading || false}
-            onClearState={onClearState}
+            isFormValid={isFormValidState}
+            onEmailValidationChange={handleEmailValidationChange}
           />
         </div>
       </div>
