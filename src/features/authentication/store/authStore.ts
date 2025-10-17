@@ -6,6 +6,7 @@ import {
   CreateUserDto,
   SendOTPDto,
   VerifyOTPDto,
+  ResendOTPDto,
 } from '../types/api';
 import { AuthStore } from '../types/store';
 import { authApi } from '../services/authApi';
@@ -143,6 +144,27 @@ export const useAuthStore = create<AuthStore>()(
         } catch (error) {
           const errorMessage =
             error instanceof Error ? error.message : 'OTP verification failed';
+          set({
+            isLoading: false,
+            error: errorMessage,
+          });
+          throw error;
+        }
+      },
+
+      resendOTP: async (emailData: ResendOTPDto) => {
+        try {
+          set({ isLoading: true, error: null });
+
+          await authApi.resendOTP(emailData);
+
+          set({
+            isLoading: false,
+            error: null,
+          });
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : 'Failed to resend OTP';
           set({
             isLoading: false,
             error: errorMessage,
