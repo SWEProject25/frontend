@@ -15,6 +15,8 @@ function AuthDemoContent() {
   const { openModal } = useAuthModals();
 
   useEffect(() => {
+    if (!searchParams) return;
+
     const loginSuccess = searchParams.get('login');
     const registerSuccess = searchParams.get('register');
 
@@ -47,9 +49,9 @@ function AuthDemoContent() {
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium">
-                  {searchParams.get('login') === 'success'
+                  {searchParams?.get('login') === 'success'
                     ? `🎉 Login successful! Welcome back, ${auth.user?.name || auth.user?.email}!`
-                    : searchParams.get('register') === 'success'
+                    : searchParams?.get('register') === 'success'
                       ? `🎉 Registration successful! Welcome, ${auth.user?.name || auth.user?.email}!`
                       : '🎉 Success!'}
                 </p>

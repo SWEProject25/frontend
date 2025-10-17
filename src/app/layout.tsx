@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { Lexend } from 'next/font/google';
+import '@/app/globals.css';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/lib/providers';
@@ -14,21 +16,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Hankers',
-  description: 'Social media platform',
+  title: 'Home / X',
+  description: 'X clone',
 };
+
+const lexend = Lexend({ subsets: ['latin'] });
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${lexend.className} bg-black text-white overflow-x-hidden`}
       >
-        <Providers>{children}</Providers>
+        <div className="flex justify-center min-h-screen w-full">
+          <Providers>{children}</Providers>
+        </div>
       </body>
     </html>
   );

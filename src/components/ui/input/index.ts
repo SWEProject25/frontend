@@ -1,5 +1,6 @@
 // Main InputField component
 export { InputField } from './InputField';
+export { default as SearchInput } from './SearchInput';
 
 // Sub-components for advanced usage
 export { InputBase } from './components/InputBase';

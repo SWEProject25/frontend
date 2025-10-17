@@ -12,11 +12,15 @@ export {
   LoginIcon,
   UserIcon,
   KeyIcon,
+  InstallIcon,
   MailIcon,
   ChatIcon,
   ListIcon,
   CloseXIcon,
   XLogoIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  SearchIcon,
 } from './UIIcons';
 
 // Brand Icons
