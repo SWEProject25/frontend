@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Content from './Content';
 import Actions from './Actions';
@@ -91,20 +91,34 @@ const data = {
 };
 
 export default function Tweet() {
+  const [profileCardHovered, setProfileCardHovered] = useState(false);
+
   return (
     <Link
       href={'/fullTweet'}
-      className="block mx-auto sm:max-w-[600px] border-b border-gray-700 p-4 text-white relative hover:bg-[#0a0a0a] transition-colors"
+      className={`block mx-auto sm:max-w-[600px] border-b border-gray-700 p-4 text-white relative transition-colors
+        ${!profileCardHovered ? 'hover:bg-[#0a0a0a]' : ''}
+      `}
       style={{ textDecoration: 'none' }}
     >
       <div className="absolute top-2 right-4">
         <DropDown items={dropItems}>
           <Action icon={<FaEllipsisH size={16} />} label="more" color="blue" />
-          {/* <FaEllipsisH size={16} /> */}
         </DropDown>
       </div>
       <div className="flex w-full gap-2">
-        <Avatar image={data.user.avatar} />
+        <Avatar
+          image={data.user.avatar}
+          size={48}
+          name={data.user.name}
+          username={data.user.username}
+          isVerified={data.user.isVerified}
+          bio="Sample bio for the user."
+          following={100}
+          followers="1K"
+          isFollowed={false}
+          onProfileCardHover={setProfileCardHovered} // <-- add this prop
+        />
         <div className="flex flex-col flex-1">
           <UserInfo
             name={data.user.name}
