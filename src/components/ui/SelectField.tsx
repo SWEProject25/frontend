@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { cn, getSelectFieldWidthClass } from '@/lib/utils';
 import { SelectProps } from '@/types/ui';
@@ -14,7 +16,6 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
     {
       className,
       label,
-      error,
       options,
       value,
       fullWidth = false,
@@ -25,7 +26,7 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
     ref
   ) => {
     const fieldState = useFieldState<HTMLSelectElement>({
-      initialValue: value,
+      value: value,
       onFocus,
       onBlur,
     });
@@ -36,7 +37,6 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
     }, [options, label, fullWidth]);
 
     const styleProps = {
-      error,
       isFocused: fieldState.isFocused,
       hasValue: fieldState.hasValue,
       shouldFloatLabel: fieldState.shouldFloatLabel,
@@ -94,10 +94,6 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
           >
             {label}
           </label>
-        )}
-
-        {error && (
-          <p className="mt-2 text-sm text-error font-medium">{error}</p>
         )}
       </div>
     );

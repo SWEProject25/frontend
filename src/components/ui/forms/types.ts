@@ -8,8 +8,22 @@ export interface FormField {
   maxLength?: number;
   showCharCount?: boolean;
   showPasswordToggle?: boolean;
+  disabled?: boolean;
   options?: { value: string; label: string }[];
-  validation?: (value: string) => string | undefined;
+  validation?: {
+    enableRealTimeValidation?: boolean;
+    apiEndpoint?: string;
+    messages?: {
+      invalidFormat?: string;
+      alreadyTaken?: string;
+    };
+  };
+  group?: {
+    id: string;
+    title: string;
+    description?: string;
+    layout: 'horizontal' | 'vertical';
+  };
 }
 
 export interface SocialProvider {
@@ -42,9 +56,16 @@ export interface GenericAuthFormProps {
   onSocialLogin?: (providerId: string) => void;
   onForgotPassword?: () => void;
   onClose?: () => void;
-  loading?: boolean;
+  onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
+  formState: {
+    isLoading: boolean;
+    success: boolean;
+    errors: Record<string, string>;
+  };
+  onClearState?: (fieldName?: string) => void;
   className?: string;
   mode?: 'modal' | 'fullpage' | 'responsive';
+  initialValues?: Record<string, string>;
 }
 
 export interface FormState {
@@ -60,6 +81,8 @@ export interface FormHandlers {
   handleBlur: (fieldName: string) => () => void;
   handleSubmit: (e: React.FormEvent) => void;
   handleSocialLogin: (providerId: string) => void;
+  onClearState?: (fieldName?: string) => void;
+  onEmailValidationChange?: (isValid: boolean, isValidating: boolean) => void;
 }
 
 export interface FormContainerProps
@@ -67,7 +90,6 @@ export interface FormContainerProps
     FormState,
     FormHandlers {
   displayMode: 'modal' | 'fullpage';
-  isRegisterForm: boolean;
   onClose?: () => void;
   className?: string;
 }
@@ -81,7 +103,8 @@ export interface FormFieldsProps {
     fieldName: string
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   onBlur: (fieldName: string) => () => void;
-  isRegisterForm: boolean;
+  onClearState?: (fieldName?: string) => void;
+  onEmailValidationChange?: (isValid: boolean, isValidating: boolean) => void;
 }
 
 export interface FormHeaderProps {
@@ -91,6 +114,7 @@ export interface FormHeaderProps {
 
 export interface FormFooterProps {
   footerLinks: readonly FooterLink[];
+  onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
 }
 
 export interface FormActionsProps {
@@ -98,6 +122,7 @@ export interface FormActionsProps {
   loading: boolean;
   showForgotPassword: boolean;
   onForgotPassword?: () => void;
+  isFormValid: boolean;
 }
 
 export interface SocialLoginSectionProps {
@@ -111,5 +136,11 @@ export interface FormContentProps
   extends GenericAuthFormProps,
     FormState,
     FormHandlers {
-  isRegisterForm: boolean;
+  onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
+  loading: boolean;
+  isFormValid: boolean;
 }
+
+// Re-export types from organized files
+export * from './types/components';
+export * from './types/hooks';

@@ -5,5 +5,4 @@ export {
   getLabelStyles,
   getInputPadding,
 } from './fieldStyles';
-export type { UseFieldStateProps } from './useFieldState';
-export type { FieldStyleProps } from './fieldStyles';
+export type { UseFieldStateProps, FieldStyleProps } from '@/types/formUtils';

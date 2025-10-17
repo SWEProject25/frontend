@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { GenericAuthForm, authFormConfigs } from '@/components/ui/forms';
+import { FormContainer, authFormConfigs } from '@/components/ui/forms';
 import { AuthButton } from '@/components/ui/AuthButton';
 import { Divider } from '@/components/ui/Divider';
 import {
@@ -33,14 +33,27 @@ export function GenericAuthFormDemo() {
     string,
     string
   > | null>(null);
+  const [formState, setFormState] = useState({
+    isLoading: false,
+    errors: {},
+    success: false,
+  });
 
   const handleSubmit = (data: Record<string, string>) => {
     console.log('Form submitted:', data);
-    setSubmittedData(data);
+    setFormState({ isLoading: true, errors: {}, success: false });
+
+    // Simulate API call
     setTimeout(() => {
-      setSubmittedData(null);
-      setActiveForm(null);
-    }, 2000);
+      setFormState({ isLoading: false, errors: {}, success: true });
+      setSubmittedData(data);
+
+      setTimeout(() => {
+        setSubmittedData(null);
+        setActiveForm(null);
+        setFormState({ isLoading: false, errors: {}, success: false });
+      }, 2000);
+    }, 1000);
   };
 
   const handleSocialLogin = (providerId: string) => {
@@ -56,6 +69,11 @@ export function GenericAuthFormDemo() {
 
   const closeModal = () => {
     setActiveForm(null);
+    setFormState({ isLoading: false, errors: {}, success: false });
+  };
+
+  const clearFormState = () => {
+    setFormState({ isLoading: false, errors: {}, success: false });
   };
 
   return (
@@ -413,7 +431,7 @@ export function GenericAuthFormDemo() {
 
         {/* Form Modals */}
         {activeForm === 'login' && (
-          <GenericAuthForm
+          <FormContainer
             {...authFormConfigs.login}
             onSubmit={handleSubmit}
             onSocialLogin={handleSocialLogin}
@@ -421,32 +439,38 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
         {activeForm === 'register' && (
-          <GenericAuthForm
+          <FormContainer
             {...authFormConfigs.register}
             onSubmit={handleSubmit}
             onSocialLogin={handleSocialLogin}
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
         {activeForm === 'forgotPassword' && (
-          <GenericAuthForm
+          <FormContainer
             {...authFormConfigs.forgotPassword}
             onSubmit={handleSubmit}
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
         {activeForm === 'contact' && (
-          <GenericAuthForm
+          <FormContainer
             title="Contact Us"
             subtitle="Get in touch with our team"
             fields={[
@@ -502,11 +526,13 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
         {activeForm === 'newsletter' && (
-          <GenericAuthForm
+          <FormContainer
             title="Newsletter Subscription"
             subtitle="Stay updated with our latest news and updates"
             fields={[
@@ -547,11 +573,13 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
         {activeForm === 'feedback' && (
-          <GenericAuthForm
+          <FormContainer
             title="Feedback Form"
             subtitle="Help us improve by sharing your thoughts"
             fields={[
@@ -598,11 +626,13 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
         {activeForm === 'survey' && (
-          <GenericAuthForm
+          <FormContainer
             title="User Survey"
             subtitle="Help us understand your needs better"
             fields={[
@@ -650,11 +680,13 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
         {activeForm === 'support' && (
-          <GenericAuthForm
+          <FormContainer
             title="Technical Support"
             subtitle="Describe your issue and we'll help you resolve it"
             fields={[
@@ -708,11 +740,13 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
         {activeForm === 'newsletter-signup' && (
-          <GenericAuthForm
+          <FormContainer
             title="Newsletter Signup"
             subtitle="Get the latest updates delivered to your inbox"
             fields={[
@@ -740,11 +774,13 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
 
         {activeForm === 'user-profile' && (
-          <GenericAuthForm
+          <FormContainer
             title="Update Profile"
             subtitle="Keep your profile information up to date"
             fields={[
@@ -788,6 +824,8 @@ export function GenericAuthFormDemo() {
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"
+            formState={formState}
+            onClearState={clearFormState}
           />
         )}
       </div>

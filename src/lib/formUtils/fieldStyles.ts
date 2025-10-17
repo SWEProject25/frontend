@@ -1,14 +1,5 @@
 import { cn } from '@/lib/utils';
-
-export interface FieldStyleProps {
-  error?: string;
-  isFocused: boolean;
-  hasValue: boolean;
-  shouldFloatLabel: boolean;
-  icon?: React.ReactNode;
-  showPasswordToggle?: boolean;
-  showCharCount?: boolean;
-}
+import { FieldStyleProps } from '@/types/formUtils';
 
 export function getFieldBaseStyles({
   error,
@@ -18,7 +9,7 @@ export function getFieldBaseStyles({
   showCharCount,
 }: FieldStyleProps) {
   return cn(
-    'peer w-full h-16 px-4 text-lg text-foreground bg-transparent border rounded-lg transition-all duration-200 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+    'peer w-full h-16 px-4 text-lg text-foreground bg-transparent border rounded-lg transition-all duration-200 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 disabled:text-gray-400 disabled:bg-gray-800/50',
     // Padding adjustments
     icon ? 'pl-12' : '',
     isFocused && (showPasswordToggle || showCharCount) ? 'pr-12' : '',
@@ -46,7 +37,9 @@ export function getLabelStyles({
         ? 'text-primary'
         : shouldFloatLabel
           ? 'text-text-inactive'
-          : 'text-text-placeholder'
+          : 'text-text-placeholder',
+    // Disabled field label styling
+    'peer-disabled:text-gray-500'
   );
 }
 

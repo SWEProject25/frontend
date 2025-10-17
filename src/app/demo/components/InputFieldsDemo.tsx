@@ -76,7 +76,7 @@ export function InputFieldsDemo() {
     if (field === 'email' && formData.email && !formData.email.includes('@')) {
       setErrors((prev) => ({
         ...prev,
-        email: 'Please enter a valid email address',
+        email: 'Please enter a valid email',
       }));
     }
   };

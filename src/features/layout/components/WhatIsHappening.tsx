@@ -21,7 +21,9 @@ export default function WhatIsHappening() {
   ];
   return (
     <div className="bg-black rounded-2xl p-4 border border-gray-700">
-      <h2 className="text-xl font-bold mb-3 text-white">What's happening</h2>
+      <h2 className="text-xl font-bold mb-3 text-white">
+        What&apos;s happening
+      </h2>
       <div className="space-y-2">
         {trends.map((trend, i) => (
           <div

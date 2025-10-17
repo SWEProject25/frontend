@@ -4,14 +4,7 @@ import { SocialLoginSection } from './SocialLoginSection';
 import { FormFields } from './FormFields';
 import { FormActions } from './FormActions';
 import { FormFooter } from './FormFooter';
-import { GenericAuthFormProps, FormState, FormHandlers } from '../types';
-
-interface FormContentProps
-  extends GenericAuthFormProps,
-    FormState,
-    FormHandlers {
-  isRegisterForm: boolean;
-}
+import { FormContentProps } from '../types';
 
 export function FormContent({
   title,
@@ -22,7 +15,7 @@ export function FormContent({
   showDivider = true,
   showForgotPassword = false,
   footerLinks = [],
-  loading = false,
+  loading,
   formData,
   errors,
   touched,
@@ -31,7 +24,10 @@ export function FormContent({
   handleSubmit,
   handleSocialLogin,
   onForgotPassword,
-  isRegisterForm,
+  onSwitchModal,
+  onClearState,
+  isFormValid,
+  onEmailValidationChange,
 }: FormContentProps) {
   return (
     <>
@@ -52,18 +48,43 @@ export function FormContent({
           touched={touched}
           onInputChange={handleInputChange}
           onBlur={handleBlur}
-          isRegisterForm={isRegisterForm}
+          onClearState={onClearState}
+          onEmailValidationChange={onEmailValidationChange}
         />
+
+        {/* General form errors */}
+        {(() => {
+          // Find the first general error (not field-specific)
+          const generalErrorKeys = [
+            'login',
+            'signup',
+            'forgotPassword',
+            'social',
+            'otp',
+          ];
+          const generalError = generalErrorKeys.find((key) => errors[key]);
+
+          if (!generalError) return null;
+
+          return (
+            <div className="text-center">
+              <p className="text-sm" style={{ color: 'var(--color-error)' }}>
+                {errors[generalError]}
+              </p>
+            </div>
+          );
+        })()}
 
         <FormActions
           submitButton={submitButton}
           loading={loading}
           showForgotPassword={showForgotPassword}
           onForgotPassword={onForgotPassword}
+          isFormValid={isFormValid}
         />
       </form>
 
-      <FormFooter footerLinks={footerLinks} />
+      <FormFooter footerLinks={footerLinks} onSwitchModal={onSwitchModal} />
     </>
   );
 }

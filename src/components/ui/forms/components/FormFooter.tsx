@@ -1,11 +1,8 @@
 import React from 'react';
-import { FooterLink } from '../types';
+import { FormFooterProps } from '../types';
+import { handleFooterLinkClick } from '../utils';
 
-interface FormFooterProps {
-  footerLinks: readonly FooterLink[];
-}
-
-export function FormFooter({ footerLinks }: FormFooterProps) {
+export function FormFooter({ footerLinks, onSwitchModal }: FormFooterProps) {
   if (footerLinks.length === 0) {
     return null;
   }
@@ -18,6 +15,7 @@ export function FormFooter({ footerLinks }: FormFooterProps) {
           <a
             href={link.href}
             className="text-primary hover:underline font-medium transition-colors"
+            onClick={(e) => handleFooterLinkClick(link, e, onSwitchModal)}
           >
             {link.linkText}
           </a>

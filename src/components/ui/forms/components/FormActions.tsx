@@ -1,19 +1,13 @@
 import React from 'react';
 import { AuthButton } from '@/components/ui/AuthButton';
-import { SubmitButton } from '../types';
-
-interface FormActionsProps {
-  submitButton: SubmitButton;
-  loading: boolean;
-  showForgotPassword: boolean;
-  onForgotPassword?: () => void;
-}
+import { FormActionsProps } from '../types';
 
 export function FormActions({
   submitButton,
   loading,
   showForgotPassword,
   onForgotPassword,
+  isFormValid,
 }: FormActionsProps) {
   return (
     <>
@@ -23,6 +17,7 @@ export function FormActions({
         variant="primary"
         size="lg"
         loading={loading}
+        disabled={!isFormValid || loading}
         className="w-full"
       >
         {submitButton.text}

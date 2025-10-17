@@ -1,6 +1,12 @@
-import Home from '@/pages/Home';
-import React from 'react';
+import { WelcomePage, AuthFooter } from '@/features/authentication/components';
 
-export default function page() {
-  return <Home />;
+export default function Home() {
+  return (
+    <div className="h-screen bg-background flex flex-col">
+      <main className="flex-1 overflow-y-auto">
+        <WelcomePage />
+      </main>
+      <AuthFooter />
+    </div>
+  );
 }
