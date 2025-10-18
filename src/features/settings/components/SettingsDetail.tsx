@@ -9,7 +9,7 @@ import {
   ChatIcon,
   InstallIcon,
 } from '@/components/ui/icons';
-import type { SettingsOption } from '@/constants/SETTINGs_ITEMS';
+import type { SettingsOption } from '@/features/settings/constants/SETTINGs_ITEMS';
 
 interface SettingsDetailProps {
   selectedOption: SettingsOption | null;

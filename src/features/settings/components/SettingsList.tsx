@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import ListItem from '@/components/ui/ListItem';
 import { SearchInput } from '@/components/ui/input';
-import type { SettingsOption } from '@/constants/SETTINGs_ITEMS';
+import type { SettingsOption } from '@/features/settings/constants/SETTINGs_ITEMS';
 
 interface SettingsListProps {
   options: SettingsOption[];

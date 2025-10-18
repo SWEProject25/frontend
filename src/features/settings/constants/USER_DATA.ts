@@ -3,8 +3,6 @@ export const userData = {
   username: '@ahmedfathy0_0',
   phone: '+201552851443',
   email: 'ahmedfathi20044002@gmail.com',
-  verified: 'No. Learn more',
-  protectedPosts: 'No',
   accountCreation: 'Apr 12, 2021, 9:20:23 PM',
   accountCreationIP: '156.193.143.48 (Egypt)',
   country: 'Egypt',
@@ -32,18 +30,6 @@ export const accountInfoItems = [
     label: 'Email',
     value: userData.email,
     path: '/settings/account/accountinfo/email',
-  },
-  {
-    id: 'verified',
-    label: 'Verified',
-    value: userData.verified,
-    path: '/settings/account/accountinfo/verified',
-  },
-  {
-    id: 'protected-posts',
-    label: 'Protected posts',
-    value: userData.protectedPosts,
-    path: '/settings/account/accountinfo/protected-posts',
   },
   {
     id: 'account-creation',

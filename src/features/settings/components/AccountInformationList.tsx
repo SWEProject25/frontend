@@ -3,7 +3,10 @@
 import { useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import ListItem from '@/components/ui/ListItem';
-import { userData, accountInfoItems } from '@/constants/USER_DATA';
+import {
+  userData,
+  accountInfoItems,
+} from '@/features/settings/constants/USER_DATA';
 
 export default function AccountInformationList() {
   const router = useRouter();
