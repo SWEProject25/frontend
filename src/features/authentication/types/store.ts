@@ -4,6 +4,7 @@ import {
   CreateUserDto,
   SendOTPDto,
   VerifyOTPDto,
+  ResendOTPDto,
 } from './api';
 
 // Auth Store Types
@@ -24,6 +25,7 @@ export interface AuthActions {
   logout: () => Promise<void>;
   sendOTP: (emailData: SendOTPDto) => Promise<void>;
   verifyOTP: (otpData: VerifyOTPDto) => Promise<void>;
+  resendOTP: (emailData: ResendOTPDto) => Promise<void>;
 }
 
 export interface AuthStore extends AuthState, AuthActions {}
