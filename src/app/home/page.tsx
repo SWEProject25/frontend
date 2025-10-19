@@ -1,4 +1,4 @@
-import Timeline from '@/features/timeline/Timeline';
+import Timeline from '@/features/timeline/components/Timeline';
 export const metadata = {
   title: 'Home',
   description: 'Home page',

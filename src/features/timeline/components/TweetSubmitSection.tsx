@@ -1,8 +1,8 @@
 'use client';
 
-import Button from '../../componenets/Button';
-import Icon from '@/componenets/Icon';
-import useAddTweetStore from '@/services/useAddTweetStore';
+import Button from '../../../componenets/ui/home/Button';
+import Icon from '@/componenets/ui/home/Icon';
+import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 const MAX_TWEET_LENGTH = 260; //blue color
 const MAX_WARNING_TWEET_LENGTH = 20; // yellow color
 export default function TweetSubmitSection() {

@@ -1,5 +1,5 @@
 'use client';
-import useAddTweetStore from '@/services/useAddTweetStore';
+import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 import { useEffect, useRef } from 'react';
 
 export default function TweetText() {

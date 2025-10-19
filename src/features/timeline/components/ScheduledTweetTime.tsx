@@ -1,6 +1,6 @@
 'use client';
-import Icon from '@/componenets/Icon';
-import useAddTweetStore from '@/services/useAddTweetStore';
+import Icon from '@/componenets/ui/home/Icon';
+import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 
 export default function ScheduledTweetTime() {
   const scheduledTime = useAddTweetStore((state) => state.scheduledTime);

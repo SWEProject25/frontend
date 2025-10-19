@@ -1,15 +1,15 @@
 'use client';
 import TweetFooter from './TweetFooter';
-import ProfileLogo from '../../componenets/ProfileLogo';
-import TweetText from '../../componenets/TweetText';
+import ProfileLogo from '../../../componenets/ui/home/ProfileLogo';
+import TweetText from '../../../componenets/ui/home/TweetText';
 import TweetReplySettings from './TweetReplySettings';
 import Poll from './Poll';
 import React, { useEffect, useRef, useState } from 'react';
 import TweetOptionsBar from './TweetOptionsBar';
 import TweetSubmitSection from './TweetSubmitSection';
-import usePollStore from '@/services/usePollStore';
+import usePollStore from '@/features/timeline/store/usePollStore';
 import ScheduledTweetTime from './ScheduledTweetTime';
-import useAddTweetStore from '@/services/useAddTweetStore';
+import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 export default function AddTweet() {
   const [isOpenPoll, setIsOpenPoll] = useState(false);
   const reset = usePollStore((state) => state.reset);

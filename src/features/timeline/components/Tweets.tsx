@@ -2,7 +2,7 @@
 // import dynamic from 'next/dynamic';
 import EmojiPicker from 'emoji-picker-react';
 import { useState } from 'react';
-import ProfileLogo from '../../componenets/ProfileLogo';
+import ProfileLogo from '../../../componenets/ui/home/ProfileLogo';
 // const Picker = dynamic(
 //   () => {
 //     return import('emoji-picker-react');

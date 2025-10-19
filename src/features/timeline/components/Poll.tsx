@@ -1,8 +1,8 @@
 'use client';
-import Input from '@/features/timeline/Input';
-import TimeOptions from '@/features/timeline/TimeOptions';
+import Input from '@/features/timeline/components/Input';
+import TimeOptions from '@/features/timeline/components/TimeOptions';
 import { useState } from 'react';
-import usePollStore from '@/services/usePollStore';
+import usePollStore from '@/features/timeline/store/usePollStore';
 
 const timeInputs = [
   { id: 1, type: 'Days' },
