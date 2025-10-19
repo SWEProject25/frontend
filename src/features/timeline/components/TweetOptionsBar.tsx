@@ -1,4 +1,4 @@
-import Icon from '../../../componenets/ui/home/Icon';
+import Icon from '../../../components/ui/home/Icon';
 
 import Schedule from './Schedule';
 export default function TweetOptionsBar({

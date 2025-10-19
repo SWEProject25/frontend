@@ -1,8 +1,8 @@
 'use client';
 
-import Button from '@/componenets/ui/home/Button';
-import Icon from '@/componenets/ui/home/Icon';
-import Modal, { useModal } from '@/componenets/ui/home/Modal';
+import Button from '@/components/ui/home/Button';
+import Icon from '@/components/ui/home/Icon';
+import Modal, { useModal } from '@/components/ui/home/Modal';
 import { useEffect } from 'react';
 import TimeOptions from './TimeOptions';
 import ScheduledTweetTime from './ScheduledTweetTime';

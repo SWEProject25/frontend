@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import Icon from '../../../componenets/ui/home/Icon';
+import Icon from '../../../components/ui/home/Icon';
 import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 
 const options = [
@@ -38,7 +38,9 @@ export default function TweetReplySettings() {
   return (
     <div className="w-full max-h-9 flex flex-1 items-stretch   border-b-1 border-border ">
       <button
-        onClick={() => {}} // open model
+        onClick={(e) => {
+          e.preventDefault();
+        }} // open model
         className=" h-6 flex items-center justify-center cursor-pointer hover:bg-icon-hover hover:rounded-full text-primary text-sm font-bold pr-3 "
       >
         <Icon

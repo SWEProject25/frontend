@@ -1,5 +1,5 @@
 'use client';
-import Icon from '@/componenets/ui/home/Icon';
+import Icon from '@/components/ui/home/Icon';
 import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 
 export default function ScheduledTweetTime() {

@@ -1,7 +1,7 @@
 'use client';
 import TweetFooter from './TweetFooter';
-import ProfileLogo from '../../../componenets/ui/home/ProfileLogo';
-import TweetText from '../../../componenets/ui/home/TweetText';
+import ProfileLogo from '../../../components/ui/home/ProfileLogo';
+import TweetText from '../../../components/ui/home/TweetText';
 import TweetReplySettings from './TweetReplySettings';
 import Poll from './Poll';
 import React, { useEffect, useRef, useState } from 'react';
@@ -26,22 +26,22 @@ export default function AddTweet() {
     setIsOpenPoll(false);
   };
   // const openPoll = () => setIsOpenPoll(true);
-  const formRef = useRef<HTMLFormElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(
     function () {
       function handleClick(e: MouseEvent) {
         openReplySettings();
       }
-      if (formRef.current && !isOpenReplySettings) {
-        formRef.current.addEventListener('click', handleClick, { once: true });
+      if (ref.current && !isOpenReplySettings) {
+        ref.current.addEventListener('click', handleClick, { once: true });
       }
     },
     [isOpenReplySettings, openReplySettings]
   );
   return (
-    <form
+    <div
       id="Add tweet"
-      ref={formRef}
+      ref={ref}
       className=" flex items-stretch  min-h-fit w-full  justify-center  border-l-1 border-b-1 border-border px-4 "
     >
       <ProfileLogo />
@@ -70,6 +70,6 @@ export default function AddTweet() {
           </div>
         </div>
       </div>
-    </form>
+    </div>
   );
 }
