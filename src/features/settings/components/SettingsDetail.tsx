@@ -8,6 +8,7 @@ import {
   KeyIcon,
   ChatIcon,
   InstallIcon,
+  MuteIcon,
 } from '@/components/ui/icons';
 import type { SettingsOption } from '@/features/settings/constants/SETTINGs_ITEMS';
 
@@ -26,7 +27,7 @@ const getIconForSubOption = (subOptionId: string) => {
     'connected-apps': <UserIcon className="w-4 h-4" />,
     audience: <UserIcon className="w-4 h-4" />,
     'content-preferences': <UserIcon className="w-4 h-4" />,
-    'mute-block': <UserIcon className="w-4 h-4" />,
+    'mute-block': <MuteIcon className="w-4 h-4" />,
     'direct-messages': <ChatIcon className="w-4 h-4" />,
     filters: <UserIcon className="w-4 h-4" />,
     preferences: <UserIcon className="w-4 h-4" />,
