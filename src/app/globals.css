@@ -55,6 +55,10 @@
     --color-text-active: #e7e9ea;
     --color-text-inactive: #71767b;
     --color-text-button: #eff3f4;
+    --color-icon-hover: #031018;
+    --color-button-hover: #d7dbdc;
+    --color-button-x: #eff3f4;
+    --color-button-x-hover: #181818;
     --color-text-placeholder: #71767b;
     --color-text-counter: #8b98a5;
   }
