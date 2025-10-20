@@ -7,7 +7,7 @@ export const block_mute_Items = [
   {
     id: 'mutedaccounts',
     label: 'Muted accounts',
-    path: '//settings/privacy_and_safety/mute_and_block/muted_accounts',
+    path: '/settings/privacy_and_safety/mute_and_block/muted_accounts',
   },
 ];
 
