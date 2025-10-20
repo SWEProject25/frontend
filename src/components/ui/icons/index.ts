@@ -21,6 +21,7 @@ export {
   ArrowLeftIcon,
   ArrowRightIcon,
   SearchIcon,
+  MuteIcon,
 } from './UIIcons';
 
 // Brand Icons

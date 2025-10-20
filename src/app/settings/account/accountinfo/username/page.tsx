@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { InputField } from '@/components/ui/input';
 import Button from '@/components/ui/Button';
-import { userData } from '@/constants/USER_DATA';
+import { userData } from '@/features/settings/constants/MUTE_and_BLOCK';
 
 export default function UsernamePage() {
   const router = useRouter();

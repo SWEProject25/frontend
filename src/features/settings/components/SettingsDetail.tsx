@@ -3,13 +3,15 @@
 import { usePathname, useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import ListItem from '@/components/ui/ListItem';
+import OptionItem from '@/components/ui/OptionItem';
 import {
   UserIcon,
   KeyIcon,
   ChatIcon,
   InstallIcon,
+  MuteIcon,
 } from '@/components/ui/icons';
-import type { SettingsOption } from '@/constants/SETTINGs_ITEMS';
+import type { SettingsOption } from '@/features/settings/constants/SETTINGs_ITEMS';
 
 interface SettingsDetailProps {
   selectedOption: SettingsOption | null;
@@ -26,7 +28,7 @@ const getIconForSubOption = (subOptionId: string) => {
     'connected-apps': <UserIcon className="w-4 h-4" />,
     audience: <UserIcon className="w-4 h-4" />,
     'content-preferences': <UserIcon className="w-4 h-4" />,
-    'mute-block': <UserIcon className="w-4 h-4" />,
+    'mute-block': <MuteIcon className="w-4 h-4" />,
     'direct-messages': <ChatIcon className="w-4 h-4" />,
     filters: <UserIcon className="w-4 h-4" />,
     preferences: <UserIcon className="w-4 h-4" />,
@@ -69,12 +71,16 @@ export default function SettingsDetail({
             return (
               <ListItem
                 key={subOption.id}
-                label={subOption.label}
-                description={subOption.description}
                 href={subOption.path}
                 isActive={isActive}
-                icon={getIconForSubOption(subOption.id)}
-              />
+              >
+                <OptionItem
+                  label={subOption.label}
+                  description={subOption.description}
+                  icon={getIconForSubOption(subOption.id)}
+                  showArrow={true}
+                />
+              </ListItem>
             );
           })}
         </nav>
