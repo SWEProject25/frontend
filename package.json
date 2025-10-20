@@ -15,6 +15,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@mui/material": "^7.3.4",
     "@svgr/webpack": "^8.1.0",
     "@tanstack/react-query": "^5.90.2",
     "@tanstack/react-query-devtools": "^5.90.2",

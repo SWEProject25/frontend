@@ -16,7 +16,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Home / X',
+  title: {
+    template: '%s / X',
+    default: 'X',
+  },
   description: 'X clone',
 };
 
