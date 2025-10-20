@@ -28,7 +28,7 @@ export default function ListItem({
         py-3 px-4 min-h-[48px]
         transition-[background-color,box-shadow] duration-200
         outline-none
-        ${isActive ? 'bg-muted' : ''}
+        ${isActive ? 'bg-muted border-r-2 border-r-primary' : ''}
         hover:bg-muted
       `}
       style={{

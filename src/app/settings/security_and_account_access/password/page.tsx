@@ -32,7 +32,6 @@ export default function PasswordPage() {
         ...prev,
         [field]: e.target.value,
       }));
-      // Clear error when user starts typing
       if (errors[field]) {
         setErrors((prev) => ({
           ...prev,
@@ -42,7 +41,6 @@ export default function PasswordPage() {
     };
 
   const handleSave = async () => {
-    // Validate passwords
     let hasErrors = false;
     const newErrors = { current: '', new: '', confirm: '' };
 
@@ -76,12 +74,9 @@ export default function PasswordPage() {
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setLoading(false);
-    // Here you would update the password in the backend
-    // Reset form on success
     setPasswords({ current: '', new: '', confirm: '' });
   };
 
-  // Check if button should be disabled
   const isDisabled = !passwords.current || !passwords.new || !passwords.confirm;
 
   return (
@@ -108,7 +103,6 @@ export default function PasswordPage() {
               className="text-primary text-sm hover:underline inline-block mt-2"
               onClick={(e) => {
                 e.preventDefault();
-                // Handle forgot password
               }}
             >
               Forgot password?

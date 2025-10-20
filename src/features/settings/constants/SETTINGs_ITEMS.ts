@@ -109,24 +109,24 @@ export const SETTINGS_ITEMS: SettingsOption[] = [
     description: 'Select the kinds of notifications you get',
     path: '/settings/notifications',
     subOptions: [
-      {
-        id: 'filters',
-        label: 'Filters',
-        description: 'Choose the notifications you want to see.',
-        path: '/settings/notifications',
-      },
-      {
-        id: 'preferences',
-        label: 'Preferences',
-        description: 'Select your preferences by notification type.',
-        path: '/settings/notifications/preferences',
-      },
-      {
-        id: 'push-notifications',
-        label: 'Push notifications',
-        description: 'Manage push notifications on web and mobile.',
-        path: '/settings/notifications/push',
-      },
+      // {
+      //   id: 'filters',
+      //   label: 'Filters',
+      //   description: 'Choose the notifications you want to see.',
+      //   path: '/settings/notifications',
+      // },
+      // {
+      //   id: 'preferences',
+      //   label: 'Preferences',
+      //   description: 'Select your preferences by notification type.',
+      //   path: '/settings/notifications/preferences',
+      // },
+      // {
+      //   id: 'push-notifications',
+      //   label: 'Push notifications',
+      //   description: 'Manage push notifications on web and mobile.',
+      //   path: '/settings/notifications/push',
+      // },
     ],
   },
 ];
