@@ -7,6 +7,8 @@ import {
   SendOTPResponseDto,
   VerifyOTPDto,
   VerifyOTPResponseDto,
+  ResendOTPDto,
+  ResendOTPResponseDto,
 } from '../types/api';
 import { AUTH_API_CONFIG, AUTH_ENDPOINTS } from '../constants/api';
 
@@ -137,5 +139,21 @@ export const authApi = {
     );
 
     return handleResponse<VerifyOTPResponseDto>(response);
+  },
+
+  async resendOTP(emailData: ResendOTPDto): Promise<ResendOTPResponseDto> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.RESEND_OTP}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Important for HTTPOnly cookies
+        body: JSON.stringify(emailData),
+      }
+    );
+
+    return handleResponse<ResendOTPResponseDto>(response);
   },
 };

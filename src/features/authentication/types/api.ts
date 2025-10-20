@@ -47,3 +47,12 @@ export interface VerifyOTPResponseDto {
   status: string;
   message: string;
 }
+
+export interface ResendOTPDto {
+  email: string;
+}
+
+export interface ResendOTPResponseDto {
+  status: string;
+  message: string;
+}

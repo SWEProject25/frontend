@@ -32,7 +32,7 @@ export function OTPInput({
   // Start countdown when OTP is successfully sent
   useEffect(() => {
     if (isOTPSent) {
-      setResendCountdown(60); // 1 minute countdown
+      setResendCountdown(OTP_CONSTANTS.RESEND_COUNTDOWN_SECONDS);
       setIsResendDisabled(true);
     }
   }, [isOTPSent]);
@@ -48,7 +48,7 @@ export function OTPInput({
     if (isResendDisabled) return;
 
     setIsResendDisabled(true);
-    setResendCountdown(60);
+    setResendCountdown(OTP_CONSTANTS.RESEND_COUNTDOWN_SECONDS);
 
     try {
       retrySendOTP();
