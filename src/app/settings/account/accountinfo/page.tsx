@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import ListItem from '@/components/ui/ListItem';
+import OptionItem from '@/components/ui/OptionItem';
 import {
   userData,
   accountInfoItems,
@@ -24,13 +25,13 @@ export default function AccountInfoPage() {
       />
       <nav className="flex flex-col">
         {accountInfoItems.map((item) => (
-          <ListItem
-            key={item.id}
-            label={item.label}
-            description={item.value}
-            href={item.path}
-            showArrow={true}
-          />
+          <ListItem key={item.id} href={item.path}>
+            <OptionItem
+              label={item.label}
+              description={item.value}
+              showArrow={true}
+            />
+          </ListItem>
         ))}
       </nav>
     </div>

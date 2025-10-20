@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import ListItem from '@/components/ui/ListItem';
+import OptionItem from '@/components/ui/OptionItem';
 import {
   UserIcon,
   KeyIcon,
@@ -70,12 +71,16 @@ export default function SettingsDetail({
             return (
               <ListItem
                 key={subOption.id}
-                label={subOption.label}
-                description={subOption.description}
                 href={subOption.path}
                 isActive={isActive}
-                icon={getIconForSubOption(subOption.id)}
-              />
+              >
+                <OptionItem
+                  label={subOption.label}
+                  description={subOption.description}
+                  icon={getIconForSubOption(subOption.id)}
+                  showArrow={true}
+                />
+              </ListItem>
             );
           })}
         </nav>

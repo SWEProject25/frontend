@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Tab from '../../../components/ui/home/Tab';
+import Tab from '../../../components/ui/Tab';
 
 export default function Header() {
   const [selectedTab, setSelectedTab] = useState<null | number>(1);
