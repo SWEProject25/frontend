@@ -16,8 +16,8 @@ export const useLoginMutation = () => {
   return useMutation({
     mutationFn: authApi.login,
     onSuccess: (data) => {
-      setUser(data.user);
-      queryClient.setQueryData(authKeys.user(), data.user);
+      setUser(data.data.user);
+      queryClient.setQueryData(authKeys.user(), data.data.user);
     },
     onError: (error) => {
       setError(
@@ -37,8 +37,8 @@ export const useRegisterMutation = () => {
   return useMutation({
     mutationFn: authApi.register,
     onSuccess: (data) => {
-      setUser(data.user);
-      queryClient.setQueryData(authKeys.user(), data.user);
+      setUser(data.data.user);
+      queryClient.setQueryData(authKeys.user(), data.data.user);
     },
     onError: (error) => {
       setError(error instanceof Error ? error.message : 'Registration failed');

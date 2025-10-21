@@ -60,6 +60,7 @@ function AuthDemoContent() {
                 <button
                   onClick={() => setShowSuccessMessage(false)}
                   className="text-green-400 hover:text-green-600"
+                  aria-label="Close success message"
                 >
                   <CloseXIcon className="h-5 w-5" />
                 </button>
@@ -79,13 +80,28 @@ function AuthDemoContent() {
                   <strong>Name:</strong> {auth.user?.name}
                 </p>
                 <p>
+                  <strong>Username:</strong> {auth.user?.username}
+                </p>
+                <p>
                   <strong>Email:</strong> {auth.user?.email}
                 </p>
                 <p>
                   <strong>Role:</strong> {auth.user?.role}
                 </p>
                 <p>
-                  <strong>ID:</strong> {auth.user?.id}
+                  <strong>Birth Date:</strong>{' '}
+                  {auth.user?.birth_date
+                    ? new Date(auth.user.birth_date).toLocaleDateString()
+                    : 'N/A'}
+                </p>
+                <p>
+                  <strong>Location:</strong> {auth.user?.location || 'N/A'}
+                </p>
+                <p>
+                  <strong>Created At:</strong>{' '}
+                  {auth.user?.created_at
+                    ? new Date(auth.user.created_at).toLocaleDateString()
+                    : 'N/A'}
                 </p>
               </div>
               <button

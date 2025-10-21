@@ -38,12 +38,23 @@ async function handleResponse<T>(response: Response): Promise<T> {
       errorMessage = response.statusText || errorMessage;
     }
 
-    // Provide user-friendly error messages for common login errors
+    // Provide user-friendly error messages for common errors
     if (
       statusCode === 401 &&
       errorMessage.toLowerCase().includes('invalid credentials')
     ) {
       errorMessage = 'Invalid email or password, please try again';
+    }
+
+    // Handle registration errors
+    if (statusCode === 409) {
+      errorMessage = errorMessage || 'User already exists';
+    }
+
+    if (statusCode === 400) {
+      errorMessage =
+        errorMessage ||
+        'Invalid input data. Please check your information and try again.';
     }
 
     throw new ApiError(errorMessage, statusCode);
