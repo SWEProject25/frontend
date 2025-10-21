@@ -1,8 +1,9 @@
 'use client';
 
-import { FormContainer, authFormConfigs } from '@/components/ui/forms';
+import { MultiStepForm } from '@/components/ui/forms/components/MultiStepForm';
 import { CloseXIcon, XLogoIcon } from '@/components/ui/icons';
-import { AuthFormProps } from '../types';
+import { AuthFormProps } from '../types/hooks';
+import { handleFormClose, getSubmitHandler } from '../utils';
 
 export function AuthForm({
   type,
@@ -17,82 +18,57 @@ export function AuthForm({
   handleForgotPassword,
   clearFormState,
 }: AuthFormProps) {
-  const handleCreateAccount = () => {
-    // Switch to createAccount modal when Create account is clicked
-    if (onSwitchModal) {
-      onSwitchModal('createAccount');
-    }
-  };
-
   if (!isOpen) return null;
 
-  const config =
-    type === 'login'
-      ? authFormConfigs.login
-      : type === 'signup'
-        ? authFormConfigs.signup
-        : authFormConfigs.register;
-  const onSubmit =
-    type === 'login'
-      ? handleLogin
-      : type === 'signup'
-        ? handleCreateAccount
-        : handleSignup;
-
-  // Mobile header for fullpage mode
-  const mobileHeader = mode === 'fullpage' && (
-    <div className="flex items-center justify-between p-4">
-      <button
-        onClick={onClose}
-        className="text-foreground hover:bg-gray-800 rounded-full p-2 transition-colors"
-      >
-        <CloseXIcon className="w-5 h-5" />
-      </button>
-      <div className="flex justify-center flex-1">
-        <XLogoIcon className="w-8 h-8 text-foreground" />
-      </div>
-      <div className="w-9"></div> {/* Spacer for centering */}
-    </div>
+  const handleClose = () => handleFormClose(clearFormState, onClose);
+  const onSubmit = getSubmitHandler(
+    type,
+    handleLogin,
+    handleSignup,
+    onSwitchModal
   );
 
-  // Full-screen wrapper for fullpage mode
-  const fullScreenWrapper = mode === 'fullpage' && (
-    <div className="min-h-screen bg-background">
-      {mobileHeader}
-      <div className="px-6">
-        <FormContainer
-          {...config}
-          onSubmit={onSubmit}
-          onSocialLogin={handleSocialLogin}
-          onForgotPassword={handleForgotPassword}
-          mode="fullpage"
-          onClose={onClose}
-          onSwitchModal={onSwitchModal}
-          loading={formState.isLoading}
-          error={formState.error}
-          success={formState.success}
-          onClearState={clearFormState}
-        />
-      </div>
-    </div>
-  );
+  const formProps = {
+    isOpen,
+    onClose: handleClose,
+    mode,
+    onSocialLogin: handleSocialLogin,
+    onSwitchModal,
+    onForgotPassword: handleForgotPassword,
+    onSubmit,
+    formState,
+    onClearState: () => clearFormState('otp'),
+    type: type === 'loginPassword' ? 'login' : type,
+  };
 
-  // Modal mode (no wrapper)
-  const modalForm = mode === 'modal' && (
-    <FormContainer
-      {...config}
-      onSubmit={onSubmit}
-      onSocialLogin={handleSocialLogin}
-      onForgotPassword={handleForgotPassword}
-      mode="modal"
-      onClose={onClose}
-      onSwitchModal={onSwitchModal}
-      loading={formState.isLoading}
-      error={formState.error}
-      success={formState.success}
-      onClearState={clearFormState}
-    />
-  );
+  return (
+    <>
+      {/* Mobile header for fullpage mode */}
+      {mode === 'fullpage' && (
+        <div className="flex items-center justify-between p-4">
+          <button
+            onClick={handleClose}
+            className="text-foreground hover:bg-gray-800 rounded-full p-2 transition-colors"
+          >
+            <CloseXIcon className="w-5 h-5" />
+          </button>
+          <div className="flex justify-center flex-1">
+            <XLogoIcon className="w-8 h-8 text-foreground" />
+          </div>
+          <div className="w-9"></div> {/* Spacer for centering */}
+        </div>
+      )}
 
-  return fullScreenWrapper || modalForm;
+      {/* Form wrapper - fullpage vs modal */}
+      {mode === 'fullpage' ? (
+        <div className="min-h-screen bg-background">
+          <div className="px-6">
+            <MultiStepForm {...formProps} />
+          </div>
+        </div>
+      ) : (
+        <MultiStepForm {...formProps} />
+      )}
+    </>
+  );
 }

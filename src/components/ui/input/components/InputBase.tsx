@@ -15,7 +15,7 @@ export function InputBase({
     <input
       className={cn(
         getFieldBaseStyles(styleProps),
-        getInputPadding(styleProps.shouldFloatLabel),
+        getInputPadding(styleProps.shouldFloatLabel || false),
         className
       )}
       onFocus={onFocus}

@@ -22,6 +22,7 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
       showCharCount = false,
       onFocus,
       onBlur,
+      onChange,
       ...props
     },
     ref
@@ -29,7 +30,7 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
     const [showPassword, setShowPassword] = useState(false);
 
     const fieldState = useFieldState<HTMLInputElement>({
-      initialValue: value,
+      value: value,
       onFocus,
       onBlur,
     });
@@ -74,11 +75,12 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
             inputRef={ref}
             onFocus={fieldState.handleFocus}
             onBlur={fieldState.handleBlur}
+            onChange={onChange}
             className={className}
             {...props}
           />
 
-          {/* Password Toggle Button - Only show when focused */}
+          {/* Password Toggle Button */}
           {showPasswordToggle && fieldState.isFocused && (
             <PasswordToggle
               showPassword={showPassword}
@@ -87,7 +89,7 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
             />
           )}
 
-          {/* Character Counter - Only show when focused */}
+          {/* Character Counter */}
           {showCharCount && maxLength && fieldState.isFocused && (
             <CharCounter currentLength={currentLength} maxLength={maxLength} />
           )}

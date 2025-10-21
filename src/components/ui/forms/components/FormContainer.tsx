@@ -1,18 +1,57 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { XLogo, CloseIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/utils';
 import { FormContent } from './FormContent';
 import { GenericAuthFormProps } from '../types';
+import { handleOverlayClick, handleModalKeyDown, isFormValid } from '../utils';
 
-export function FormContainer(props: GenericAuthFormProps) {
-  const { onSubmit, onSocialLogin, mode = 'modal', onClose, className } = props;
+export function FormContainer(
+  props: GenericAuthFormProps & {
+    formState?: {
+      isLoading: boolean;
+      success: boolean;
+      errors?: Record<string, string>;
+    };
+    onClearState?: () => void;
+  }
+) {
+  const {
+    fields,
+    onSubmit,
+    onSocialLogin,
+    mode = 'modal',
+    onClose,
+    initialValues = {},
+    className,
+    formState,
+  } = props;
 
   // Simple form state management
-  const [formData, setFormData] = useState<Record<string, string>>({});
-  const [errors] = useState<Record<string, string>>({});
+  const [formData, setFormData] =
+    useState<Record<string, string>>(initialValues);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [emailValidationState, setEmailValidationState] = useState<{
+    isValid: boolean;
+    isValidating: boolean;
+  }>({ isValid: true, isValidating: false });
+
+  // Calculate form validity - check form state errors AND email validation
+  const isFormValidState = useMemo(() => {
+    const formValid = isFormValid(fields, formData, formState?.errors || {});
+    // Form is only valid if both form validation AND email validation pass
+    return (
+      formValid &&
+      emailValidationState.isValid &&
+      !emailValidationState.isValidating
+    );
+  }, [fields, formData, formState?.errors, emailValidationState]);
+
+  // Update formData when initialValues change
+  useEffect(() => {
+    setFormData(initialValues);
+  }, [initialValues]);
 
   // Event handlers
   const handleInputChange = useCallback(
@@ -46,19 +85,14 @@ export function FormContainer(props: GenericAuthFormProps) {
     [onSocialLogin]
   );
 
+  const handleEmailValidationChange = useCallback(
+    (isValid: boolean, isValidating: boolean) => {
+      setEmailValidationState({ isValid, isValidating });
+    },
+    []
+  );
+
   const displayMode = mode === 'responsive' ? 'modal' : mode;
-
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && onClose) {
-      onClose();
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape' && onClose) {
-      onClose();
-    }
-  };
 
   if (displayMode === 'fullpage') {
     return (
@@ -72,12 +106,15 @@ export function FormContainer(props: GenericAuthFormProps) {
               <FormContent
                 {...props}
                 formData={formData}
-                errors={errors}
+                errors={formState?.errors || {}}
                 touched={touched}
                 handleInputChange={handleInputChange}
                 handleBlur={handleBlur}
                 handleSubmit={handleSubmit}
                 handleSocialLogin={handleSocialLogin}
+                loading={formState?.isLoading || false}
+                isFormValid={isFormValidState}
+                onEmailValidationChange={handleEmailValidationChange}
               />
             </div>
           </div>
@@ -93,8 +130,8 @@ export function FormContainer(props: GenericAuthFormProps) {
         className
       )}
       style={{ backgroundColor: 'rgba(91, 112, 131, 0.4)' }}
-      onClick={handleOverlayClick}
-      onKeyDown={handleKeyDown}
+      onClick={(e) => onClose && handleOverlayClick(e, onClose)}
+      onKeyDown={(e) => onClose && handleModalKeyDown(e, onClose)}
       tabIndex={-1}
     >
       <div
@@ -123,12 +160,15 @@ export function FormContainer(props: GenericAuthFormProps) {
           <FormContent
             {...props}
             formData={formData}
-            errors={errors}
+            errors={formState?.errors || {}}
             touched={touched}
             handleInputChange={handleInputChange}
             handleBlur={handleBlur}
             handleSubmit={handleSubmit}
             handleSocialLogin={handleSocialLogin}
+            loading={formState?.isLoading || false}
+            isFormValid={isFormValidState}
+            onEmailValidationChange={handleEmailValidationChange}
           />
         </div>
       </div>

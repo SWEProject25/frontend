@@ -1,6 +1,9 @@
 import React from 'react';
 import { InputField } from '@/components/ui/input';
 import { SelectField } from '@/components/ui/SelectField';
+import { CaptchaInput } from '@/features/authentication/components/CaptchaInput';
+import { OTPInput } from '@/features/authentication/components/OTPInput';
+import { EmailInputField } from '@/features/authentication/components/EmailInputField';
 import { FormFieldsProps } from '../types';
 
 export function FormFields({
@@ -10,6 +13,8 @@ export function FormFields({
   touched,
   onInputChange,
   onBlur,
+  onClearState,
+  onEmailValidationChange,
 }: FormFieldsProps) {
   // Group fields by their group.id
   const fieldGroups = fields.reduce(
@@ -64,6 +69,39 @@ export function FormFields({
   );
 
   function renderField(field: (typeof fields)[0]) {
+    // Special field types
+    if (field.name === 'captcha') {
+      return (
+        <CaptchaInput
+          key={field.name}
+          onVerify={(isValid: boolean) => {
+            // Handle captcha verification
+            if (isValid) {
+              onInputChange(field.name)({
+                target: { value: 'verified' },
+              } as React.ChangeEvent<HTMLInputElement>);
+            }
+          }}
+        />
+      );
+    }
+
+    if (field.name === 'otp') {
+      return (
+        <OTPInput
+          key={field.name}
+          onComplete={(otp) => {
+            onInputChange(field.name)({
+              target: { value: otp },
+            } as React.ChangeEvent<HTMLInputElement>);
+          }}
+          email={formData.email}
+          error={errors.otp || undefined}
+          onClearError={onClearState}
+        />
+      );
+    }
+
     if (field.type === 'select' && field.options) {
       return (
         <SelectField
@@ -80,6 +118,29 @@ export function FormFields({
       );
     }
 
+    // Special email field with real-time validation
+    if (
+      field.name === 'email' &&
+      field.type === 'email' &&
+      field.validation?.enableRealTimeValidation
+    ) {
+      return (
+        <EmailInputField
+          key={field.name}
+          label={field.label}
+          value={formData[field.name] || ''}
+          onChange={onInputChange(field.name)}
+          onBlur={onBlur(field.name)}
+          placeholder={field.placeholder}
+          required={field.required}
+          disabled={field.disabled}
+          validation={field.validation}
+          onValidationChange={onEmailValidationChange}
+        />
+      );
+    }
+
+    // Regular input field
     return (
       <InputField
         key={field.name}
@@ -94,6 +155,7 @@ export function FormFields({
         showCharCount={field.showCharCount}
         showPasswordToggle={field.showPasswordToggle}
         required={field.required}
+        disabled={field.disabled}
       />
     );
   }

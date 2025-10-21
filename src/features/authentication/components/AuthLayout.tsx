@@ -1,4 +1,3 @@
-import React from 'react';
 import { XLogo } from '@/components/ui/icons';
 import { AuthLayoutProps } from '../types';
 

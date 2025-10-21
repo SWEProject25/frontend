@@ -15,7 +15,7 @@ export function FormContent({
   showDivider = true,
   showForgotPassword = false,
   footerLinks = [],
-  loading = false,
+  loading,
   formData,
   errors,
   touched,
@@ -25,6 +25,9 @@ export function FormContent({
   handleSocialLogin,
   onForgotPassword,
   onSwitchModal,
+  onClearState,
+  isFormValid,
+  onEmailValidationChange,
 }: FormContentProps) {
   return (
     <>
@@ -45,13 +48,39 @@ export function FormContent({
           touched={touched}
           onInputChange={handleInputChange}
           onBlur={handleBlur}
+          onClearState={onClearState}
+          onEmailValidationChange={onEmailValidationChange}
         />
+
+        {/* General form errors */}
+        {(() => {
+          // Find the first general error (not field-specific)
+          const generalErrorKeys = [
+            'login',
+            'signup',
+            'forgotPassword',
+            'social',
+            'otp',
+          ];
+          const generalError = generalErrorKeys.find((key) => errors[key]);
+
+          if (!generalError) return null;
+
+          return (
+            <div className="text-center">
+              <p className="text-sm" style={{ color: 'var(--color-error)' }}>
+                {errors[generalError]}
+              </p>
+            </div>
+          );
+        })()}
 
         <FormActions
           submitButton={submitButton}
           loading={loading}
           showForgotPassword={showForgotPassword}
           onForgotPassword={onForgotPassword}
+          isFormValid={isFormValid}
         />
       </form>
 

@@ -366,10 +366,16 @@ export function AuthButtonsDemo() {
               ← Back to Demos
             </a>
             <a
-              href="/demo/inputs"
+              href="/demo/buttons"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
-              Input Components →
+              ← Buttons Home
+            </a>
+            <a
+              href="/demo/buttons/general"
+              className="text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              ← General Buttons
             </a>
           </div>
         </div>

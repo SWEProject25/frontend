@@ -6,16 +6,21 @@ export { GoogleIcon, AppleIcon, FacebookIcon, GitHubIcon } from './SocialIcons';
 
 // UI Icons
 export {
+  CheckIcon,
   SpinnerIcon,
   CloseIcon,
   LoginIcon,
   UserIcon,
   KeyIcon,
+  InstallIcon,
   MailIcon,
   ChatIcon,
   ListIcon,
   CloseXIcon,
   XLogoIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  SearchIcon,
 } from './UIIcons';
 
 // Brand Icons

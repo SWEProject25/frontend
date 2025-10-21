@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { cn, getSelectFieldWidthClass } from '@/lib/utils';
 import { SelectProps } from '@/types/ui';
 import { ChevronDownIcon } from './icons';
@@ -26,15 +26,10 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
     ref
   ) => {
     const fieldState = useFieldState<HTMLSelectElement>({
-      initialValue: value,
+      value: value,
       onFocus,
       onBlur,
     });
-
-    // Sync field state with actual value changes
-    useEffect(() => {
-      fieldState.handleValueChange(value || '');
-    }, [value, fieldState]);
 
     // Calculate width class using utility function
     const widthClass = React.useMemo(() => {

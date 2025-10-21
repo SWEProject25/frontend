@@ -23,6 +23,7 @@ export const FOOTER_LINKS = [
 // Authentication modal types
 export const AUTH_MODAL_TYPES = {
   LOGIN: 'login',
+  LOGIN_PASSWORD: 'loginPassword',
   SIGNUP: 'signup',
   CREATE_ACCOUNT: 'createAccount',
 } as const;
@@ -40,3 +41,12 @@ export const SOCIAL_PROVIDERS = {
 export const BREAKPOINTS = {
   MOBILE: 710,
 } as const;
+
+// Re-export API constants
+export { AUTH_API_CONFIG, AUTH_ENDPOINTS, AUTH_CONSTANTS } from './api';
+
+// Re-export OTP constants
+export { OTP_CONSTANTS } from './otp';
+
+// Re-export reCAPTCHA constants
+export { RECAPTCHA_CONFIG } from './recaptcha';

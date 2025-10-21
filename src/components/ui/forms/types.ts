@@ -8,8 +8,16 @@ export interface FormField {
   maxLength?: number;
   showCharCount?: boolean;
   showPasswordToggle?: boolean;
+  disabled?: boolean;
   options?: { value: string; label: string }[];
-  validation?: (value: string) => string | undefined;
+  validation?: {
+    enableRealTimeValidation?: boolean;
+    apiEndpoint?: string;
+    messages?: {
+      invalidFormat?: string;
+      alreadyTaken?: string;
+    };
+  };
   group?: {
     id: string;
     title: string;
@@ -49,12 +57,15 @@ export interface GenericAuthFormProps {
   onForgotPassword?: () => void;
   onClose?: () => void;
   onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
-  loading?: boolean;
-  error?: string | null;
-  success?: boolean;
-  onClearState?: () => void;
+  formState: {
+    isLoading: boolean;
+    success: boolean;
+    errors: Record<string, string>;
+  };
+  onClearState?: (fieldName?: string) => void;
   className?: string;
   mode?: 'modal' | 'fullpage' | 'responsive';
+  initialValues?: Record<string, string>;
 }
 
 export interface FormState {
@@ -70,6 +81,8 @@ export interface FormHandlers {
   handleBlur: (fieldName: string) => () => void;
   handleSubmit: (e: React.FormEvent) => void;
   handleSocialLogin: (providerId: string) => void;
+  onClearState?: (fieldName?: string) => void;
+  onEmailValidationChange?: (isValid: boolean, isValidating: boolean) => void;
 }
 
 export interface FormContainerProps
@@ -90,6 +103,8 @@ export interface FormFieldsProps {
     fieldName: string
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   onBlur: (fieldName: string) => () => void;
+  onClearState?: (fieldName?: string) => void;
+  onEmailValidationChange?: (isValid: boolean, isValidating: boolean) => void;
 }
 
 export interface FormHeaderProps {
@@ -107,6 +122,7 @@ export interface FormActionsProps {
   loading: boolean;
   showForgotPassword: boolean;
   onForgotPassword?: () => void;
+  isFormValid: boolean;
 }
 
 export interface SocialLoginSectionProps {
@@ -121,4 +137,10 @@ export interface FormContentProps
     FormState,
     FormHandlers {
   onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
+  loading: boolean;
+  isFormValid: boolean;
 }
+
+// Re-export types from organized files
+export * from './types/components';
+export * from './types/hooks';
