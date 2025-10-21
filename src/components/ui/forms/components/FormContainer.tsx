@@ -5,7 +5,12 @@ import { XLogo, CloseIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/utils';
 import { FormContent } from './FormContent';
 import { GenericAuthFormProps } from '../types';
-import { handleOverlayClick, handleModalKeyDown, isFormValid } from '../utils';
+import {
+  handleOverlayClick,
+  handleModalKeyDown,
+  isFormValid,
+  validatePasswordMatch,
+} from '../utils';
 
 export function FormContainer(
   props: GenericAuthFormProps & {
@@ -37,16 +42,71 @@ export function FormContainer(
     isValidating: boolean;
   }>({ isValid: true, isValidating: false });
 
-  // Calculate form validity - check form state errors AND email validation
+  // Password validation errors
+  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>(
+    {}
+  );
+
+  // Check if form has password fields
+  const hasPasswordFields = useMemo(
+    () =>
+      fields.some((field) => field.name === 'password') &&
+      fields.some((field) => field.name === 'confirmPassword'),
+    [fields]
+  );
+
+  // Validate password match whenever password fields change
+  useEffect(() => {
+    if (hasPasswordFields) {
+      const password = formData.password || '';
+      const confirmPassword = formData.confirmPassword || '';
+
+      // Only validate if both fields have been touched and both have values
+      // If both fields are empty, clear errors
+      if (!password && !confirmPassword) {
+        setPasswordErrors({});
+        return;
+      }
+      const error = validatePasswordMatch(password, confirmPassword);
+      if (error) {
+        // Show error color on both fields, but only display message under confirmPassword
+        setPasswordErrors({
+          password: ' ', // triggers error style only
+          confirmPassword: error, // triggers error style and message
+        });
+      } else {
+        // Clear errors when passwords match
+        setPasswordErrors({});
+      }
+    } else if (!touched.password || !touched.confirmPassword) {
+      // Clear errors if either field hasn't been touched yet
+      setPasswordErrors({});
+    }
+  }, [
+    formData.password,
+    formData.confirmPassword,
+    touched.password,
+    touched.confirmPassword,
+    hasPasswordFields,
+  ]);
+
+  // Merge password errors with form state errors
+  const allErrors = useMemo(
+    () => ({ ...formState?.errors, ...passwordErrors }),
+    [formState?.errors, passwordErrors]
+  );
+
+  // Calculate form validity - check form state errors AND email validation AND password validation
   const isFormValidState = useMemo(() => {
-    const formValid = isFormValid(fields, formData, formState?.errors || {});
-    // Form is only valid if both form validation AND email validation pass
+    const formValid = isFormValid(fields, formData, allErrors);
+    // Form is only valid if both form validation AND email validation pass AND no password errors
     return (
       formValid &&
       emailValidationState.isValid &&
-      !emailValidationState.isValidating
+      !emailValidationState.isValidating &&
+      Object.keys(passwordErrors).length === 0
     );
-  }, [fields, formData, formState?.errors, emailValidationState]);
+  }, [fields, formData, allErrors, emailValidationState, passwordErrors]);
 
   // Update formData when initialValues change
   useEffect(() => {
@@ -106,7 +166,7 @@ export function FormContainer(
               <FormContent
                 {...props}
                 formData={formData}
-                errors={formState?.errors || {}}
+                errors={allErrors}
                 touched={touched}
                 handleInputChange={handleInputChange}
                 handleBlur={handleBlur}
@@ -160,7 +220,7 @@ export function FormContainer(
           <FormContent
             {...props}
             formData={formData}
-            errors={formState?.errors || {}}
+            errors={allErrors}
             touched={touched}
             handleInputChange={handleInputChange}
             handleBlur={handleBlur}
