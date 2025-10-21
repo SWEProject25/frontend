@@ -9,6 +9,8 @@ import {
   VerifyOTPResponseDto,
   ResendOTPDto,
   ResendOTPResponseDto,
+  VerifyRecaptchaDto,
+  VerifyRecaptchaResponseDto,
 } from '../types/api';
 import { AUTH_API_CONFIG, AUTH_ENDPOINTS } from '../constants/api';
 
@@ -155,5 +157,23 @@ export const authApi = {
     );
 
     return handleResponse<ResendOTPResponseDto>(response);
+  },
+
+  async verifyRecaptcha(
+    recaptchaData: VerifyRecaptchaDto
+  ): Promise<VerifyRecaptchaResponseDto> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.VERIFY_RECAPTCHA}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(recaptchaData),
+      }
+    );
+
+    return handleResponse<VerifyRecaptchaResponseDto>(response);
   },
 };

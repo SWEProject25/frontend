@@ -56,3 +56,12 @@ export interface ResendOTPResponseDto {
   status: string;
   message: string;
 }
+
+export interface VerifyRecaptchaDto {
+  recaptcha: string;
+}
+
+export interface VerifyRecaptchaResponseDto {
+  status: string;
+  message: string;
+}

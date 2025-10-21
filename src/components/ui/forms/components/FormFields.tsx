@@ -1,7 +1,7 @@
 import React from 'react';
 import { InputField } from '@/components/ui/input';
 import { SelectField } from '@/components/ui/SelectField';
-import { CaptchaComponent } from './CaptchaComponent';
+import { CaptchaInput } from '@/features/authentication/components/CaptchaInput';
 import { OTPInput } from '@/features/authentication/components/OTPInput';
 import { EmailInputField } from '@/features/authentication/components/EmailInputField';
 import { FormFieldsProps } from '../types';
@@ -72,9 +72,9 @@ export function FormFields({
     // Special field types
     if (field.name === 'captcha') {
       return (
-        <CaptchaComponent
+        <CaptchaInput
           key={field.name}
-          onVerify={(isValid) => {
+          onVerify={(isValid: boolean) => {
             // Handle captcha verification
             if (isValid) {
               onInputChange(field.name)({

@@ -14,6 +14,7 @@ export const AUTH_ENDPOINTS = {
   RESEND_OTP: `/api/${AUTH_API_CONFIG.VERSION}/auth/resend-otp`,
   TEST: `/api/${AUTH_API_CONFIG.VERSION}/auth/test`,
   CHECK_EMAIL: `/api/${AUTH_API_CONFIG.VERSION}/auth/check-email`,
+  VERIFY_RECAPTCHA: `/api/${AUTH_API_CONFIG.VERSION}/auth/verify-recaptcha`,
 } as const;
 
 // Authentication Constants
