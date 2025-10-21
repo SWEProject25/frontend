@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { CreateUserDto, LoginDto, VerifyOTPDto } from '../types/api';
 import { FormState } from '../types/hooks';
 import { useAuth } from './useAuth';
+import { formatBirthDate } from '../utils/dateUtils';
 
 export function useAuthHandlers() {
   const router = useRouter();
@@ -170,6 +171,11 @@ export function useAuthHandlers() {
               name: data.name,
               email: data.email,
               password: data.password,
+              birth_date: formatBirthDate(
+                data.birthMonth,
+                data.birthDay,
+                data.birthYear
+              ),
             };
 
             await register(signupData);

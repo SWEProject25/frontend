@@ -44,7 +44,7 @@ export const useAuthStore = create<AuthStore>()(
           const response = await authApi.login(credentials);
 
           set({
-            user: response.user,
+            user: response.data.user,
             isAuthenticated: true,
             isLoading: false,
             error: null,
@@ -70,7 +70,7 @@ export const useAuthStore = create<AuthStore>()(
           const response = await authApi.register(userData);
 
           set({
-            user: response.user,
+            user: response.data.user,
             isAuthenticated: true,
             isLoading: false,
             error: null,
