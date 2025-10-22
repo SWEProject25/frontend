@@ -1,3 +1,5 @@
+import Label from './Label';
+
 function Action({
   icon,
   count,
@@ -30,7 +32,7 @@ function Action({
   return (
     <div className="flex flex-col items-center group relative">
       <div
-        className="relative flex items-center cursor-pointer transition-colors"
+        className="relative flex items-center cursor-pointer transition-colors gap-x-1"
         onClick={(e) => {
           e.preventDefault();
           // e.stopPropagation();
@@ -41,11 +43,13 @@ function Action({
         <span
           className={`
             relative flex items-center justify-center
-            w-8 h-8
+            w-auto h-auto
             rounded-full
             before:content-['']
             before:absolute
-            before:inset-0
+            before:left-1/2 before:top-1/2
+            before:-translate-x-1/2 before:-translate-y-1/2
+            before:w-8 before:h-8
             before:rounded-full
             before:opacity-0
             group-hover:before:opacity-100
@@ -62,22 +66,8 @@ function Action({
           </span>
         )}
       </div>
-      {/* Label on hover: gray bg, white text */}
-      <div
-        className={`
-          absolute left-1/2 -translate-x-1/2 top-10
-          opacity-0 group-hover:opacity-100
-          pointer-events-none
-          transition-opacity
-          text-white text-xs px-2 py-1 rounded
-          bg-gray-700
-          shadow
-          z-10
-          whitespace-nowrap
-        `}
-      >
-        {label}
-      </div>
+      {/* Label on hover: smaller and directly under the icon */}
+      <Label label={label} />
     </div>
   );
 }

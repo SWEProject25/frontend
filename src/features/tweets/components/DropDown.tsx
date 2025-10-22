@@ -31,18 +31,18 @@ export default function DropDown({ children, items }: DropProps) {
   return (
     <Dropdown>
       <DropdownTrigger>
-        <Button>{children}</Button>
+        <button className="h-auto w-auto">{children}</button>
       </DropdownTrigger>
       <DropdownMenu
         aria-label="Tweet Actions"
-        className="rounded-xl border border-gray-800 bg-black backdrop-blur-md space-y-2 shadow-lg shadow-white/20"
+        className="rounded-xl border border-gray-800 bg-black backdrop-blur-md shadow-lg shadow-white/20"
       >
         {items.map((item) => (
           <DropdownItem
             key={item.key}
             color={item.color}
             startContent={item.icon}
-            className="hover:bg-white/10 hover:backdrop-blur-sm transition-all duration-200 my-2"
+            className="hover:bg-white/10 hover:backdrop-blur-sm transition-all duration-200 py-2 px-4"
           >
             {item.label}
           </DropdownItem>

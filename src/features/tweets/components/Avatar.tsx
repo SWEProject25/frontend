@@ -13,7 +13,8 @@ export default function Avatar({
   following,
   followers,
   isFollowed,
-  onProfileCardHover,
+  cardShow = true,
+  onHoverCard,
 }: {
   image?: string;
   size?: number;
@@ -24,18 +25,13 @@ export default function Avatar({
   following?: number;
   followers?: string;
   isFollowed?: boolean;
-  onProfileCardHover?: (hovered: boolean) => void;
+  cardShow?: boolean;
+  onHoverCard?: (hovered: boolean) => void;
 }) {
   const [showProfileCard, setShowProfileCard] = useState(false);
   const [cardHover, setCardHover] = useState(false);
 
-  React.useEffect(() => {
-    if (onProfileCardHover) {
-      onProfileCardHover(showProfileCard || cardHover);
-    }
-  }, [showProfileCard, cardHover, onProfileCardHover]);
-
-  const show = showProfileCard || cardHover;
+  const show = cardShow && (showProfileCard || cardHover);
 
   return (
     <div className="flex-shrink-0">
@@ -59,8 +55,12 @@ export default function Avatar({
             onMouseEnter={(e) => {
               e.preventDefault();
               setCardHover(true);
+              onHoverCard ? onHoverCard(true) : null;
             }}
-            onMouseLeave={() => setCardHover(false)}
+            onMouseLeave={() => {
+              setCardHover(false);
+              onHoverCard ? onHoverCard(false) : null;
+            }}
             onClick={(e) => e.preventDefault()}
           >
             <ProfileCard

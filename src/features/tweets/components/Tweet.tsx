@@ -6,8 +6,14 @@ import Actions from './Actions';
 import UserInfo from './UserInfo';
 import Avatar from './Avatar';
 import { FaEllipsisH } from 'react-icons/fa';
+import { TbSpeakerphone } from 'react-icons/tb';
+import { IoStatsChart } from 'react-icons/io5';
+import { TiVolumeMute } from 'react-icons/ti';
 import Action from './Action';
 import DropDown from './DropDown';
+import Timing from './Timing';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// <FontAwesomeIcon icon={byPrefixAndName.far['user-plus']} />;
 import {
   FaUserPlus,
   FaListUl,
@@ -16,7 +22,6 @@ import {
   FaChartBar,
   FaCode,
   FaFlag,
-  FaFrown,
 } from 'react-icons/fa';
 import { HiOutlineEmojiSad } from 'react-icons/hi';
 
@@ -39,7 +44,7 @@ const dropItems = [
   {
     key: 'mute',
     label: 'Mute',
-    icon: <FaVolumeMute />,
+    icon: <TiVolumeMute />,
   },
   {
     key: 'block',
@@ -49,7 +54,7 @@ const dropItems = [
   {
     key: 'engagement',
     label: 'View post engagements',
-    icon: <FaChartBar />,
+    icon: <IoStatsChart />,
   },
   {
     key: 'embed',
@@ -64,10 +69,11 @@ const dropItems = [
   {
     key: 'community_note',
     label: 'Request Community Note',
-    icon: <FaFlag />,
+    icon: <TbSpeakerphone />,
   },
 ];
 
+const time = new Date(Date.now() - 250 * 1000 * 60);
 const data = {
   user: {
     name: 'Omda Hancker',
@@ -76,9 +82,10 @@ const data = {
     isVerified: true,
   },
   tweet: {
-    id: '1', // Add an id for routing
+    id: '1',
     text: 'Tweet content goes here. This is a sample tweet to demonstrate the layout.',
     image: '/Personal photo.jpeg',
+    time: time,
     stats: {
       replies: 2,
       retweets: 4,
@@ -92,20 +99,12 @@ const data = {
 
 export default function Tweet() {
   const [profileCardHovered, setProfileCardHovered] = useState(false);
-
   return (
     <Link
       href={'/fullTweet'}
-      className={`block mx-auto sm:max-w-[600px] border-b border-gray-700 p-4 text-white relative transition-colors
-        ${!profileCardHovered ? 'hover:bg-[#0a0a0a]' : ''}
-      `}
+      className={`block mx-auto sm:max-w-[600px] border-b border-gray-700 p-4 text-white relative transition-colors ${!profileCardHovered ? 'hover:bg-[#0a0a0a]' : ''}`}
       style={{ textDecoration: 'none' }}
     >
-      <div className="absolute top-2 right-4">
-        <DropDown items={dropItems}>
-          <Action icon={<FaEllipsisH size={16} />} label="more" color="blue" />
-        </DropDown>
-      </div>
       <div className="flex w-full gap-2">
         <Avatar
           image={data.user.avatar}
@@ -117,14 +116,34 @@ export default function Tweet() {
           following={100}
           followers="1K"
           isFollowed={false}
-          onProfileCardHover={setProfileCardHovered} // <-- add this prop
+          onHoverCard={setProfileCardHovered}
         />
-        <div className="flex flex-col flex-1">
-          <UserInfo
-            name={data.user.name}
-            username={data.user.username}
-            isVerified={data.user.isVerified}
-          />
+        <div className="flex flex-col items-center flex-1">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-1">
+              <UserInfo
+                name={data.user.name}
+                username={data.user.username}
+                isVerified={data.user.isVerified}
+                bio="Sample bio for the user."
+                following={100}
+                followers="1K"
+                isFollowed={false}
+                avatar={data.user.avatar}
+                onHoverCard={setProfileCardHovered}
+              />
+              <Timing time={data.tweet.time} />
+            </div>
+            <div className="ml-2 flex items-center">
+              <DropDown items={dropItems}>
+                <Action
+                  icon={<FaEllipsisH size={12} />} // smaller icon
+                  label="more"
+                  color="blue"
+                />
+              </DropDown>
+            </div>
+          </div>
           <Content text={data.tweet.text} image={data.tweet.image} />
           <Actions stats={data.tweet.stats} />
         </div>

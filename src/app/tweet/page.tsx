@@ -8,16 +8,6 @@ function Page() {
       <Tweet />
       <Tweet />
       <Tweet />
-      <ProfileCard
-        name="John Doe"
-        username="johndoe"
-        isVerified={true}
-        bio="Lorem ipsum dolor sit amet."
-        following={100}
-        followers="1K"
-        avatar="/apple.png"
-        isFollowed={false}
-      />
     </>
   );
 }
