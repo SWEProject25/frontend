@@ -44,7 +44,7 @@ const ProfileContainer = ({ userData }: ProfileContainerProps) => {
         onSaveProfile={handleSaveProfile}
       />
       <UserInfo name={userData.name} username={userData.username} />
-      <div className="flex flex-col items-start px-4 gap-1 w-[600px] h-[20px]">
+      <div className="flex flex-col items-start px-4 gap-3 w-full">
         <Description bio={userData.bio} />
         <UserDetails joinDate={userData.joinDate} />
         <FollowStats

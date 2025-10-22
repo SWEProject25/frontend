@@ -5,6 +5,7 @@ import { userData } from '@/features/settings/constants/USER_DATA';
 import { SearchIcon } from '@/components/ui/icons';
 import ProfileContainer from '@/features/profile/components/ProfileContainer';
 import Button from '@/components/ui/Button';
+import TabView from '@/features/profile/components/TabView';
 interface UserPageProps {
   params: {
     username: string;
@@ -18,7 +19,7 @@ const UserPage = ({ params }: UserPageProps) => {
   };
 
   return (
-    <main className="">
+    <main className="flex flex-col">
       <div className="flex flex-row justify-between items-center mr-4">
         <Breadcrumb
           title={`${username}'s Profile`}
@@ -30,7 +31,10 @@ const UserPage = ({ params }: UserPageProps) => {
           <SearchIcon className="w-5 h-6 text-text-primary" />
         </Button>
       </div>
-      <ProfileContainer userData={userData} />
+      <div className="flex flex-col w-full max-w-[600px] mx-auto">
+        <ProfileContainer userData={userData} />
+        <TabView />
+      </div>
     </main>
   );
 };
