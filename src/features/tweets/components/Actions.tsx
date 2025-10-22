@@ -55,6 +55,7 @@ const SECONDARY_ACTIONS_META = [
 
 export default function Actions({
   stats,
+  full = false,
 }: {
   stats: {
     replies: number;
@@ -64,6 +65,7 @@ export default function Actions({
     saved?: boolean;
     shared?: boolean;
   };
+  full?: boolean;
 }) {
   return (
     <div className="w-full my-.5">
@@ -86,18 +88,28 @@ export default function Actions({
           label={ACTIONS_META[2].label}
           color={ACTIONS_META[2].color}
         />
-        <Action
-          icon={ACTIONS_META[3].icon}
-          count={stats.views}
-          label={ACTIONS_META[3].label}
-          color={ACTIONS_META[3].color}
-        />
-        <div className="flex items-center gap-3">
+        {!full ? (
+          <Action
+            icon={ACTIONS_META[3].icon}
+            count={stats.views}
+            label={ACTIONS_META[3].label}
+            color={ACTIONS_META[3].color}
+          />
+        ) : (
           <Action
             icon={SECONDARY_ACTIONS_META[0].icon}
             label={SECONDARY_ACTIONS_META[0].label}
             color={SECONDARY_ACTIONS_META[0].color}
           />
+        )}
+        <div className="flex items-center gap-3">
+          {!full && (
+            <Action
+              icon={SECONDARY_ACTIONS_META[0].icon}
+              label={SECONDARY_ACTIONS_META[0].label}
+              color={SECONDARY_ACTIONS_META[0].color}
+            />
+          )}
           <Action
             icon={SECONDARY_ACTIONS_META[1].icon}
             label={SECONDARY_ACTIONS_META[1].label}

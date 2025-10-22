@@ -47,14 +47,15 @@ export default function UserInfo({
   const profileCardClass =
     'absolute left-1/2 transform -translate-x-1/2 top-full z-50 cursor-default';
 
+  const delay = 400;
   return (
     <div className={containerClass}>
       <div className="relative">
         <Link href="/profile">
           <span
             className={nameRowClass}
-            onMouseEnter={() => setShowNameCard(true)}
-            onMouseLeave={() => setShowNameCard(false)}
+            onMouseEnter={() => setTimeout(() => setShowNameCard(true), delay)}
+            onMouseLeave={() => setTimeout(() => setShowNameCard(false), delay)}
           >
             {name}{' '}
             {isVerified && (
@@ -62,20 +63,24 @@ export default function UserInfo({
             )}
           </span>
         </Link>
-        {cardShow && (showNameCard || cardNameHover) && (
-          <div
-            className={profileCardClass}
-            onMouseEnter={(e) => {
-              e.preventDefault();
-              setCardNameHover(true);
-              onHoverCard ? onHoverCard(true) : null;
-            }}
-            onMouseLeave={() => {
-              setCardNameHover(false);
-              onHoverCard ? onHoverCard(false) : null;
-            }}
-            onClick={(e) => e.preventDefault()}
-          >
+        <div
+          className={`${profileCardClass} transition-opacity duration-200 ${
+            cardShow && (showNameCard || cardNameHover)
+              ? 'opacity-100 pointer-events-auto'
+              : 'opacity-0 pointer-events-none'
+          }`}
+          onMouseEnter={(e) => {
+            e.preventDefault();
+            setCardNameHover(true);
+            onHoverCard ? onHoverCard(true) : null;
+          }}
+          onMouseLeave={() => {
+            setCardNameHover(false);
+            onHoverCard ? onHoverCard(false) : null;
+          }}
+          onClick={(e) => e.preventDefault()}
+        >
+          {cardShow && (showNameCard || cardNameHover) && (
             <ProfileCard
               name={name}
               username={username}
@@ -86,33 +91,41 @@ export default function UserInfo({
               avatar={avatar || ''}
               isFollowed={isFollowed}
             />
-          </div>
-        )}
+          )}
+        </div>
       </div>
-      <div className=" relative">
+      <div className="relative">
         <Link href="/profile">
           <span
             className={usernameClass}
-            onMouseEnter={() => setShowUsernameCard(true)}
-            onMouseLeave={() => setShowUsernameCard(false)}
+            onMouseEnter={() =>
+              setTimeout(() => setShowUsernameCard(true), 400)
+            }
+            onMouseLeave={() =>
+              setTimeout(() => setShowUsernameCard(false), 400)
+            }
           >
             {username}
           </span>
         </Link>
-        {cardShow && (showUsernameCard || cardUsernameHover) && (
-          <div
-            className={profileCardClass}
-            onMouseEnter={(e) => {
-              e.preventDefault();
-              setCardUsernameHover(true);
-              onHoverCard ? onHoverCard(true) : null;
-            }}
-            onMouseLeave={() => {
-              setCardUsernameHover(false);
-              onHoverCard ? onHoverCard(false) : null;
-            }}
-            onClick={(e) => e.preventDefault()}
-          >
+        <div
+          className={`${profileCardClass} transition-opacity duration-200 ${
+            cardShow && (showUsernameCard || cardUsernameHover)
+              ? 'opacity-100 pointer-events-auto'
+              : 'opacity-0 pointer-events-none'
+          }`}
+          onMouseEnter={(e) => {
+            e.preventDefault();
+            setCardUsernameHover(true);
+            onHoverCard ? onHoverCard(true) : null;
+          }}
+          onMouseLeave={() => {
+            setCardUsernameHover(false);
+            onHoverCard ? onHoverCard(false) : null;
+          }}
+          onClick={(e) => e.preventDefault()}
+        >
+          {cardShow && (showUsernameCard || cardUsernameHover) && (
             <ProfileCard
               name={name}
               username={username}
@@ -123,8 +136,8 @@ export default function UserInfo({
               avatar={avatar || ''}
               isFollowed={isFollowed}
             />
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

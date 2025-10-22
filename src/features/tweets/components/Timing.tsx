@@ -1,7 +1,7 @@
 import React from 'react';
 import Label from './Label';
 
-function Timing({ time }: { time: Date }) {
+function Timing({ time, full = false }: { time: Date; full?: boolean }) {
   const hours = time.getHours();
   const minutes = time.getMinutes();
   const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -44,7 +44,7 @@ function Timing({ time }: { time: Date }) {
 
   return (
     <div className="text-gray-400 text-sm relative hover:cursor-pointer group">
-      . <span className="hover:underline">{shownDate}</span>
+      <span className="hover:underline">{full ? formatted : shownDate}</span>
       <Label label={formatted} />
     </div>
   );

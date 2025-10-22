@@ -1,7 +1,12 @@
 import React from 'react';
+import FullTweet from '../../features/tweets/components/FullTweet';
 
 function Page() {
-  return <div>Full Tweet Page</div>;
+  return (
+    <>
+      <FullTweet />
+    </>
+  );
 }
 
 export default Page;

@@ -11,6 +11,7 @@ import { IoStatsChart } from 'react-icons/io5';
 import { TiVolumeMute } from 'react-icons/ti';
 import Action from './Action';
 import DropDown from './DropDown';
+
 import Timing from './Timing';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // <FontAwesomeIcon icon={byPrefixAndName.far['user-plus']} />;
@@ -73,36 +74,41 @@ const dropItems = [
   },
 ];
 
-const time = new Date(Date.now() - 250 * 1000 * 60);
-const data = {
-  user: {
-    name: 'Omda Hancker',
-    username: '@mohamedemad',
-    avatar: '/apple.png',
-    isVerified: true,
-  },
-  tweet: {
-    id: '1',
-    text: 'Tweet content goes here. This is a sample tweet to demonstrate the layout.',
-    image: '/Personal photo.jpeg',
-    time: time,
-    stats: {
-      replies: 2,
-      retweets: 4,
-      likes: 24,
-      views: '1.5K',
-      saved: true,
-      shared: false,
-    },
-  },
+type TweetStats = {
+  replies: number;
+  retweets: number;
+  likes: number;
+  views: string;
+  saved: boolean;
+  shared: boolean;
 };
 
-export default function Tweet() {
-  const [profileCardHovered, setProfileCardHovered] = useState(false);
+type Tweet = {
+  id: string;
+  text: string;
+  image?: string;
+  time: Date;
+  stats: TweetStats;
+};
+
+type User = {
+  name: string;
+  username: string;
+  avatar: string;
+  isVerified: boolean;
+};
+
+type TweetData = {
+  user: User;
+  tweet: Tweet;
+};
+
+export default function Tweet({ data }: { data: TweetData }) {
+  const [Hovered, setHovered] = useState(false);
   return (
     <Link
       href={'/fullTweet'}
-      className={`block mx-auto sm:max-w-[600px] border-b border-gray-700 p-4 text-white relative transition-colors ${!profileCardHovered ? 'hover:bg-[#0a0a0a]' : ''}`}
+      className={`block mx-auto sm:max-w-[600px] border-b border-gray-700 p-4 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''}`}
       style={{ textDecoration: 'none' }}
     >
       <div className="flex w-full gap-2">
@@ -112,11 +118,11 @@ export default function Tweet() {
           name={data.user.name}
           username={data.user.username}
           isVerified={data.user.isVerified}
-          bio="Sample bio for the user."
+          bio="Sample bio  time: time,for the user."
           following={100}
           followers="1K"
           isFollowed={false}
-          onHoverCard={setProfileCardHovered}
+          onHoverCard={setHovered}
         />
         <div className="flex flex-col items-center flex-1">
           <div className="flex items-center justify-between w-full">
@@ -130,12 +136,12 @@ export default function Tweet() {
                 followers="1K"
                 isFollowed={false}
                 avatar={data.user.avatar}
-                onHoverCard={setProfileCardHovered}
+                onHoverCard={setHovered}
               />
               <Timing time={data.tweet.time} />
             </div>
             <div className="ml-2 flex items-center">
-              <DropDown items={dropItems}>
+              <DropDown items={dropItems} onOpened={setHovered}>
                 <Action
                   icon={<FaEllipsisH size={12} />} // smaller icon
                   label="more"

@@ -29,7 +29,7 @@ export default function ProfileCard({
   const [followClicked, setFollowClicked] = useState(false);
 
   return (
-    <div className="w-64 h-full bg-black text-white rounded-2xl p-4 shadow-lg shadow-white/20 border border-gray-800 hover:border-gray-700 transition-all duration-200">
+    <div className="w-64 h-full bg-black text-white rounded-2xl p-4 shadow-lg shadow-white/20 border border-gray-800 hover:border-gray-700 transition-all duration-200 mt-2">
       <div className="flex justify-between items-start">
         <Avatar image={avatar} size={80} cardShow={false} />
         <button
