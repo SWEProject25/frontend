@@ -11,8 +11,13 @@ import {
   ResendOTPResponseDto,
   VerifyRecaptchaDto,
   VerifyRecaptchaResponseDto,
+  UserResponse,
 } from '../types/api';
-import { AUTH_API_CONFIG, AUTH_ENDPOINTS } from '../constants/api';
+import {
+  AUTH_API_CONFIG,
+  AUTH_ENDPOINTS,
+  AUTH_CLIENT_CONFIG,
+} from '../constants/api';
 
 class ApiError extends Error {
   constructor(
@@ -186,5 +191,48 @@ export const authApi = {
     );
 
     return handleResponse<VerifyRecaptchaResponseDto>(response);
+  },
+
+  oAuthLogin(
+    provider: string,
+    callback: (user: UserResponse | Record<string, unknown>) => void
+  ): void {
+    const width = AUTH_CLIENT_CONFIG.POPUP_WIDTH;
+    const height = AUTH_CLIENT_CONFIG.POPUP_HEIGHT;
+    const left = AUTH_CLIENT_CONFIG.LEFT_MARGIN;
+    const top = AUTH_CLIENT_CONFIG.TOP_MARGIN;
+    // Select endpoint from constants when available
+    let endpoint = '';
+    switch (provider) {
+      case 'google':
+        endpoint = AUTH_ENDPOINTS.GOOGLE_OAUTH_LOGIN;
+        break;
+      case 'github':
+        endpoint = AUTH_ENDPOINTS.GITHUB_OAUTH_LOGIN;
+        break;
+      default:
+        endpoint = `/api/v1.0/auth/${provider}/login`;
+    }
+
+    window.open(
+      `${AUTH_API_CONFIG.BASE_URL}${endpoint}`,
+      'OAuthPopup',
+      `width=${width},height=${height},left=${left},top=${top}`
+    );
+
+    function handleMessage(event: MessageEvent) {
+      const allowedOrigins = [AUTH_API_CONFIG.BASE_URL, window.location.origin];
+      if (!allowedOrigins.includes(event.origin)) return;
+
+      const payload = event.data;
+
+      const { user } = payload.data.user;
+
+      if (user) {
+        callback(user);
+        window.removeEventListener('message', handleMessage);
+      }
+    }
+    window.addEventListener('message', handleMessage);
   },
 };

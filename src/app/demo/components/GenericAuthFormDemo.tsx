@@ -56,7 +56,7 @@ export function GenericAuthFormDemo() {
     }, 1000);
   };
 
-  const handleSocialLogin = (providerId: string) => {
+  const handleSocialAuth = (providerId: string) => {
     console.log('Social login:', providerId);
     alert(`Social login with: ${providerId}`);
     setActiveForm(null);
@@ -434,7 +434,7 @@ export function GenericAuthFormDemo() {
           <FormContainer
             {...authFormConfigs.login}
             onSubmit={handleSubmit}
-            onSocialLogin={handleSocialLogin}
+            onSocialLogin={handleSocialAuth}
             onForgotPassword={handleForgotPassword}
             onClose={closeModal}
             mode="responsive"
@@ -448,7 +448,7 @@ export function GenericAuthFormDemo() {
           <FormContainer
             {...authFormConfigs.register}
             onSubmit={handleSubmit}
-            onSocialLogin={handleSocialLogin}
+            onSocialLogin={handleSocialAuth}
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"

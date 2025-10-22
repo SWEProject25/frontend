@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi } from '../services/authApi';
 import { useAuthStore } from '../store/authStore';
+import { UserResponse } from '../types';
 
 // Query Keys
 export const authKeys = {
@@ -77,6 +78,7 @@ export const useAuth = () => {
     login: loginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
+    oAuthLogin: authStore.oAuthLogin,
     isLoginLoading: loginMutation.isPending,
     isRegisterLoading: registerMutation.isPending,
     isLogoutLoading: logoutMutation.isPending,
