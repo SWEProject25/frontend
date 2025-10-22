@@ -12,7 +12,7 @@ interface ProfileContainerProps {
   userData: Profile;
 }
 
-const ProfileContainer: React.FC<ProfileContainerProps> = ({ userData }) => {
+const ProfileContainer = ({ userData }: ProfileContainerProps) => {
   return (
     <div className="flex flex-col w-[600px] mx-auto relative">
       <Cover coverImage={userData.coverImage} />

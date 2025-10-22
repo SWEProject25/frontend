@@ -11,7 +11,7 @@ interface UserPageProps {
   };
 }
 
-const UserPage: React.FC<UserPageProps> = ({ params }) => {
+const UserPage = ({ params }: UserPageProps) => {
   const { username } = params;
   const handleBack = () => {
     console.log('Back button clicked');

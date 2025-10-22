@@ -4,7 +4,7 @@ interface AvatarProps {
   avatarImage: string;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ avatarImage }) => {
+const Avatar = ({ avatarImage }: AvatarProps) => {
   return (
     <div
       className="absolute w-[132px] h-[132px] rounded-full border-4 border-[#15202B]"

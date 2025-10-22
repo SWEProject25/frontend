@@ -4,7 +4,7 @@ interface CoverProps {
   coverImage: string;
 }
 
-const Cover: React.FC<CoverProps> = ({ coverImage }) => {
+const Cover = ({ coverImage }: CoverProps) => {
   return (
     <div
       className="flex flex-row items-start p-8 w-[600px] h-[200px]"

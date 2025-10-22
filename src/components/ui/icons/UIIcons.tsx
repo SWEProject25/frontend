@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '@/types/ui';
 
-export const CheckIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const CheckIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -18,7 +18,7 @@ export const CheckIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const SpinnerIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const SpinnerIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -37,7 +37,7 @@ export const SpinnerIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const CloseIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const CloseIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -56,7 +56,7 @@ export const CloseIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const LoginIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const LoginIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -75,7 +75,7 @@ export const LoginIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const UserIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const UserIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -90,7 +90,7 @@ export const UserIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const KeyIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const KeyIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -105,7 +105,7 @@ export const KeyIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const InstallIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const InstallIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -120,7 +120,7 @@ export const InstallIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const MailIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const MailIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -139,7 +139,7 @@ export const MailIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const ChatIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const ChatIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -158,7 +158,7 @@ export const ChatIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const ListIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const ListIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -177,7 +177,7 @@ export const ListIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const CloseXIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const CloseXIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg className={className} fill="currentColor" viewBox="0 0 20 20">
       <path
@@ -189,7 +189,7 @@ export const CloseXIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const XLogoIcon: React.FC<IconProps> = ({ className = 'w-8 h-8' }) => {
+export const XLogoIcon = ({ className = 'w-8 h-8' }) => {
   return (
     <svg className={className} fill="currentColor" viewBox="0 0 24 24">
       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -197,9 +197,7 @@ export const XLogoIcon: React.FC<IconProps> = ({ className = 'w-8 h-8' }) => {
   );
 };
 
-export const ArrowLeftIcon: React.FC<IconProps> = ({
-  className = 'w-5 h-5',
-}) => {
+export const ArrowLeftIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -214,9 +212,7 @@ export const ArrowLeftIcon: React.FC<IconProps> = ({
   );
 };
 
-export const ArrowRightIcon: React.FC<IconProps> = ({
-  className = 'w-5 h-5',
-}) => {
+export const ArrowRightIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -231,7 +227,7 @@ export const ArrowRightIcon: React.FC<IconProps> = ({
   );
 };
 
-export const SearchIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const SearchIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -246,7 +242,7 @@ export const SearchIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const MuteIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const MuteIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -261,9 +257,7 @@ export const MuteIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const MessagesIcon: React.FC<IconProps> = ({
-  className = 'w-5 h-5',
-}) => {
+export const MessagesIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -279,7 +273,7 @@ export const MessagesIcon: React.FC<IconProps> = ({
   );
 };
 
-export const MoreIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const MoreIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -292,9 +286,7 @@ export const MoreIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const ProfessionIcon: React.FC<IconProps> = ({
-  className = 'w-5 h-5',
-}) => {
+export const ProfessionIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -306,9 +298,7 @@ export const ProfessionIcon: React.FC<IconProps> = ({
     </svg>
   );
 };
-export const LocationIcon: React.FC<IconProps> = ({
-  className = 'w-5 h-5',
-}) => {
+export const LocationIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -320,7 +310,7 @@ export const LocationIcon: React.FC<IconProps> = ({
     </svg>
   );
 };
-export const LinkIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const LinkIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -332,9 +322,7 @@ export const LinkIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
     </svg>
   );
 };
-export const BirthdateIcon: React.FC<IconProps> = ({
-  className = 'w-5 h-5',
-}) => {
+export const BirthdateIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -346,9 +334,7 @@ export const BirthdateIcon: React.FC<IconProps> = ({
     </svg>
   );
 };
-export const JoinDateIcon: React.FC<IconProps> = ({
-  className = 'w-5 h-5',
-}) => {
+export const JoinDateIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}

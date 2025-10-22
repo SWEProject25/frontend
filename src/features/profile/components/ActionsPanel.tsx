@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@/components/ui/Button';
 import { MoreIcon, MessagesIcon } from '@/components/ui/icons';
 
-const ActionsPanel: React.FC = () => {
+const ActionsPanel = () => {
   return (
     <div className="flex flex-row justify-end items-start p-3 gap-3 w-[600px] h-[60px]">
       <Button variant="outline" size="md" shape="circle">

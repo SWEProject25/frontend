@@ -5,10 +5,7 @@ interface FollowStatsProps {
   followersCount: number;
 }
 
-const FollowStats: React.FC<FollowStatsProps> = ({
-  followingCount,
-  followersCount,
-}) => {
+const FollowStats = ({ followingCount, followersCount }: FollowStatsProps) => {
   return (
     <div className="flex flex-row flex-wrap items-baseline gap-x-3 w-[600px] h-[20px]">
       <div className="flex flex-row items-baseline gap-1">

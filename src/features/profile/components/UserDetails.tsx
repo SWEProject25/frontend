@@ -5,7 +5,7 @@ interface UserDetailsProps {
   joinDate: string;
 }
 
-const UserDetails: React.FC<UserDetailsProps> = ({ joinDate }) => {
+const UserDetails = ({ joinDate }: UserDetailsProps) => {
   return (
     <div className="flex flex-row items-center gap-1">
       <JoinDateIcon className="w-4 h-4 text-text-placeholder" />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '@/types/ui';
 
-export const EyeIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const EyeIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -16,9 +16,7 @@ export const EyeIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const EyeSlashIcon: React.FC<IconProps> = ({
-  className = 'w-5 h-5',
-}) => {
+export const EyeSlashIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -33,9 +31,7 @@ export const EyeSlashIcon: React.FC<IconProps> = ({
   );
 };
 
-export const ChevronDownIcon: React.FC<IconProps> = ({
-  className = 'w-5 h-5',
-}) => {
+export const ChevronDownIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}

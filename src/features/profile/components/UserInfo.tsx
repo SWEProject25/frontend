@@ -5,7 +5,7 @@ interface UserInfoProps {
   username: string;
 }
 
-const UserInfo: React.FC<UserInfoProps> = ({ name, username }) => {
+const UserInfo = ({ name, username }: UserInfoProps) => {
   return (
     <div className="flex flex-col items-start p-4 gap-1 w-[600px] h-[80px]">
       <div className="flex flex-row items-center gap-1">
