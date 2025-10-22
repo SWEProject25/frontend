@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '@/types/ui';
 
-export const GoogleIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const GoogleIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -29,7 +29,7 @@ export const GoogleIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const AppleIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const AppleIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -42,9 +42,7 @@ export const AppleIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const FacebookIcon: React.FC<IconProps> = ({
-  className = 'w-5 h-5',
-}) => {
+export const FacebookIcon = ({ className = 'w-5 h-5' }) => {
   return (
     <svg
       className={className}
@@ -57,7 +55,7 @@ export const FacebookIcon: React.FC<IconProps> = ({
   );
 };
 
-export const GitHubIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const GitHubIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}

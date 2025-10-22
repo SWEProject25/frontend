@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '@/types/ui';
 
-export const CheckIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const CheckIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -18,7 +18,7 @@ export const CheckIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const SpinnerIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const SpinnerIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -37,7 +37,7 @@ export const SpinnerIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const CloseIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const CloseIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -56,7 +56,7 @@ export const CloseIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const LoginIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const LoginIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -75,7 +75,7 @@ export const LoginIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const UserIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const UserIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -90,7 +90,7 @@ export const UserIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const KeyIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const KeyIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -105,7 +105,7 @@ export const KeyIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const InstallIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const InstallIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -120,7 +120,7 @@ export const InstallIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const MailIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const MailIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -139,7 +139,7 @@ export const MailIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const ChatIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const ChatIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -158,7 +158,7 @@ export const ChatIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const ListIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const ListIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -177,7 +177,7 @@ export const ListIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const CloseXIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const CloseXIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg className={className} fill="currentColor" viewBox="0 0 20 20">
       <path
@@ -189,7 +189,7 @@ export const CloseXIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const XLogoIcon: React.FC<IconProps> = ({ className = 'w-8 h-8' }) => {
+export const XLogoIcon = ({ className = 'w-8 h-8' }) => {
   return (
     <svg className={className} fill="currentColor" viewBox="0 0 24 24">
       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -197,9 +197,7 @@ export const XLogoIcon: React.FC<IconProps> = ({ className = 'w-8 h-8' }) => {
   );
 };
 
-export const ArrowLeftIcon: React.FC<IconProps> = ({
-  className = 'w-5 h-5',
-}) => {
+export const ArrowLeftIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -214,9 +212,7 @@ export const ArrowLeftIcon: React.FC<IconProps> = ({
   );
 };
 
-export const ArrowRightIcon: React.FC<IconProps> = ({
-  className = 'w-5 h-5',
-}) => {
+export const ArrowRightIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -231,7 +227,7 @@ export const ArrowRightIcon: React.FC<IconProps> = ({
   );
 };
 
-export const SearchIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const SearchIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -246,7 +242,7 @@ export const SearchIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
   );
 };
 
-export const MuteIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const MuteIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -257,6 +253,109 @@ export const MuteIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
       <g>
         <path d="M18 6.59V1.2L8.71 7H5.5C4.12 7 3 8.12 3 9.5v5C3 15.88 4.12 17 5.5 17h2.09l-2.3 2.29 1.42 1.42 15.5-15.5-1.42-1.42L18 6.59zm-8 8V8.55l6-3.75v3.79l-6 6zM5 9.5c0-.28.22-.5.5-.5H8v6H5.5c-.28 0-.5-.22-.5-.5v-5zm6.5 9.24l1.45-1.45L16 19.2V14l2 .02v8.78l-6.5-4.06z"></path>
       </g>
+    </svg>
+  );
+};
+
+export const MessagesIcon = ({ className = 'w-5 h-5' }: IconProps) => {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 17 15"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        d="M0 2.08333C0 0.9325 0.9325 0 2.08333 0H14.5833C15.7342 0 16.6667 0.9325 16.6667 2.08333V12.9167C16.6667 14.0675 15.7342 15 14.5833 15H2.08333C0.9325 15 0 14.0675 0 12.9167V2.08333ZM2.08333 1.66667C1.85333 1.66667 1.66667 1.85333 1.66667 2.08333V4.38667L8.33333 7.41833L15 4.38833V2.08333C15 1.85333 14.8133 1.66667 14.5833 1.66667H2.08333ZM15 6.21917L8.33333 9.24917L1.66667 6.2175V12.9167C1.66667 13.1467 1.85333 13.3333 2.08333 13.3333H14.5833C14.8133 13.3333 15 13.1467 15 12.9167V6.21917Z"
+        fill="#F7F9F9"
+      />
+    </svg>
+  );
+};
+
+export const MoreIcon = ({ className = 'w-5 h-5' }: IconProps) => {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M2.5 9.99992C2.5 9.08325 3.25 8.33325 4.16667 8.33325C5.08333 8.33325 5.83333 9.08325 5.83333 9.99992C5.83333 10.9166 5.08333 11.6666 4.16667 11.6666C3.25 11.6666 2.5 10.9166 2.5 9.99992ZM10 11.6666C10.9167 11.6666 11.6667 10.9166 11.6667 9.99992C11.6667 9.08325 10.9167 8.33325 10 8.33325C9.08333 8.33325 8.33333 9.08325 8.33333 9.99992C8.33333 10.9166 9.08333 11.6666 10 11.6666ZM15.8333 11.6666C16.75 11.6666 17.5 10.9166 17.5 9.99992C17.5 9.08325 16.75 8.33325 15.8333 8.33325C14.9167 8.33325 14.1667 9.08325 14.1667 9.99992C14.1667 10.9166 14.9167 11.6666 15.8333 11.6666Z" />
+    </svg>
+  );
+};
+
+export const ProfessionIcon = ({ className = 'w-5 h-5' }: IconProps) => {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6-2a2 2 0 100 4 2 2 0 000-4zm6-2a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+  );
+};
+export const LocationIcon = ({ className = 'w-5 h-5' }: IconProps) => {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6-2a2 2 0 100 4 2 2 0 000-4zm6-2a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+  );
+};
+export const LinkIcon = ({ className = 'w-5 h-5' }: IconProps) => {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6-2a2 2 0 100 4 2 2 0 000-4zm6-2a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+  );
+};
+export const BirthdateIcon = ({ className = 'w-5 h-5' }: IconProps) => {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6-2a2 2 0 100 4 2 2 0 000-4zm6-2a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+  );
+};
+export const JoinDateIcon = ({ className = 'w-5 h-5' }: IconProps) => {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M3.33333 0.833333V0H5V0.833333H10V0H11.6667V0.833333H12.9167C14.075 0.833333 15 1.76667 15 2.91667V12.9167C15 14.0667 14.075 15 12.9167 15H2.08333C0.933333 15 0 14.0667 0 12.9167V2.91667C0 1.76667 0.933333 0.833333 2.08333 0.833333H3.33333ZM3.33333 2.5H2.08333C1.85833 2.5 1.66667 2.68333 1.66667 2.91667V12.9167C1.66667 13.15 1.85833 13.3333 2.08333 13.3333H12.9167C13.15 13.3333 13.3333 13.15 13.3333 12.9167V2.91667C13.3333 2.68333 13.15 2.5 12.9167 2.5H11.6667V3.33333H10V2.5H5V3.33333H3.33333V2.5ZM3.33333 7.5H5V5.83333H3.33333V7.5ZM3.33333 10.8333H5V9.16667H3.33333V10.8333ZM6.66667 7.5H8.33333V5.83333H6.66667V7.5ZM6.66667 10.8333H8.33333V9.16667H6.66667V10.8333ZM10 7.5H11.6667V5.83333H10V7.5Z" />
+    </svg>
+  );
+};
+
+export const CameraIcon = ({ className = 'w-5 h-5' }: IconProps) => {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h1.697l3-2zM12 10.5c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-4 2c0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4-4-1.791-4-4zM17 2c0 1.657-1.343 3-3 3v1c1.657 0 3 1.343 3 3h1c0-1.657 1.343-3 3-3V5c-1.657 0-3-1.343-3-3h-1z"></path>
     </svg>
   );
 };
