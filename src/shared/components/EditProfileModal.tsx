@@ -4,6 +4,8 @@ import { InputField } from '@/components/ui/input/InputField';
 import Button from '@/components/ui/Button';
 import { CloseIcon } from '@/components/ui/icons';
 import UploadImage from '@/components/ui/UploadImage';
+import Cover from './Cover';
+import Avatar from './Avatar';
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -85,19 +87,9 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   );
 
   return (
-    <XModal isOpen={isOpen} onClose={onClose} size="lg" header={headerContent}>
+    <XModal isOpen={isOpen} onClose={onClose} size="xl" header={headerContent}>
       <div className="flex flex-col w-full">
-        {/* Cover Image Section */}
-        <div className="relative w-full h-[200px]">
-          <div
-            className="w-full h-full"
-            style={{
-              backgroundImage: bannerPreview ? `url(${bannerPreview})` : 'none',
-              backgroundColor: '#333639',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          />
+        <Cover coverImage={bannerPreview} className="mt-4">
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <UploadImage
               onFileSelect={handleBannerImageChange}
@@ -105,27 +97,19 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               onClear={() => handleBannerImageChange(null)}
             />
           </div>
-        </div>
+        </Cover>
 
-        {/* Avatar Section */}
-        <div className="relative px-4 pb-4">
-          <div className="absolute -top-16 left-4">
-            <div
-              className="w-[132px] h-[132px] rounded-full border-4 border-[#15202B] relative"
-              style={{
-                backgroundImage: profilePreview
-                  ? `url(${profilePreview})`
-                  : 'none',
-                backgroundColor: '#333639',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            >
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <UploadImage onFileSelect={handleProfileImageChange} />
-              </div>
+        <div className="relative pb-4">
+          <Avatar
+            avatarImage={profilePreview}
+            className="-top-[66px] left-3"
+            position="absolute"
+            customPosition={true}
+          >
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <UploadImage onFileSelect={handleProfileImageChange} />
             </div>
-          </div>
+          </Avatar>
 
           {/* Form Fields */}
           <div className="mt-20 space-y-6">

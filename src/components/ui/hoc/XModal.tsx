@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { XLogo, CloseIcon } from '@/components/ui/icons';
+import { CloseIcon } from '@/components/ui/icons';
 import Button from '@/components/ui/Button';
 
 interface XModalProps {
@@ -48,10 +48,10 @@ export default function XModal({
   if (!isOpen) return null;
 
   const sizeClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
+    sm: 'sm:max-w-sm',
+    md: 'sm:max-w-md',
+    lg: 'sm:max-w-lg',
+    xl: 'sm:max-w-xl',
   };
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -62,7 +62,7 @@ export default function XModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center sm:p-4 bg-gray-400/50 "
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
@@ -70,9 +70,9 @@ export default function XModal({
       <div
         className={`
           relative w-full ${sizeClasses[size]}
-          bg-modal-bg rounded-2xl
+          bg-modal-bg sm:rounded-2xl
           shadow-2xl
-          max-h-[90vh] overflow-y-auto
+          h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto
           animate-in fade-in zoom-in-95 duration-200
         `}
       >
