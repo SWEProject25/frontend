@@ -29,6 +29,7 @@ export {
   LinkIcon,
   BirthdateIcon,
   JoinDateIcon,
+  CameraIcon,
 } from './UIIcons';
 
 // Brand Icons

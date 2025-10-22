@@ -10,7 +10,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     | 'ghost'
     | 'social'
     | 'error'
-    | 'error-outline';
+    | 'error-outline'
+    | 'overlay';
   size?: 'sm' | 'md' | 'lg';
   shape?: 'rounded' | 'circle';
   loading?: boolean;
@@ -41,10 +42,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = `
       relative inline-flex items-center justify-center
       font-bold transition-all duration-200
-      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary
       cursor-pointer
       disabled:cursor-not-allowed disabled:opacity-50
     `;
+    // focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary
 
     const sizeStyles = {
       sm:
@@ -98,6 +99,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         bg-transparent text-error
         border border-error
         disabled:text-red-300 disabled:border-red-300 disabled:shadow-inner
+      `,
+      overlay: `
+        bg-black/50 text-white
+        hover:bg-black/70
+        disabled:bg-opacity-30 disabled:text-gray-400
       `,
     };
 

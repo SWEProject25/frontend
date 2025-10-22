@@ -26,7 +26,7 @@ const UserPage = ({ params }: UserPageProps) => {
           onBack={handleBack}
           showArrow={true}
         />
-        <Button variant="outline" size="md" shape="circle">
+        <Button variant="ghost" size="md" shape="circle">
           <SearchIcon className="w-5 h-6 text-text-primary" />
         </Button>
       </div>

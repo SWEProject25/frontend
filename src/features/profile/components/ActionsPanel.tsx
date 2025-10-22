@@ -1,24 +1,41 @@
 import React, { useState } from 'react';
 import Button from '@/components/ui/Button';
 import { MoreIcon, MessagesIcon } from '@/components/ui/icons';
+import EditProfileModal from '../../../shared/components/EditProfileModal';
 
 interface ActionsPanelProps {
   isOwnProfile: boolean;
   isFollowing: boolean;
-  onEditProfile?: () => void;
   onFollow?: () => void;
   onUnfollow?: () => void;
+  userData: {
+    name: string;
+    bio: string;
+    profileImage?: string;
+    bannerImage?: string;
+  };
+  onSaveProfile: (data: {
+    name: string;
+    bio: string;
+    profileImage?: File;
+    bannerImage?: File;
+  }) => void;
 }
 
 const ActionsPanel: React.FC<ActionsPanelProps> = ({
   isOwnProfile,
   isFollowing,
-  onEditProfile,
   onFollow,
   onUnfollow,
+  userData,
+  onSaveProfile,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleEditProfileClick = () => {
+    setIsModalOpen(true);
+  };
   return (
     <div className="flex flex-row justify-end items-start p-3 gap-3 w-[600px] h-[60px]">
       {isOwnProfile ? (
@@ -27,7 +44,7 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
           size="md"
           shape="rounded"
           className="px-5"
-          onClick={onEditProfile}
+          onClick={handleEditProfileClick}
         >
           Edit Profile
         </Button>
@@ -74,6 +91,12 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
           )}
         </>
       )}
+      <EditProfileModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        initialData={userData}
+        onSave={onSaveProfile}
+      />
     </div>
   );
 };

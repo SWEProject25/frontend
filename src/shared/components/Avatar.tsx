@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface AvatarProps {
-  avatarImage: string;
+  avatarImage?: string;
 }
 
 const Avatar = ({ avatarImage }: AvatarProps) => {
@@ -13,8 +13,8 @@ const Avatar = ({ avatarImage }: AvatarProps) => {
       <div
         className="w-full h-full rounded-full"
         style={{
-          backgroundImage: `url(${avatarImage})`,
-          backgroundColor: '#FFFFFF',
+          backgroundImage: avatarImage ? `url(${avatarImage})` : 'none',
+          backgroundColor: '#333639',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}

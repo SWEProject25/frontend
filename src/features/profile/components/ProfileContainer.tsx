@@ -1,6 +1,6 @@
 import React from 'react';
-import Cover from './Cover';
-import Avatar from './Avatar';
+import Cover from '../../../shared/components/Cover';
+import Avatar from '../../../shared/components/Avatar';
 import ActionsPanel from './ActionsPanel';
 import UserInfo from './UserInfo';
 import Description from './Description';
@@ -13,8 +13,14 @@ interface ProfileContainerProps {
 }
 
 const ProfileContainer = ({ userData }: ProfileContainerProps) => {
-  const onEditProfile = () => {
-    // Handle edit profile action
+  const handleSaveProfile = (data: {
+    name: string;
+    bio: string;
+    profileImage?: File;
+    bannerImage?: File;
+  }) => {
+    console.log('Saving profile data:', data);
+    // Implement API call or state update here
   };
 
   const onFollow = () => {
@@ -30,11 +36,12 @@ const ProfileContainer = ({ userData }: ProfileContainerProps) => {
       <Cover coverImage={userData.coverImage} />
       <Avatar avatarImage={userData.avatarImage} />
       <ActionsPanel
-        isOwnProfile={false}
-        isFollowing={true}
-        onEditProfile={onEditProfile}
-        onFollow={onFollow}
-        onUnfollow={onUnfollow}
+        isOwnProfile={true}
+        isFollowing={false}
+        onFollow={() => console.log('Follow clicked')}
+        onUnfollow={() => console.log('Unfollow clicked')}
+        userData={userData}
+        onSaveProfile={handleSaveProfile}
       />
       <UserInfo name={userData.name} username={userData.username} />
       <div className="flex flex-col items-start px-4 gap-1 w-[600px] h-[20px]">

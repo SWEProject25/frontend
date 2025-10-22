@@ -1,16 +1,16 @@
 import React from 'react';
 
 interface CoverProps {
-  coverImage: string;
+  coverImage?: string;
 }
 
 const Cover = ({ coverImage }: CoverProps) => {
   return (
     <div
-      className="flex flex-row items-start p-8 w-[600px] h-[200px]"
+      className="flex flex-row items-start p-8 w-full h-[200px]"
       style={{
-        backgroundImage: `url(${coverImage})`,
-        backgroundColor: '#FFFFFF',
+        backgroundImage: coverImage ? `url(${coverImage})` : 'none',
+        backgroundColor: '#333639',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
