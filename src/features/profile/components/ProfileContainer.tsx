@@ -13,11 +13,29 @@ interface ProfileContainerProps {
 }
 
 const ProfileContainer = ({ userData }: ProfileContainerProps) => {
+  const onEditProfile = () => {
+    // Handle edit profile action
+  };
+
+  const onFollow = () => {
+    // Handle follow action
+  };
+
+  const onUnfollow = () => {
+    // Handle unfollow action
+  };
+
   return (
     <div className="flex flex-col w-[600px] mx-auto relative">
       <Cover coverImage={userData.coverImage} />
       <Avatar avatarImage={userData.avatarImage} />
-      <ActionsPanel />
+      <ActionsPanel
+        isOwnProfile={false}
+        isFollowing={true}
+        onEditProfile={onEditProfile}
+        onFollow={onFollow}
+        onUnfollow={onUnfollow}
+      />
       <UserInfo name={userData.name} username={userData.username} />
       <div className="flex flex-col items-start px-4 gap-1 w-[600px] h-[20px]">
         <Description bio={userData.bio} />
