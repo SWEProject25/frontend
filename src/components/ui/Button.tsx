@@ -4,6 +4,7 @@ import { SpinnerIcon } from '@/components/ui/icons';
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
+  shape?: 'rounded' | 'circle'; // New prop for button shape
   loading?: boolean;
   fullWidth?: boolean;
   children: React.ReactNode;
@@ -12,6 +13,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export default function Button({
   variant = 'primary',
   size = 'md',
+  shape = 'rounded',
   loading = false,
   fullWidth = false,
   disabled,
@@ -21,7 +23,7 @@ export default function Button({
 }: ButtonProps) {
   const baseStyles = `
     relative inline-flex items-center justify-center
-    font-medium rounded-full
+    font-medium
     transition-all duration-200
     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary
     cursor-pointer
@@ -29,9 +31,18 @@ export default function Button({
   `;
 
   const sizeStyles = {
-    sm: 'px-4 py-1.5 text-sm min-h-[32px]',
-    md: 'px-6 py-2 text-base min-h-[40px]',
-    lg: 'px-8 py-3 text-lg min-h-[52px]',
+    sm:
+      shape === 'circle'
+        ? 'w-8 h-8 text-sm'
+        : 'px-4 py-1.5 text-sm min-h-[32px]',
+    md:
+      shape === 'circle'
+        ? 'w-10 h-10 text-base'
+        : 'px-6 py-2 text-base min-h-[40px]',
+    lg:
+      shape === 'circle'
+        ? 'w-13 h-13 text-lg'
+        : 'px-8 py-3 text-lg min-h-[52px]',
   };
 
   const variantStyles = {
@@ -57,7 +68,8 @@ export default function Button({
     `,
   };
 
-  const widthStyles = fullWidth ? 'w-full' : '';
+  const shapeStyles = shape === 'circle' ? 'rounded-full' : 'rounded-full'; // Both use rounded-full for border-radius
+  const widthStyles = fullWidth && shape !== 'circle' ? 'w-full' : ''; // fullWidth ignored for circle shape
 
   return (
     <button
@@ -65,6 +77,7 @@ export default function Button({
         ${baseStyles}
         ${sizeStyles[size]}
         ${variantStyles[variant]}
+        ${shapeStyles}
         ${widthStyles}
         ${className}
       `}

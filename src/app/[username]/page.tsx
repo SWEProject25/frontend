@@ -1,11 +1,10 @@
-// app/[username]/page.tsx
 'use client';
 import React from 'react';
-
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { userData } from '@/features/settings/constants/USER_DATA';
 import { SearchIcon } from '@/components/ui/icons';
-
+import ProfileContainer from '@/features/profile/components/ProfileContainer';
+import Button from '@/components/ui/Button';
 interface UserPageProps {
   params: {
     username: string;
@@ -27,10 +26,11 @@ const UserPage: React.FC<UserPageProps> = ({ params }) => {
           onBack={handleBack}
           showArrow={true}
         />
-        <SearchIcon className="w-5 h-6 text-text-primary" />
+        <Button variant="outline" size="md" shape="circle">
+          <SearchIcon className="w-5 h-6 text-text-primary" />
+        </Button>
       </div>
-      <h1 className="text-2xl font-bold">@{username}&apos;s Profile</h1>
-      <p>Welcome to {username}&apos;s page!</p>
+      <ProfileContainer userData={userData} />
     </main>
   );
 };

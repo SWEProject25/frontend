@@ -22,6 +22,13 @@ export {
   ArrowRightIcon,
   SearchIcon,
   MuteIcon,
+  MessagesIcon,
+  MoreIcon,
+  ProfessionIcon,
+  LocationIcon,
+  LinkIcon,
+  BirthdateIcon,
+  JoinDateIcon,
 } from './UIIcons';
 
 // Brand Icons
