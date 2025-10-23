@@ -7,11 +7,15 @@ import EmptySpace from './EmptySpace';
 interface LayoutWrapperProps {
   children: React.ReactNode;
   showRightSidebar?: boolean;
+  hideMobileBar?: boolean;
+  fullWidth?: boolean; // For pages that need full width like messages
 }
 
 export default function LayoutWrapper({
   children,
   showRightSidebar = true,
+  hideMobileBar = false,
+  fullWidth = false,
 }: LayoutWrapperProps) {
   return (
     <div className="min-h-screen bg-black flex justify-center">
@@ -22,7 +26,7 @@ export default function LayoutWrapper({
       </div>
 
       <main
-        className={`flex-1 ${showRightSidebar ? 'max-w-[600px]' : 'max-w-[990px]'} border-x border-gray-800 min-h-screen`}
+        className={`flex-1 ${!fullWidth && (showRightSidebar ? 'max-w-[600px]' : 'max-w-[990px]')} border-x border-gray-800 min-h-screen`}
       >
         {children}
       </main>
@@ -35,9 +39,11 @@ export default function LayoutWrapper({
 
       <EmptySpace />
 
-      <div className="sm:hidden">
-        <MobileBottomBar />
-      </div>
+      {!hideMobileBar && (
+        <div className="sm:hidden">
+          <MobileBottomBar />
+        </div>
+      )}
     </div>
   );
 }
