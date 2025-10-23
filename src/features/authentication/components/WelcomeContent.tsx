@@ -11,7 +11,7 @@ export function WelcomeContent({
   onCreateAccount,
   onLogin,
 }: WelcomeContentProps) {
-  const { handleSocialLogin } = useAuthHandlers();
+  const { handleSocialAuth } = useAuthHandlers();
 
   return (
     <div className="space-y-12">
@@ -33,7 +33,7 @@ export function WelcomeContent({
             size="lg"
             icon={<GoogleIcon />}
             className="w-full"
-            onClick={() => handleSocialLogin(SOCIAL_PROVIDERS.GOOGLE)}
+            onClick={() => handleSocialAuth(SOCIAL_PROVIDERS.GOOGLE)}
           >
             Sign up with Google
           </AuthButton>
@@ -43,7 +43,7 @@ export function WelcomeContent({
             size="lg"
             icon={<GitHubIcon />}
             className="w-full"
-            onClick={() => handleSocialLogin(SOCIAL_PROVIDERS.GITHUB)}
+            onClick={() => handleSocialAuth(SOCIAL_PROVIDERS.GITHUB)}
           >
             Sign up with GitHub
           </AuthButton>

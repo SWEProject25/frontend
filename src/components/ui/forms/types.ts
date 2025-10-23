@@ -80,7 +80,7 @@ export interface FormHandlers {
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   handleBlur: (fieldName: string) => () => void;
   handleSubmit: (e: React.FormEvent) => void;
-  handleSocialLogin: (providerId: string) => void;
+  handleSocialAuth: (providerId: string) => void;
   onClearState?: (fieldName?: string) => void;
   onEmailValidationChange?: (isValid: boolean, isValidating: boolean) => void;
 }

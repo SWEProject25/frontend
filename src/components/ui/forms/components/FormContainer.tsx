@@ -138,7 +138,7 @@ export function FormContainer(
     [formData, onSubmit]
   );
 
-  const handleSocialLogin = useCallback(
+  const handleSocialAuth = useCallback(
     (providerId: string) => {
       onSocialLogin?.(providerId);
     },
@@ -171,7 +171,7 @@ export function FormContainer(
                 handleInputChange={handleInputChange}
                 handleBlur={handleBlur}
                 handleSubmit={handleSubmit}
-                handleSocialLogin={handleSocialLogin}
+                handleSocialAuth={handleSocialAuth}
                 loading={formState?.isLoading || false}
                 isFormValid={isFormValidState}
                 onEmailValidationChange={handleEmailValidationChange}
@@ -225,7 +225,7 @@ export function FormContainer(
             handleInputChange={handleInputChange}
             handleBlur={handleBlur}
             handleSubmit={handleSubmit}
-            handleSocialLogin={handleSocialLogin}
+            handleSocialAuth={handleSocialAuth}
             loading={formState?.isLoading || false}
             isFormValid={isFormValidState}
             onEmailValidationChange={handleEmailValidationChange}
