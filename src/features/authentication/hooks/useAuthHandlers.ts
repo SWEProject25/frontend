@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { CreateUserDto, LoginDto, VerifyOTPDto } from '../types/api';
+import { AUTH_CLIENT_CONFIG } from '../constants/api';
 import { FormState } from '../types/hooks';
 import { useAuth } from './useAuth';
 
@@ -12,27 +13,48 @@ export function useAuthHandlers() {
     errors: {},
   });
 
-  const { login, register, verifyOTP, isLoginLoading, isRegisterLoading } =
-    useAuth();
+  const {
+    login,
+    register,
+    verifyOTP,
+    oAuthLogin,
+    isLoginLoading,
+    isRegisterLoading,
+  } = useAuth();
 
-  const handleSocialLogin = useCallback(async (_providerId: string) => {
-    try {
-      setFormState((prev) => ({ ...prev, isLoading: true }));
+  const handleSocialAuth = useCallback(
+    async (providerId: string) => {
+      try {
+        setFormState((prev) => ({ ...prev, isLoading: true }));
+        // Open popup and handle result via callback
+        oAuthLogin(providerId, () => {
+          // Update state to reflect successful login
+          setFormState((prev) => ({
+            ...prev,
+            isLoading: false,
+            success: true,
+          }));
 
-      // TODO: Implement social login logic when backend supports it
-      // providerId will be used to determine which provider (Google, GitHub, etc.)
-      // For now, just simulate success
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setFormState((prev) => ({ ...prev, isLoading: false, success: true }));
-    } catch (_error) {
-      setFormState((prev) => ({
-        ...prev,
-        isLoading: false,
-        errors: { social: 'Social login failed. Please try again.' },
-      }));
-    }
-  }, []);
+          // Always redirect to the demo success page after OAuth
+          setTimeout(() => {
+            router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT);
+          }, 300);
+        });
+      } catch (error) {
+        setFormState((prev) => ({
+          ...prev,
+          isLoading: false,
+          errors: {
+            social:
+              error instanceof Error
+                ? error.message
+                : 'Social login failed. Please try again.',
+          },
+        }));
+      }
+    },
+    [oAuthLogin, router]
+  );
 
   const handleLogin = useCallback(
     async (data: Record<string, string>, step?: string): Promise<boolean> => {
@@ -66,7 +88,7 @@ export function useAuthHandlers() {
 
             // Redirect to demo page with success message
             setTimeout(() => {
-              router.push('/auth-demo?login=success');
+              router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT);
             }, 1000); // Small delay to show success state
             return true;
 
@@ -86,7 +108,7 @@ export function useAuthHandlers() {
 
             // Redirect to demo page with success message
             setTimeout(() => {
-              router.push('/auth-demo?login=success');
+              router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT);
             }, 1000);
             return true;
         }
@@ -170,6 +192,7 @@ export function useAuthHandlers() {
               name: data.name,
               email: data.email,
               password: data.password,
+              birth_date: data.birth_date || '',
             };
 
             await register(signupData);
@@ -181,7 +204,7 @@ export function useAuthHandlers() {
 
             // Redirect to demo page with success message
             setTimeout(() => {
-              router.push('/auth-demo?register=success');
+              router.push(AUTH_CLIENT_CONFIG.REGISTER_REDIRECT);
             }, 1000); // Small delay to show success state
             return true;
 
@@ -253,7 +276,7 @@ export function useAuthHandlers() {
       ...formState,
       isLoading: formState.isLoading || isLoginLoading || isRegisterLoading,
     },
-    handleSocialLogin,
+    handleSocialAuth,
     handleLogin,
     handleSignup,
     handleForgotPassword,

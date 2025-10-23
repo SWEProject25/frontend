@@ -47,3 +47,6 @@ export { AUTH_API_CONFIG, AUTH_ENDPOINTS, AUTH_CONSTANTS } from './api';
 
 // Re-export OTP constants
 export { OTP_CONSTANTS } from './otp';
+
+// Re-export reCAPTCHA constants
+export { RECAPTCHA_CONFIG } from './recaptcha';

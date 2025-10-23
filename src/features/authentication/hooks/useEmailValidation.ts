@@ -132,8 +132,7 @@ export function useEmailValidation({
           });
           onValidationChange?.(true);
         }
-      } catch (error) {
-        console.error('Email validation error:', error);
+      } catch {
         // Network error - don't show error, just don't validate
         setValidationState({
           isValidating: false,

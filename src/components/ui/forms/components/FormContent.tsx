@@ -22,7 +22,7 @@ export function FormContent({
   handleInputChange,
   handleBlur,
   handleSubmit,
-  handleSocialLogin,
+  handleSocialAuth,
   onForgotPassword,
   onSwitchModal,
   onClearState,
@@ -37,7 +37,7 @@ export function FormContent({
         socialProviders={socialProviders}
         showDivider={showDivider}
         loading={loading}
-        onSocialLogin={handleSocialLogin}
+        onSocialLogin={handleSocialAuth}
       />
 
       <form onSubmit={handleSubmit} className="space-y-6">

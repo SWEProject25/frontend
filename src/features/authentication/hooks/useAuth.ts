@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi } from '../services/authApi';
 import { useAuthStore } from '../store/authStore';
+import { UserResponse } from '../types';
 
 // Query Keys
 export const authKeys = {
@@ -16,8 +17,8 @@ export const useLoginMutation = () => {
   return useMutation({
     mutationFn: authApi.login,
     onSuccess: (data) => {
-      setUser(data.user);
-      queryClient.setQueryData(authKeys.user(), data.user);
+      setUser(data.data.user);
+      queryClient.setQueryData(authKeys.user(), data.data.user);
     },
     onError: (error) => {
       setError(
@@ -37,8 +38,8 @@ export const useRegisterMutation = () => {
   return useMutation({
     mutationFn: authApi.register,
     onSuccess: (data) => {
-      setUser(data.user);
-      queryClient.setQueryData(authKeys.user(), data.user);
+      setUser(data.data.user);
+      queryClient.setQueryData(authKeys.user(), data.data.user);
     },
     onError: (error) => {
       setError(error instanceof Error ? error.message : 'Registration failed');
@@ -77,6 +78,7 @@ export const useAuth = () => {
     login: loginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
+    oAuthLogin: authStore.oAuthLogin,
     isLoginLoading: loginMutation.isPending,
     isRegisterLoading: registerMutation.isPending,
     isLogoutLoading: logoutMutation.isPending,
