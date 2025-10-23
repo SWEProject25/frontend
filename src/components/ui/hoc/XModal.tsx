@@ -1,26 +1,25 @@
 import React, { useEffect } from 'react';
-import { XLogo, CloseIcon } from '@/components/ui/icons';
+import { CloseIcon } from '@/components/ui/icons';
+import Button from '@/components/ui/Button';
 
 interface XModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
   children: React.ReactNode;
-  showLogo?: boolean;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
+  header?: React.ReactNode; // Added header prop
 }
 
 export default function XModal({
   isOpen,
   onClose,
-  title,
   children,
-  showLogo = true,
   size = 'md',
   closeOnOverlayClick = true,
   closeOnEscape = true,
+  header, // Added header prop
 }: XModalProps) {
   useEffect(() => {
     if (!closeOnEscape || !isOpen) return;
@@ -49,10 +48,10 @@ export default function XModal({
   if (!isOpen) return null;
 
   const sizeClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
+    sm: 'sm:max-w-sm',
+    md: 'sm:max-w-md',
+    lg: 'sm:max-w-lg',
+    xl: 'sm:max-w-xl',
   };
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -63,7 +62,7 @@ export default function XModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center sm:p-4 bg-gray-400/50 "
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
@@ -71,35 +70,26 @@ export default function XModal({
       <div
         className={`
           relative w-full ${sizeClasses[size]}
-          bg-modal-bg rounded-2xl
+          bg-modal-bg sm:rounded-2xl
           shadow-2xl
-          max-h-[90vh] overflow-y-auto
+          h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto
           animate-in fade-in zoom-in-95 duration-200
         `}
       >
-        <button
-          onClick={onClose}
-          className="absolute top-4 left-4 p-2 rounded-full hover:bg-muted transition-colors z-10"
-          aria-label="Close modal"
-        >
-          <CloseIcon className="w-5 h-5 text-text-active" />
-        </button>
-
-        {showLogo && (
-          <div className="flex justify-center pt-4 pb-2">
-            <XLogo className="w-8 h-8 text-text-active" />
-          </div>
+        {header ? (
+          header
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            shape="circle"
+            className="absolute top-4 right-4 p-6 rounded-full hover:bg-muted transition-colors z-10"
+            onClick={onClose}
+            aria-label="Close modal"
+          >
+            <CloseIcon className="w-5 h-5 text-text-active" />
+          </Button>
         )}
-
-        {title && (
-          <div className="px-8 pt-2 pb-4">
-            <h2 className="text-2xl font-bold text-text-active text-center">
-              {title}
-            </h2>
-          </div>
-        )}
-
-        {/* Content */}
         <div className="px-8 pb-8">{children}</div>
       </div>
     </div>

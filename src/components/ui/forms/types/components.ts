@@ -23,7 +23,7 @@ export type AllSteps = LoginStep | CreateAccountStep | SingleStep;
 
 // Captcha Component Types
 export interface CaptchaComponentProps {
-  onVerify: (isValid: boolean) => void;
+  onVerify: (isValid: boolean, token?: string) => void;
 }
 
 // Password Strength Indicator Types

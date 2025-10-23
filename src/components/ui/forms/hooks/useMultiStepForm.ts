@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { LOGIN_STEPS, CREATE_ACCOUNT_STEPS } from '../constants';
+import { LOGIN_STEPS, getCreateAccountSteps } from '../constants';
 import { AllSteps } from '../types/components';
 import { getInitialValues } from '@/features/authentication/utils';
 import { UseMultiStepFormProps, UseMultiStepFormReturn } from '../types/hooks';
@@ -44,7 +44,7 @@ export function useMultiStepForm({
     return isMultiStep
       ? type === 'login'
         ? LOGIN_STEPS
-        : CREATE_ACCOUNT_STEPS
+        : getCreateAccountSteps() // Use dynamic steps for create account
       : [type as AllSteps];
   }, [type]);
 

@@ -7,6 +7,11 @@ export interface OTPInputProps {
   onClearError?: () => void;
 }
 
+// Captcha Component Types
+export interface CaptchaInputProps {
+  onVerify: (isVerified: boolean) => void;
+}
+
 // Email Input Field Types
 export interface EmailInputFieldProps {
   label: string;

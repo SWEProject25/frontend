@@ -17,7 +17,7 @@ export function WelcomePage() {
 
   const {
     formState,
-    handleSocialLogin,
+    handleSocialAuth,
     handleLogin,
     handleSignup,
     handleForgotPassword,
@@ -53,7 +53,7 @@ export function WelcomePage() {
           onSwitchModal={switchModal}
           mode={formMode}
           formState={formState}
-          handleSocialLogin={handleSocialLogin}
+          handleSocialAuth={handleSocialAuth}
           handleLogin={handleLogin}
           handleSignup={handleSignup}
           handleForgotPassword={handleForgotPassword}

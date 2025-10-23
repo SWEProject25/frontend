@@ -15,7 +15,7 @@ export interface AuthFormProps {
   onSwitchModal?: (newType: AuthModalType) => void;
   mode: 'modal' | 'fullpage';
   formState: FormState;
-  handleSocialLogin: (providerId: string) => void;
+  handleSocialAuth: (providerId: string) => void;
   handleLogin: (
     data: Record<string, string>,
     step?: string

@@ -191,7 +191,7 @@ export const authFormConfigs = {
         placeholder: 'Enter the code shown above',
       },
     ],
-    submitButton: { text: 'Verify' },
+    submitButton: { text: 'Next' },
     footerLinks: [
       {
         text: FOOTER_LINK_TEXTS.ALREADY_HAVE_ACCOUNT,
