@@ -1,6 +1,6 @@
-import Tabs from '@/shared/components/Tabs';
+import Tabs from '@/components/generic/Tabs';
 import { useState } from 'react';
-import InfiniteScrollContainer from '@/shared/components/InfiniteScrollContainer';
+import InfiniteScrollContainer from '@/components/generic/InfiniteScrollContainer';
 
 const TabView = () => {
   const [selectedTab, setSelectedTab] = useState('posts');

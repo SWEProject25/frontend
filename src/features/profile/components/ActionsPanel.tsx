@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Button from '@/components/ui/Button';
 import { MoreIcon, MessagesIcon } from '@/components/ui/icons';
-import EditProfileModal from '../../../shared/components/EditProfileModal';
+import EditProfileModal from '../../../components/generic/EditProfileModal';
 
 interface ActionsPanelProps {
   isOwnProfile: boolean;
