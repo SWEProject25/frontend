@@ -6,14 +6,16 @@ import { SearchIcon } from '@/components/ui/icons';
 import ProfileContainer from '@/features/profile/components/ProfileContainer';
 import Button from '@/components/ui/Button';
 import TabView from '@/features/profile/components/TabView';
+import { use } from 'react';
+
 interface UserPageProps {
-  params: {
+  params: Promise<{
     username: string;
-  };
+  }>;
 }
 
 const UserPage = ({ params }: UserPageProps) => {
-  const { username } = params;
+  const { username } = use(params);
   const handleBack = () => {
     console.log('Back button clicked');
   };
