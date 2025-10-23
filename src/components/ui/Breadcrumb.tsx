@@ -19,12 +19,12 @@ export default function Breadcrumb({
   showSubtitleOnMobile = false,
 }: BreadcrumbProps) {
   return (
-    <div className="mb-3">
+    <div className="mb-3 p-4">
       <div className="flex items-center gap-4">
         {onBack && (
           <button
             onClick={onBack}
-            className={`${showArrow && showArrow == true ? '' : 'lg:hidden'} p-4 hover:bg-muted rounded-full transition-colors`}
+            className={`${showArrow && showArrow == true ? '' : 'lg:hidden'} hover:bg-muted rounded-full transition-colors`}
             aria-label="Go back"
           >
             <ArrowLeftIcon className="w-5 h-5 text-text-active" />
