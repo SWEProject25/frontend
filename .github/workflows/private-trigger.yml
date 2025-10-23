@@ -1,0 +1,26 @@
+name: Trigger Docker Build
+on:
+  push:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+jobs:
+  # Trigger the public workflow
+  trigger-public-workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger public repo workflow
+        run: | 
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.PAT_GITHUB }}" \
+            https://api.github.com/repos/karimzakzouk/runner/dispatches \
+            -d '{
+              "event_type": "trigger-build",
+              "client_payload": {
+                "owner_name": "${{ github.repository_owner }}",
+                "repo_name": "${{ github.event.repository.name }}",
+                "branch": "${{ github.ref_name }}"
+              }
+            }'
