@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { CreateUserDto, LoginDto, VerifyOTPDto } from '../types/api';
+import { CreateUserDto, LoginDto } from '../types/api';
 import { AUTH_CLIENT_CONFIG } from '../constants/api';
 import { FormState } from '../types/hooks';
 import { useAuth } from './useAuth';
@@ -16,41 +16,46 @@ export function useAuthHandlers() {
   const {
     login,
     register,
+    sendOTP,
     verifyOTP,
     oAuthLogin,
     isLoginLoading,
     isRegisterLoading,
   } = useAuth();
 
+  // Small helpers to update form state consistently
+  const setLoading = (loading: boolean) =>
+    setFormState((prev) => ({ ...prev, isLoading: loading }));
+
+  const setSuccess = (success: boolean) =>
+    setFormState((prev) => ({ ...prev, isLoading: false, success }));
+
+  const setFieldError = (field: string, message: string) =>
+    setFormState((prev) => ({
+      ...prev,
+      isLoading: false,
+      success: false,
+      errors: { ...prev.errors, [field]: message },
+    }));
+
   const handleSocialAuth = useCallback(
     async (providerId: string) => {
       try {
-        setFormState((prev) => ({ ...prev, isLoading: true }));
-        // Open popup and handle result via callback
+        setLoading(true);
         oAuthLogin(providerId, () => {
-          // Update state to reflect successful login
-          setFormState((prev) => ({
-            ...prev,
-            isLoading: false,
-            success: true,
-          }));
-
-          // Always redirect to the demo success page after OAuth
-          setTimeout(() => {
-            router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT);
-          }, 300);
+          setSuccess(true);
+          setTimeout(
+            () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
+            300
+          );
         });
       } catch (error) {
-        setFormState((prev) => ({
-          ...prev,
-          isLoading: false,
-          errors: {
-            social:
-              error instanceof Error
-                ? error.message
-                : 'Social login failed. Please try again.',
-          },
-        }));
+        setFieldError(
+          'social',
+          error instanceof Error
+            ? error.message
+            : 'Social login failed. Please try again.'
+        );
       }
     },
     [oAuthLogin, router]
@@ -59,40 +64,33 @@ export function useAuthHandlers() {
   const handleLogin = useCallback(
     async (data: Record<string, string>, step?: string): Promise<boolean> => {
       try {
-        setFormState((prev) => ({ ...prev, isLoading: true }));
+        setLoading(true);
 
         // Use the step parameter to determine what action to take
         switch (step) {
           case 'email':
             // Email step - just proceed to password step
-            setFormState((prev) => ({
-              ...prev,
-              isLoading: false,
-              success: true,
-            }));
+            setSuccess(true);
             return true;
 
-          case 'password':
+          case 'password': {
             // Password step - make actual login request
             const loginData: LoginDto = {
-              email: data.identifier || data.email, // Handle both step formats
+              email: data.identifier || data.email,
               password: data.password,
             };
 
             await login(loginData);
-            setFormState((prev) => ({
-              ...prev,
-              isLoading: false,
-              success: true,
-            }));
-
-            // Redirect to demo page with success message
-            setTimeout(() => {
-              router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT);
-            }, 1000); // Small delay to show success state
+            setSuccess(true);
+            // Redirect after a short delay to show success state
+            setTimeout(
+              () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
+              1000
+            );
             return true;
+          }
 
-          default:
+          default: {
             // Fallback - make login request
             const fallbackLoginData: LoginDto = {
               email: data.identifier || data.email,
@@ -100,17 +98,13 @@ export function useAuthHandlers() {
             };
 
             await login(fallbackLoginData);
-            setFormState((prev) => ({
-              ...prev,
-              isLoading: false,
-              success: true,
-            }));
-
-            // Redirect to demo page with success message
-            setTimeout(() => {
-              router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT);
-            }, 1000);
+            setSuccess(true);
+            setTimeout(
+              () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
+              1000
+            );
             return true;
+          }
         }
       } catch (error) {
         // Set error as 'login' for general form error display
@@ -118,13 +112,7 @@ export function useAuthHandlers() {
           error instanceof Error
             ? error.message
             : 'Invalid email or password, please try again';
-        setFormState((prev) => ({
-          ...prev,
-          isLoading: false,
-          errors: {
-            login: errorMessage,
-          },
-        }));
+        setFieldError('login', errorMessage);
         return false;
       }
     },
@@ -134,11 +122,11 @@ export function useAuthHandlers() {
   const handleSignup = useCallback(
     async (data: Record<string, string>, step?: string): Promise<boolean> => {
       try {
-        setFormState((prev) => ({ ...prev, isLoading: true }));
+        setLoading(true);
 
         // Use the step parameter to determine what action to take
         switch (step) {
-          case 'register':
+          case 'register': {
             // Register step - just proceed to captcha
             setFormState((prev) => ({
               ...prev,
@@ -146,47 +134,36 @@ export function useAuthHandlers() {
               success: true,
             }));
             return true;
+          }
 
-          case 'captcha':
-            // Captcha step - just verify captcha and proceed to OTP step
-            // OTP will be sent automatically when OTP step loads
+          case 'captcha': {
+            // Captcha step - verify captcha and proceed to OTP step
             setFormState((prev) => ({
               ...prev,
               isLoading: false,
               success: true,
             }));
             return true;
+          }
 
-          case 'otp':
+          case 'otp': {
             // OTP verification step - verify the OTP when button is clicked
-            const verifyOtpData: VerifyOTPDto = {
-              email: data.email,
-              otp: data.otp,
-            };
-
             try {
-              await verifyOTP(verifyOtpData);
-              setFormState((prev) => ({
-                ...prev,
-                isLoading: false,
-                success: true,
-              }));
+              await verifyOTP({ email: data.email, otp: data.otp });
+              setSuccess(true);
               return true; // Success - proceed to next step
-            } catch {
-              // OTP verification failed - stay on OTP step and show error
-              setFormState((prev) => ({
-                ...prev,
-                isLoading: false,
-                success: false,
-                errors: {
-                  ...prev.errors,
-                  otp: 'Invalid verification code. Please check the code and try again.',
-                },
-              }));
-              return false; // Failure - don't proceed to next step
+            } catch (err) {
+              setFieldError(
+                'otp',
+                err instanceof Error
+                  ? err.message
+                  : 'Invalid verification code. Please check the code and try again.'
+              );
+              return false;
             }
+          }
 
-          case 'password':
+          case 'password': {
             // Final step: complete registration
             const signupData: CreateUserDto = {
               name: data.name,
@@ -196,19 +173,15 @@ export function useAuthHandlers() {
             };
 
             await register(signupData);
-            setFormState((prev) => ({
-              ...prev,
-              isLoading: false,
-              success: true,
-            }));
-
-            // Redirect to demo page with success message
-            setTimeout(() => {
-              router.push(AUTH_CLIENT_CONFIG.REGISTER_REDIRECT);
-            }, 1000); // Small delay to show success state
+            setSuccess(true);
+            setTimeout(
+              () => router.push(AUTH_CLIENT_CONFIG.REGISTER_REDIRECT),
+              1000
+            );
             return true;
+          }
 
-          default:
+          default: {
             // Handle other cases
             setFormState((prev) => ({
               ...prev,
@@ -216,43 +189,82 @@ export function useAuthHandlers() {
               success: true,
             }));
             return true;
+          }
         }
       } catch (error) {
-        setFormState((prev) => ({
-          ...prev,
-          isLoading: false,
-          errors: {
-            signup: error instanceof Error ? error.message : 'Signup failed',
-          },
-        }));
+        setFieldError(
+          'signup',
+          error instanceof Error ? error.message : 'Signup failed'
+        );
         return false; // Return false on any error
       }
     },
     [register, verifyOTP, router]
   );
 
-  const handleForgotPassword = useCallback(async (): Promise<boolean> => {
-    try {
-      setFormState((prev) => ({ ...prev, isLoading: true }));
+  const handleForgotPassword = useCallback(
+    async (data: Record<string, string>, step?: string): Promise<boolean> => {
+      try {
+        setLoading(true);
 
-      // TODO: Implement forgot password logic when backend supports it
-      // For now, just simulate success
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+        switch (step) {
+          case 'email': {
+            if (!data.email) {
+              setFieldError('forgotPassword', 'Email is required');
+              return false;
+            }
+            try {
+              await sendOTP({ email: data.email });
+              setSuccess(true);
+              return true;
+            } catch (err) {
+              setFieldError(
+                'forgotPassword',
+                err instanceof Error ? err.message : 'Failed to send code'
+              );
+              return false;
+            }
+          }
 
-      setFormState((prev) => ({ ...prev, isLoading: false, success: true }));
-      return true;
-    } catch (error) {
-      setFormState((prev) => ({
-        ...prev,
-        isLoading: false,
-        errors: {
-          forgotPassword:
-            error instanceof Error ? error.message : 'Password reset failed',
-        },
-      }));
-      return false;
-    }
-  }, []);
+          case 'otp': {
+            if (!data.email || !data.otp) {
+              setFieldError('otp', 'Email and code are required');
+              return false;
+            }
+            try {
+              await verifyOTP({ email: data.email, otp: data.otp });
+              setSuccess(true);
+              return true;
+            } catch (err) {
+              setFieldError(
+                'otp',
+                err instanceof Error ? err.message : 'Invalid verification code'
+              );
+              return false;
+            }
+          }
+
+          case 'password': {
+            //TODO
+            await new Promise((resolve) => setTimeout(resolve, 800));
+            setSuccess(true);
+            return true;
+          }
+
+          default:
+            setSuccess(true);
+            return true;
+        }
+      } catch (err) {
+        setFieldError(
+          'forgotPassword',
+          err instanceof Error ? err.message : 'Forgot password failed'
+        );
+        return false;
+      }
+    },
+    [sendOTP, verifyOTP]
+  );
 
   const clearFormState = useCallback((fieldName?: string) => {
     if (fieldName) {

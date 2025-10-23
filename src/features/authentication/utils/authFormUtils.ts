@@ -5,8 +5,10 @@
 /**
  * Handles switching to createAccount modal
  */
+import { AuthModalType } from '@/components/ui/forms/types/components';
+
 export const handleCreateAccount = (
-  onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void
+  onSwitchModal?: (newType: AuthModalType) => void
 ) => {
   if (onSwitchModal) {
     onSwitchModal('createAccount');
@@ -37,7 +39,11 @@ export const getSubmitHandler = (
     data: Record<string, string>,
     step?: string
   ) => Promise<boolean>,
-  onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void
+  handleForgotPassword?: (
+    data: Record<string, string>,
+    step?: string
+  ) => Promise<boolean>,
+  onSwitchModal?: (newType: AuthModalType) => void
 ) => {
   if (type === 'login') {
     return handleLogin;
@@ -47,6 +53,9 @@ export const getSubmitHandler = (
       handleCreateAccount(onSwitchModal);
       return true;
     };
+  }
+  if (type === 'forgotPassword' && handleForgotPassword) {
+    return handleForgotPassword;
   }
   return handleSignup;
 };

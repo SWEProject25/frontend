@@ -186,10 +186,9 @@ export function FormContainer(
   return (
     <div
       className={cn(
-        'fixed inset-0 flex items-center justify-center p-4 sm:p-6 z-50',
+        'fixed inset-0 flex items-center justify-center p-4 sm:p-6 z-50 bg-modal-overlay',
         className
       )}
-      style={{ backgroundColor: 'rgba(91, 112, 131, 0.4)' }}
       onClick={(e) => onClose && handleOverlayClick(e, onClose)}
       onKeyDown={(e) => onClose && handleModalKeyDown(e, onClose)}
       tabIndex={-1}
