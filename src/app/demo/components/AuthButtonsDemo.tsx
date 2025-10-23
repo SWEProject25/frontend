@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { AuthButton } from '@/components/ui/AuthButton';
 import { Divider } from '@/components/ui/Divider';
 import {
@@ -359,24 +360,24 @@ export function AuthButtonsDemo() {
         {/* Navigation */}
         <div className="text-center">
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <a
+            <Link
               href="/demo"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← Back to Demos
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/buttons"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← Buttons Home
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/buttons/general"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← General Buttons
-            </a>
+            </Link>
           </div>
         </div>
       </div>

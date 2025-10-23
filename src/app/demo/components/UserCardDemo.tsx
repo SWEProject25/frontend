@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import UserCard from '@/components/ui/UserCard';
 import { Divider } from '@/components/ui/Divider';
 import { XLogo } from '@/components/ui/icons';
@@ -248,12 +249,12 @@ export function UserCardDemo() {
 
         {/* Navigation */}
         <div className="text-center">
-          <a
+          <Link
             href="/demo"
             className="text-blue-400 hover:text-blue-300 transition-colors text-sm"
           >
             ← Back to Demos
-          </a>
+          </Link>
         </div>
       </div>
     </div>

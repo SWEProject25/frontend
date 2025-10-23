@@ -87,18 +87,18 @@ export default function ButtonsIndexPage() {
         {/* Navigation */}
         <div className="text-center mt-12">
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <a
+            <Link
               href="/demo"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← Back to Demos
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/inputs"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               Input Components →
-            </a>
+            </Link>
           </div>
         </div>
       </div>

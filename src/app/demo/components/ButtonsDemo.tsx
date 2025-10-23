@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { Divider } from '@/components/ui/Divider';
 import { XLogo } from '@/components/ui/icons';
@@ -280,24 +281,24 @@ export function ButtonsDemo() {
         {/* Navigation */}
         <div className="text-center">
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <a
+            <Link
               href="/demo"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← Back to Demos
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/buttons"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← Buttons Home
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/buttons/auth"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               Auth Buttons →
-            </a>
+            </Link>
           </div>
         </div>
       </div>
