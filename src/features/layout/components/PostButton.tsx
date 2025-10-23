@@ -1,14 +1,11 @@
-import { Feather } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 export default function PostButton() {
   return (
-    <button
-      className="bg-white text-black font-bold text-lg mt-4 rounded-full 
-  w-12 h-12 xl:w-[230px] xl:h-auto flex items-center justify-center 
-  hover:bg-gray-200 transition-all duration-200"
-    >
-      <Feather className="w-6 h-6 xl:hidden" />
-      <span className="hidden xl:inline px-4 py-2">Post</span>
+    <button className="bg-white hover:bg-gray-200 text-black font-bold rounded-full transition-colors mt-4 w-14 h-14 xl:w-full xl:h-auto xl:py-3 flex items-center justify-center">
+      {/* Show + icon on small screens, "Post" text on xl */}
+      <Plus className="w-6 h-6 xl:hidden" strokeWidth={3} />
+      <span className="hidden xl:inline text-lg">Post</span>
     </button>
   );
 }

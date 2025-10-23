@@ -1,6 +1,8 @@
 import React from 'react';
 import LeftSidebar from './LeftSidebar';
 import RightSidebar from './RightSidebar';
+import MobileBottomBar from './MobileBottomBar';
+import EmptySpace from './EmptySpace';
 
 interface LayoutWrapperProps {
   children: React.ReactNode;
@@ -12,33 +14,30 @@ export default function LayoutWrapper({
   showRightSidebar = true,
 }: LayoutWrapperProps) {
   return (
-    <div className="container flex flex-row justify-center min-h-screen">
-      <div className="hidden xs:block">
+    <div className="min-h-screen bg-black flex justify-center">
+      <EmptySpace />
+
+      <div className="hidden sm:block w-[68px] sm:w-[88px] xl:w-[275px] flex-shrink-0">
         <LeftSidebar />
       </div>
-      <div className="block xs:hidden">{/* <MobileBar/> */}</div>
 
-      {/* Main Content */}
       <main
-        className={`
-          flex-1
-          ${showRightSidebar ? 'max-w-[600px]' : 'max-w-[990px]'}
-          min-h-screen
-          border-x
-          border-gray-800
-          pt-0
-          pb-20
-        `}
+        className={`flex-1 ${showRightSidebar ? 'max-w-[600px]' : 'max-w-[990px]'} border-x border-gray-800 min-h-screen`}
       >
-        <div>{children}</div>
+        {children}
       </main>
 
-      {/* Right Sidebar - Conditional */}
       {showRightSidebar && (
-        <div className="hidden xl:flex right-0 top-0 h-full">
+        <div className="hidden lg:block w-[350px] flex-shrink-0">
           <RightSidebar />
         </div>
       )}
+
+      <EmptySpace />
+
+      <div className="sm:hidden">
+        <MobileBottomBar />
+      </div>
     </div>
   );
 }
