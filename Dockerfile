@@ -5,8 +5,11 @@ COPY package*.json ./
 
 RUN npm install
 
-
 COPY . .
+
+ARG NEXT_PUBLIC_BASE_PATH=""
+ENV NEXT_PUBLIC_BASE_PATH=${NEXT_PUBLIC_BASE_PATH}
+
 RUN npm run build
 RUN npm prune --production
 
