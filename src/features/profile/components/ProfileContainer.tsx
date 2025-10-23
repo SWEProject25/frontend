@@ -23,14 +23,6 @@ const ProfileContainer = ({ userData }: ProfileContainerProps) => {
     // Implement API call or state update here
   };
 
-  const onFollow = () => {
-    // Handle follow action
-  };
-
-  const onUnfollow = () => {
-    // Handle unfollow action
-  };
-
   return (
     <div className="flex flex-col w-[600px] mx-auto relative">
       <Cover coverImage={userData.coverImage} />

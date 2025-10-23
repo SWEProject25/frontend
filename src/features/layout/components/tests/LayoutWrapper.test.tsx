@@ -130,7 +130,7 @@ describe('LayoutWrapper', () => {
   });
 
   it('should have responsive classes for left sidebar', () => {
-    const { container } = render(
+    render(
       <LayoutWrapper>
         <div>Content</div>
       </LayoutWrapper>
@@ -148,7 +148,7 @@ describe('LayoutWrapper', () => {
   });
 
   it('should have responsive classes for right sidebar', () => {
-    const { container } = render(
+    render(
       <LayoutWrapper showRightSidebar={true}>
         <div>Content</div>
       </LayoutWrapper>
@@ -165,7 +165,7 @@ describe('LayoutWrapper', () => {
   });
 
   it('should hide mobile bottom bar on larger screens', () => {
-    const { container } = render(
+    render(
       <LayoutWrapper>
         <div>Content</div>
       </LayoutWrapper>

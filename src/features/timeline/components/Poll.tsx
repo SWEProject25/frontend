@@ -9,16 +9,9 @@ const timeInputs = [
   { id: 2, type: 'Hours' },
   { id: 3, type: 'Minutes' },
 ];
-const inputs = [
-  { id: 1, required: true },
-  { id: 2, required: true },
-  { id: 3, required: false },
-  { id: 4, required: false },
-];
+
 export default function Poll({ onClose }: { onClose: () => void }) {
-  const choices = usePollStore((state) => state.choices);
   const time = usePollStore((state) => state.time);
-  const setChoice = usePollStore((state) => state.setChoice);
   const setTime = usePollStore((state) => state.setTime);
   const shiftStartMinutes = usePollStore((state) => state.shiftStartMinutes);
   const [state, setState] = useState<number>(0);

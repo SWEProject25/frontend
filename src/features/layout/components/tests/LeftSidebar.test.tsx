@@ -51,7 +51,7 @@ describe('LeftSidebar', () => {
   });
 
   it('should render X logo with hover effect', () => {
-    const { container } = render(<LeftSidebar />);
+    render(<LeftSidebar />);
     const logoWrapper = screen.getByTestId('x-logo').parentElement;
 
     expect(logoWrapper).toHaveClass(

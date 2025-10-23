@@ -29,7 +29,7 @@ export default function AddTweet() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(
     function () {
-      function handleClick(e: MouseEvent) {
+      function handleClick() {
         openReplySettings();
       }
       if (ref.current && !isOpenReplySettings) {

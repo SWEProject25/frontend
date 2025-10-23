@@ -30,7 +30,7 @@ const options = [
   },
 ];
 export default function TweetReplySettings() {
-  const [replyOption, setReplyOption] = useState(0);
+  const [replyOption] = useState(0);
   const isOpenReplySettings = useAddTweetStore(
     (state) => state.isOpenReplySettings
   );

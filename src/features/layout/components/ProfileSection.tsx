@@ -1,14 +1,17 @@
 import React from 'react';
+import Image from 'next/image';
 import { MoreHorizontal } from 'lucide-react';
 
 export default function ProfileSection() {
   return (
     <div className="flex items-center justify-between hover:bg-gray-900 rounded-full p-3 mb-3 cursor-pointer transition-colors ">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center">
-          <img
+        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center relative">
+          <Image
             src="https://via.placeholder.com/40"
             alt="Profile"
+            width={40}
+            height={40}
             className="w-full h-full object-cover"
           />
         </div>
