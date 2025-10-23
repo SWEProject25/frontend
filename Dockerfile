@@ -2,7 +2,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --no-audit --prefer-offline
+
+RUN npm install
+
 
 COPY . .
 RUN npm run build
