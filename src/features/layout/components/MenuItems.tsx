@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Home,
   Search,
@@ -8,59 +10,88 @@ import {
   User,
   MoreHorizontal,
 } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function MenuItems() {
+  const pathname = usePathname();
+
   const menuItems = [
-    { icon: Home, label: 'Home', active: true, hideOnShortScreen: false },
-    { icon: Search, label: 'Explore', active: false, hideOnShortScreen: false },
+    {
+      icon: Home,
+      label: 'Home',
+      href: '/home',
+      hideOnShortScreen: false,
+    },
+    {
+      icon: Search,
+      label: 'Explore',
+      href: '/explore',
+      hideOnShortScreen: false,
+    },
     {
       icon: Bell,
       label: 'Notifications',
-      active: false,
+      href: '/notifications',
       hideOnShortScreen: false,
     },
-    { icon: Mail, label: 'Messages', active: false, hideOnShortScreen: false },
+    {
+      icon: Mail,
+      label: 'Messages',
+      href: '/messages',
+      hideOnShortScreen: false,
+    },
     {
       icon: Bookmark,
       label: 'Bookmarks',
-      active: false,
+      href: '/bookmarks',
       hideOnShortScreen: true,
     },
     {
       icon: Users,
       label: 'Communities',
-      active: false,
+      href: '/communities',
       hideOnShortScreen: true,
     },
-    { icon: User, label: 'Profile', active: false, hideOnShortScreen: false },
+    {
+      icon: User,
+      label: 'Profile',
+      href: '/profile',
+      hideOnShortScreen: false,
+    },
     {
       icon: MoreHorizontal,
       label: 'More',
-      active: false,
+      href: '/more',
       hideOnShortScreen: false,
     },
   ];
 
   return (
     <nav className="flex flex-col mt-1 w-full">
-      {menuItems.map((item, index) => (
-        <div
-          key={index}
-          className={`flex items-center justify-center xl:justify-start gap-5 px-3 py-3 rounded-full hover:bg-gray-900 cursor-pointer transition-colors w-full ${
-            item.hideOnShortScreen ? 'hidden xl:flex' : ''
-          }`}
-        >
-          <item.icon
-            strokeWidth={item.active ? 2.5 : 2}
-            className="w-7 h-7 text-white flex-shrink-0"
-          />
-          <span
-            className={`hidden xl:block text-xl ${item.active ? 'font-bold' : 'font-normal'} text-white`}
+      {menuItems.map((item, index) => {
+        const isActive = pathname === item.href;
+        return (
+          <Link
+            key={index}
+            href={item.href}
+            aria-label={item.label}
+            className={`flex items-center justify-center xl:justify-start gap-5 px-3 py-3 rounded-full hover:bg-gray-900 cursor-pointer transition-colors w-full ${
+              item.hideOnShortScreen ? 'max-[699px]:hidden' : ''
+            }`}
           >
-            {item.label}
-          </span>
-        </div>
-      ))}
+            <item.icon
+              strokeWidth={isActive ? 3 : 2}
+              className="w-7 h-7 text-white flex-shrink-0"
+            />
+            <span
+              className={`hidden xl:block text-xl ${isActive ? 'font-bold' : ''} text-white/95`}
+            >
+              {item.label}
+            </span>
+          </Link>
+        );
+      })}
     </nav>
   );
 }
