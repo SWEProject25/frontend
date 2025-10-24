@@ -1,5 +1,6 @@
-import Tweet from '@/features/tweets/components/Tweet';
-export default function Tweets() {
+import React from 'react';
+import Tweet from '../../features/tweets/components/Tweet';
+function Page() {
   const time = new Date(Date.now() - 250 * 30 * 10 * 100 * 1000 * 60);
   const data = {
     id: '1',
@@ -31,10 +32,15 @@ export default function Tweets() {
     },
   };
   return (
-    <div className="w-full">
+    <>
       <Tweet data={data} />
+      {/* <Tweet data={data} />
       <Tweet data={data} />
-      <Tweet data={data} />
-    </div>
+      <Tweet data={data} /> */}
+    </>
   );
 }
+
+export default Page;
+
+// merged with fulltweet branch
