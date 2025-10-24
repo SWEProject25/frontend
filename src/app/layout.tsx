@@ -24,9 +24,9 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className={` bg-black text-white overflow-x-hidden`}>
         <div className="flex justify-center min-h-screen w-full">
-          <MSWProvider>
-            <Providers>{children}</Providers>
-          </MSWProvider>
+          {/* <MSWProvider> */}
+          <Providers>{children}</Providers>
+          {/* </MSWProvider> */}
         </div>
       </body>
     </html>
