@@ -1,5 +1,6 @@
 import { useUpdateMyProfile } from './profileQueries';
 import type { ProfileResponseDto } from '../types/api';
+import { convertFileToDataURL } from '@/utils';
 
 /**
  * Custom hook for handling profile updates with file upload support
@@ -66,17 +67,4 @@ export const useProfile = () => {
     isSuccess: updateMyProfile.isSuccess,
     error: updateMyProfile.error,
   };
-};
-
-/**
- * Helper function to convert File to data URL (base64)
- * In production, this should upload to a storage service (S3, Cloudinary, etc.)
- */
-const convertFileToDataURL = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
 };
