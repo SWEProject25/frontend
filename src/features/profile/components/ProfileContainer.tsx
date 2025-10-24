@@ -7,6 +7,7 @@ import Description from './Description';
 import UserDetails from './UserDetails';
 import FollowStats from './FollowStats';
 import { UserProfile } from '../types/api';
+import { mockCurrentUserProfile } from '../mocks/mockData';
 
 interface ProfileContainerProps {
   profileData: UserProfile;
@@ -28,7 +29,7 @@ const ProfileContainer = ({ profileData }: ProfileContainerProps) => {
       <Cover coverImage={profileData.banner_image_url || ''} />
       <Avatar avatarImage={profileData.profile_image_url || ''} />
       <ActionsPanel
-        isOwnProfile={true}
+        isOwnProfile={profileData.id === mockCurrentUserProfile.id}
         isFollowing={false}
         onFollow={() => console.log('Follow clicked')}
         onUnfollow={() => console.log('Unfollow clicked')}

@@ -4,9 +4,32 @@ import { UserProfile } from '../types/api';
  * Mock user profiles for testing and development
  */
 
-export const mockUserProfile1: UserProfile = {
+// Mock current signed-in user (Ahmed Fathy)
+export const mockCurrentUserProfile: UserProfile = {
   id: 1,
   user_id: 1,
+  name: 'Ahmed Fathy',
+  birth_date: '1995-06-15T00:00:00.000Z',
+  profile_image_url: 'https://i.pravatar.cc/150?img=8',
+  banner_image_url: 'https://picsum.photos/1500/500?random=10',
+  bio: 'Full-stack developer | Building amazing web experiences | TypeScript enthusiast 🚀',
+  location: 'Cairo, Egypt',
+  website: 'https://ahmedfathy.dev',
+  is_deactivated: false,
+  created_at: '2024-11-01T00:00:00.000Z',
+  updated_at: '2025-01-24T12:00:00.000Z',
+  User: {
+    id: 1,
+    username: 'ahmedfathy',
+    email: 'ahmed@example.com',
+    role: 'USER',
+    created_at: '2024-11-01T00:00:00.000Z',
+  },
+};
+
+export const mockUserProfile1: UserProfile = {
+  id: 2,
+  user_id: 2,
   name: 'John Doe',
   birth_date: '1990-01-01T00:00:00.000Z',
   profile_image_url: 'https://i.pravatar.cc/150?img=12',
@@ -18,7 +41,7 @@ export const mockUserProfile1: UserProfile = {
   created_at: '2025-01-01T00:00:00.000Z',
   updated_at: '2025-01-15T10:30:00.000Z',
   User: {
-    id: 1,
+    id: 2,
     username: 'john_doe',
     email: 'john@example.com',
     role: 'USER',
@@ -159,6 +182,7 @@ export const mockUserProfileMinimal: UserProfile = {
 };
 
 export const mockUserProfiles: UserProfile[] = [
+  mockCurrentUserProfile, // Ahmed Fathy (current signed-in user)
   mockUserProfile1,
   mockUserProfile2,
   mockUserProfile3,
@@ -166,9 +190,6 @@ export const mockUserProfiles: UserProfile[] = [
   mockUserProfile5,
   mockUserProfileMinimal,
 ];
-
-// Mock current user (typically used for "me" endpoint)
-export const mockCurrentUserProfile = mockUserProfile1;
 
 // Helper function to get mock profile by ID
 export const getMockProfileById = (id: number): UserProfile | undefined => {
