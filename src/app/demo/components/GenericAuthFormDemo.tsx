@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { FormContainer, authFormConfigs } from '@/components/ui/forms';
 import { AuthButton } from '@/components/ui/AuthButton';
 import { Divider } from '@/components/ui/Divider';
@@ -408,24 +409,24 @@ export function GenericAuthFormDemo() {
         {/* Navigation */}
         <div className="text-center">
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <a
+            <Link
               href="/demo"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← Back to Demos
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/buttons"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← Button Components
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/inputs"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               Input Components →
-            </a>
+            </Link>
           </div>
         </div>
 

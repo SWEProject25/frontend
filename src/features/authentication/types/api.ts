@@ -11,13 +11,13 @@ export interface UserResponse {
   email: string;
   role: string;
   name: string;
-  birth_date: string;
-  profile_image_url: string | null;
-  banner_image_url: string | null;
-  bio: string | null;
-  location: string | null;
-  website: string | null;
-  created_at: string;
+  birthDate?: string;
+  profileImageUrl?: string | null;
+  bannerImageUrl?: string | null;
+  bio?: string | null;
+  location?: string | null;
+  website?: string | null;
+  createdAt?: string;
 }
 
 export interface RegisterResponseDto {

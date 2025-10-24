@@ -61,11 +61,13 @@ export function EmailInputField({
       <InputField
         label={label}
         type="email"
+        name="email"
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
         error={error}
         placeholder={placeholder}
+        data-testid="auth-email-input"
         required={required}
         disabled={disabled}
       />

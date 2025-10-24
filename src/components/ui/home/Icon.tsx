@@ -1,0 +1,78 @@
+import { ReactNode } from 'react';
+import Tooltip from '@mui/material/Tooltip';
+interface IconOptions {
+  path: string;
+  viewBox?: number;
+  size?: string;
+  children?: ReactNode;
+  title?: string;
+  disabled?: boolean;
+  tooltip?: boolean;
+  onClick?: () => void;
+  color?: string;
+  hoverColor?: string;
+  width?: string;
+  height?: string;
+}
+export default function Icon({
+  path,
+  viewBox = 24,
+  size = 'w-5 h-5',
+  title = '',
+  children,
+  disabled = false,
+  color = disabled ? 'text-primary/50' : 'text-primary',
+  hoverColor = !disabled ? 'bg-icon-hover' : '',
+  width = 'h-9',
+  height = 'w-9',
+  onClick,
+}: IconOptions) {
+  const icon = (
+    <div
+      onClick={onClick}
+      className={` relative flex items-center justify-center ${width} ${height}  ${!disabled && 'hover:cursor-pointer'} rounded-full  hover:${hoverColor}`}
+    >
+      <svg
+        viewBox={`0 0 ${viewBox} ${viewBox}`}
+        aria-hidden="true"
+        className={`fill-current ${size}  ${color}  `}
+      >
+        <g>
+          <path d={path}></path>
+        </g>
+      </svg>
+      {children}
+    </div>
+  );
+
+  return (
+    <>
+      {!disabled ? (
+        <div className={`flex items-center justify-center ${width}  ${height}`}>
+          <Tooltip
+            // enterTouchDelay={1000}
+            enterNextDelay={500}
+            title={title}
+            disableInteractive
+            slotProps={{
+              popper: {
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [0, -12],
+                    },
+                  },
+                ],
+              },
+            }}
+          >
+            {icon}
+          </Tooltip>
+        </div>
+      ) : (
+        icon
+      )}
+    </>
+  );
+}

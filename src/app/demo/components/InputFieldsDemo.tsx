@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { InputField, SearchInput } from '@/components/ui/input';
 import { SelectField } from '@/components/ui/SelectField';
 import { Divider } from '@/components/ui/Divider';
@@ -471,24 +472,24 @@ export function InputFieldsDemo() {
         {/* Navigation */}
         <div className="text-center">
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <a
+            <Link
               href="/demo"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← Back to Demos
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/buttons"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← Button Components
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/auth-forms"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               Auth Forms →
-            </a>
+            </Link>
           </div>
         </div>
       </div>
