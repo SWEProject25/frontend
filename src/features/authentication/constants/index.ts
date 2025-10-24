@@ -26,6 +26,7 @@ export const AUTH_MODAL_TYPES = {
   LOGIN_PASSWORD: 'loginPassword',
   SIGNUP: 'signup',
   CREATE_ACCOUNT: 'createAccount',
+  FORGOT_PASSWORD: 'forgotPassword',
 } as const;
 
 export type AuthModalType =

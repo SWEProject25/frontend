@@ -43,6 +43,8 @@ export interface SubmitButton {
   variant?: 'primary' | 'secondary' | 'outline' | 'social' | 'ghost';
 }
 
+import { AuthModalType } from './types/components';
+
 export interface GenericAuthFormProps {
   title: string;
   subtitle?: string;
@@ -56,7 +58,7 @@ export interface GenericAuthFormProps {
   onSocialLogin?: (providerId: string) => void;
   onForgotPassword?: () => void;
   onClose?: () => void;
-  onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
+  onSwitchModal?: (newType: AuthModalType) => void;
   formState: {
     isLoading: boolean;
     success: boolean;
@@ -114,7 +116,7 @@ export interface FormHeaderProps {
 
 export interface FormFooterProps {
   footerLinks: readonly FooterLink[];
-  onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
+  onSwitchModal?: (newType: AuthModalType) => void;
 }
 
 export interface FormActionsProps {
@@ -136,7 +138,7 @@ export interface FormContentProps
   extends GenericAuthFormProps,
     FormState,
     FormHandlers {
-  onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void;
+  onSwitchModal?: (newType: AuthModalType) => void;
   loading: boolean;
   isFormValid: boolean;
 }

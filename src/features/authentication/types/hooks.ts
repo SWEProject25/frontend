@@ -24,7 +24,10 @@ export interface AuthFormProps {
     data: Record<string, string>,
     step?: string
   ) => Promise<boolean>;
-  handleForgotPassword: () => void;
+  handleForgotPassword: (
+    data: Record<string, string>,
+    step?: string
+  ) => Promise<boolean>;
   clearFormState: (fieldName?: string) => void;
 }
 
