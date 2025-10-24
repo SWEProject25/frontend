@@ -21,7 +21,7 @@ export default function Button({
       <button
         disabled
         onClick={onClick}
-        className={`bg-text-button rounded-r-full rounded-l-full p-1 ${disabled ? 'bg-text-inactive' : 'hover:bg-button-hover hover:cursor-pointer'} text-muted font-bold ${size} ${height} ${width}`}
+        className={`    bg-text-button rounded-r-full rounded-l-full p-1 ${disabled ? 'bg-text-inactive' : 'hover:bg-button-hover hover:cursor-pointer'} font-semibold text-muted  ${size} ${height} ${width}`}
       >
         {label}
       </button>

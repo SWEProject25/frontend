@@ -6,13 +6,18 @@ export default function Input({
   label,
   required = true,
   isActive = false,
+  id,
+  value,
+  setValue,
 }: {
   label: string;
   required?: boolean;
   isActive?: boolean;
+  id: number;
+  value: string;
+  setValue: (id: number, value: string) => void;
 }) {
-  const [text, setText] = useState('');
-  const active = text.length;
+  const active = value.length;
   const ref = useRef<null | HTMLInputElement>(null);
   useEffect(
     function () {
@@ -31,9 +36,11 @@ export default function Input({
           id={label}
           type="text"
           placeholder=" "
-          value={text}
-          onChange={(e) => setText(e.target.value)}
+          value={value}
+          onChange={(e) => setValue(id, e.target.value)}
           maxLength={25}
+          spellCheck={false}
+          // autoComplete="off"
           className="peer  w-full h-15 bg-transparent px-4 pt-4 text-base text-amber-50 outline-none transition-colors duration-150 border-1 border-solid border-text-inactive rounded-md focus:border-primary focus:border-3"
           aria-label={label}
         />
@@ -42,7 +49,7 @@ export default function Input({
           htmlFor={label}
           className={`
             absolute left-3 pointer-events-none transition-all duration-150 ease-in-out text-text-inactive px-1  
-            peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-lg  
+            peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base  
             peer-focus:top-1 peer-focus:text-sm peer-focus:translate-y-0 peer-focus:scale-95 peer-focus:text-primary 
             ${active && 'top-1  text-sm translate-y-0 scale-95'}
             
@@ -53,7 +60,7 @@ export default function Input({
         </label>
 
         <span className="hidden peer-focus:block absolute top-0 right-0 p-2 text-sm  text-text-inactive">
-          {text.length} /25
+          {value.length} /25
         </span>
       </div>
     </div>

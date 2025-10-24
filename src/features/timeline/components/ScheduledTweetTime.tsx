@@ -4,9 +4,13 @@ import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 
 export default function ScheduledTweetTime() {
   const scheduledTime = useAddTweetStore((state) => state.scheduledTime);
-  const timearr = new Date().toLocaleTimeString().split(' ');
+  const currDate = new Date();
+  currDate.setDate(currDate.getDate() + 5);
+  const date = currDate.setHours(currDate.getHours() + 1);
+  console.log(date);
+  const timearr = currDate.toLocaleTimeString().split(' ');
 
-  const day = scheduledTime || new Date().toDateString();
+  const day = scheduledTime || currDate.toDateString();
   const time = scheduledTime || timearr[0].slice(0, 5) + ' ' + timearr[1];
   return (
     <div className="text-sm h-5 mt-1 text-text-inactive  flex items-center ">

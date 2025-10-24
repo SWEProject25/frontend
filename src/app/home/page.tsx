@@ -6,8 +6,10 @@ export const metadata = {
 };
 export default function Home() {
   return (
-    <LayoutWrapper showRightSidebar={true}>
+    <div className="grid grid-cols-[1fr_600px_1fr] min-h-screen overflow-x-hidden  ">
+      <aside className="bg-gray-100">Left</aside>
       <Timeline />
-    </LayoutWrapper>
+      <aside className="bg-gray-100">right</aside>
+    </div>
   );
 }
