@@ -1,6 +1,6 @@
 'use client';
 import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
-import { useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import {
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
@@ -8,26 +8,20 @@ import {
 
 const startRedText = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
 
-export default function TweetText() {
-  const isReplySettingsVisible = useAddTweetStore(
-    (state) => state.selectedReplyOption
-  );
-
+export default function TweetText({
+  divRef,
+}: {
+  divRef: RefObject<null | HTMLDivElement>;
+}) {
   const setTweetText = useAddTweetStore((state) => state.setTweetText);
-  const divRef = useRef<null | HTMLDivElement>(null);
+
   const spanRef1 = useRef<null | HTMLSpanElement>(null);
   const [spanText1, setSpanText1] = useState("What's happening?");
   const [spanText2, setSpanText2] = useState('');
 
-  useEffect(
-    function () {
-      if (isReplySettingsVisible && spanRef1.current) {
-        divRef.current?.focus();
-        setSpanText1("What's happening?");
-      }
-    },
-    [isReplySettingsVisible]
-  );
+  useEffect(function () {
+    setSpanText1("What's happening?");
+  }, []);
 
   function handleInput(e: React.ChangeEvent<HTMLDivElement>) {
     if (divRef.current && divRef.current.innerHTML === '<br>') {

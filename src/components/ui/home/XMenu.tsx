@@ -1,7 +1,6 @@
 'use client';
 import { ReactNode, useEffect, useRef } from 'react';
 import { create } from 'zustand';
-import XModal from '@/components/ui/hoc/XModal';
 
 interface XMenuState {
   menuName?: string;
@@ -74,6 +73,8 @@ interface ListProps {
   name: string;
   height: string;
   width: string;
+  closeOnOverlayClick?: boolean;
+  closeOnEscape?: boolean;
 }
 function List({
   children,
@@ -83,13 +84,12 @@ function List({
   name,
   height,
   width,
+  closeOnOverlayClick = true,
+  closeOnEscape = true,
 }: ListProps) {
   const menuName = useXMenu((state) => state.menuName);
   const close = useXMenu((state) => state.close);
   const placement = useXMenu((state) => state.placement);
-  function handleCloseMenu(e: React.MouseEvent<HTMLDivElement>) {
-    if (e.target === e.currentTarget) onClose();
-  }
   // Close modal on scroll
   useEffect(() => {
     if (menuName !== name || menuName === '' || preventScroll) return;
@@ -104,23 +104,55 @@ function List({
       window.removeEventListener('scroll', handleScroll, true);
     };
   }, [menuName, name, close, preventScroll]);
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (closeOnOverlayClick && e.target === e.currentTarget) {
+      close();
+    }
+  };
+  useEffect(() => {
+    if (!closeOnEscape || menuName !== name || menuName === '') return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        close();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [closeOnEscape, close, menuName, name]);
+
+  useEffect(() => {
+    if (menuName === name && preventScroll) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [preventScroll, menuName, name]);
+
+  if (menuName !== name || menuName === '') return null;
+
   return (
-    <XModal
-      overlayColor={overlayColor}
-      isOpen={menuName === name}
-      customLayout={customLayout}
-      preventScroll={preventScroll}
-      onClose={close}
-    >
+    <>
       <div
-        onClick={handleCloseMenu}
+        className={`fixed inset-0 z-50 flex items-center justify-center  ${overlayColor}`}
+        onClick={handleOverlayClick}
+        role="dialog"
+        aria-modal="true"
+      />
+
+      <div
         className={`absolute left-0 z-50 ${width} ${height} bg-black border-border border-[1px] shadow-[0_0_20px_rgba(255,255,255,0.15)] rounded-2xl overflow-hidden ${
           placement === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2'
         }`}
       >
         {children}
       </div>
-    </XModal>
+    </>
   );
 }
 XMenu.Button = Button;

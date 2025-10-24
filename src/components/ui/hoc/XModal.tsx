@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useEffect } from 'react';
 import { CloseIcon, XLogo } from '@/components/ui/icons';
+import { createPortal } from 'react-dom';
 
 interface XModalProps {
   isOpen: boolean;
@@ -70,7 +73,7 @@ export default function XModal({
     }
   };
 
-  return (
+  return createPortal(
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center  ${overlayColor}`}
       onClick={handleOverlayClick}
@@ -118,6 +121,7 @@ export default function XModal({
         {/* Content */}
         <div className="px-8 pb-8">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

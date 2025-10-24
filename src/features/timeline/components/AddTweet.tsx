@@ -21,10 +21,12 @@ export default function AddTweet() {
   const open = useScheduleStore((state) => state.open);
 
   const ref = useRef<HTMLDivElement>(null);
+  const textRef = useRef<null | HTMLDivElement>(null);
   useEffect(
     function () {
       function handleClick() {
         showReplySettings();
+        textRef.current?.focus();
       }
       if (ref.current && !isReplySettingsVisible) {
         ref.current.addEventListener('click', handleClick, { once: true });
@@ -50,7 +52,7 @@ export default function AddTweet() {
               <ScheduledTweetTime />
             </button>
           )}
-          <TweetText />
+          <TweetText divRef={textRef} />
 
           <div className=" flex flex-1 items-stretch pt-3 h-fit">
             <Poll />
