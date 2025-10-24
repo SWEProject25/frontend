@@ -15,66 +15,47 @@ const inputs = [
   { id: 3, required: false },
   { id: 4, required: false },
 ];
-export default function Poll({ onClose }: { onClose: () => void }) {
+export default function Poll() {
   const choices = usePollStore((state) => state.choices);
   const time = usePollStore((state) => state.time);
   const setChoice = usePollStore((state) => state.setChoice);
   const setTime = usePollStore((state) => state.setTime);
   const shiftStartMinutes = usePollStore((state) => state.shiftStartMinutes);
-  const [state, setState] = useState<number>(0);
-
+  const isOpen = usePollStore((state) => state.isOpen);
+  const onClose = usePollStore((state) => state.close);
+  const buttonInputIndex = usePollStore((state) => state.buttonInputIndex);
+  const setButtonInputIndex = usePollStore(
+    (state) => state.setButtonInputIndex
+  );
+  if (!isOpen) return null;
   return (
-    <div className="w-[513px] rounded-lg bg-background border border-border  pt-4">
+    <div className="w-[513px] rounded-lg bg-background border border-border mb-1 pt-4">
       <div className="space-y-3">
         <div className="space-y-3">
-          <div className="flex flex-1 justify-between items-start px-4">
-            <Input label="Choice 1" />
-          </div>
-
-          <div className="flex items-center px-4">
-            <div className="flex-1">
-              <Input label="Choice 2" />
-            </div>
-            {state === 0 && (
-              <button
-                onClick={() => setState(1)}
-                className="flex justify-center w-8 h-8 rounded-full hover:bg-icon-hover ml-3 text-primary text-2xl text-center hover:cursor-pointer"
-              >
-                +
-              </button>
-            )}
-          </div>
-
-          {state >= 1 && (
-            <div className="flex items-center px-4">
-              <div className="flex-1">
-                <Input
-                  isActive={true}
-                  label="Choice 3 (optional)"
-                  required={false}
-                />
-              </div>
-
-              {state === 1 && (
-                <button
-                  onClick={() => setState(2)}
-                  className="flex rounded-full w-9 h-9 hover:bg-icon-hover ml-3 text-primary text-2xl text-center hover:cursor-pointer"
-                >
-                  +
-                </button>
-              )}
-            </div>
-          )}
-          {state >= 2 && (
-            <div className="flex items-center px-4">
-              <div className="flex-1">
-                <Input
-                  isActive={true}
-                  label="Choice 4(optional)"
-                  required={false}
-                />
-              </div>
-            </div>
+          {inputs.map(
+            (inp) =>
+              buttonInputIndex >= inp.id && (
+                <div key={inp.id} className="flex items-center px-4">
+                  <div className="flex-1">
+                    <Input
+                      id={inp.id}
+                      value={choices[inp.id - 1]}
+                      setValue={setChoice}
+                      required={inp.required}
+                      isActive={buttonInputIndex > 2 || inp.id === 1}
+                      label={`Choice ${inp.id} ${!inp.required ? '(optional)' : ''}`}
+                    />
+                  </div>
+                  {buttonInputIndex === inp.id && buttonInputIndex != 4 && (
+                    <button
+                      onClick={() => setButtonInputIndex(inp.id + 1)}
+                      className="flex justify-center w-8 h-8 rounded-full hover:bg-icon-hover ml-3 text-primary text-2xl text-center hover:cursor-pointer"
+                    >
+                      +
+                    </button>
+                  )}
+                </div>
+              )
           )}
         </div>
 

@@ -1,61 +1,99 @@
 'use client';
-import { useState } from 'react';
+import React, { useState } from 'react';
+
 import Icon from '../../../components/ui/home/Icon';
 import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
+import XMenu from '@/components/ui/home/XMenu';
 
-const options = [
-  {
-    id: 1,
-    name: 'Everyone',
-    path: 'M12 1.75C6.34 1.75 1.75 6.34 1.75 12S6.34 22.25 12 22.25 22.25 17.66 22.25 12 17.66 1.75 12 1.75zm-.25 10.48L10.5 17.5l-2-1.5v-3.5L7.5 9 5.03 7.59c1.42-2.24 3.89-3.75 6.72-3.84L11 6l-2 .5L8.5 9l5 1.5-1.75 1.73zM17 14v-3l-1.5-3 2.88-1.23c1.17 1.42 1.87 3.24 1.87 5.23 0 1.3-.3 2.52-.83 3.61L17 14z',
-    viewBox: 24,
-  },
-  {
-    id: 2,
-    name: 'Accounts you follow',
-    path: 'M14 6c0 2.21-1.791 4-4 4S6 8.21 6 6s1.791-4 4-4 4 1.79 4 4zm-4 5c-2.352 0-4.373.85-5.863 2.44-1.477 1.58-2.366 3.8-2.632 6.46l-.11 1.1h17.21l-.11-1.1c-.266-2.66-1.155-4.88-2.632-6.46C14.373 11.85 12.352 11 10 11zm12.223-5.89l-2.969 4.46L17.3 8.1l-1.2 1.6 3.646 2.73 4.141-6.21-1.664-1.11z',
-    viewBox: 24,
-  },
-  {
-    id: 3,
-    name: 'Verified accounts',
-    path: 'M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z',
-    viewBox: 22,
-  },
-  {
-    id: 4,
-    name: 'Only accounts you mention',
-    path: 'M12 4.25c-4.28 0-7.75 3.47-7.75 7.75s3.47 7.75 7.75 7.75c1.499 0 2.894-.424 4.078-1.158l1.318 2.125c-1.568.972-3.418 1.534-5.396 1.534-5.661 0-10.25-4.589-10.25-10.25S6.339 1.75 12 1.75 22.25 6.339 22.25 12c0 .534-.032 1.061-.08 1.549-.223 2.285-2.31 3.65-4.378 3.471-1.128-.098-2.114-.621-2.817-1.396-1.008 1.136-2.467 1.802-4.077 1.576-2.748-.386-4.354-3.149-3.973-5.86s2.686-4.924 5.434-4.538c.793.111 1.491.421 2.074.87l.038-.32 2.482.298-.584 4.861c-.122 1.015.621 1.93 1.64 2.019.927.081 1.605-.515 1.674-1.223.042-.426.068-.869.068-1.306 0-4.28-3.47-7.75-7.75-7.75H12zm.01 5.026c-1.08-.152-2.377.746-2.611 2.41s.765 2.885 1.845 3.036c1.08.152 2.377-.746 2.611-2.41.234-1.664-.765-2.884-1.845-3.036z',
-    viewBox: 24,
-  },
-];
+import { onClose } from '@/components/ui/home/XMenu';
+import { options } from '../constants/ReplySettingsOptions';
+
+const PANEL_HEIGHT = 332;
+
 export default function TweetReplySettings() {
-  const [replyOption, setReplyOption] = useState(0);
-  const isOpenReplySettings = useAddTweetStore(
-    (state) => state.isOpenReplySettings
+  const selectedReplyOption = useAddTweetStore(
+    (state) => state.selectedReplyOption
   );
-  if (!isOpenReplySettings) return null;
+  const updateReplyOption = useAddTweetStore(
+    (state) => state.updateReplyOption
+  );
+
+  if (!selectedReplyOption) return null;
   return (
-    <div className="w-full max-h-9 flex flex-1 items-stretch   border-b-1 border-border ">
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-        }} // open model
-        className=" h-6 flex items-center justify-center cursor-pointer hover:bg-icon-hover hover:rounded-full text-primary text-sm font-bold pr-3 "
-      >
-        <Icon
-          viewBox={options[replyOption].viewBox}
-          height="h-7"
-          width="w-7"
-          disabled={true}
-          size="w-4"
-          color="text-primary"
-          path={options[replyOption].path}
-        />
-        <span className="text-center font-bold">
-          {options[replyOption].name} can reply
-        </span>
-      </button>
+    <div className="select-text w-full max-h-9 pb-3 flex flex-1 items-stretch   border-b-1 border-border ">
+      <div className="relative">
+        <XMenu>
+          <XMenu.Button name="ReplyMenu" panelHeight={PANEL_HEIGHT}>
+            <div className=" h-6 flex items-center justify-center cursor-pointer hover:bg-icon-hover hover:rounded-full text-primary text-sm font-bold pr-3 ">
+              <Icon
+                viewBox={options[selectedReplyOption - 1].viewBox}
+                height="h-7"
+                width="w-7"
+                disabled={true}
+                size="w-4"
+                color="text-primary"
+                path={options[selectedReplyOption - 1].path}
+              />
+              <span className="text-center font-bold">
+                {options[selectedReplyOption - 1].value} can reply
+              </span>
+            </div>
+          </XMenu.Button>
+          <XMenu.List
+            height="h-[332px]"
+            width="w-80"
+            name="ReplyMenu"
+            preventScroll={false}
+          >
+            <div className="flex  flex-col pt-4 pb-2">
+              <div className="px-4 pb-3">
+                <h3 className="text-sm font-bold text-text-active">
+                  Who can reply?
+                </h3>
+                <p className="text-sm text-text-inactive">
+                  Choose who can reply to this post.
+                  <br />
+                  Anyone mentioned can always reply.
+                </p>
+              </div>
+              <ul className="flex flex-col gap-1 pb-1 ">
+                {options.map((opt) => {
+                  const selected = opt.id === selectedReplyOption;
+                  return (
+                    <li key={opt.value}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          updateReplyOption(opt.id);
+                          onClose();
+                        }}
+                        className="cursor-pointer w-full flex items-center gap-3 px-2 py-2  rounded-sm  hover:bg-white/10 focus:bg-white/10 outline-none"
+                      >
+                        <span className="flex items-center justify-center w-10 h-10 rounded-full bg-primary">
+                          <Icon
+                            disabled={true}
+                            path={opt.path}
+                            viewBox={opt.viewBox}
+                            color="text-white"
+                          />
+                        </span>
+                        <span className="flex-1 text-left text-sm font-bold text-text-active">
+                          {opt.value}
+                        </span>
+                        {selected && (
+                          <span className="text-primary">
+                            <Icon path="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z" />
+                          </span>
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </XMenu.List>
+        </XMenu>
+      </div>
     </div>
   );
 }

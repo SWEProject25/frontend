@@ -8,7 +8,7 @@ export default function Header() {
   const tabs = [{ text: 'For you' }, { text: 'Following' }];
   const selectTab = (id: number) => setSelectedTab(id);
   return (
-    <header className=" flex sticky border-b-1 border-border top-0 min-h-14 bg-black/50 backdrop-blur-md ">
+    <header className=" z-10 flex fixed top-0 left-[calc(50%-300px)] w-[600px] border-b-1 border-border h-14 bg-black/50 backdrop-blur-md ">
       {tabs.map((tab, i) => (
         <Tab
           selected={selectedTab === i}

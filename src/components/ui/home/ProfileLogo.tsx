@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 export default function ProfileLogo() {
   return (
-    <div className="flex-none w-fit pr-2 py-3">
+    <div className="flex-none w-fit mr-2 pt-3  ">
       <Link href={'./profile'}>
         <Image
           src="/profilePhoto.png"

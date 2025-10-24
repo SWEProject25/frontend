@@ -1,44 +1,87 @@
 'use client';
 import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import {
+  MAX_TWEET_LENGTH,
+  MAX_WARNING_TWEET_LENGTH,
+} from '@/features/timeline/constants/TweetConstants';
+
+const startRedText = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
 
 export default function TweetText() {
-  const tweetText = useAddTweetStore((state) => state.tweetText);
-  const setTweetText = useAddTweetStore((state) => state.setTweetText);
-  const ref = useRef<null | HTMLTextAreaElement>(null);
-  const isOpenReplySettings = useAddTweetStore(
-    (state) => state.isOpenReplySettings
+  const isReplySettingsVisible = useAddTweetStore(
+    (state) => state.selectedReplyOption
   );
-  function handleText(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    if (ref.current) {
-      ref.current.style.height = `auto`;
-      ref.current.style.height = `${ref.current.scrollHeight}px`;
-    }
 
-    setTweetText(e.target.value);
-  }
+  const setTweetText = useAddTweetStore((state) => state.setTweetText);
+  const divRef = useRef<null | HTMLDivElement>(null);
+  const spanRef1 = useRef<null | HTMLSpanElement>(null);
+  const [spanText1, setSpanText1] = useState("What's happening?");
+  const [spanText2, setSpanText2] = useState('');
 
   useEffect(
     function () {
-      if (isOpenReplySettings) ref.current?.focus();
+      if (isReplySettingsVisible && spanRef1.current) {
+        divRef.current?.focus();
+        setSpanText1("What's happening?");
+      }
     },
-    [isOpenReplySettings]
+    [isReplySettingsVisible]
   );
 
+  function handleInput(e: React.ChangeEvent<HTMLDivElement>) {
+    if (divRef.current && divRef.current.innerHTML === '<br>') {
+      divRef.current.innerHTML = '';
+    }
+    console.log('handleINput ', e);
+    handleChangeText(e.target.innerText);
+  }
+  function handleChangeText(text: string) {
+    if (spanRef1.current) {
+      if (text.length === 0) {
+        console.log('erase');
+        setSpanText1("What's happening?");
+        spanRef1.current.style.color = 'var(--color-text-inactive)';
+        setSpanText2('');
+        setTweetText('');
+        return;
+      }
+      setTweetText(text);
+      spanRef1.current.style.color = 'var(--color-text-active)';
+      setSpanText1(text.slice(0, startRedText));
+      if (text.length > startRedText) {
+        console.log('inside length greater than 10');
+
+        console.log(text, 'after slicing');
+        setSpanText2(text.slice(startRedText, text.length));
+      } else {
+        setSpanText2('');
+      }
+    }
+  }
+
   return (
-    <div className="  relative flex flex-1 items-center py-3 h-fit ">
-      <textarea
-        ref={ref}
-        value={tweetText}
-        maxLength={280}
-        rows={1}
-        cols={40}
-        onChange={handleText}
-        className={` flex flex-1  items-stretch overflow-y-hidden resize-none text-xl border-0 h-fit pl-2 pr-4 focus:outline-0  w-[25rem] md:w-[32rem] transition-[height] duration-100 ease-in-out `}
-        id="1"
-        wrap="soft"
-        placeholder="What's happening?"
-      ></textarea>
+    <div className="relative flex flex-1 max-w-[25rem] md:max-w-[32rem]  py-3 h-fit min-w-0 pl-2">
+      <div className="relative flex-1 min-w-0 min-h-7 whitespace-pre-wrap break-words overflow-wrap-anywhere">
+        <span
+          ref={spanRef1}
+          className="  text-text-inactive text-xl transition-[height] duration-100 ease-in-out"
+        >
+          {spanText1}
+        </span>
+        <span className="  bg-red-500 text-xl transition-[height] duration-100 ease-in-out">
+          {spanText2}
+        </span>
+      </div>
+
+      <div
+        contentEditable="plaintext-only"
+        onInput={handleInput}
+        ref={divRef}
+        spellCheck={true}
+        aria-label="Tweet text input overlay"
+        className="   absolute top-0 pl-2 left-0 py-3 inset-0 w-full h-full text-transparent caret-white  outline-none whitespace-pre-wrap break-words overflow-wrap-anywhere pointer-events-auto text-xl"
+      ></div>
     </div>
   );
 }
