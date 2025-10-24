@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Avatar from './Avatar';
 import UserInfo from './UserInfo';
+import { Grok } from '@lobehub/icons/es/icons';
 
 type User = {
   name: string;
@@ -75,8 +76,9 @@ export default function ProfileCard({ data }: { data: User }) {
         </span>
       </div>
 
-      <div className="mt-3 border border-gray-700 rounded-full py-2 text-center text-sm text-gray-400 hover:bg-gray-900 cursor-pointer transition">
-        Profile Summary
+      <div className="mt-3 border border-gray-700 rounded-full py-2 text-center text-sm text-white hover:bg-gray-900 cursor-pointer transition flex items-center justify-center gap-2">
+        <Grok size={18} />
+        <span className="font-bold">Profile Summary</span>
       </div>
     </div>
   );

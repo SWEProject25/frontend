@@ -5,7 +5,6 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Button,
 } from '@heroui/react';
 import Action from './Action';
 

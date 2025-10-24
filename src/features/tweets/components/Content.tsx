@@ -8,8 +8,8 @@ type contentTypes = {
 
 export default function Content({ content }: { content: contentTypes }) {
   return (
-    <div className="">
-      <p className="text-gray-200">{content.text}</p>
+    <div className="w-full h-full">
+      <p className="text-gray-200 text-left">{content.text}</p>
       {content.image && (
         <div className="mt-3 rounded-xl overflow-auto relative h-70 w-full">
           <Image

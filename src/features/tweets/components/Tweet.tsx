@@ -12,17 +12,9 @@ import { TiVolumeMute } from 'react-icons/ti';
 import Action from './Action';
 import DropDown from './DropDown';
 import Timing from './Timing';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// <FontAwesomeIcon icon={byPrefixAndName.far['user-plus']} />;
-import {
-  FaUserPlus,
-  FaListUl,
-  FaVolumeMute,
-  FaBan,
-  FaChartBar,
-  FaCode,
-  FaFlag,
-} from 'react-icons/fa';
+import { Grok } from '@lobehub/icons';
+
+import { FaUserPlus, FaListUl, FaBan, FaCode, FaFlag } from 'react-icons/fa';
 import { HiOutlineEmojiSad } from 'react-icons/hi';
 
 const dropItems = [
@@ -123,9 +115,15 @@ export default function Tweet({ data }: { data: TweetData }) {
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-1">
               <UserInfo data={data.user} onHoverCard={setHovered} />
+              <span className="text-gray-500">.</span>
               <Timing time={data.time} />
             </div>
-            <div className="ml-2 flex items-center">
+            <div className="ml-2 flex items-center space-x-2 text-gray-500">
+              <Action
+                icon={<Grok size={18} />} // smaller icon
+                label="Explain this post"
+                color="blue"
+              />
               <DropDown items={dropItems} onOpened={setHovered}>
                 <Action
                   icon={<FaEllipsisH size={12} />} // smaller icon

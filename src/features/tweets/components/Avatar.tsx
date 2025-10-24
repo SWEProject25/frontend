@@ -65,7 +65,7 @@ export default function Avatar({
           }}
           onClick={(e) => e.preventDefault()}
         >
-          {data.name && data.username && <ProfileCard data={data} />}
+          {show && data.name && data.username && <ProfileCard data={data} />}
         </div>
       </div>
     </div>

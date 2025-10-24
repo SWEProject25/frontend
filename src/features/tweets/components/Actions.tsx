@@ -3,7 +3,6 @@ import {
   FaRegComment,
   FaRetweet,
   FaRegHeart,
-  FaChartBar,
   FaRegBookmark,
 } from 'react-icons/fa';
 import { IoStatsChart } from 'react-icons/io5';

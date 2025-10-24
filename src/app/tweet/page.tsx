@@ -5,7 +5,7 @@ function Page() {
   const data = {
     id: '1',
     content: {
-      text: 'Tweet content goes here. This is a sample tweet to demonstrate the layout.',
+      text: ' tweet to demonstrate the layout.',
       image: '/Personal photo.jpeg',
     },
     user: {
