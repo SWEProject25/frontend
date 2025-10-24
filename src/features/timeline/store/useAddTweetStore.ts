@@ -5,8 +5,8 @@ import { devtools } from 'zustand/middleware';
 interface AddTweetState {
   scheduledTime: string;
   setScheduledTime: (time: string) => void;
-  isOpenReplySettings: boolean;
-  openReplySettings: () => void;
+  selectedReplyOption: number;
+  updateReplyOption: (id?: number) => void;
   tweetText: string;
   setTweetText: (text: string) => void;
 }
@@ -15,8 +15,8 @@ const useAddTweetStore = create<AddTweetState>()(
   devtools((set) => ({
     scheduledTime: '',
     setScheduledTime: (time) => set({ scheduledTime: time }),
-    isOpenReplySettings: false,
-    openReplySettings: () => set({ isOpenReplySettings: true }),
+    selectedReplyOption: 0,
+    updateReplyOption: (id = 1) => set({ selectedReplyOption: id }),
     tweetText: '',
     setTweetText: (text) => set({ tweetText: text }),
   }))

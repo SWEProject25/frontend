@@ -22,6 +22,7 @@ interface EditProfileModalProps {
     profileImage?: File;
     bannerImage?: File;
   }) => void;
+  isUpdating?: boolean;
 }
 
 const EditProfileModal: React.FC<EditProfileModalProps> = ({
@@ -29,6 +30,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   onClose,
   initialData,
   onSave,
+  isUpdating = false,
 }) => {
   const [name, setName] = useState(initialData.name);
   const [bio, setBio] = useState(initialData.bio);
@@ -69,25 +71,30 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     }
   };
 
-  const headerContent = (
-    <div className="flex justify-between gap-2 px-4 pt-4">
-      <Button
-        variant="ghost"
-        size="sm"
-        shape="circle"
-        onClick={onClose}
-        aria-label="Close modal"
-      >
-        <CloseIcon className="w-5 h-5 text-text-active" />
-      </Button>
-      <Button variant="social" size="sm" shape="rounded" onClick={handleSave}>
-        Save
-      </Button>
-    </div>
-  );
-
   return (
-    <XModal isOpen={isOpen} onClose={onClose} size="xl" header={headerContent}>
+    <XModal isOpen={isOpen} onClose={onClose} size="xl" customLayout={false}>
+      {/* <div className="z-50 fixed left-1/2 -translate-x-1/2 inset-0 flex flex-col bg-background rounded-2xl shadow-xl h-[427.5px] w-[600px] m-10 py-1"> */}
+      <div className="flex justify-between gap-2 px-4 pt-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          shape="circle"
+          onClick={onClose}
+          aria-label="Close modal"
+          disabled={isUpdating}
+        >
+          <CloseIcon className="w-5 h-5 text-text-active" />
+        </Button>
+        <Button
+          variant="social"
+          size="sm"
+          shape="rounded"
+          onClick={handleSave}
+          disabled={isUpdating}
+        >
+          {isUpdating ? 'Saving...' : 'Save'}
+        </Button>
+      </div>
       <div className="flex flex-col w-full">
         <Cover coverImage={bannerPreview} className="mt-4">
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -130,6 +137,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
           </div>
         </div>
       </div>
+      {/* </div> */}
     </XModal>
   );
 };

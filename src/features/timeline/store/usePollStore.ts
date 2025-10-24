@@ -7,7 +7,12 @@ interface PollState {
   shiftStartMinutes: number;
   setChoice: (id: number, choice: string) => void;
   setTime: (id: number, timeValue: number) => void;
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
   reset: () => void;
+  buttonInputIndex: number;
+  setButtonInputIndex: (ind: number) => void;
 }
 const usePollStore = create<PollState>()(
   devtools((set) => ({
@@ -42,7 +47,30 @@ const usePollStore = create<PollState>()(
       set({
         time: [1, 0, 0],
         choices: Array.from({ length: 4 }, () => ''),
+        buttonInputIndex: 2,
+        isOpen: false,
       }),
+    close: () =>
+      set((state) => {
+        const nonEmptyChoices = state.choices.filter((ch) => ch !== '');
+
+        const newIndex =
+          nonEmptyChoices.length < 3 ? 2 : nonEmptyChoices.length;
+
+        const newChoices = state.choices.map(
+          () => nonEmptyChoices.shift() ?? ''
+        );
+
+        return {
+          isOpen: false,
+          buttonInputIndex: newIndex,
+          choices: newChoices,
+        };
+      }),
+    isOpen: false,
+    open: () => set({ isOpen: true }),
+    buttonInputIndex: 2,
+    setButtonInputIndex: (ind) => set({ buttonInputIndex: ind }),
   }))
 );
 export default usePollStore;
