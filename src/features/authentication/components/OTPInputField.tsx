@@ -43,6 +43,7 @@ export function OTPInputField({
       )}
       maxLength={OTP_CONSTANTS.MAX_LENGTH_PER_INPUT}
       aria-label={`OTP digit ${index + 1}`}
+      data-testid={`otp-input-${index + 1}`}
     />
   );
 }

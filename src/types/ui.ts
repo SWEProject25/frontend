@@ -3,19 +3,21 @@ export interface IconProps {
   className?: string;
 }
 
-export interface ButtonProps {
+// Allow standard button HTML attributes so consumers can pass data-testid, id, aria-*, etc.
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'social' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
-  disabled?: boolean;
   className?: string;
+  // children and icon are still explicit
   children: React.ReactNode;
-  onClick?: () => void;
-  type?: 'button' | 'submit' | 'reset';
   icon?: React.ReactNode;
 }
 
-export interface InputProps {
+// Allow standard input HTML attributes so consumers can pass data-testid, name, id, aria-*, etc.
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url';
   value: string;
@@ -34,7 +36,8 @@ export interface InputProps {
   className?: string;
 }
 
-export interface SelectProps {
+export interface SelectProps
+  extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;

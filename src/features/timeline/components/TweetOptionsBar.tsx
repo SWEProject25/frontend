@@ -20,6 +20,7 @@ export default function TweetOptionsBar({
             accept="image/*"
             aria-label="Media"
             className="hidden  "
+            data-testid="tweet-options-image-input"
           />
         </label>
       </Icon>

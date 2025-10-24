@@ -9,6 +9,7 @@ export default function SearchBar() {
           type="text"
           placeholder="Search"
           id="search"
+          data-testid="layout-search-input"
           className="w-full bg-black text-white placeholder-gray-400 rounded-full pl-12 pr-4 py-2 focus:outline-none border border-gray-700"
         />
       </div>
