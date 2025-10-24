@@ -38,33 +38,35 @@ export default function AddTweet() {
     <div
       id="Add tweet"
       ref={ref}
-      className="  flex items-stretch  min-h-fit w-full  justify-center  border-l-1 border-b-1 border-border px-4 "
+      className="flex items-start w-full justify-center border-l-1 border-b-1 border-border px-4"
     >
-      <ProfileLogo />
-      <div className=" flex flex-1 flex-col items-stretch ">
-        <div className="flex flex-col flex-1 items-stretch pt-1 ">
+      <div className="pt-1">
+        <ProfileLogo />
+      </div>
+      <div className="flex flex-1 flex-col">
+        <div className="flex flex-col pt-1 pb-1 max-h-[calc(100vh-9rem)] overflow-y-auto">
           {scheduledTime && (
             <button
               onClick={open}
               aria-label="Scheduled Tweet Time"
-              className="cursor-pointer hover:underline hover:underline-offset-1 hover:decoration-text-inactive "
+              className="cursor-pointer hover:underline hover:underline-offset-1 hover:decoration-text-inactive"
             >
               <ScheduledTweetTime />
             </button>
           )}
           <TweetText divRef={textRef} />
 
-          <div className=" flex flex-1 items-stretch pt-3 h-fit">
+          <div className="pt-3">
             <Poll />
           </div>
+        </div>
 
-          <div className="sticky bottom-0  flex items-stretch flex-1 flex-col">
-            <TweetReplySettings />
-            <TweetFooter>
-              <TweetOptionsBar />
-              <TweetSubmitSection />
-            </TweetFooter>
-          </div>
+        <div>
+          <TweetReplySettings />
+          <TweetFooter>
+            <TweetOptionsBar />
+            <TweetSubmitSection />
+          </TweetFooter>
         </div>
       </div>
     </div>
