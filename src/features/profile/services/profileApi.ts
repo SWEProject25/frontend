@@ -26,11 +26,9 @@ async function handleResponse<T>(response: Response): Promise<T> {
       const errorData = await response.json();
       errorMessage = errorData.message || errorMessage;
     } catch {
-      // If response is not JSON, use status text
       errorMessage = response.statusText || errorMessage;
     }
 
-    // Provide user-friendly error messages for common errors
     if (statusCode === 401) {
       errorMessage = errorMessage || 'Unauthorized - Please log in';
     }
@@ -61,7 +59,7 @@ export const profileApi = {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Important for HTTPOnly cookies
+        credentials: 'include',
       }
     );
 
@@ -79,7 +77,7 @@ export const profileApi = {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Important for HTTPOnly cookies
+        credentials: 'include',
         body: JSON.stringify(profileData),
       }
     );
