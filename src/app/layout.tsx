@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google';
 import '@/app/globals.css';
 import './globals.css';
 import { Providers } from '@/lib/providers';
-import { MSWProvider } from '../features/profile/mocks/MSWProvider';
+import { MSWProvider } from '@/mocks/MSWProvider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
