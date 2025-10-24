@@ -17,6 +17,7 @@
  */
 
 export * from './MSWProvider';
+export * from './mockData';
 
 // Don't export server/browser directly to avoid bundling issues
 // Import them directly when needed:

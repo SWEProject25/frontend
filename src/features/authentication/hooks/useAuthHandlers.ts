@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { CreateUserDto, LoginDto, VerifyOTPDto } from '../types/api';
-import { formatBirthDate, hasBirthDateFields } from '../utils/dateUtils';
+import { formatBirthDate } from '../utils/dateUtils';
 import { AUTH_CLIENT_CONFIG } from '../constants/api';
 import { FormState } from '../types/hooks';
 import { useAuth } from './useAuth';

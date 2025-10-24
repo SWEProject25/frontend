@@ -2,10 +2,6 @@ import { useUpdateMyProfile } from './profileQueries';
 import type { ProfileResponseDto } from '../types/api';
 import { convertFileToDataURL } from '@/utils';
 
-/**
- * Custom hook for handling profile updates with file upload support
- * Converts File objects to data URLs and transforms data to API format
- */
 export const useProfile = () => {
   const updateMyProfile = useUpdateMyProfile();
 
@@ -16,7 +12,6 @@ export const useProfile = () => {
     bannerImage?: File;
   }) => {
     try {
-      // Convert File objects to data URLs (or upload to storage service)
       const profileImageUrl = data.profileImage
         ? await convertFileToDataURL(data.profileImage)
         : undefined;
@@ -25,7 +20,6 @@ export const useProfile = () => {
         ? await convertFileToDataURL(data.bannerImage)
         : undefined;
 
-      // Transform to API format
       const updateData: {
         name?: string;
         bio?: string;
@@ -36,7 +30,6 @@ export const useProfile = () => {
         bio: data.bio,
       };
 
-      // Only include image URLs if they were changed
       if (profileImageUrl) {
         updateData.profile_image_url = profileImageUrl;
       }

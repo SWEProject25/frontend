@@ -3,11 +3,9 @@ import Icon from '../../../components/ui/home/Icon';
 import XMenu from '@/components/ui/home/XMenu';
 
 import { onClose } from '@/components/ui/home/XMenu';
-import { useState } from 'react';
 import useAddTweetStore from '../store/useAddTweetStore';
 import { options } from '../constants/GrokOptions';
 export default function GrokMenu() {
-  const [grokOption, setgrokOption] = useState(0);
   const PANEL_HEIGHT = 88;
   const canEnhanceTweet =
     useAddTweetStore((state) => state.tweetText).length > 0;
@@ -34,7 +32,6 @@ export default function GrokMenu() {
                   disabled={index === 1 ? !canEnhanceTweet : false}
                   type="button"
                   onClick={() => {
-                    setgrokOption(opt.id);
                     onClose();
                   }}
                   className={`h-full cursor-pointer w-full flex items-center gap-2 pl-2 outline-none ${

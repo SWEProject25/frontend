@@ -1,8 +1,7 @@
 'use client';
 import { Settings, Mail } from 'lucide-react';
 import { SearchInput } from '@/components/ui/input';
-import { useRouter } from 'next/navigation';
-import UserCard from '@/components/ui/UserCard';
+import NextImage from 'next/image';
 
 interface Conversation {
   id: string;
@@ -88,10 +87,12 @@ export default function ConversationsList({
             >
               <div className="flex items-start gap-3">
                 {/* Avatar */}
-                <img
+                <NextImage
                   src={conversation.avatar}
                   alt={conversation.name}
-                  className="w-12 h-12 rounded-full flex-shrink-0"
+                  width={48}
+                  height={48}
+                  className="rounded-full flex-shrink-0"
                 />
 
                 {/* Content */}

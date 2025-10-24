@@ -17,7 +17,6 @@ interface UserPageProps {
 const UserPage = ({ params }: UserPageProps) => {
   const { username } = use(params);
 
-  // Fetch profile data using TanStack Query hook with MSW
   const {
     data: profileData,
     isLoading,

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 
 import Icon from '../../../components/ui/home/Icon';
 import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';

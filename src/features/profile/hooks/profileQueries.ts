@@ -68,7 +68,6 @@ export const useUpdateMyProfile = () => {
       }
     },
     onSuccess: () => {
-      // Invalidate and refetch ALL profile queries to ensure UI updates
       queryClient.invalidateQueries({
         queryKey: ['profile'],
       });

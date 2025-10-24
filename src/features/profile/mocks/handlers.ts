@@ -5,7 +5,7 @@ import {
   getMockProfileByUserId,
   getMockProfileByUsername,
   searchMockProfiles,
-} from './mockData';
+} from '../../../mocks/mockData';
 import type { UpdateProfileDto } from '../types/api';
 
 /**
@@ -13,14 +13,12 @@ import type { UpdateProfileDto } from '../types/api';
  * These handlers intercept HTTP requests and return mock responses
  */
 
-// Helper to build full URL
 const buildUrl = (endpoint: string) =>
   `${PROFILE_API_CONFIG.BASE_URL}${endpoint}`;
 
 export const profileHandlers = [
   // GET /api/v1.0/profile/me - Get current user's profile
   http.get(buildUrl(PROFILE_ENDPOINTS.GET_MY_PROFILE), () => {
-    // Simulate 5% error rate
     if (Math.random() < 0.05) {
       return HttpResponse.json(
         {
@@ -77,7 +75,6 @@ export const profileHandlers = [
         );
       }
 
-      // Update the mock profile in place
       Object.assign(mockCurrentUserProfile, {
         ...body,
         updated_at: new Date().toISOString(),

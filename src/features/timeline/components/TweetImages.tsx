@@ -4,14 +4,7 @@ import React, { useState } from 'react';
 import usePollStore from '../store/usePollStore';
 import Image from 'next/image';
 
-interface ImagesType {
-  name: string;
-  size: number;
-  type: string;
-}
-
 export default function TweetImages() {
-  const [images, setImages] = useState<ImagesType[]>([]);
   const [image, setImage] = useState<File>();
   const isPollOpen = usePollStore((state) => state.isOpen);
 
@@ -19,14 +12,6 @@ export default function TweetImages() {
     const files = e.target.files;
     if (!files) return;
     setImage(files[0]);
-    const filesArray = Array.from(files);
-    const newImages = filesArray.map((file) => ({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    }));
-
-    setImages((imgs) => [...imgs, ...newImages]);
   }
 
   return (

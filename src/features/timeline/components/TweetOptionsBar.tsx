@@ -1,13 +1,6 @@
 import Icon from '../../../components/ui/home/Icon';
-import usePollStore from '../store/usePollStore';
-import GrokMenu from './GrokMenu';
-import Schedule from './Schedule';
 
-export default function TweetOptionsBar({
-  openPoll,
-}: {
-  openPoll: (open: boolean) => void;
-}) {
+export default function TweetOptionsBar() {
   return (
     <div className="flex flex-1 items-center mr-auto h-10">
       <Icon
