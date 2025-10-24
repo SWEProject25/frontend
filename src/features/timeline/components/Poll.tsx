@@ -17,8 +17,8 @@ const inputs = [
 ];
 export default function Poll() {
   const choices = usePollStore((state) => state.choices);
-  const time = usePollStore((state) => state.time);
   const setChoice = usePollStore((state) => state.setChoice);
+  const time = usePollStore((state) => state.time);
   const setTime = usePollStore((state) => state.setTime);
   const shiftStartMinutes = usePollStore((state) => state.shiftStartMinutes);
   const isOpen = usePollStore((state) => state.isOpen);

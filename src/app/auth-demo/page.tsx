@@ -14,6 +14,36 @@ function AuthDemoContent() {
   const { formState, clearFormState } = useAuthHandlers();
   const { openModal } = useAuthModals();
 
+  // Safe getters to avoid TS errors when auth.user can be a loose Record
+  const getField = (key: string) => {
+    const u = auth.user as Record<string, unknown> | null;
+    if (!u) return 'N/A';
+    const v = u[key];
+    return typeof v === 'string' && v.length > 0 ? v : 'N/A';
+  };
+
+  const getDateField = (key: string) => {
+    const u = auth.user as Record<string, unknown> | null;
+    if (!u) return 'N/A';
+    const v = u[key];
+    if (typeof v === 'string' || typeof v === 'number') {
+      const d = new Date(v as string | number);
+      if (isNaN(d.getTime())) return 'N/A';
+      return d.toLocaleDateString();
+    }
+    return 'N/A';
+  };
+
+  const userDisplay = (() => {
+    const name = getField('name');
+    if (name !== 'N/A') return name;
+    const email = getField('email');
+    if (email !== 'N/A') return email;
+    const username = getField('username');
+    if (username !== 'N/A') return username;
+    return '';
+  })();
+
   useEffect(() => {
     if (!searchParams) return;
 
@@ -60,6 +90,7 @@ function AuthDemoContent() {
                 <button
                   onClick={() => setShowSuccessMessage(false)}
                   className="text-green-400 hover:text-green-600"
+                  aria-label="Close success message"
                 >
                   <CloseXIcon className="h-5 w-5" />
                 </button>
@@ -76,16 +107,25 @@ function AuthDemoContent() {
               <p className="text-green-600 mb-2">✅ Authenticated</p>
               <div className="bg-gray-50 p-4 rounded">
                 <p>
-                  <strong>Name:</strong> {auth.user?.name}
+                  <strong>Name:</strong> {userDisplay || 'N/A'}
                 </p>
                 <p>
-                  <strong>Email:</strong> {auth.user?.email}
+                  <strong>Username:</strong> {getField('username')}
                 </p>
                 <p>
-                  <strong>Role:</strong> {auth.user?.role}
+                  <strong>Email:</strong> {getField('email')}
                 </p>
                 <p>
-                  <strong>ID:</strong> {auth.user?.id}
+                  <strong>Role:</strong> {getField('role')}
+                </p>
+                <p>
+                  <strong>Birth Date:</strong> {getDateField('birth_date')}
+                </p>
+                <p>
+                  <strong>Location:</strong> {getField('location')}
+                </p>
+                <p>
+                  <strong>Created At:</strong> {getDateField('created_at')}
                 </p>
               </div>
               <button

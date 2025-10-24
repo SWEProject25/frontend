@@ -23,7 +23,7 @@ export default function AddTweet() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(
     function () {
-      function handleClick(e: MouseEvent) {
+      function handleClick() {
         showReplySettings();
       }
       if (ref.current && !isReplySettingsVisible) {

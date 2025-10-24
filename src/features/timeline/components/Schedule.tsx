@@ -39,9 +39,10 @@ export default function Schedule() {
         isOpen={isOpen}
         customLayout={false}
         onClose={close}
+        size="2xl"
       >
-        <div className="z-50 fixed left-1/2 -translate-x-1/2 inset-0 flex flex-col bg-background rounded-2xl shadow-xl h-[427.5px] w-[600px] m-10 py-1">
-          <div className="flex items-center px-3 h-12 ">
+        <div className="flex flex-col inset-0 py-1">
+          <div className="flex items-center h-12 ">
             <div className="flex w-14 h-12 justify-start items-center">
               <Icon
                 width="w-5"
@@ -65,7 +66,7 @@ export default function Schedule() {
               />
             </div>
           </div>
-          <div className=" flex flex-col px-3 gap-y-3">
+          <div className=" flex flex-col  gap-y-3">
             <ScheduledTweetTime />
 
             <div className="space-y-2  text-text-inactive ">

@@ -1,32 +1,34 @@
 import React, { useEffect } from 'react';
-import { XLogo, CloseIcon } from '@/components/ui/icons';
+import { CloseIcon, XLogo } from '@/components/ui/icons';
 
 interface XModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
   children: React.ReactNode;
-  showLogo?: boolean;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
   overlayColor?: string;
   customLayout?: boolean;
   preventScroll?: boolean;
+  title?: string;
+  showLogo?: boolean;
+  showCloseButton?: boolean;
 }
 
 export default function XModal({
   isOpen,
   onClose,
-  title,
   children,
-  showLogo = true,
   size = 'md',
   closeOnOverlayClick = true,
   closeOnEscape = true,
   overlayColor = 'bg-black/50 backdrop-blur-sm',
   customLayout = true,
   preventScroll = true,
+  title = 'Custom Modal',
+  showLogo = false,
+  showCloseButton = false,
 }: XModalProps) {
   useEffect(() => {
     if (!closeOnEscape || !isOpen) return;
@@ -55,10 +57,11 @@ export default function XModal({
   if (!isOpen) return null;
 
   const sizeClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
+    sm: 'sm:max-w-sm',
+    md: 'sm:max-w-md',
+    lg: 'sm:max-w-lg',
+    xl: 'sm:max-w-xl',
+    '2xl': 'sm:h-[427.5px] sm:w-[600px]',
   };
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -68,51 +71,53 @@ export default function XModal({
   };
 
   return (
-    <>
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center  ${overlayColor}`}
+      onClick={handleOverlayClick}
+      role="dialog"
+      aria-modal="true"
+    >
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${overlayColor}`}
-        onClick={handleOverlayClick}
-        role="dialog"
-        aria-modal="true"
-      />
-      {customLayout ? (
-        <div
-          className={`
-          relative w-full ${sizeClasses[size]}
-          bg-modal-bg rounded-2xl
-          shadow-2xl
-          max-h-[90vh] overflow-y-auto
-          animate-in fade-in zoom-in-95 duration-200
-        `}
-        >
-          <button
-            onClick={onClose}
-            className="absolute top-4 left-4 p-2 rounded-full hover:bg-muted transition-colors z-10"
-            aria-label="Close modal"
-          >
-            <CloseIcon className="w-5 h-5 text-text-active" />
-          </button>
+        className={`
+              relative w-full
+              bg-modal-bg sm:rounded-2xl
+              shadow-2xl
+              h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto
+              sm:p-4
+              animate-in fade-in zoom-in-95 duration-200
+               ${sizeClasses[size]}
+              `}
+      >
+        {customLayout && (
+          <>
+            {showCloseButton && (
+              <button
+                onClick={onClose}
+                className="absolute top-4 left-4 p-2 rounded-full hover:bg-muted transition-colors z-10"
+                aria-label="Close modal"
+              >
+                <CloseIcon className="w-5 h-5 text-text-active" />
+              </button>
+            )}
 
-          {showLogo && (
-            <div className="flex justify-center pt-4 pb-2">
-              <XLogo className="w-8 h-8 text-text-active" />
-            </div>
-          )}
+            {showLogo && (
+              <div className="flex justify-center pt-4 pb-2">
+                <XLogo className="w-8 h-8 text-text-active" />
+              </div>
+            )}
 
-          {title && (
-            <div className="px-8 pt-2 pb-4">
-              <h2 className="text-2xl font-bold text-text-active text-center">
-                {title}
-              </h2>
-            </div>
-          )}
-
-          {/* Content */}
-          <div className="px-8 pb-8">{children}</div>
-        </div>
-      ) : (
-        <>{children}</>
-      )}
-    </>
+            {title && (
+              <div className="px-8 pt-2 pb-4">
+                <h2 className="text-2xl font-bold text-text-active text-center">
+                  {title}
+                </h2>
+              </div>
+            )}
+          </>
+        )}
+        {/* Content */}
+        <div className="px-8 pb-8">{children}</div>
+      </div>
+    </div>
   );
 }

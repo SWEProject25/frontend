@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { FormContainer, authFormConfigs } from '@/components/ui/forms';
 import { AuthButton } from '@/components/ui/AuthButton';
 import { Divider } from '@/components/ui/Divider';
@@ -56,7 +57,7 @@ export function GenericAuthFormDemo() {
     }, 1000);
   };
 
-  const handleSocialLogin = (providerId: string) => {
+  const handleSocialAuth = (providerId: string) => {
     console.log('Social login:', providerId);
     alert(`Social login with: ${providerId}`);
     setActiveForm(null);
@@ -408,24 +409,24 @@ export function GenericAuthFormDemo() {
         {/* Navigation */}
         <div className="text-center">
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <a
+            <Link
               href="/demo"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← Back to Demos
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/buttons"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← Button Components
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/inputs"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               Input Components →
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -434,7 +435,7 @@ export function GenericAuthFormDemo() {
           <FormContainer
             {...authFormConfigs.login}
             onSubmit={handleSubmit}
-            onSocialLogin={handleSocialLogin}
+            onSocialLogin={handleSocialAuth}
             onForgotPassword={handleForgotPassword}
             onClose={closeModal}
             mode="responsive"
@@ -448,7 +449,7 @@ export function GenericAuthFormDemo() {
           <FormContainer
             {...authFormConfigs.register}
             onSubmit={handleSubmit}
-            onSocialLogin={handleSocialLogin}
+            onSocialLogin={handleSocialAuth}
             onClose={closeModal}
             mode="responsive"
             className="animate-in fade-in duration-200"

@@ -12,6 +12,7 @@ export {
   getPreviousOTPIndex,
   processPastedOTP,
 } from './otpUtils';
+export { getOTPInputClassName } from './otpStyleUtils';
 export {
   handleCreateAccount,
   handleFormClose,

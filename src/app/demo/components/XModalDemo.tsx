@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import XModal from '@/components/ui/hoc/XModal';
 import Button from '@/components/ui/Button';
 import { InputField } from '@/components/ui/input';
@@ -139,7 +140,6 @@ export function XModalDemo() {
         <XModal
           isOpen={activeModal === 'delete-confirmation'}
           onClose={closeModal}
-          title="Delete post?"
           size="sm"
         >
           <p className="text-text-secondary text-[15px] mb-6">
@@ -161,7 +161,6 @@ export function XModalDemo() {
         <XModal
           isOpen={activeModal === 'logout-confirmation'}
           onClose={closeModal}
-          title="Log out of X?"
           size="sm"
         >
           <p className="text-text-secondary text-[15px] mb-6">
@@ -182,7 +181,6 @@ export function XModalDemo() {
         <XModal
           isOpen={activeModal === 'discard-confirmation'}
           onClose={closeModal}
-          title="Discard changes?"
           size="sm"
         >
           <p className="text-text-secondary text-[15px] mb-6">
@@ -202,7 +200,6 @@ export function XModalDemo() {
         <XModal
           isOpen={activeModal === 'success'}
           onClose={closeModal}
-          title="Success!"
           size="sm"
         >
           <div className="text-center">
@@ -229,12 +226,7 @@ export function XModalDemo() {
         </XModal>
 
         {/* Error Modal */}
-        <XModal
-          isOpen={activeModal === 'error'}
-          onClose={closeModal}
-          title="Error"
-          size="sm"
-        >
+        <XModal isOpen={activeModal === 'error'} onClose={closeModal} size="sm">
           <div className="text-center">
             <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg
@@ -262,7 +254,6 @@ export function XModalDemo() {
         <XModal
           isOpen={activeModal === 'warning'}
           onClose={closeModal}
-          title="Warning"
           size="sm"
         >
           <div className="text-center">
@@ -295,12 +286,7 @@ export function XModalDemo() {
         </XModal>
 
         {/* Info Modal */}
-        <XModal
-          isOpen={activeModal === 'info'}
-          onClose={closeModal}
-          title="Information"
-          size="md"
-        >
+        <XModal isOpen={activeModal === 'info'} onClose={closeModal} size="md">
           <div className="text-center">
             <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg
@@ -329,7 +315,6 @@ export function XModalDemo() {
         <XModal
           isOpen={activeModal === 'contact-form'}
           onClose={closeModal}
-          title="Contact Us"
           size="md"
         >
           <div className="space-y-4">
@@ -364,7 +349,6 @@ export function XModalDemo() {
         <XModal
           isOpen={activeModal === 'edit-profile'}
           onClose={closeModal}
-          title="Edit Profile"
           size="lg"
         >
           <div className="space-y-4">
@@ -405,7 +389,6 @@ export function XModalDemo() {
         <XModal
           isOpen={activeModal === 'size-sm'}
           onClose={closeModal}
-          title="Small Modal"
           size="sm"
         >
           <p className="text-text-secondary text-[15px] mb-4">
@@ -420,7 +403,6 @@ export function XModalDemo() {
         <XModal
           isOpen={activeModal === 'size-md'}
           onClose={closeModal}
-          title="Medium Modal"
           size="md"
         >
           <p className="text-text-secondary text-[15px] mb-4">
@@ -435,7 +417,6 @@ export function XModalDemo() {
         <XModal
           isOpen={activeModal === 'size-lg'}
           onClose={closeModal}
-          title="Large Modal"
           size="lg"
         >
           <p className="text-text-secondary text-[15px] mb-4">
@@ -450,7 +431,6 @@ export function XModalDemo() {
         <XModal
           isOpen={activeModal === 'size-xl'}
           onClose={closeModal}
-          title="Extra Large Modal"
           size="xl"
         >
           <p className="text-text-secondary text-[15px] mb-4">
@@ -465,24 +445,24 @@ export function XModalDemo() {
         {/* Navigation */}
         <div className="text-center mt-12">
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <a
+            <Link
               href="/demo"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               ← Back to Demos
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/buttons"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               Button Components
-            </a>
-            <a
+            </Link>
+            <Link
               href="/demo/inputs"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               Input Components
-            </a>
+            </Link>
           </div>
         </div>
       </div>

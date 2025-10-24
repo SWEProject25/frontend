@@ -1,6 +1,8 @@
 import React from 'react';
 import LeftSidebar from './LeftSidebar';
 import RightSidebar from './RightSidebar';
+import MobileBottomBar from './MobileBottomBar';
+import EmptySpace from './EmptySpace';
 
 interface LayoutWrapperProps {
   children: React.ReactNode;
@@ -16,13 +18,16 @@ export default function LayoutWrapper({
       <div className="hidden xs:block">
         <LeftSidebar />
       </div>
-      <div className="block xs:hidden">{/* <MobileBar/> */}</div>
+
+      <div className="xs:hidden">
+        <MobileBottomBar />
+      </div>
 
       {/* Main Content */}
       <main
         className={`
           flex-1
-          ${showRightSidebar ? 'max-w-[600px]' : 'max-w-[990px]'}
+          ${showRightSidebar ? 'max-w-[600px]' : 'max-w-[942px]'}
           min-h-screen
           border-x
           border-gray-800
