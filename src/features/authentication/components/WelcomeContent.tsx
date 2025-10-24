@@ -34,6 +34,7 @@ export function WelcomeContent({
             icon={<GoogleIcon />}
             className="w-full"
             onClick={() => handleSocialAuth(SOCIAL_PROVIDERS.GOOGLE)}
+            data-testid="signup-google-button"
           >
             Sign up with Google
           </AuthButton>
@@ -44,6 +45,7 @@ export function WelcomeContent({
             icon={<GitHubIcon />}
             className="w-full"
             onClick={() => handleSocialAuth(SOCIAL_PROVIDERS.GITHUB)}
+            data-testid="signup-github-button"
           >
             Sign up with GitHub
           </AuthButton>
@@ -57,6 +59,7 @@ export function WelcomeContent({
           size="lg"
           className="w-full"
           onClick={onCreateAccount}
+          data-testid="signup-create-account-button"
         >
           Create account
         </AuthButton>
@@ -91,6 +94,7 @@ export function WelcomeContent({
             size="lg"
             className="w-full"
             onClick={onLogin}
+            data-testid="signin-button"
           >
             Sign in
           </AuthButton>

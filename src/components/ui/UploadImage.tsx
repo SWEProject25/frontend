@@ -62,6 +62,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
         accept="image/*"
         className="hidden"
         onChange={handleFileChange}
+        data-testid="upload-image-input"
       />
       {label && <p className="text-sm text-text-active">{label}</p>}
     </div>

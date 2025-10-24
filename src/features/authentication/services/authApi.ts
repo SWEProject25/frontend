@@ -222,11 +222,13 @@ export const authApi = {
 
     function handleMessage(event: MessageEvent) {
       const allowedOrigins = [AUTH_API_CONFIG.BASE_URL, window.location.origin];
+
       if (!allowedOrigins.includes(event.origin)) return;
 
       const payload = event.data;
-
+      console.log(payload);
       const { user } = payload.data.user;
+      console.log(user);
 
       if (user) {
         callback(user);

@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { CreateUserDto, LoginDto, VerifyOTPDto } from '../types/api';
+import { formatBirthDate, hasBirthDateFields } from '../utils/dateUtils';
 import { AUTH_CLIENT_CONFIG } from '../constants/api';
 import { FormState } from '../types/hooks';
 import { useAuth } from './useAuth';
@@ -187,12 +188,16 @@ export function useAuthHandlers() {
             }
 
           case 'password':
-            // Final step: complete registration
+            console.log(data);
             const signupData: CreateUserDto = {
               name: data.name,
               email: data.email,
               password: data.password,
-              birth_date: data.birth_date || '',
+              birth_date: formatBirthDate(
+                data.birthMonth,
+                data.birthDay,
+                data.birthYear
+              ),
             };
 
             await register(signupData);
@@ -201,10 +206,11 @@ export function useAuthHandlers() {
               isLoading: false,
               success: true,
             }));
+            console.log(signupData);
 
-            // Redirect to demo page with success message
+            // Redirect to configured success page after registration
             setTimeout(() => {
-              router.push(AUTH_CLIENT_CONFIG.REGISTER_REDIRECT);
+              router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT);
             }, 1000); // Small delay to show success state
             return true;
 
