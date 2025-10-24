@@ -1,18 +1,17 @@
 /**
  * Handles footer link clicks for modal switching
  */
+import { AuthModalType } from '../types/components';
+
 export const handleFooterLinkClick = (
   link: { href: string },
   e: React.MouseEvent,
-  onSwitchModal?: (newType: 'login' | 'signup' | 'createAccount') => void
+  onSwitchModal?: (newType: AuthModalType) => void
 ) => {
   e.preventDefault();
 
   if (link.href.startsWith('modal:')) {
-    const modalType = link.href.replace('modal:', '') as
-      | 'login'
-      | 'signup'
-      | 'createAccount';
+    const modalType = link.href.replace('modal:', '') as AuthModalType;
     onSwitchModal?.(modalType);
   } else {
     // Handle external links

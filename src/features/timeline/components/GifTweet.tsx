@@ -2,7 +2,6 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
-const GIF_API_KEY = 't0JUs64tvKcw5xaMCbIX640GKnqJ6Ybi';
 interface GifData {
   id: string;
   title: string;

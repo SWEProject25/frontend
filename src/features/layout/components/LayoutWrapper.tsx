@@ -2,7 +2,6 @@ import React from 'react';
 import LeftSidebar from './LeftSidebar';
 import RightSidebar from './RightSidebar';
 import MobileBottomBar from './MobileBottomBar';
-import EmptySpace from './EmptySpace';
 
 interface LayoutWrapperProps {
   children: React.ReactNode;

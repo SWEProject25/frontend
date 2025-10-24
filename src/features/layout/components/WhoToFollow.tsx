@@ -9,7 +9,6 @@ export default function WhoToFollow() {
 
   const handleFollow = (userName: string) => {
     console.log(`Following ${userName}`);
-    // Add your follow logic here
   };
 
   return (

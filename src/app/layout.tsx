@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
-import { Lexend } from 'next/font/google';
-import '@/app/globals.css';
+import { Inter } from 'next/font/google';
 import './globals.css';
+// import './globals.css';
 import { Providers } from '@/lib/providers';
+import { MSWProvider } from '@/mocks/MSWProvider';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   title: {
@@ -12,20 +15,18 @@ export const metadata: Metadata = {
   description: 'X clone',
 };
 
-const lexend = Lexend({ subsets: ['latin'] });
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body
-        className={`${lexend.className} bg-black text-white overflow-x-hidden`}
-      >
+    <html lang="en" className={inter.variable}>
+      <body className={` bg-black text-white overflow-x-hidden`}>
         <div className="flex justify-center min-h-screen w-full">
+          {/* <MSWProvider> */}
           <Providers>{children}</Providers>
+          {/* </MSWProvider> */}
         </div>
       </body>
     </html>

@@ -20,6 +20,7 @@ interface ActionsPanelProps {
     profileImage?: File;
     bannerImage?: File;
   }) => void;
+  isUpdating?: boolean;
 }
 
 const ActionsPanel: React.FC<ActionsPanelProps> = ({
@@ -29,6 +30,7 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
   onUnfollow,
   userData,
   onSaveProfile,
+  isUpdating = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -96,6 +98,7 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
         onClose={() => setIsModalOpen(false)}
         initialData={userData}
         onSave={onSaveProfile}
+        isUpdating={isUpdating}
       />
     </div>
   );

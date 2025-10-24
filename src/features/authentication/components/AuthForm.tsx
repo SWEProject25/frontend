@@ -25,6 +25,7 @@ export function AuthForm({
     type,
     handleLogin,
     handleSignup,
+    handleForgotPassword,
     onSwitchModal
   );
 
@@ -34,7 +35,7 @@ export function AuthForm({
     mode,
     onSocialLogin: handleSocialAuth,
     onSwitchModal,
-    onForgotPassword: handleForgotPassword,
+    onForgotPassword: () => onSwitchModal?.('forgotPassword'),
     onSubmit,
     formState,
     onClearState: () => clearFormState('otp'),
@@ -49,6 +50,8 @@ export function AuthForm({
           <button
             onClick={handleClose}
             className="text-foreground hover:bg-gray-800 rounded-full p-2 transition-colors"
+            title="Close"
+            aria-label="Close authentication form"
           >
             <CloseXIcon className="w-5 h-5" />
           </button>

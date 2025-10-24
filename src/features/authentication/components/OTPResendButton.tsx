@@ -34,6 +34,7 @@ export function OTPResendButton({
           type="button"
           disabled
           className="text-sm text-text-inactive cursor-not-allowed"
+          data-testid="otp-resend-button-disabled"
         >
           Didn&apos;t receive the code? Resend
         </button>
@@ -46,6 +47,7 @@ export function OTPResendButton({
       type="button"
       onClick={onResend}
       className="text-sm text-primary hover:text-primary-hover underline transition-colors"
+      data-testid="otp-resend-button"
     >
       Didn&apos;t receive the code? Resend
     </button>

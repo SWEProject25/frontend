@@ -58,9 +58,9 @@ export const FORM_MODES = {
 // Re-export multi-step constants
 export {
   LOGIN_STEPS,
-  CREATE_ACCOUNT_STEPS,
   MULTI_STEP_CONSTANTS,
   getCreateAccountSteps,
+  getForgotPasswordSteps,
 } from './multiStep';
 
 // Re-export link constants

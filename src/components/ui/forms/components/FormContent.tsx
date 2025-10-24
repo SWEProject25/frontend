@@ -68,9 +68,7 @@ export function FormContent({
 
           return (
             <div className="text-center">
-              <p className="text-sm" style={{ color: 'var(--color-error)' }}>
-                {errors[generalError]}
-              </p>
+              <p className="text-sm text-error">{errors[generalError]}</p>
             </div>
           );
         })()}

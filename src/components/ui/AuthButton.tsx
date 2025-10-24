@@ -39,6 +39,13 @@ export const AuthButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
       lg: 'h-14 px-8 text-lg',
     };
 
+    // Allow callers to pass a data-testid; otherwise provide a sensible default
+    const providedTestId = (
+      props as unknown as Record<string, string | undefined>
+    )['data-testid'];
+
+    const computedTestId = providedTestId ?? `auth-button-${variant}-${size}`;
+
     return (
       <button
         className={cn(
@@ -50,6 +57,7 @@ export const AuthButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         disabled={disabled || loading}
         ref={ref}
+        data-testid={computedTestId}
         {...props}
       >
         {loading && <SpinnerIcon className="mr-2 h-4 w-4" />}

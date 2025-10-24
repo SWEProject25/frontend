@@ -15,6 +15,9 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@heroui/dropdown": "^2.3.27",
+    "@heroui/react": "^2.8.5",
+    "@lobehub/icons": "^2.43.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.3.4",
@@ -26,6 +29,7 @@
     "next": "15.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-icons": "^5.5.0",
     "react-google-recaptcha": "^3.1.0",
     "zustand": "^5.0.8"
   },
@@ -49,6 +53,7 @@
     "husky": "^9.1.7",
     "jsdom": "^27.0.0",
     "lint-staged": "^16.2.3",
+    "msw": "^2.11.6",
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "typescript": "^5",
@@ -61,6 +66,11 @@
     ],
     "*.{json,css,md}": [
       "prettier --write"
+    ]
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
     ]
   }
 }
