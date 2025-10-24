@@ -38,7 +38,7 @@ export default function AddTweet() {
     <div
       id="Add tweet"
       ref={ref}
-      className=" flex items-stretch  min-h-fit w-full  justify-center  border-l-1 border-b-1 border-border px-4 "
+      className="  flex items-stretch  min-h-fit w-full  justify-center  border-l-1 border-b-1 border-border px-4 "
     >
       <ProfileLogo />
       <div className=" flex flex-1 flex-col items-stretch ">

@@ -10,7 +10,7 @@ export default function Timeline() {
       <div className="flex-col w-full justify-items-center pt-14">
         <AddTweet />
         <ShowTweets />
-        <Tweets />
+        {/* <Tweets /> */}
       </div>
     </div>
   );

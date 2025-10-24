@@ -5,13 +5,13 @@ import usePollStore from '../store/usePollStore';
 import Image from 'next/image';
 
 export default function TweetImages() {
-  const [image, setImage] = useState<File>();
+  const [images, setImages] = useState<File[]>([]);
   const isPollOpen = usePollStore((state) => state.isOpen);
 
   function handleImportImage(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (!files) return;
-    setImage(files[0]);
+    setImages((images) => [...images, ...files]);
   }
 
   return (
@@ -36,7 +36,7 @@ export default function TweetImages() {
           />
         </label>
       </Icon>
-      {image && (
+      {/* {image && (
         <div className="flex w-40 h-40 relative aspect-square">
           <Image
             fill
@@ -46,7 +46,7 @@ export default function TweetImages() {
             alt={image.name}
           />
         </div>
-      )}
+      )} */}
     </>
   );
 }

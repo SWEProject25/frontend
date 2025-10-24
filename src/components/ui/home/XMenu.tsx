@@ -1,19 +1,20 @@
 'use client';
 import { ReactNode, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { create } from 'zustand';
 
 interface XMenuState {
   menuName?: string;
   open: (name: string) => void;
   close: () => void;
-  placement: 'top' | 'bottom';
-  setPlacement: (diretion: 'bottom' | 'top') => void;
+  position: { top: number; left: number };
+  setPosition: (position: { top: number; left: number }) => void;
 }
 
 const useXMenu = create<XMenuState>()((set) => ({
   menuName: '',
-  placement: 'bottom',
-  setPlacement: (direction) => set({ placement: direction }),
+  position: { top: 0, left: 0 },
+  setPosition: (position) => set({ position }),
   open: (name) => set({ menuName: name }),
   close: () => set({ menuName: '' }),
 }));
@@ -22,7 +23,7 @@ interface XMenuProps {
   children: ReactNode;
 }
 export default function XMenu({ children }: XMenuProps) {
-  return <>{children}</>;
+  return <div className="relative">{children}</div>;
 }
 
 interface ButtonProp {
@@ -34,7 +35,7 @@ function Button({ panelHeight, children, name }: ButtonProp) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuName = useXMenu((state) => state.menuName);
   const open = useXMenu((state) => state.open);
-  const setPlacement = useXMenu((state) => state.setPlacement);
+  const setPosition = useXMenu((state) => state.setPosition);
 
   function handleOpenMenu() {
     if (menuName === name) return;
@@ -43,15 +44,22 @@ function Button({ panelHeight, children, name }: ButtonProp) {
     if (!trigger) return;
     const spaceBelow = window.innerHeight - trigger.bottom;
     const spaceAbove = trigger.top;
-    const margin = 8; // mt/mb-2 spacing
+    const margin = 8;
+
+    let top: number;
     if (
       spaceBelow < panelHeight + margin &&
       spaceAbove >= panelHeight + margin
     ) {
-      setPlacement('top');
+      // Position above the button
+      top = trigger.top - panelHeight - margin;
     } else {
-      setPlacement('bottom');
+      // Position below the button
+      top = trigger.bottom + margin;
     }
+
+    const left = trigger.left;
+    setPosition({ top, left });
     open(name);
   }
   return (
@@ -68,7 +76,6 @@ function Button({ panelHeight, children, name }: ButtonProp) {
 interface ListProps {
   preventScroll: boolean;
   children: ReactNode;
-  customLayout?: boolean;
   overlayColor?: string;
   name: string;
   height: string;
@@ -79,7 +86,6 @@ interface ListProps {
 function List({
   children,
   preventScroll,
-  customLayout = false,
   overlayColor = 'bg-transparent',
   name,
   height,
@@ -89,7 +95,7 @@ function List({
 }: ListProps) {
   const menuName = useXMenu((state) => state.menuName);
   const close = useXMenu((state) => state.close);
-  const placement = useXMenu((state) => state.placement);
+  const position = useXMenu((state) => state.position);
   // Close modal on scroll
   useEffect(() => {
     if (menuName !== name || menuName === '' || preventScroll) return;
@@ -134,25 +140,30 @@ function List({
     };
   }, [preventScroll, menuName, name]);
 
+  const menuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (menuRef.current) {
+      menuRef.current.style.top = `${position.top}px`;
+      menuRef.current.style.left = `${position.left}px`;
+    }
+  }, [position]);
+
   if (menuName !== name || menuName === '') return null;
-
-  return (
-    <>
+  return createPortal(
+    <div
+      className={`fixed inset-0 z-50   ${overlayColor}`}
+      onClick={handleOverlayClick}
+      role="dialog"
+      aria-modal="true"
+    >
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center  ${overlayColor}`}
-        onClick={handleOverlayClick}
-        role="dialog"
-        aria-modal="true"
-      />
-
-      <div
-        className={`absolute left-0 z-50 ${width} ${height} bg-black border-border border-[1px] shadow-[0_0_20px_rgba(255,255,255,0.15)] rounded-2xl overflow-hidden ${
-          placement === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2'
-        }`}
+        ref={menuRef}
+        className={`fixed z-50 ${width} ${height} bg-black border-border border-[1px] shadow-[0_0_20px_rgba(255,255,255,0.15)] rounded-2xl overflow-hidden`}
       >
         {children}
       </div>
-    </>
+    </div>,
+    document.body
   );
 }
 XMenu.Button = Button;
