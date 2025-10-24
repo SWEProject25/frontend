@@ -6,9 +6,6 @@
  * have been moved to src/mocks for reusability across features.
  */
 
-// Export mock data
-export * from './mockData';
-
 // Export MSW handlers (to be used by src/mocks/browser.ts and src/mocks/server.ts)
 export * from './handlers';
 

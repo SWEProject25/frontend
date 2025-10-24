@@ -7,7 +7,7 @@ import Description from './Description';
 import UserDetails from './UserDetails';
 import FollowStats from './FollowStats';
 import { UserProfile } from '../types/api';
-import { mockCurrentUserProfile } from '../mocks/mockData';
+import { mockCurrentUserProfile } from '../../../mocks/mockData';
 import { useProfile } from '../hooks';
 
 interface ProfileContainerProps {

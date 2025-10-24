@@ -1,4 +1,4 @@
-import { UserProfile } from '../types/api';
+import { UserProfile } from '../features/profile/types/api';
 
 /**
  * Mock user profiles for testing and development

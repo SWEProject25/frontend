@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { Lexend } from 'next/font/google';
 import { Inter } from 'next/font/google';
 import '@/app/globals.css';
 import './globals.css';

@@ -5,7 +5,6 @@ import Icon from '@/components/ui/home/Icon';
 import TimeOptions from './TimeOptions';
 import ScheduledTweetTime from './ScheduledTweetTime';
 import XModal from '@/components/ui/hoc/XModal';
-import { useState } from 'react';
 import usePollStore from '../store/usePollStore';
 import useAddTweetStore from '../store/useAddTweetStore';
 import useScheduleStore from '../store/useScheduleStore';

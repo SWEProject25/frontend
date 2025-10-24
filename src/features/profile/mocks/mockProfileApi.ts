@@ -11,7 +11,7 @@ import {
   getMockProfileByUsername,
   searchMockProfiles,
   mockUserProfiles,
-} from './mockData';
+} from '@/mocks/mockData';
 
 /**
  * Mock Profile API Service

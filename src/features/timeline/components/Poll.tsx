@@ -1,7 +1,6 @@
 'use client';
 import Input from '@/features/timeline/components/Input';
 import TimeOptions from '@/features/timeline/components/TimeOptions';
-import { useState } from 'react';
 import usePollStore from '@/features/timeline/store/usePollStore';
 
 const timeInputs = [
