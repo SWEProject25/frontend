@@ -3,35 +3,32 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ProfileCard from './ProfileCard';
 
-export default function Avatar({
-  image,
-  size,
-  name,
-  username,
-  isVerified,
-  bio,
-  following,
-  followers,
-  isFollowed,
-  cardShow = true,
-  onHoverCard,
-}: {
-  image?: string;
-  size?: number;
-  name?: string;
-  username?: string;
-  isVerified?: boolean;
+type User = {
+  name: string;
+  username: string;
+  avatar: string;
   bio?: string;
   following?: number;
   followers?: string;
+  isVerified: boolean;
   isFollowed?: boolean;
+};
+
+export default function Avatar({
+  size = 48,
+  data,
+  cardShow,
+  onHoverCard,
+}: {
+  size?: number;
+  data: User;
   cardShow?: boolean;
   onHoverCard?: (hovered: boolean) => void;
 }) {
   const [showProfileCard, setShowProfileCard] = useState(false);
   const [cardHover, setCardHover] = useState(false);
 
-  const show = cardShow && (showProfileCard || cardHover);
+  const show = (cardShow ?? true) && (showProfileCard || cardHover);
   const delay = 400;
   return (
     <div className="flex-shrink-0">
@@ -46,7 +43,7 @@ export default function Avatar({
           <Image
             width={size || 48}
             height={size || 48}
-            src={image || '/default-avatar.png'}
+            src={data.avatar || '/default-avatar.png'}
             alt="User avatar"
             className="w-12 h-12 rounded-full"
           />
@@ -68,18 +65,7 @@ export default function Avatar({
           }}
           onClick={(e) => e.preventDefault()}
         >
-          {name && username && (
-            <ProfileCard
-              name={name}
-              username={username}
-              isVerified={isVerified || false}
-              bio={bio || ''}
-              following={following || 0}
-              followers={followers || '0'}
-              avatar={image || '/default-avatar.png'}
-              isFollowed={isFollowed || false}
-            />
-          )}
+          {data.name && data.username && <ProfileCard data={data} />}
         </div>
       </div>
     </div>

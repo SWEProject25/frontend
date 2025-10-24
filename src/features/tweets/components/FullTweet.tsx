@@ -75,79 +75,49 @@ const dropItems = [
   },
 ];
 
-const time = new Date(Date.now() - 250 * 100 * 1000 * 60);
-const data = {
-  user: {
-    name: 'Omda Hancker',
-    username: '@mohamedemad',
-    avatar: '/apple.png',
-    isVerified: true,
-  },
-  tweet: {
-    id: '1',
-    text: 'Tweet content goes here. This is a sample tweet to demonstrate the layout.',
-    image: '/Personal photo.jpeg',
-    time: time,
-    stats: {
-      replies: 2,
-      retweets: 4,
-      likes: 24,
-      views: '1.5K',
-      saved: true,
-      shared: false,
-    },
-  },
+type TweetActions = {
+  replies: number;
+  retweets: number;
+  likes: number;
+  bookmarks: number;
+  views: string;
+  booked: boolean;
+  liked: boolean;
+  reposted: boolean;
 };
-const replies = {
-  user: {
-    name: 'Omda Hancker',
-    username: '@mohamedemad',
-    avatar: '/apple.png',
-    isVerified: true,
-  },
-  tweet: {
-    id: '1',
-    text: 'Tweet content goes here. This is a sample tweet to demonstrate the layout.',
-    // image: '/Personal photo.jpeg',
-    time: time,
-    stats: {
-      replies: 2,
-      retweets: 4,
-      likes: 24,
-      views: '1.5K',
-      saved: true,
-      shared: false,
-    },
-  },
+
+type TweetContent = {
+  text?: string;
+  image?: string;
 };
-function FullTweet() {
+
+type User = {
+  name: string;
+  username: string;
+  avatar: string;
+  bio?: string;
+  following?: number;
+  followers?: string;
+  isVerified: boolean;
+  isFollowed?: boolean;
+};
+
+type TweetData = {
+  id: string;
+  content: TweetContent;
+  user: User;
+  time: Date;
+  Actions: TweetActions;
+};
+
+function FullTweet({ data, reply }: { data: TweetData; reply: TweetData }) {
   return (
     <div>
       <div className="mx-auto sm:max-w-[600px] p-4 text-white relative">
         <div className="flex items-start justify-between">
           <div className="flex space-x-3">
-            <Avatar
-              image={data.user.avatar}
-              size={48}
-              name={data.user.name}
-              username={data.user.username}
-              isVerified={data.user.isVerified}
-              bio="Sample bio for the user."
-              following={100}
-              followers="1K"
-              isFollowed={false}
-            />
-            <UserInfo
-              name={data.user.name}
-              username={data.user.username}
-              isVerified={data.user.isVerified}
-              bio="Sample bio for the user."
-              following={100}
-              followers="1K"
-              isFollowed={false}
-              avatar={data.user.avatar}
-              direction="vertical"
-            />
+            <Avatar data={data.user} />
+            <UserInfo data={data.user} direction="vertical" />
           </div>
           <DropDown items={dropItems}>
             <Action
@@ -158,24 +128,24 @@ function FullTweet() {
           </DropDown>
         </div>
         <div className="mt-4 space-y-4">
-          <Content text={data.tweet.text} image={data.tweet.image} />
+          <Content content={data.content} />
           <div className="flex items-center space-x-1">
-            <Timing time={data.tweet.time} full={true} />
+            <Timing time={data.time} full={true} />
             <span className="text-gray-400 text-sm"> · </span>
             <span className="text-gray-200 bold text-sm">
-              {data.tweet.stats.views}{' '}
+              {data.Actions.views}{' '}
               <span className="text-gray-400 text-sm">Views</span>
             </span>
           </div>
           <div className="border-b border-gray-700 my-2" />
-          <Actions stats={data.tweet.stats} full={true} />
+          <Actions stats={data.Actions} full={true} />
           <div className="border-b border-gray-700 mt-3" />
         </div>
       </div>
       <div>
-        <Tweet data={replies} />
-        <Tweet data={replies} />
-        <Tweet data={replies} />
+        <Tweet data={reply} />
+        <Tweet data={reply} />
+        <Tweet data={reply} />
       </div>
     </div>
   );

@@ -11,7 +11,6 @@ import { IoStatsChart } from 'react-icons/io5';
 import { TiVolumeMute } from 'react-icons/ti';
 import Action from './Action';
 import DropDown from './DropDown';
-
 import Timing from './Timing';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // <FontAwesomeIcon icon={byPrefixAndName.far['user-plus']} />;
@@ -74,37 +73,44 @@ const dropItems = [
   },
 ];
 
-type TweetStats = {
+type TweetActions = {
   replies: number;
   retweets: number;
   likes: number;
+  bookmarks: number;
   views: string;
-  saved: boolean;
-  shared: boolean;
+  booked: boolean;
+  liked: boolean;
+  reposted: boolean;
 };
 
-type Tweet = {
-  id: string;
-  text: string;
+type TweetContent = {
+  text?: string;
   image?: string;
-  time: Date;
-  stats: TweetStats;
 };
 
 type User = {
   name: string;
   username: string;
   avatar: string;
+  bio?: string;
+  following?: number;
+  followers?: string;
   isVerified: boolean;
+  isFollowed?: boolean;
 };
 
 type TweetData = {
+  id: string;
+  content: TweetContent;
   user: User;
-  tweet: Tweet;
+  time: Date;
+  Actions: TweetActions;
 };
 
 export default function Tweet({ data }: { data: TweetData }) {
   const [Hovered, setHovered] = useState(false);
+
   return (
     <Link
       href={'/fullTweet'}
@@ -112,33 +118,12 @@ export default function Tweet({ data }: { data: TweetData }) {
       style={{ textDecoration: 'none' }}
     >
       <div className="flex w-full gap-2">
-        <Avatar
-          image={data.user.avatar}
-          size={48}
-          name={data.user.name}
-          username={data.user.username}
-          isVerified={data.user.isVerified}
-          bio="Sample bio  time: time,for the user."
-          following={100}
-          followers="1K"
-          isFollowed={false}
-          onHoverCard={setHovered}
-        />
+        <Avatar size={48} data={data.user} onHoverCard={setHovered} />
         <div className="flex flex-col items-center flex-1">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-1">
-              <UserInfo
-                name={data.user.name}
-                username={data.user.username}
-                isVerified={data.user.isVerified}
-                bio="Sample bio for the user."
-                following={100}
-                followers="1K"
-                isFollowed={false}
-                avatar={data.user.avatar}
-                onHoverCard={setHovered}
-              />
-              <Timing time={data.tweet.time} />
+              <UserInfo data={data.user} onHoverCard={setHovered} />
+              <Timing time={data.time} />
             </div>
             <div className="ml-2 flex items-center">
               <DropDown items={dropItems} onOpened={setHovered}>
@@ -150,8 +135,8 @@ export default function Tweet({ data }: { data: TweetData }) {
               </DropDown>
             </div>
           </div>
-          <Content text={data.tweet.text} image={data.tweet.image} />
-          <Actions stats={data.tweet.stats} />
+          <Content content={data.content} />
+          <Actions stats={data.Actions} />
         </div>
       </div>
     </Link>

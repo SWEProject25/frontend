@@ -53,18 +53,22 @@ const SECONDARY_ACTIONS_META = [
   },
 ];
 
+type stats = {
+  replies: number;
+  retweets: number;
+  likes: number;
+  bookmarks: number;
+  views: string;
+  booked: boolean;
+  liked: boolean;
+  reposted: boolean;
+};
+
 export default function Actions({
   stats,
   full = false,
 }: {
-  stats: {
-    replies: number;
-    retweets: number;
-    likes: number;
-    views: string;
-    saved?: boolean;
-    shared?: boolean;
-  };
+  stats: stats;
   full?: boolean;
 }) {
   return (

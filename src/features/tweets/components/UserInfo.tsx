@@ -5,27 +5,24 @@ import { useState } from 'react';
 
 type Direction = 'horizontal' | 'vertical';
 
+type User = {
+  name: string;
+  username: string;
+  avatar: string;
+  bio?: string;
+  following?: number;
+  followers?: string;
+  isVerified: boolean;
+  isFollowed?: boolean;
+};
+
 export default function UserInfo({
-  name,
-  username,
-  isVerified,
-  bio,
-  following,
-  followers,
-  avatar,
-  isFollowed,
+  data,
   direction = 'horizontal',
   cardShow = true,
   onHoverCard,
 }: {
-  name: string;
-  username: string;
-  isVerified?: boolean;
-  bio?: string;
-  following?: number;
-  followers?: string;
-  avatar?: string;
-  isFollowed?: boolean;
+  data: User;
   direction?: Direction;
   cardShow?: boolean;
   onHoverCard?: (hovered: boolean) => void;
@@ -57,8 +54,8 @@ export default function UserInfo({
             onMouseEnter={() => setTimeout(() => setShowNameCard(true), delay)}
             onMouseLeave={() => setTimeout(() => setShowNameCard(false), delay)}
           >
-            {name}{' '}
-            {isVerified && (
+            {data.name}{' '}
+            {data.isVerified && (
               <RiVerifiedBadgeFill className="inline text-blue-400" size={16} />
             )}
           </span>
@@ -81,16 +78,7 @@ export default function UserInfo({
           onClick={(e) => e.preventDefault()}
         >
           {cardShow && (showNameCard || cardNameHover) && (
-            <ProfileCard
-              name={name}
-              username={username}
-              isVerified={isVerified}
-              bio={bio || ''}
-              following={following || 0}
-              followers={followers || ''}
-              avatar={avatar || ''}
-              isFollowed={isFollowed}
-            />
+            <ProfileCard data={data} />
           )}
         </div>
       </div>
@@ -105,7 +93,7 @@ export default function UserInfo({
               setTimeout(() => setShowUsernameCard(false), 400)
             }
           >
-            {username}
+            {data.username}
           </span>
         </Link>
         <div
@@ -126,16 +114,7 @@ export default function UserInfo({
           onClick={(e) => e.preventDefault()}
         >
           {cardShow && (showUsernameCard || cardUsernameHover) && (
-            <ProfileCard
-              name={name}
-              username={username}
-              isVerified={isVerified}
-              bio={bio || ''}
-              following={following || 0}
-              followers={followers || ''}
-              avatar={avatar || ''}
-              isFollowed={isFollowed}
-            />
+            <ProfileCard data={data} />
           )}
         </div>
       </div>
