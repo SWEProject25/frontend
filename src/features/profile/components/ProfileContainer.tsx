@@ -6,13 +6,13 @@ import UserInfo from './UserInfo';
 import Description from './Description';
 import UserDetails from './UserDetails';
 import FollowStats from './FollowStats';
-import { Profile } from '../types';
+import { UserProfile } from '../types/api';
 
 interface ProfileContainerProps {
-  userData: Profile;
+  profileData: UserProfile;
 }
 
-const ProfileContainer = ({ userData }: ProfileContainerProps) => {
+const ProfileContainer = ({ profileData }: ProfileContainerProps) => {
   const handleSaveProfile = (data: {
     name: string;
     bio: string;
@@ -25,23 +25,28 @@ const ProfileContainer = ({ userData }: ProfileContainerProps) => {
 
   return (
     <div className="flex flex-col w-[600px] mx-auto relative">
-      <Cover coverImage={userData.coverImage} />
-      <Avatar avatarImage={userData.avatarImage} />
+      <Cover coverImage={profileData.banner_image_url || ''} />
+      <Avatar avatarImage={profileData.profile_image_url || ''} />
       <ActionsPanel
         isOwnProfile={true}
         isFollowing={false}
         onFollow={() => console.log('Follow clicked')}
         onUnfollow={() => console.log('Unfollow clicked')}
-        userData={userData}
+        userData={{
+          name: profileData.name,
+          bio: profileData.bio || '',
+          profileImage: profileData.profile_image_url || '',
+          bannerImage: profileData.banner_image_url || '',
+        }}
         onSaveProfile={handleSaveProfile}
       />
-      <UserInfo name={userData.name} username={userData.username} />
+      <UserInfo name={profileData.name} username={profileData.User.username} />
       <div className="flex flex-col items-start px-4 gap-3 w-full">
-        <Description bio={userData.bio} />
-        <UserDetails joinDate={userData.joinDate} />
+        <Description bio={profileData.bio || ''} />
+        <UserDetails joinDate={profileData.created_at} />
         <FollowStats
-          followingCount={userData.followingCount}
-          followersCount={userData.followersCount}
+          followingCount={0} // TODO: Add to API
+          followersCount={0} // TODO: Add to API
         />
       </div>
     </div>

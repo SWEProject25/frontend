@@ -3,6 +3,7 @@ import { Lexend } from 'next/font/google';
 import '@/app/globals.css';
 import './globals.css';
 import { Providers } from '@/lib/providers';
+import { MSWProvider } from '../features/profile/mocks/MSWProvider';
 
 export const metadata: Metadata = {
   title: {
@@ -25,7 +26,9 @@ export default function RootLayout({
         className={`${lexend.className} bg-black text-white overflow-x-hidden`}
       >
         <div className="flex justify-center min-h-screen w-full">
-          <Providers>{children}</Providers>
+          <MSWProvider>
+            <Providers>{children}</Providers>
+          </MSWProvider>
         </div>
       </body>
     </html>

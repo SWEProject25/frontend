@@ -29,7 +29,7 @@ export const useProfileStore = create<ProfileStore>()(
       },
     }),
     {
-      name: 'profile-storage', // Name in localStorage
+      name: 'profile-storage',
       partialize: (state) => ({
         currentProfile: state.currentProfile,
       }),
