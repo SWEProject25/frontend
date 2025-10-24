@@ -106,7 +106,7 @@ export default function Tweet({ data }: { data: TweetData }) {
   return (
     <Link
       href={'/fullTweet'}
-      className={`block mx-auto sm:max-w-[600px] border-b border-gray-700 p-4 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''}`}
+      className={`block mx-auto w-full border-b border-gray-700 p-4 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''}`}
       style={{ textDecoration: 'none' }}
     >
       <div className="flex w-full gap-2">

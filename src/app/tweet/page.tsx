@@ -34,9 +34,9 @@ function Page() {
   return (
     <>
       <Tweet data={data} />
+      {/* <Tweet data={data} />
       <Tweet data={data} />
-      <Tweet data={data} />
-      <Tweet data={data} />
+      <Tweet data={data} /> */}
     </>
   );
 }
