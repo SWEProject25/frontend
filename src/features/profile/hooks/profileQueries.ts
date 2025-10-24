@@ -67,19 +67,11 @@ export const useUpdateMyProfile = () => {
         setLoading(false);
       }
     },
-    onSuccess: (data) => {
-      // Invalidate and refetch profile queries
+    onSuccess: () => {
+      // Invalidate and refetch ALL profile queries to ensure UI updates
       queryClient.invalidateQueries({
-        queryKey: PROFILE_QUERY_KEYS.myProfile,
+        queryKey: ['profile'],
       });
-      // Also invalidate by username if available
-      if (data.data.User.username) {
-        queryClient.invalidateQueries({
-          queryKey: PROFILE_QUERY_KEYS.profileByUsername(
-            data.data.User.username
-          ),
-        });
-      }
     },
   });
 };

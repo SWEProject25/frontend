@@ -8,21 +8,14 @@ import UserDetails from './UserDetails';
 import FollowStats from './FollowStats';
 import { UserProfile } from '../types/api';
 import { mockCurrentUserProfile } from '../mocks/mockData';
+import { useProfile } from '../hooks';
 
 interface ProfileContainerProps {
   profileData: UserProfile;
 }
 
 const ProfileContainer = ({ profileData }: ProfileContainerProps) => {
-  const handleSaveProfile = (data: {
-    name: string;
-    bio: string;
-    profileImage?: File;
-    bannerImage?: File;
-  }) => {
-    console.log('Saving profile data:', data);
-    // Implement API call or state update here
-  };
+  const { handleSaveProfile, isUpdating } = useProfile();
 
   return (
     <div className="flex flex-col w-[600px] mx-auto relative">
@@ -40,6 +33,7 @@ const ProfileContainer = ({ profileData }: ProfileContainerProps) => {
           bannerImage: profileData.banner_image_url || '',
         }}
         onSaveProfile={handleSaveProfile}
+        isUpdating={isUpdating}
       />
       <UserInfo name={profileData.name} username={profileData.User.username} />
       <div className="flex flex-col items-start px-4 gap-3 w-full">

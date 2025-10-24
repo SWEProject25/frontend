@@ -9,7 +9,8 @@ export const settingsUtils = {
     return phoneRegex.test(phone);
   },
 
-  formatSettingsData: <T>(data: T): T => {
+  formatData: <T>(data: T): T => {
+    // Placeholder for data formatting logic
     return data;
   },
 };

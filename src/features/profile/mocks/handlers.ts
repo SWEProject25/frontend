@@ -77,18 +77,17 @@ export const profileHandlers = [
         );
       }
 
-      // Create updated profile
-      const updatedProfile = {
-        ...mockCurrentUserProfile,
+      // Update the mock profile in place
+      Object.assign(mockCurrentUserProfile, {
         ...body,
         updated_at: new Date().toISOString(),
-      };
+      });
 
       return HttpResponse.json(
         {
           status: 'success',
           message: 'Profile updated successfully',
-          data: updatedProfile,
+          data: mockCurrentUserProfile,
         },
         { status: 200 }
       );
