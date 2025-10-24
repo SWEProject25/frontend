@@ -1,9 +1,9 @@
-import React from 'react';
+import LayoutWrapper from '@/features/layout/components/LayoutWrapper';
 
 export default function MessagesRootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <LayoutWrapper showRightSidebar={false}>{children}</LayoutWrapper>;
 }

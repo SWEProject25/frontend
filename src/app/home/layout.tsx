@@ -1,5 +1,9 @@
-import { ReactNode } from 'react';
+import LayoutWrapper from '@/features/layout/components/LayoutWrapper';
 
-export default function layout({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+export default function HomeRootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <LayoutWrapper showRightSidebar={true}>{children}</LayoutWrapper>;
 }
