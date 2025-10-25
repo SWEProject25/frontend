@@ -12,6 +12,7 @@ export interface FormField {
   options?: { value: string; label: string }[];
   validation?: {
     enableRealTimeValidation?: boolean;
+    remoteCheck?: boolean;
     apiEndpoint?: string;
     messages?: {
       invalidFormat?: string;

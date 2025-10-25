@@ -31,12 +31,17 @@ export function EmailInputField({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChange(e);
 
-      // Trigger real-time validation if enabled
       if (validation?.enableRealTimeValidation && e.target.value) {
-        validateWithDebounce(e.target.value);
+        const remote = validation?.remoteCheck ?? true;
+        validateWithDebounce(e.target.value, 500, remote);
       }
     },
-    [onChange, validation?.enableRealTimeValidation, validateWithDebounce]
+    [
+      onChange,
+      validation?.enableRealTimeValidation,
+      validation?.remoteCheck,
+      validateWithDebounce,
+    ]
   );
 
   const handleBlur = useCallback(() => {
@@ -44,11 +49,13 @@ export function EmailInputField({
 
     // Trigger validation on blur if enabled
     if (validation?.enableRealTimeValidation && value) {
-      validateWithDebounce(value);
+      const remote = validation?.remoteCheck ?? true;
+      validateWithDebounce(value, 500, remote);
     }
   }, [
     onBlur,
     validation?.enableRealTimeValidation,
+    validation?.remoteCheck,
     value,
     validateWithDebounce,
   ]);
