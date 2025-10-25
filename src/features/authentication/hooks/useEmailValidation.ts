@@ -6,6 +6,7 @@ import {
   EmailValidationState,
   UseEmailValidationOptions,
 } from '../types/hooks';
+import { isValidEmailFormat } from '@/features/authentication/utils/validators';
 
 const API_BASE_URL = AUTH_API_CONFIG.BASE_URL;
 
@@ -32,15 +33,12 @@ export function useEmailValidation({
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Email regex validation
-  const isValidEmailFormat = useCallback((email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }, []);
+  // Use shared email format helper from validators
+  // (no local regex duplication)
 
   // Email validation function
   const validateEmail = useCallback(
-    async (email: string) => {
+    async (email: string, remote: boolean = true) => {
       if (!email) {
         setValidationState({
           isValidating: false,
@@ -59,6 +57,16 @@ export function useEmailValidation({
           isValid: false,
         });
         onValidationChange?.(false, 'Please enter a valid email.');
+        return;
+      }
+
+      if (!remote) {
+        setValidationState({
+          isValidating: false,
+          error: undefined,
+          isValid: true,
+        });
+        onValidationChange?.(true);
         return;
       }
 
@@ -142,18 +150,18 @@ export function useEmailValidation({
         onValidationChange?.(true);
       }
     },
-    [onValidationChange, isValidEmailFormat]
+    [onValidationChange]
   );
 
   // Debounced validation
   const validateWithDebounce = useCallback(
-    (email: string, debounceMs: number = 500) => {
+    (email: string, debounceMs: number = 500, remote: boolean = true) => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
 
       debounceTimerRef.current = setTimeout(() => {
-        validateEmail(email);
+        validateEmail(email, remote);
       }, debounceMs);
     },
     [validateEmail]
