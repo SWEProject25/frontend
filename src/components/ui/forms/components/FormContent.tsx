@@ -53,6 +53,15 @@ export function FormContent({
         />
 
         {/* General form errors */}
+        {/* Success message for forgot-password (backend response) */}
+        {errors && errors.forgotPasswordSuccess && (
+          <div className="text-center">
+            <p className="text-sm text-success">
+              {errors.forgotPasswordSuccess}
+            </p>
+          </div>
+        )}
+
         {(() => {
           // Find the first general error (not field-specific)
           const generalErrorKeys = [
@@ -61,6 +70,7 @@ export function FormContent({
             'forgotPassword',
             'social',
             'otp',
+            'resetPassword',
           ];
           const generalError = generalErrorKeys.find((key) => errors[key]);
 

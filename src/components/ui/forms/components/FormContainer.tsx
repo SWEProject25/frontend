@@ -110,7 +110,15 @@ export function FormContainer(
 
   // Update formData when initialValues change
   useEffect(() => {
-    setFormData(initialValues);
+    setFormData((prev) => {
+      const init = initialValues || {};
+      const initKeys = Object.keys(init);
+      if (initKeys.length === 0) return prev;
+      for (const k of initKeys) {
+        if (prev[k] === init[k]) return init;
+      }
+      return prev;
+    });
   }, [initialValues]);
 
   // Event handlers
