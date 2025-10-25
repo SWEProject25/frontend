@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { LOGIN_STEPS, getCreateAccountSteps } from '../constants';
+import { FORGOT_PASSWORD_STEPS } from '../constants/multiStep';
 import { AllSteps } from '../types/components';
 import { getInitialValues } from '@/features/authentication/utils';
 import { UseMultiStepFormProps, UseMultiStepFormReturn } from '../types/hooks';
@@ -23,13 +24,17 @@ export function useMultiStepForm({
   onClose,
   onClearState,
 }: UseMultiStepFormProps): UseMultiStepFormReturn {
-  // Helper function to get initial step for form type
   const getInitialStep = useCallback((): AllSteps => {
-    return type === 'login'
-      ? 'email'
-      : type === 'createAccount'
-        ? 'register'
-        : type;
+    switch (type) {
+      case 'login':
+        return 'email';
+      case 'createAccount':
+        return 'register';
+      case 'forgotPassword':
+        return 'forgotPassword';
+      default:
+        return type as AllSteps;
+    }
   }, [type]);
 
   const [currentStep, setCurrentStep] = useState<AllSteps>(getInitialStep);
@@ -40,12 +45,16 @@ export function useMultiStepForm({
 
   // Get steps array for current form type
   const getSteps = useCallback((): AllSteps[] => {
-    const isMultiStep = type === 'login' || type === 'createAccount';
-    return isMultiStep
-      ? type === 'login'
-        ? LOGIN_STEPS
-        : getCreateAccountSteps() // Use dynamic steps for create account
-      : [type as AllSteps];
+    switch (type) {
+      case 'login':
+        return LOGIN_STEPS;
+      case 'createAccount':
+        return getCreateAccountSteps(); // Use dynamic steps for create account
+      case 'forgotPassword':
+        return FORGOT_PASSWORD_STEPS;
+      default:
+        return [type as AllSteps]; // Single-step forms
+    }
   }, [type]);
 
   // Handle prop changes - reset state when type changes
@@ -56,16 +65,16 @@ export function useMultiStepForm({
 
   const handleStepSubmit = useCallback(
     async (data: Record<string, string>) => {
-      const isMultiStep = type === 'login' || type === 'createAccount';
+      const isMultiStep =
+        type === 'login' ||
+        type === 'createAccount' ||
+        type === 'forgotPassword';
 
       // For single-step forms, submit directly
       if (!isMultiStep) {
         await onSubmit(data, currentStep);
         return;
       }
-
-      // Store data for current step
-      setStepData((prev) => ({ ...prev, [currentStep]: data }));
 
       // Get steps for current form type
       const steps = getSteps();
@@ -82,6 +91,8 @@ export function useMultiStepForm({
         // Only proceed to next step if onSubmit returns true
         const success = await onSubmit(flattenedData, currentStep);
         if (success) {
+          // Persist the current step data so next step can prefill values (e.g. email)
+          setStepData((prev) => ({ ...prev, [currentStep]: data }));
           setCurrentStep(nextStep);
         }
       } else {

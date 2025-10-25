@@ -11,6 +11,14 @@ export function InputBase({
   styleProps,
   ...inputProps
 }: InputBaseProps) {
+  // If the caller passed a data-testid use it, otherwise try to provide a stable default
+  const providedTestId = (
+    inputProps as unknown as Record<string, string | undefined>
+  )['data-testid'];
+  const nameAttr = inputProps.name as string | undefined;
+  const computedTestId =
+    providedTestId ?? (nameAttr ? `auth-input-${nameAttr}` : undefined);
+
   return (
     <input
       className={cn(
@@ -22,6 +30,7 @@ export function InputBase({
       onBlur={onBlur}
       ref={inputRef}
       placeholder=""
+      data-testid={computedTestId}
       {...inputProps}
     />
   );

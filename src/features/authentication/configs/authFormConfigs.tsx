@@ -250,9 +250,39 @@ export const authFormConfigs = {
     ],
   },
 
+  // Reset password (used by forgot password flow)
+  resetPassword: {
+    title: 'Reset your password',
+    subtitle: 'Enter a new password to secure your account',
+    fields: [
+      {
+        name: 'password',
+        label: 'New password',
+        type: FIELD_TYPES.PASSWORD,
+        required: true,
+        showPasswordToggle: true,
+      },
+      {
+        name: 'confirmPassword',
+        label: 'Confirm new password',
+        type: FIELD_TYPES.PASSWORD,
+        required: true,
+        showPasswordToggle: true,
+      },
+    ],
+    submitButton: { text: 'Reset Password' },
+    footerLinks: [
+      {
+        text: FOOTER_LINK_TEXTS.REMEMBER_PASSWORD,
+        linkText: FOOTER_LINK_ACTIONS.SIGN_IN,
+        href: MODAL_LINKS.LOGIN,
+      },
+    ],
+  },
+
   forgotPassword: {
     title: 'Reset your password',
-    subtitle: 'Enter your email to receive reset instructions',
+    subtitle: 'Enter your email to receive a password reset link',
     fields: [
       {
         name: 'email',
@@ -261,7 +291,7 @@ export const authFormConfigs = {
         required: true,
       },
     ],
-    submitButton: { text: 'Send Reset Link' },
+    submitButton: { text: 'Send Link' },
     footerLinks: [
       {
         text: FOOTER_LINK_TEXTS.REMEMBER_PASSWORD,

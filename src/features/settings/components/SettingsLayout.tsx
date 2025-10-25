@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { SETTINGS_ITEMS } from '@/constants/SETTINGs_ITEMS';
+import { SETTINGS_ITEMS } from '@/features/settings/constants/SETTINGs_ITEMS';
 import SettingsList from './SettingsList';
 import SettingsDetail from './SettingsDetail';
 

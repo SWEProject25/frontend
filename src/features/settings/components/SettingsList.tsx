@@ -4,8 +4,9 @@ import { useState, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import ListItem from '@/components/ui/ListItem';
+import OptionItem from '@/components/ui/OptionItem';
 import { SearchInput } from '@/components/ui/input';
-import type { SettingsOption } from '@/constants/SETTINGs_ITEMS';
+import type { SettingsOption } from '@/features/settings/constants/SETTINGs_ITEMS';
 
 interface SettingsListProps {
   options: SettingsOption[];
@@ -61,11 +62,11 @@ export default function SettingsList({ options }: SettingsListProps) {
               return (
                 <ListItem
                   key={option.id}
-                  label={option.label}
                   href={option.path || '#'}
                   isActive={isActive}
-                  showArrow={true}
-                />
+                >
+                  <OptionItem label={option.label} showArrow={true} />
+                </ListItem>
               );
             })
           ) : (

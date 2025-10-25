@@ -52,6 +52,27 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
       showCharCount,
     };
 
+    // Compute a deterministic data-testid for the input when one isn't provided
+    const providedTestId = (
+      props as unknown as Record<string, string | undefined>
+    )['data-testid'];
+    const nameAttr = (props as unknown as Record<string, unknown>).name as
+      | string
+      | undefined;
+    const slug = (s: string) =>
+      s
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-_]/g, '');
+    const computedTestId =
+      providedTestId ??
+      (nameAttr
+        ? `auth-input-${nameAttr}`
+        : label
+          ? `auth-input-${slug(label)}`
+          : `auth-input-${inputType}`);
+
     const handleLabelClick = () => {
       if (ref && 'current' in ref && ref.current) {
         ref.current.focus();
@@ -77,6 +98,7 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
             onBlur={fieldState.handleBlur}
             onChange={onChange}
             className={className}
+            data-testid={computedTestId}
             {...props}
           />
 

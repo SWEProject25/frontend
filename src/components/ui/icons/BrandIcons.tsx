@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '@/types/ui';
 
-export const XLogo: React.FC<IconProps> = ({ className = 'w-8 h-8' }) => {
+export const XLogo = ({ className = 'w-8 h-8' }: IconProps) => {
   return (
     <svg
       className={className}
@@ -19,7 +19,7 @@ export const XLogo: React.FC<IconProps> = ({ className = 'w-8 h-8' }) => {
   );
 };
 
-export const GrokIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const GrokIcon = ({ className = 'w-5 h-5' }: IconProps) => {
   return (
     <svg
       className={className}

@@ -175,6 +175,46 @@ export const authApi = {
     return handleResponse<ResendOTPResponseDto>(response);
   },
 
+  async forgotPassword(payload: {
+    email: string;
+    type?: string;
+  }): Promise<{ status: string; message: string }> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.FORGOT_PASSWORD}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      }
+    );
+
+    return handleResponse<{ status: string; message: string }>(response);
+  },
+
+  async resetPassword(payload: {
+    userId: string;
+    token: string;
+    newPassword: string;
+    email?: string;
+  }): Promise<{ status: string; message: string }> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.RESET_PASSWORD}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      }
+    );
+
+    return handleResponse<{ status: string; message: string }>(response);
+  },
+
   async verifyRecaptcha(
     recaptchaData: VerifyRecaptchaDto
   ): Promise<VerifyRecaptchaResponseDto> {
@@ -222,11 +262,13 @@ export const authApi = {
 
     function handleMessage(event: MessageEvent) {
       const allowedOrigins = [AUTH_API_CONFIG.BASE_URL, window.location.origin];
+
       if (!allowedOrigins.includes(event.origin)) return;
 
       const payload = event.data;
-
+      console.log(payload);
       const { user } = payload.data.user;
+      console.log(user);
 
       if (user) {
         callback(user);

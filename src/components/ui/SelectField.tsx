@@ -42,6 +42,25 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
       shouldFloatLabel: fieldState.shouldFloatLabel,
     };
 
+    // Compute deterministic data-testid: prefer explicit prop, then name, then label
+    const providedTestId = (
+      props as unknown as Record<string, string | undefined>
+    )['data-testid'];
+    const nameAttr = props.name as string | undefined;
+    const slug = (s: string) =>
+      s
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-_]/g, '');
+    const computedTestId =
+      providedTestId ??
+      (nameAttr
+        ? `auth-select-${nameAttr}`
+        : label
+          ? `auth-select-${slug(label)}`
+          : undefined);
+
     const handleLabelClick = (e: React.MouseEvent) => {
       e.preventDefault();
       const selectEl = e.currentTarget.parentElement?.querySelector('select');
@@ -65,6 +84,7 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
           onFocus={fieldState.handleFocus}
           onBlur={fieldState.handleBlur}
           ref={ref}
+          data-testid={computedTestId}
           {...props}
         >
           <option value="" disabled hidden>

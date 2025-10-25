@@ -65,6 +65,7 @@ export default function SearchInput({
         onChange={handleChange}
         placeholder={placeholder}
         autoFocus={autoFocus}
+        data-testid="search-input"
         className="
           flex-1 bg-transparent
           py-3 pr-4

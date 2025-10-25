@@ -1,26 +1,19 @@
 import type { Metadata } from 'next';
-import { Lexend } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import '@/app/globals.css';
-import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/lib/providers';
+import { MSWProvider } from '@/mocks/MSWProvider';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'Home / X',
+  title: {
+    template: '%s / X',
+    default: 'X',
+  },
   description: 'X clone',
 };
-
-const lexend = Lexend({ subsets: ['latin'] });
 
 export default function RootLayout({
   children,
@@ -28,12 +21,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body
-        className={`${lexend.className} bg-black text-white overflow-x-hidden`}
-      >
+    <html lang="en" className={inter.variable}>
+      <body className={` bg-black text-white overflow-x-hidden`}>
         <div className="flex justify-center min-h-screen w-full">
+          {/* <MSWProvider> */}
           <Providers>{children}</Providers>
+          {/* </MSWProvider> */}
         </div>
       </body>
     </html>

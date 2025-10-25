@@ -5,6 +5,7 @@ export interface FormState {
   isLoading: boolean;
   success: boolean;
   errors: Record<string, string>;
+  message?: string;
 }
 
 // Authentication Form Props (unified for both modal and fullpage modes)
@@ -24,7 +25,10 @@ export interface AuthFormProps {
     data: Record<string, string>,
     step?: string
   ) => Promise<boolean>;
-  handleForgotPassword: () => void;
+  handleForgotPassword: (
+    data: Record<string, string>,
+    step?: string
+  ) => Promise<boolean>;
   clearFormState: (fieldName?: string) => void;
 }
 

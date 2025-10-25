@@ -15,6 +15,8 @@
   --color-border-hover: #ccd6dd;
   --color-muted: #f7f9f9;
   --color-modal-bg: #ffffff;
+  /* Overlay color used for modals/dialogs */
+  --color-modal-overlay: rgba(91, 112, 131, 0.4);
   --color-input-border: #536471;
   --color-input-border-focus: #1d9bf0;
   --color-input-bg-hover: #16181c;
@@ -48,13 +50,17 @@
     --color-border: #2f3336;
     --color-border-hover: #3e4144;
     --color-muted: #16181c;
-    --color-modal-bg: #0f1419;
+    --color-modal-bg: #000000;
     --color-input-border: #2f3336;
     --color-input-border-focus: #1d9bf0;
     --color-input-bg-hover: #1c1f23;
     --color-text-active: #e7e9ea;
     --color-text-inactive: #71767b;
     --color-text-button: #eff3f4;
+    --color-icon-hover: #031018;
+    --color-button-hover: #d7dbdc;
+    --color-button-x: #eff3f4;
+    --color-button-x-hover: #181818;
     --color-text-placeholder: #71767b;
     --color-text-counter: #8b98a5;
   }
@@ -107,4 +113,23 @@ body {
 
 .animate-shake {
   animation: shake 0.5s ease-in-out;
+}
+
+@layer utilities {
+  [contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    @apply absolute text-gray-400 pointer-events-none;
+  }
+}
+@layer base {
+  /* Force white text on autofill and prevent black text flash during auto complete */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    background-color: #000 !important;
+    -webkit-box-shadow: 0 0 0px 1000px #000 inset !important;
+    -webkit-text-fill-color: #fff !important;
+    color: #fff !important;
+    caret-color: #fff !important;
+  }
 }

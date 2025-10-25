@@ -1,29 +1,43 @@
-FROM node:20-alpine
-
-RUN apk add --no-cache wget
+FROM node:20-alpine AS builder
 
 WORKDIR /app
-
 COPY package*.json ./
 
-RUN npm ci
+RUN npm install
 
 COPY . .
 
+ARG NEXT_PUBLIC_API_BASE_URL=""
+ARG NEXT_PUBLIC_API_VERSION=""
+ARG NEXT_PUBLIC_API_TIMEOUT=""
+ARG NEXT_PUBLIC_API_RETRY_ATTEMPTS=""
+ARG NEXT_PUBLIC_API_DEBUG=""
+ARG NEXT_PUBLIC_RECAPTCHA_SITE_KEY=""
+ARG NEXT_PUBLIC_SKIP_VERIFICATION_STEPS=""
+ARG NEXT_PUBLIC_AUTH_SUCCESS_REDIRECT=""
+
+ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+ENV NEXT_PUBLIC_API_VERSION=${NEXT_PUBLIC_API_VERSION}
+ENV NEXT_PUBLIC_API_TIMEOUT=${NEXT_PUBLIC_API_TIMEOUT}
+ENV NEXT_PUBLIC_API_RETRY_ATTEMPTS=${NEXT_PUBLIC_API_RETRY_ATTEMPTS}
+ENV NEXT_PUBLIC_API_DEBUG=${NEXT_PUBLIC_API_DEBUG}
+ENV NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+ENV NEXT_PUBLIC_SKIP_VERIFICATION_STEPS=${NEXT_PUBLIC_SKIP_VERIFICATION_STEPS}
+ENV NEXT_PUBLIC_AUTH_SUCCESS_REDIRECT=${NEXT_PUBLIC_AUTH_SUCCESS_REDIRECT}
+
 RUN npm run build
+RUN npm prune --production
 
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
+FROM node:20-alpine AS runner
+WORKDIR /app
 
-RUN chown -R nextjs:nodejs /app
-USER nextjs
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package*.json ./
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 EXPOSE 3000
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
-
 CMD ["npm", "start"]

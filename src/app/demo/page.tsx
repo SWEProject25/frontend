@@ -145,6 +145,38 @@ export default function DemoIndexPage() {
               View Modals →
             </div>
           </Link>
+
+          {/* User Card Component */}
+          <Link
+            href="/demo/usercard"
+            className="group block p-8 bg-muted rounded-xl border border-border hover:bg-border-hover hover:border-border-hover transition-all duration-200"
+          >
+            <div className="mb-4">
+              <div className="w-12 h-12 bg-warning/20 rounded-lg flex items-center justify-center mb-4">
+                <svg
+                  className="w-6 h-6 text-warning"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+            </div>
+            <h2 className="text-foreground text-xl font-bold mb-3">
+              User Card Component
+            </h2>
+            <p className="text-text-inactive mb-4 text-sm">
+              Flexible user cards with customizable actions: Follow, Unfollow,
+              Block, Unblock, Mute, Unmute with avatar support.
+            </p>
+            <div className="text-primary font-medium group-hover:text-primary-hover transition-colors">
+              View User Cards →
+            </div>
+          </Link>
         </div>
 
         {/* Features Section */}
