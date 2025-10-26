@@ -7,13 +7,9 @@ export default function ProfileSection() {
     <div className="flex items-center justify-between hover:bg-gray-900 rounded-full p-3 mb-3 cursor-pointer transition-colors ">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center relative">
-          <Image
-            src="https://via.placeholder.com/40"
-            alt="Profile"
-            width={40}
-            height={40}
-            className="w-full h-full object-cover"
-          />
+          <div className="w-full h-full bg-gray-600 flex items-center justify-center text-gray-400 text-xl font-bold">
+            A
+          </div>
         </div>
         <div className="hidden xl:block">
           <p className="text-white font-semibold text-sm leading-tight">
