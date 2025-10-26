@@ -110,11 +110,20 @@ export default function Tweet({ data }: { data: TweetData }) {
       style={{ textDecoration: 'none' }}
     >
       <div className="flex w-full gap-2">
-        <Avatar size={48} data={data.user} onHoverCard={setHovered} />
+        <Avatar
+          size={48}
+          data={data.user}
+          onHoverCard={setHovered}
+          disableLink={true}
+        />
         <div className="flex flex-col items-center flex-1">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-1">
-              <UserInfo data={data.user} onHoverCard={setHovered} />
+              <UserInfo
+                data={data.user}
+                onHoverCard={setHovered}
+                disableLink={true}
+              />
               <span className="text-gray-500">.</span>
               <Timing time={data.time} />
             </div>
