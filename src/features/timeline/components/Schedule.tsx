@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Button from '@/components/ui/home/Button';
 import Icon from '@/components/ui/home/Icon';
 import TimeOptions from './TimeOptions';
@@ -10,6 +11,11 @@ import useAddTweetStore from '../store/useAddTweetStore';
 import useScheduleStore from '../store/useScheduleStore';
 
 export default function Schedule() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   // const [state, setState] = useState(false);\
   const open = useScheduleStore((state) => state.open);
   const close = useScheduleStore((state) => state.close);
@@ -131,7 +137,9 @@ export default function Schedule() {
               <div className="text-md text-text-inactive  ">Time zone</div>
               <div className="text-text-active text-xl ">
                 {/* Eastern European Summer Time */}
-                {new Date().toString().split('(')[1].split(')')[0]}
+                {mounted
+                  ? new Date().toString().split('(')[1].split(')')[0]
+                  : 'Loading...'}
               </div>
             </div>
           </div>

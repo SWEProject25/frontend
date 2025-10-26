@@ -1,7 +1,13 @@
-import React from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 import Label from './Label';
 
 function Timing({ time, full = false }: { time: Date; full?: boolean }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const hours = time.getHours();
   const minutes = time.getMinutes();
   const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -40,6 +46,15 @@ function Timing({ time, full = false }: { time: Date; full?: boolean }) {
     shownDate = `${month} ${day}`;
   } else {
     shownDate = `${month} ${day}, ${year}`;
+  }
+
+  // Don't render time until client-side to avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="text-gray-400 text-sm relative hover:cursor-pointer group">
+        <span className="hover:underline">...</span>
+      </div>
+    );
   }
 
   return (
