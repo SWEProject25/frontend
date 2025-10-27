@@ -267,7 +267,7 @@ export const authApi = {
 
       const payload = event.data;
       console.log(payload);
-      const { user } = payload.data.user;
+      const { user } = payload.data;
       console.log(user);
 
       if (user) {

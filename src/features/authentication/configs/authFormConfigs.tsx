@@ -289,6 +289,10 @@ export const authFormConfigs = {
         label: 'Email',
         type: FIELD_TYPES.EMAIL,
         required: true,
+        validation: {
+          enableRealTimeValidation: true,
+          remoteCheck: false,
+        },
       },
     ],
     submitButton: { text: 'Send Link' },
