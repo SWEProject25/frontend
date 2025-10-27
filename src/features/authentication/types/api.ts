@@ -3,7 +3,7 @@ export interface CreateUserDto {
   name: string;
   email: string;
   password: string;
-  birth_date: string; // Format: YYYY-MM-DD
+  birthDate: string; // Format: YYYY-MM-DD
 }
 
 export interface UserResponse {

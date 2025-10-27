@@ -19,8 +19,8 @@ const ProfileContainer = ({ profileData }: ProfileContainerProps) => {
 
   return (
     <div className="flex flex-col w-[600px] mx-auto relative">
-      <Cover coverImage={profileData.banner_image_url || ''} />
-      <Avatar avatarImage={profileData.profile_image_url || ''} />
+      <Cover coverImage={profileData.bannerImageUrl || ''} />
+      <Avatar avatarImage={profileData.profileImageUrl || ''} />
       <ActionsPanel
         isOwnProfile={profileData.id === mockCurrentUserProfile.id}
         isFollowing={false}
@@ -29,8 +29,8 @@ const ProfileContainer = ({ profileData }: ProfileContainerProps) => {
         userData={{
           name: profileData.name,
           bio: profileData.bio || '',
-          profileImage: profileData.profile_image_url || '',
-          bannerImage: profileData.banner_image_url || '',
+          profileImage: profileData.profileImageUrl || '',
+          bannerImage: profileData.bannerImageUrl || '',
         }}
         onSaveProfile={handleSaveProfile}
         isUpdating={isUpdating}
@@ -38,7 +38,7 @@ const ProfileContainer = ({ profileData }: ProfileContainerProps) => {
       <UserInfo name={profileData.name} username={profileData.User.username} />
       <div className="flex flex-col items-start px-4 gap-3 w-full">
         <Description bio={profileData.bio || ''} />
-        <UserDetails joinDate={profileData.created_at} />
+        <UserDetails joinDate={profileData.createdAt} />
         <FollowStats
           followingCount={0} // TODO: Add to API
           followersCount={0} // TODO: Add to API
