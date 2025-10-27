@@ -40,7 +40,7 @@ export function FormContent({
         onSocialLogin={handleSocialAuth}
       />
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
         <FormFields
           fields={fields}
           formData={formData}

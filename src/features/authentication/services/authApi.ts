@@ -195,7 +195,7 @@ export const authApi = {
   },
 
   async resetPassword(payload: {
-    userId: string;
+    userId: number;
     token: string;
     newPassword: string;
     email?: string;
@@ -266,9 +266,7 @@ export const authApi = {
       if (!allowedOrigins.includes(event.origin)) return;
 
       const payload = event.data;
-      console.log(payload);
       const { user } = payload.data;
-      console.log(user);
 
       if (user) {
         callback(user);

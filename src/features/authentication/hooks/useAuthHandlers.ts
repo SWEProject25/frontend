@@ -29,15 +29,27 @@ export function useAuthHandlers() {
     setFormState((prev) => ({ ...prev, isLoading: loading }));
 
   const setSuccess = (success: boolean) =>
-    setFormState((prev) => ({ ...prev, isLoading: false, success }));
-
-  const setFieldError = (field: string, message: string) =>
     setFormState((prev) => ({
       ...prev,
       isLoading: false,
-      success: false,
-      errors: { ...prev.errors, [field]: message },
+      success,
+      errors: success ? {} : prev.errors,
     }));
+
+  const setFieldError = (field: string, message: string) =>
+    setFormState((prev) => {
+      const newErrors = { ...prev.errors };
+      delete newErrors.forgotPasswordSuccess;
+      newErrors[field] = message;
+
+      return {
+        ...prev,
+        isLoading: false,
+        success: false,
+        message: undefined,
+        errors: newErrors,
+      };
+    });
 
   const handleSocialAuth = useCallback(
     async (providerId: string) => {
@@ -183,7 +195,6 @@ export function useAuthHandlers() {
               isLoading: false,
               success: true,
             }));
-            console.log(signupData);
 
             // Redirect to configured success page after registration
             setTimeout(() => {
@@ -231,11 +242,10 @@ export function useAuthHandlers() {
                 type: 'WEB',
               });
 
-              setFormState((prev) => ({
-                ...prev,
+              setFormState(() => ({
                 isLoading: false,
-                success: true,
-                errors: { ...prev.errors, forgotPasswordSuccess: resp.message },
+                success: false,
+                errors: { forgotPasswordSuccess: resp.message },
               }));
 
               return false;
@@ -271,13 +281,9 @@ export function useAuthHandlers() {
     []
   );
 
-  /**
-   * Reset password using token from email link.
-   * Returns the backend message on success or throws an Error with a message.
-   */
   const handleResetPassword = useCallback(
     async (payload: {
-      userId: string;
+      userId: number;
       token: string;
       newPassword: string;
       email?: string;
