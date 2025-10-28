@@ -6,6 +6,7 @@ import { formatBirthDate } from '../utils/dateUtils';
 import { AUTH_CLIENT_CONFIG } from '../constants/api';
 import { FormState } from '../types/hooks';
 import { useAuth } from './useAuth';
+import { AUTH_MODAL_STORAGE_KEY } from '../utils';
 
 export function useAuthHandlers() {
   const router = useRouter();
@@ -57,6 +58,7 @@ export function useAuthHandlers() {
         setLoading(true);
         oAuthLogin(providerId, () => {
           setSuccess(true);
+          localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
           setTimeout(
             () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
             300
@@ -96,6 +98,8 @@ export function useAuthHandlers() {
             await login(loginData);
             setSuccess(true);
             // Redirect after a short delay to show success state
+            localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
+
             setTimeout(
               () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
               1000
@@ -112,6 +116,8 @@ export function useAuthHandlers() {
 
             await login(fallbackLoginData);
             setSuccess(true);
+            localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
+
             setTimeout(
               () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
               1000
@@ -197,6 +203,8 @@ export function useAuthHandlers() {
             }));
 
             // Redirect to configured success page after registration
+            localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
+
             setTimeout(() => {
               router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT);
             }, 1000); // Small delay to show success state
