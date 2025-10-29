@@ -170,7 +170,7 @@ export function useAuthHandlers() {
               name: data.name,
               email: data.email,
               password: data.password,
-              birth_date: formatBirthDate(
+              birthDate: formatBirthDate(
                 data.birthMonth,
                 data.birthDay,
                 data.birthYear
@@ -277,7 +277,7 @@ export function useAuthHandlers() {
    */
   const handleResetPassword = useCallback(
     async (payload: {
-      userId: string;
+      userId: number;
       token: string;
       newPassword: string;
       email?: string;

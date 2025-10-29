@@ -25,7 +25,7 @@ export const CREATE_ACCOUNT_STEPS: AllSteps[] = [
 export const getCreateAccountSteps = (): AllSteps[] => {
   if (shouldSkipVerificationSteps()) {
     // Skip captcha and OTP steps in development/E2E mode
-    return ['register', 'password'];
+    return ['register', 'otp', 'password'];
   }
   // Full flow for production
   return ['register', 'captcha', 'otp', 'password'];

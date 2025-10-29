@@ -75,7 +75,7 @@ export const mockProfileApi = {
     const updatedProfile: UserProfile = {
       ...mockCurrentUserProfile,
       ...profileData,
-      updated_at: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     return {
