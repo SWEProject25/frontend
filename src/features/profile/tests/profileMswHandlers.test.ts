@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { PROFILE_API_CONFIG, PROFILE_ENDPOINTS } from '../constants/api';
+import { mockCurrentUserProfile } from '@/mocks/mockData';
 
 describe('Profile API with MSW', () => {
   const baseUrl = PROFILE_API_CONFIG.BASE_URL;
@@ -15,7 +16,7 @@ describe('Profile API with MSW', () => {
     expect(data.message).toBe('Profile retrieved successfully');
     expect(data.data).toHaveProperty('name');
     expect(data.data).toHaveProperty('User');
-    expect(data.data.name).toBe('John Doe');
+    expect(data.data.name).toBe(mockCurrentUserProfile.name);
   });
 
   it('should fetch profile by username', async () => {
@@ -45,7 +46,7 @@ describe('Profile API with MSW', () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.data.user_id).toBe(2);
+    expect(data.data.userId).toBe(2);
   });
 
   it('should search profiles', async () => {

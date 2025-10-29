@@ -10,7 +10,7 @@ export default function ResetPasswordClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams?.get('token') ?? '';
-  const userId = searchParams?.get('id') ?? '';
+  const userId = Number(searchParams?.get('id'));
   const email = 'temp@temp.com';
 
   const { formState, handleResetPassword } = useAuthHandlers();
@@ -20,7 +20,7 @@ export default function ResetPasswordClient() {
   const initialValues = useMemo<Record<string, string>>(() => ({}), []);
 
   useEffect(() => {
-    if (!token || !userId) {
+    if (!token || Number.isNaN(userId)) {
       setMissingParamsError(
         'Invalid or missing reset link. Please check your email link.'
       );
@@ -28,7 +28,7 @@ export default function ResetPasswordClient() {
   }, [token, userId]);
 
   const handleSubmit = async (data: Record<string, string>) => {
-    if (!token || !userId) return;
+    if (!token || Number.isNaN(userId)) return;
 
     // delegate to auth handler which will update formState inside the hook
     await handleResetPassword({

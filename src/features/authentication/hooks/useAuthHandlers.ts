@@ -188,7 +188,7 @@ export function useAuthHandlers() {
               name: data.name,
               email: data.email,
               password: data.password,
-              birth_date: formatBirthDate(
+              birthDate: formatBirthDate(
                 data.birthMonth,
                 data.birthDay,
                 data.birthYear
