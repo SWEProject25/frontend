@@ -30,10 +30,9 @@ export default function CardUserInfo({
 
   const usernameClass = 'text-gray-400 text-sm relative';
 
-  const profileCardClass =
-    'absolute left-1/2 transform -translate-x-1/2 top-full z-50 cursor-default';
+  // const profileCardClass =
+  //   'absolute left-1/2 transform -translate-x-1/2 top-full z-50 cursor-default';
 
-  const delay = 400;
   return (
     <div className={containerClass}>
       <div className="relative">

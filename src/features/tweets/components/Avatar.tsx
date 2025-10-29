@@ -56,7 +56,7 @@ export default function Avatar({
                 ? 'opacity-100 pointer-events-auto'
                 : 'opacity-0 pointer-events-none'
             }`}
-            onMouseEnter={(e) => {
+            onMouseEnter={() => {
               setCardHover(true);
               onHoverCard ? onHoverCard(true) : null;
             }}

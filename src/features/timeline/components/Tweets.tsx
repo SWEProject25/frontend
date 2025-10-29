@@ -1,6 +1,6 @@
 'use client';
 import Tweet from '@/features/tweets/components/Tweet';
-import { useState } from 'react';
+// import { useState } from 'react';
 export default function Tweets() {
   const time = new Date(Date.now() - 250 * 30 * 10 * 100 * 1000 * 60);
   const data = {
@@ -32,7 +32,7 @@ export default function Tweets() {
       reposted: false,
     },
   };
-  const [flag, setFlag] = useState(false);
+  // const [flag, setFlag] = useState(false);
   return (
     <div className="w-full">
       {/* {flag && <Tweet data={data} />}

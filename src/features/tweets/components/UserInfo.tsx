@@ -69,7 +69,7 @@ export default function UserInfo({
                 ? 'opacity-100 pointer-events-auto'
                 : 'opacity-0 pointer-events-none'
             }`}
-            onMouseEnter={(e) => {
+            onMouseEnter={() => {
               setCardNameHover(true);
               onHoverCard ? onHoverCard(true) : null;
             }}
@@ -106,7 +106,7 @@ export default function UserInfo({
                 ? 'opacity-100 pointer-events-auto'
                 : 'opacity-0 pointer-events-none'
             }`}
-            onMouseEnter={(e) => {
+            onMouseEnter={() => {
               setCardUsernameHover(true);
               onHoverCard ? onHoverCard(true) : null;
             }}
