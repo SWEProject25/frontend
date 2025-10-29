@@ -37,7 +37,12 @@ export default function AuthInit({
         if (pathname && pathname.startsWith('/reset-password')) {
           setTargetPath(pathname);
         } else {
-          setTargetPath('/');
+          if (pathname !== '/') {
+            setTargetPath('/');
+            router.replace('/');
+          } else {
+            setTargetPath('/');
+          }
         }
       }
     })();
