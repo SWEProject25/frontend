@@ -6,6 +6,7 @@ import { formatBirthDate } from '../utils/dateUtils';
 import { AUTH_CLIENT_CONFIG } from '../constants/api';
 import { FormState } from '../types/hooks';
 import { useAuth } from './useAuth';
+import { AUTH_MODAL_STORAGE_KEY } from '../utils';
 
 export function useAuthHandlers() {
   const router = useRouter();
@@ -29,15 +30,27 @@ export function useAuthHandlers() {
     setFormState((prev) => ({ ...prev, isLoading: loading }));
 
   const setSuccess = (success: boolean) =>
-    setFormState((prev) => ({ ...prev, isLoading: false, success }));
-
-  const setFieldError = (field: string, message: string) =>
     setFormState((prev) => ({
       ...prev,
       isLoading: false,
-      success: false,
-      errors: { ...prev.errors, [field]: message },
+      success,
+      errors: success ? {} : prev.errors,
     }));
+
+  const setFieldError = (field: string, message: string) =>
+    setFormState((prev) => {
+      const newErrors = { ...prev.errors };
+      delete newErrors.forgotPasswordSuccess;
+      newErrors[field] = message;
+
+      return {
+        ...prev,
+        isLoading: false,
+        success: false,
+        message: undefined,
+        errors: newErrors,
+      };
+    });
 
   const handleSocialAuth = useCallback(
     async (providerId: string) => {
@@ -45,6 +58,7 @@ export function useAuthHandlers() {
         setLoading(true);
         oAuthLogin(providerId, () => {
           setSuccess(true);
+          localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
           setTimeout(
             () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
             300
@@ -84,6 +98,8 @@ export function useAuthHandlers() {
             await login(loginData);
             setSuccess(true);
             // Redirect after a short delay to show success state
+            localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
+
             setTimeout(
               () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
               1000
@@ -100,6 +116,8 @@ export function useAuthHandlers() {
 
             await login(fallbackLoginData);
             setSuccess(true);
+            localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
+
             setTimeout(
               () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
               1000
@@ -183,9 +201,10 @@ export function useAuthHandlers() {
               isLoading: false,
               success: true,
             }));
-            console.log(signupData);
 
             // Redirect to configured success page after registration
+            localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
+
             setTimeout(() => {
               router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT);
             }, 1000); // Small delay to show success state
@@ -231,11 +250,10 @@ export function useAuthHandlers() {
                 type: 'WEB',
               });
 
-              setFormState((prev) => ({
-                ...prev,
+              setFormState(() => ({
                 isLoading: false,
-                success: true,
-                errors: { ...prev.errors, forgotPasswordSuccess: resp.message },
+                success: false,
+                errors: { forgotPasswordSuccess: resp.message },
               }));
 
               return false;
@@ -271,10 +289,6 @@ export function useAuthHandlers() {
     []
   );
 
-  /**
-   * Reset password using token from email link.
-   * Returns the backend message on success or throws an Error with a message.
-   */
   const handleResetPassword = useCallback(
     async (payload: {
       userId: number;

@@ -321,9 +321,7 @@ export const authApi = {
       if (!allowedOrigins.includes(event.origin)) return;
 
       const payload = event.data;
-      console.log(payload);
       const { user } = payload.data;
-      console.log(user);
 
       if (user) {
         callback(user);
