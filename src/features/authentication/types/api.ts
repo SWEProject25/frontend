@@ -40,6 +40,12 @@ export interface LoginResponseDto {
     user: UserResponse;
   };
 }
+export interface MeResponse {
+  status: string;
+  data: {
+    user: UserResponse;
+  };
+}
 
 export interface SendOTPDto {
   email: string;

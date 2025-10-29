@@ -277,7 +277,7 @@ export function useAuthHandlers() {
    */
   const handleResetPassword = useCallback(
     async (payload: {
-      userId: string;
+      userId: number;
       token: string;
       newPassword: string;
       email?: string;
