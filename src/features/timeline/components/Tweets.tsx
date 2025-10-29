@@ -1,4 +1,6 @@
+'use client';
 import Tweet from '@/features/tweets/components/Tweet';
+// import { useState } from 'react';
 export default function Tweets() {
   const time = new Date(Date.now() - 250 * 30 * 10 * 100 * 1000 * 60);
   const data = {
@@ -30,10 +32,16 @@ export default function Tweets() {
       reposted: false,
     },
   };
+  // const [flag, setFlag] = useState(false);
   return (
     <div className="w-full">
-      <Tweet data={data} />
-      <Tweet data={data} />
+      {/* {flag && <Tweet data={data} />}
+      <button
+        onClick={() => setFlag(!flag)}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        {flag ? 'Hide Tweet' : 'Show Tweet'}
+      </button> */}
       <Tweet data={data} />
     </div>
   );

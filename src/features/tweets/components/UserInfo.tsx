@@ -45,10 +45,12 @@ export default function UserInfo({
     'absolute left-1/2 transform -translate-x-1/2 top-full z-50 cursor-default';
 
   const delay = 400;
+  const nameCardShow = cardShow && (showNameCard || cardNameHover);
+  const usernameCardShow = cardShow && (showUsernameCard || cardUsernameHover);
   return (
     <div className={containerClass}>
       <div className="relative">
-        <Link href="/profile">
+        <Link href="/profile" onClick={(e) => e.stopPropagation()}>
           <span
             className={nameRowClass}
             onMouseEnter={() => setTimeout(() => setShowNameCard(true), delay)}
@@ -60,30 +62,31 @@ export default function UserInfo({
             )}
           </span>
         </Link>
-        <div
-          className={`${profileCardClass} transition-opacity duration-200 ${
-            cardShow && (showNameCard || cardNameHover)
-              ? 'opacity-100 pointer-events-auto'
-              : 'opacity-0 pointer-events-none'
-          }`}
-          onMouseEnter={(e) => {
-            e.preventDefault();
-            setCardNameHover(true);
-            onHoverCard ? onHoverCard(true) : null;
-          }}
-          onMouseLeave={() => {
-            setCardNameHover(false);
-            onHoverCard ? onHoverCard(false) : null;
-          }}
-          onClick={(e) => e.preventDefault()}
-        >
-          {cardShow && (showNameCard || cardNameHover) && (
-            <ProfileCard data={data} />
-          )}
-        </div>
+        {nameCardShow && (
+          <div
+            className={`${profileCardClass} transition-opacity duration-200 ${
+              cardShow && (showNameCard || cardNameHover)
+                ? 'opacity-100 pointer-events-auto'
+                : 'opacity-0 pointer-events-none'
+            }`}
+            onMouseEnter={() => {
+              setCardNameHover(true);
+              onHoverCard ? onHoverCard(true) : null;
+            }}
+            onMouseLeave={() => {
+              setCardNameHover(false);
+              onHoverCard ? onHoverCard(false) : null;
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            {data.name && data.username && <ProfileCard data={data} />}
+          </div>
+        )}
       </div>
       <div className="relative">
-        <Link href="/profile">
+        <Link href="/profile" onClick={(e) => e.stopPropagation()}>
           <span
             className={usernameClass}
             onMouseEnter={() =>
@@ -96,27 +99,28 @@ export default function UserInfo({
             {data.username}
           </span>
         </Link>
-        <div
-          className={`${profileCardClass} transition-opacity duration-200 ${
-            cardShow && (showUsernameCard || cardUsernameHover)
-              ? 'opacity-100 pointer-events-auto'
-              : 'opacity-0 pointer-events-none'
-          }`}
-          onMouseEnter={(e) => {
-            e.preventDefault();
-            setCardUsernameHover(true);
-            onHoverCard ? onHoverCard(true) : null;
-          }}
-          onMouseLeave={() => {
-            setCardUsernameHover(false);
-            onHoverCard ? onHoverCard(false) : null;
-          }}
-          onClick={(e) => e.preventDefault()}
-        >
-          {cardShow && (showUsernameCard || cardUsernameHover) && (
-            <ProfileCard data={data} />
-          )}
-        </div>
+        {usernameCardShow && (
+          <div
+            className={`${profileCardClass} transition-opacity duration-200 ${
+              cardShow && (showUsernameCard || cardUsernameHover)
+                ? 'opacity-100 pointer-events-auto'
+                : 'opacity-0 pointer-events-none'
+            }`}
+            onMouseEnter={() => {
+              setCardUsernameHover(true);
+              onHoverCard ? onHoverCard(true) : null;
+            }}
+            onMouseLeave={() => {
+              setCardUsernameHover(false);
+              onHoverCard ? onHoverCard(false) : null;
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            {data.name && data.username && <ProfileCard data={data} />}
+          </div>
+        )}
       </div>
     </div>
   );
