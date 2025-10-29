@@ -23,6 +23,7 @@ export interface EmailInputFieldProps {
   disabled?: boolean;
   validation?: {
     enableRealTimeValidation?: boolean;
+    remoteCheck?: boolean;
     apiEndpoint?: string;
     messages?: {
       invalidFormat?: string;

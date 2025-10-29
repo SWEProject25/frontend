@@ -1,9 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
-import {
-  LOGIN_STEPS,
-  getCreateAccountSteps,
-  getForgotPasswordSteps,
-} from '../constants';
+import { LOGIN_STEPS, getCreateAccountSteps } from '../constants';
+import { FORGOT_PASSWORD_STEPS } from '../constants/multiStep';
 import { AllSteps } from '../types/components';
 import { getInitialValues } from '@/features/authentication/utils';
 import { UseMultiStepFormProps, UseMultiStepFormReturn } from '../types/hooks';
@@ -54,7 +51,7 @@ export function useMultiStepForm({
       case 'createAccount':
         return getCreateAccountSteps(); // Use dynamic steps for create account
       case 'forgotPassword':
-        return getForgotPasswordSteps();
+        return FORGOT_PASSWORD_STEPS;
       default:
         return [type as AllSteps]; // Single-step forms
     }

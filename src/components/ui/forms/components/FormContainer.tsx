@@ -11,6 +11,10 @@ import {
   isFormValid,
   validatePasswordMatch,
 } from '../utils';
+import {
+  validateName,
+  validatePassword as validatePwd,
+} from '@/features/authentication/utils/validators';
 
 export function FormContainer(
   props: GenericAuthFormProps & {
@@ -46,6 +50,11 @@ export function FormContainer(
   const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>(
     {}
   );
+
+  // Field-level validation errors for realtime checks (name, password composition, username)
+  const [fieldValidationErrors, setFieldValidationErrors] = useState<
+    Record<string, string>
+  >({});
 
   // Check if form has password fields
   const hasPasswordFields = useMemo(
@@ -90,10 +99,14 @@ export function FormContainer(
     hasPasswordFields,
   ]);
 
-  // Merge password errors with form state errors
+  // Merge password errors with form state errors and field-level validation errors
   const allErrors = useMemo(
-    () => ({ ...formState?.errors, ...passwordErrors }),
-    [formState?.errors, passwordErrors]
+    () => ({
+      ...formState?.errors,
+      ...passwordErrors,
+      ...fieldValidationErrors,
+    }),
+    [formState?.errors, passwordErrors, fieldValidationErrors]
   );
 
   // Calculate form validity - check form state errors AND email validation AND password validation
@@ -110,7 +123,15 @@ export function FormContainer(
 
   // Update formData when initialValues change
   useEffect(() => {
-    setFormData(initialValues);
+    setFormData((prev) => {
+      const init = initialValues || {};
+      const initKeys = Object.keys(init);
+      if (initKeys.length === 0) return prev;
+      for (const k of initKeys) {
+        if (prev[k] === init[k]) return init;
+      }
+      return prev;
+    });
   }, [initialValues]);
 
   // Event handlers
@@ -119,6 +140,37 @@ export function FormContainer(
       (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const value = e.target.value;
         setFormData((prev) => ({ ...prev, [fieldName]: value }));
+
+        // Realtime validation for name field
+        if (fieldName === 'name' || fieldName === 'fullName') {
+          // mark touched so errors show immediately
+          setTouched((prev) => ({ ...prev, [fieldName]: true }));
+          const err = validateName(value);
+          setFieldValidationErrors((prev) => {
+            const next = { ...prev };
+            if (err) next[fieldName] = err;
+            else delete next[fieldName];
+            return next;
+          });
+        }
+
+        // Realtime password composition check (while typing)
+        if (fieldName === 'password') {
+          // mark touched so composition errors show immediately
+          setTouched((prev) => ({ ...prev, password: true }));
+          const pwdErr = validatePwd(value);
+          setFieldValidationErrors((prev) => {
+            const next = { ...prev };
+            if (pwdErr) next.password = pwdErr;
+            else delete next.password;
+            return next;
+          });
+        }
+
+        // Mark confirmPassword as touched when typing so match errors show realtime
+        if (fieldName === 'confirmPassword') {
+          setTouched((prev) => ({ ...prev, confirmPassword: true }));
+        }
       },
     []
   );
