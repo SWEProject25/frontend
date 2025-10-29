@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import Link from 'next/link';
 import Content from './Content';
 import Actions from './Actions';
 import UserInfo from './UserInfo';
@@ -13,10 +12,9 @@ import Action from './Action';
 import DropDown from './DropDown';
 import Timing from './Timing';
 import { Grok } from '@lobehub/icons';
-
 import { FaUserPlus, FaListUl, FaBan, FaCode, FaFlag } from 'react-icons/fa';
 import { HiOutlineEmojiSad } from 'react-icons/hi';
-
+import { useRouter } from 'next/navigation';
 const dropItems = [
   {
     key: 'not_interested',
@@ -102,12 +100,13 @@ type TweetData = {
 
 export default function Tweet({ data }: { data: TweetData }) {
   const [Hovered, setHovered] = useState(false);
-
+  const router = useRouter();
   return (
-    <Link
-      href={'/fullTweet'}
-      className={`block mx-auto w-full border-b border-gray-700 p-4 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''}`}
-      style={{ textDecoration: 'none' }}
+    <div
+      onClick={() => router.push('/fullTweet')}
+      //href={`/tweet/${data.id}`}
+      className={`block mx-auto w-full border-b border-gray-700 p-4 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer`}
+      // style={{ textDecoration: 'none' }}
     >
       <div className="flex w-full gap-2">
         <Avatar size={48} data={data.user} onHoverCard={setHovered} />
@@ -129,6 +128,7 @@ export default function Tweet({ data }: { data: TweetData }) {
                   icon={<FaEllipsisH size={12} />} // smaller icon
                   label="more"
                   color="blue"
+                  stopPropagation={false}
                 />
               </DropDown>
             </div>
@@ -137,6 +137,6 @@ export default function Tweet({ data }: { data: TweetData }) {
           <Actions stats={data.Actions} />
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

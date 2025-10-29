@@ -35,6 +35,7 @@ export default function Avatar({
       <div className="relative">
         <Link
           href="/profile"
+          onClick={(e) => e.stopPropagation()}
           onMouseEnter={() => setTimeout(() => setShowProfileCard(true), delay)}
           onMouseLeave={() =>
             setTimeout(() => setShowProfileCard(false), delay)
@@ -48,25 +49,28 @@ export default function Avatar({
             className="w-12 h-12 rounded-full"
           />
         </Link>
-        <div
-          className={`absolute left-1/2 transform -translate-x-1/2 top-full z-50 cursor-default transition-opacity duration-200 ${
-            show
-              ? 'opacity-100 pointer-events-auto'
-              : 'opacity-0 pointer-events-none'
-          }`}
-          onMouseEnter={(e) => {
-            e.preventDefault();
-            setCardHover(true);
-            onHoverCard ? onHoverCard(true) : null;
-          }}
-          onMouseLeave={() => {
-            setCardHover(false);
-            onHoverCard ? onHoverCard(false) : null;
-          }}
-          onClick={(e) => e.preventDefault()}
-        >
-          {show && data.name && data.username && <ProfileCard data={data} />}
-        </div>
+        {show && (
+          <div
+            className={`absolute left-1/2 transform -translate-x-1/2 top-full z-50 cursor-default transition-opacity duration-200 ${
+              show
+                ? 'opacity-100 pointer-events-auto'
+                : 'opacity-0 pointer-events-none'
+            }`}
+            onMouseEnter={(e) => {
+              setCardHover(true);
+              onHoverCard ? onHoverCard(true) : null;
+            }}
+            onMouseLeave={() => {
+              setCardHover(false);
+              onHoverCard ? onHoverCard(false) : null;
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            {data.name && data.username && <ProfileCard data={data} />}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -120,6 +120,7 @@ function FullTweet({ data, reply }: { data: TweetData; reply: TweetData }) {
                 icon={<FaEllipsisH size={12} />}
                 label="more"
                 color="blue"
+                stopPropagation={false}
               />
             </DropDown>
           </div>

@@ -1,8 +1,9 @@
 'use client';
-import React, { useState } from 'react';
-import Avatar from './Avatar';
-import UserInfo from './UserInfo';
+
 import { Grok } from '@lobehub/icons/es/icons';
+import CardAvatar from './CardAvatar';
+import CardUserInfo from './CardUserInfo';
+import FollowButton from './FollowButton';
 
 type User = {
   name: string;
@@ -16,52 +17,15 @@ type User = {
 };
 
 export default function ProfileCard({ data }: { data: User }) {
-  const [followed, setFollowed] = useState(data.isFollowed || false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [followClicked, setFollowClicked] = useState(false);
-
   return (
     <div className="w-64 h-full bg-black text-white rounded-2xl p-4 shadow-lg shadow-white/20 border border-gray-800 hover:border-gray-700 transition-all duration-200 mt-2">
       <div className="flex justify-between items-start">
-        <Avatar data={data} size={80} cardShow={false} />
-        <button
-          className={`px-5 py-2 rounded-full font-semibold text-sm transition cursor-pointer ${
-            followed
-              ? followClicked
-                ? 'bg-white text-black hover:bg-gray-200'
-                : 'bg-black text-white border border-gray-700 hover:bg-red-500/20 transition-colors hover:text-red-500 hover:border-red-500'
-              : 'bg-white text-black hover:bg-gray-200'
-          }`}
-          onClick={() => {
-            if (!followed) {
-              setFollowClicked(true);
-              setFollowed(true);
-            } else {
-              setFollowed(false);
-              setFollowClicked(false);
-            }
-          }}
-          onMouseEnter={(e) => {
-            e.preventDefault();
-            setIsHovered(true);
-          }}
-          onMouseLeave={() => {
-            setIsHovered(false);
-            setFollowClicked(false);
-          }}
-        >
-          {followed
-            ? isHovered
-              ? followClicked
-                ? 'Following'
-                : 'Unfollow'
-              : 'Following'
-            : 'Follow'}
-        </button>
+        <CardAvatar size={48} data={data} />
+        <FollowButton isFollowed={data.isFollowed} />
       </div>
       <div className="mt-3">
         <div className="flex items-center space-x-1">
-          <UserInfo data={data} direction="vertical" cardShow={false} />
+          <CardUserInfo data={data} direction="vertical" />
         </div>
       </div>
       <p className="mt-2 text-sm text-gray-300">{data.bio}</p>
