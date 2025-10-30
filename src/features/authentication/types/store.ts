@@ -9,14 +9,14 @@ import {
 
 // Auth Store Types
 export interface AuthState {
-  user: UserResponse | Record<string, unknown> | null;
+  user: UserResponse | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
 }
 
 export interface AuthActions {
-  setUser: (user: UserResponse | Record<string, unknown>) => void;
+  setUser: (user: UserResponse) => void;
   clearUser: () => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -28,7 +28,7 @@ export interface AuthActions {
   resendOTP: (emailData: ResendOTPDto) => Promise<void>;
   oAuthLogin: (
     provider: string,
-    onSuccess?: (user: UserResponse | Record<string, unknown>) => void
+    onSuccess?: (user: UserResponse) => void
   ) => void;
 }
 

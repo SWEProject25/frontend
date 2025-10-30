@@ -119,13 +119,13 @@ function AuthDemoContent() {
                   <strong>Role:</strong> {getField('role')}
                 </p>
                 <p>
-                  <strong>Birth Date:</strong> {getDateField('birth_date')}
+                  <strong>Birth Date:</strong> {getDateField('birthDate')}
                 </p>
                 <p>
                   <strong>Location:</strong> {getField('location')}
                 </p>
                 <p>
-                  <strong>Created At:</strong> {getDateField('created_at')}
+                  <strong>Created At:</strong> {getDateField('createdAt')}
                 </p>
               </div>
               <button

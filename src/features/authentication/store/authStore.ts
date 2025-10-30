@@ -21,7 +21,7 @@ export const useAuthStore = create<AuthStore>()(
       error: null,
 
       // Actions
-      setUser: (user: UserResponse | Record<string, unknown>) => {
+      setUser: (user: UserResponse) => {
         set({ user, isAuthenticated: true, error: null });
       },
 
@@ -174,7 +174,7 @@ export const useAuthStore = create<AuthStore>()(
       },
       oAuthLogin: (
         provider: string,
-        onSuccess?: (user: UserResponse | Record<string, unknown>) => void
+        onSuccess?: (user: UserResponse) => void
       ) => {
         set({ isLoading: true, error: null });
         authApi.oAuthLogin(provider, (user) => {
