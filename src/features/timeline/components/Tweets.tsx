@@ -4,7 +4,7 @@ import Tweet from '@/features/tweets/components/Tweet';
 export default function Tweets() {
   const time = new Date(Date.now() - 250 * 30 * 10 * 100 * 1000 * 60);
   const data = {
-    id: '1',
+    id: 1,
     content: {
       text: ' tweet to demonstrate the layout.',
       image: '/Personal photo.jpeg',
@@ -42,7 +42,7 @@ export default function Tweets() {
       >
         {flag ? 'Hide Tweet' : 'Show Tweet'}
       </button> */}
-      <Tweet data={data} />
+      <Tweet id={data.id} />
     </div>
   );
 }
