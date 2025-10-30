@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { authApi } from '@/features/authentication/services/authApi';
+import { useAuthStore } from '@/features/authentication/store/authStore';
 
 export default function AuthInit({
   onReady,
@@ -18,8 +19,11 @@ export default function AuthInit({
 
     (async () => {
       try {
-        // Try fetching current user. If successful, user is logged in.
-        await authApi.getCurrentUser();
+        const apiUser = await authApi.getCurrentUser();
+        const setUser = useAuthStore.getState().setUser;
+        if (apiUser) {
+          setUser(apiUser);
+        }
 
         // If user is logged in and on the root path, redirect to /home
         if (mounted && pathname === '/') {
