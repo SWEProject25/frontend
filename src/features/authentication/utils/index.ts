@@ -4,6 +4,7 @@ export {
   getModalType,
   getFullScreenFormType,
 } from './modalUtils';
+export { AUTH_MODAL_STORAGE_KEY, isValidModalType } from './modalUtils';
 export { generateCaptchaText, validateCaptcha } from './captchaUtils';
 export {
   isValidOTPInput,

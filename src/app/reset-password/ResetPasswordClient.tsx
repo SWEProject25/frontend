@@ -32,7 +32,7 @@ export default function ResetPasswordClient() {
 
     // delegate to auth handler which will update formState inside the hook
     await handleResetPassword({
-      userId,
+      userId: Number(userId),
       token,
       newPassword: data.password,
       email,

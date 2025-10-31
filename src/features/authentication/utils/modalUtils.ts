@@ -1,4 +1,4 @@
-import { BREAKPOINTS } from '../constants';
+import { BREAKPOINTS, AUTH_MODAL_TYPES, AuthModalType } from '../constants';
 
 /**
  * Checks if the current screen size is mobile
@@ -28,3 +28,11 @@ export const getFullScreenFormType = (
   if (!activeModal || !isMobile) return null;
   return activeModal;
 };
+
+export const AUTH_MODAL_STORAGE_KEY = 'auth.activeModal';
+
+export function isValidModalType(value: unknown): value is AuthModalType {
+  if (typeof value !== 'string') return false;
+  const vals = Object.values(AUTH_MODAL_TYPES) as string[];
+  return vals.includes(value);
+}
