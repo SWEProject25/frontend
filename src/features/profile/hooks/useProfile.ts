@@ -2,18 +2,22 @@ import {
   useUpdateMyProfile,
   useUploadProfileImage,
   useUploadBannerImage,
+  useRemoveBannerImage,
+  useRemoveProfileImage,
 } from './profileQueries';
 
 export const useProfile = () => {
   const updateMyProfile = useUpdateMyProfile();
   const uploadProfileImage = useUploadProfileImage();
   const uploadBannerImage = useUploadBannerImage();
+  const removeProfileImage = useRemoveProfileImage();
+  const removeBannerImage = useRemoveBannerImage();
 
   const handleSaveProfile = async (data: {
     name: string;
     bio: string;
-    profileImage?: File;
-    bannerImage?: File;
+    profileImage?: File | null;
+    bannerImage?: File | null;
     location?: string | null;
     website?: string | null;
     birthDate?: string | null;
@@ -44,11 +48,13 @@ export const useProfile = () => {
         uploadProfileImage.mutateAsync(data.profileImage);
       } else if (data.profileImage === null) {
         // Handle removal of profile image if explicitly set to null
+        removeProfileImage.mutateAsync();
       }
       if (data.bannerImage) {
         uploadBannerImage.mutateAsync(data.bannerImage);
       } else if (data.bannerImage === null) {
         // Handle removal of banner image if explicitly set to null
+        removeBannerImage.mutateAsync();
       }
 
       updateMyProfile.mutate(cleanedUpdateData);

@@ -90,13 +90,12 @@ export const profileApi = {
   // Upload profile image (multipart/form-data)
   async uploadProfileImage(file: File): Promise<ProfileResponseDto> {
     const form = new FormData();
-    form.append('file', file);
+    form.append('profile_image', file, file.name);
 
     const response = await fetch(
       `${PROFILE_API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.ADD_PROFILE_IMAGE}`,
       {
         method: 'POST',
-        // Note: Do not set Content-Type; browser will set the multipart boundary
         credentials: 'include',
         body: form,
       }
@@ -108,7 +107,8 @@ export const profileApi = {
   // Upload banner image (multipart/form-data)
   async uploadBannerImage(file: File): Promise<ProfileResponseDto> {
     const form = new FormData();
-    form.append('file', file);
+    // Backend expects field name `banner_image` and a filename with extension
+    form.append('banner_image', file, file.name);
 
     const response = await fetch(
       `${PROFILE_API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.ADD_BANNER_IMAGE}`,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import XModal from '@/components/ui/hoc/XModal';
 import { InputField } from '@/components/ui/input/InputField';
 import Button from '@/components/ui/Button';
@@ -22,8 +22,8 @@ interface EditProfileModalProps {
   onSave: (data: {
     name: string;
     bio: string;
-    profileImage?: File;
-    bannerImage?: File;
+    profileImage?: File | null;
+    bannerImage?: File | null;
     location?: string;
     website?: string;
     birthDate?: string;
@@ -40,8 +40,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 }) => {
   const [name, setName] = useState(initialData.name);
   const [bio, setBio] = useState(initialData.bio);
-  const [location, setLocation] = useState('');
-  const [website, setWebsite] = useState('');
+  const [location, setLocation] = useState(initialData.location ?? '');
+  const [website, setWebsite] = useState(initialData.website ?? '');
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string | undefined>(
@@ -52,15 +52,34 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   );
 
   const handleSave = () => {
+    const computeImagePayload = (
+      file: File | null,
+      preview: string | undefined,
+      initial?: string
+    ): File | null | undefined => {
+      if (file) return file;
+      if (preview === '') return null;
+      if (preview === initial) return undefined;
+      return undefined;
+    };
+
     onSave({
       name,
       bio,
       location,
       website,
-      profileImage: profileImage || undefined,
-      bannerImage: bannerImage || undefined,
+      profileImage: computeImagePayload(
+        profileImage,
+        profilePreview,
+        initialData.profileImage
+      ),
+      bannerImage: computeImagePayload(
+        bannerImage,
+        bannerPreview,
+        initialData.bannerImage
+      ),
     });
-    onClose();
+    onCloseModal();
   };
 
   const handleProfileImageChange = (file: File | null) => {
@@ -68,7 +87,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     if (file) {
       setProfilePreview(URL.createObjectURL(file));
     } else {
-      setProfilePreview(initialData.profileImage);
+      setProfilePreview('');
     }
   };
 
@@ -77,14 +96,45 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     if (file) {
       setBannerPreview(URL.createObjectURL(file));
     } else {
-      setBannerPreview(initialData.bannerImage);
+      setBannerPreview('');
     }
   };
+
+  // Reset local state to initial values
+  const resetToInitial = () => {
+    setName(initialData.name);
+    setBio(initialData.bio);
+    setLocation(initialData.location ?? '');
+    setWebsite(initialData.website ?? '');
+    setProfileImage(null);
+    setBannerImage(null);
+    setProfilePreview(initialData.profileImage);
+    setBannerPreview(initialData.bannerImage);
+  };
+
+  const onCloseModal = () => {
+    resetToInitial();
+    onClose();
+  };
+
+  // Sync state when modal opens or initialData changes
+  useEffect(() => {
+    if (isOpen) {
+      setName(initialData.name);
+      setBio(initialData.bio);
+      setLocation(initialData.location ?? '');
+      setWebsite(initialData.website ?? '');
+      setProfileImage(null);
+      setBannerImage(null);
+      setProfilePreview(initialData.profileImage);
+      setBannerPreview(initialData.bannerImage);
+    }
+  }, [isOpen, initialData]);
 
   return (
     <XModal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={onCloseModal}
       size="xl"
       customLayout={false}
       overlayColor="bg-modal-overlay"
@@ -96,7 +146,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             variant="ghost"
             size="sm"
             shape="circle"
-            onClick={onClose}
+            onClick={onCloseModal}
             aria-label="Close modal"
             disabled={isUpdating}
           >
@@ -170,7 +220,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
           </div>
         </div>
       </div>
-      {/* </div> */}
     </XModal>
   );
 };

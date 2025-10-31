@@ -20,8 +20,8 @@ interface ActionsPanelProps {
   onSaveProfile: (data: {
     name: string;
     bio: string;
-    profileImage?: File;
-    bannerImage?: File;
+    profileImage?: File | null;
+    bannerImage?: File | null;
     location?: string;
     website?: string;
     birthDate?: string;
