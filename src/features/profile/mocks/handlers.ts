@@ -77,7 +77,7 @@ export const profileHandlers = [
 
       Object.assign(mockCurrentUserProfile, {
         ...body,
-        updated_at: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       });
 
       return HttpResponse.json(

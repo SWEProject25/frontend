@@ -14,7 +14,9 @@ export const getConfigKey = (
   if (step === 'signup') return 'signup';
   if (step === 'otp') return 'otp';
   if (step === 'password') {
-    return type === 'login' ? 'loginPassword' : 'resetPassword';
+    if (type === 'login') return 'loginPassword';
+    if (type === 'createAccount') return 'password';
+    return 'resetPassword';
   }
   if (step === 'forgotPassword') return 'forgotPassword';
   return step as keyof typeof import('@/features/authentication/configs/authFormConfigs').authFormConfigs;
@@ -33,21 +35,25 @@ export const getInitialValues = (
     currentStep === 'password' &&
     stepData.email?.identifier
   ) {
-    return { email: stepData.email.identifier };
+    const v = stepData.email.identifier;
+
+    return { email: v, identifier: v };
   }
   if (
     type === 'createAccount' &&
     currentStep === 'otp' &&
     stepData.register?.email
   ) {
-    return { email: stepData.register.email };
+    const v = stepData.register.email;
+    return { email: v, identifier: v };
   }
   if (
     type === 'forgotPassword' &&
     (currentStep === 'otp' || currentStep === 'password') &&
     stepData.forgotPassword?.email
   ) {
-    return { email: stepData.forgotPassword.email };
+    const v = stepData.forgotPassword.email;
+    return { email: v, identifier: v };
   }
   return {};
 };

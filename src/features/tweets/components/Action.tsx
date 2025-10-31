@@ -5,11 +5,13 @@ function Action({
   count,
   label,
   color,
+  stopPropagation = true,
 }: {
   icon: React.ReactNode;
   count?: string;
   label: string;
   color: string;
+  stopPropagation?: boolean;
 }) {
   // Icon and glow color classes
   const colorMap: Record<string, string> = {
@@ -34,9 +36,7 @@ function Action({
       <div
         className="relative flex items-center cursor-pointer transition-colors gap-x-1"
         onClick={(e) => {
-          e.preventDefault();
-          // e.stopPropagation();
-          // alert(label);
+          if (stopPropagation) e.stopPropagation();
         }}
       >
         {/* Glow circle only around icon, sharp edge, only on hover */}

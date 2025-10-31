@@ -282,16 +282,20 @@ export const authFormConfigs = {
 
   forgotPassword: {
     title: 'Reset your password',
-    subtitle: 'Enter your email to receive a verification code',
+    subtitle: 'Enter your email to receive a password reset link',
     fields: [
       {
         name: 'email',
         label: 'Email',
         type: FIELD_TYPES.EMAIL,
         required: true,
+        validation: {
+          enableRealTimeValidation: true,
+          remoteCheck: false,
+        },
       },
     ],
-    submitButton: { text: 'Send Code' },
+    submitButton: { text: 'Send Link' },
     footerLinks: [
       {
         text: FOOTER_LINK_TEXTS.REMEMBER_PASSWORD,

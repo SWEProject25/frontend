@@ -12,6 +12,7 @@ import {
   VerifyRecaptchaDto,
   VerifyRecaptchaResponseDto,
   UserResponse,
+  MeResponse,
 } from '../types/api';
 import {
   AUTH_API_CONFIG,
@@ -29,6 +30,10 @@ class ApiError extends Error {
     this.name = 'ApiError';
   }
 }
+
+let cachedUser: UserResponse | null = null;
+let cachedAt = 0;
+const CURRENT_USER_TTL = 5 * 60 * 1000; // 5 minutes
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
@@ -82,7 +87,15 @@ export const authApi = {
       }
     );
 
-    return handleResponse<RegisterResponseDto>(response);
+    const data = await handleResponse<RegisterResponseDto>(response);
+
+    const user = data?.data?.user;
+    if (user) {
+      cachedUser = user;
+      cachedAt = Date.now();
+    }
+
+    return data;
   },
 
   async login(credentials: LoginDto): Promise<LoginResponseDto> {
@@ -98,7 +111,15 @@ export const authApi = {
       }
     );
 
-    return handleResponse<LoginResponseDto>(response);
+    const data = await handleResponse<LoginResponseDto>(response);
+
+    const user = data?.data?.user;
+    if (user) {
+      cachedUser = user;
+      cachedAt = Date.now();
+    }
+
+    return data;
   },
 
   async logout(): Promise<void> {
@@ -124,7 +145,8 @@ export const authApi = {
       throw new ApiError(errorMessage, response.status);
     }
 
-    // No need to parse response body for logout endpoint
+    cachedUser = null;
+    cachedAt = 0;
   },
 
   async sendOTP(emailData: SendOTPDto): Promise<SendOTPResponseDto> {
@@ -175,6 +197,46 @@ export const authApi = {
     return handleResponse<ResendOTPResponseDto>(response);
   },
 
+  async forgotPassword(payload: {
+    email: string;
+    type?: string;
+  }): Promise<{ status: string; message: string }> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.FORGOT_PASSWORD}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      }
+    );
+
+    return handleResponse<{ status: string; message: string }>(response);
+  },
+
+  async resetPassword(payload: {
+    userId: number;
+    token: string;
+    newPassword: string;
+    email?: string;
+  }): Promise<{ status: string; message: string }> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.RESET_PASSWORD}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      }
+    );
+
+    return handleResponse<{ status: string; message: string }>(response);
+  },
+
   async verifyRecaptcha(
     recaptchaData: VerifyRecaptchaDto
   ): Promise<VerifyRecaptchaResponseDto> {
@@ -193,10 +255,40 @@ export const authApi = {
     return handleResponse<VerifyRecaptchaResponseDto>(response);
   },
 
-  oAuthLogin(
-    provider: string,
-    callback: (user: UserResponse | Record<string, unknown>) => void
-  ): void {
+  async getCurrentUser(): Promise<UserResponse> {
+    // Return cached user when available and fresh
+    if (cachedUser && Date.now() - cachedAt < CURRENT_USER_TTL) {
+      return Promise.resolve(cachedUser);
+    }
+
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.ME}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+
+    const result = await handleResponse<MeResponse>(response);
+
+    let user: UserResponse | undefined;
+
+    if (result.status === 'success') {
+      user = result.data.user;
+    }
+    if (user) {
+      cachedUser = user;
+      cachedAt = Date.now();
+      return cachedUser;
+    }
+
+    throw new ApiError('Failed to parse current user', 500, result);
+  },
+
+  oAuthLogin(provider: string, callback: (user: UserResponse) => void): void {
     const width = AUTH_CLIENT_CONFIG.POPUP_WIDTH;
     const height = AUTH_CLIENT_CONFIG.POPUP_HEIGHT;
     const left = AUTH_CLIENT_CONFIG.LEFT_MARGIN;
@@ -226,12 +318,10 @@ export const authApi = {
       if (!allowedOrigins.includes(event.origin)) return;
 
       const payload = event.data;
-      console.log(payload);
-      const { user } = payload.data.user;
-      console.log(user);
+      const { user } = payload.data;
 
       if (user) {
-        callback(user);
+        callback(user as UserResponse);
         window.removeEventListener('message', handleMessage);
       }
     }

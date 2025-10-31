@@ -13,8 +13,11 @@ export const AUTH_ENDPOINTS = {
   VERIFY_OTP: `/api/${AUTH_API_CONFIG.VERSION}/auth/verify-otp`,
   RESEND_OTP: `/api/${AUTH_API_CONFIG.VERSION}/auth/resend-otp`,
   TEST: `/api/${AUTH_API_CONFIG.VERSION}/auth/test`,
+  ME: `/api/${AUTH_API_CONFIG.VERSION}/auth/me`,
   CHECK_EMAIL: `/api/${AUTH_API_CONFIG.VERSION}/auth/check-email`,
   VERIFY_RECAPTCHA: `/api/${AUTH_API_CONFIG.VERSION}/auth/verify-recaptcha`,
+  FORGOT_PASSWORD: `/api/${AUTH_API_CONFIG.VERSION}/auth/forgotPassword`,
+  RESET_PASSWORD: `/api/${AUTH_API_CONFIG.VERSION}/auth/resetPassword`,
   GOOGLE_OAUTH_LOGIN: `/api/v1.0/auth/google/login`,
   GITHUB_OAUTH_LOGIN: `/api/v1.0/auth/github/login`,
 } as const;

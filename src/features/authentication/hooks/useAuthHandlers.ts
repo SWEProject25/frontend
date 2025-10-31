@@ -1,10 +1,12 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
+import { authApi } from '../services/authApi';
 import { CreateUserDto, LoginDto } from '../types/api';
 import { formatBirthDate } from '../utils/dateUtils';
 import { AUTH_CLIENT_CONFIG } from '../constants/api';
 import { FormState } from '../types/hooks';
 import { useAuth } from './useAuth';
+import { AUTH_MODAL_STORAGE_KEY } from '../utils';
 
 export function useAuthHandlers() {
   const router = useRouter();
@@ -17,7 +19,6 @@ export function useAuthHandlers() {
   const {
     login,
     register,
-    sendOTP,
     verifyOTP,
     oAuthLogin,
     isLoginLoading,
@@ -29,15 +30,27 @@ export function useAuthHandlers() {
     setFormState((prev) => ({ ...prev, isLoading: loading }));
 
   const setSuccess = (success: boolean) =>
-    setFormState((prev) => ({ ...prev, isLoading: false, success }));
-
-  const setFieldError = (field: string, message: string) =>
     setFormState((prev) => ({
       ...prev,
       isLoading: false,
-      success: false,
-      errors: { ...prev.errors, [field]: message },
+      success,
+      errors: success ? {} : prev.errors,
     }));
+
+  const setFieldError = (field: string, message: string) =>
+    setFormState((prev) => {
+      const newErrors = { ...prev.errors };
+      delete newErrors.forgotPasswordSuccess;
+      newErrors[field] = message;
+
+      return {
+        ...prev,
+        isLoading: false,
+        success: false,
+        message: undefined,
+        errors: newErrors,
+      };
+    });
 
   const handleSocialAuth = useCallback(
     async (providerId: string) => {
@@ -45,6 +58,7 @@ export function useAuthHandlers() {
         setLoading(true);
         oAuthLogin(providerId, () => {
           setSuccess(true);
+          localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
           setTimeout(
             () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
             300
@@ -84,6 +98,8 @@ export function useAuthHandlers() {
             await login(loginData);
             setSuccess(true);
             // Redirect after a short delay to show success state
+            localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
+
             setTimeout(
               () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
               1000
@@ -100,6 +116,8 @@ export function useAuthHandlers() {
 
             await login(fallbackLoginData);
             setSuccess(true);
+            localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
+
             setTimeout(
               () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
               1000
@@ -170,7 +188,7 @@ export function useAuthHandlers() {
               name: data.name,
               email: data.email,
               password: data.password,
-              birth_date: formatBirthDate(
+              birthDate: formatBirthDate(
                 data.birthMonth,
                 data.birthDay,
                 data.birthYear
@@ -183,9 +201,10 @@ export function useAuthHandlers() {
               isLoading: false,
               success: true,
             }));
-            console.log(signupData);
 
             // Redirect to configured success page after registration
+            localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
+
             setTimeout(() => {
               router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT);
             }, 1000); // Small delay to show success state
@@ -219,42 +238,35 @@ export function useAuthHandlers() {
         setLoading(true);
 
         switch (step) {
+          case 'forgotPassword':
           case 'email': {
             if (!data.email) {
               setFieldError('forgotPassword', 'Email is required');
               return false;
             }
             try {
-              await sendOTP({ email: data.email });
-              setSuccess(true);
-              return true;
+              const resp = await authApi.forgotPassword({
+                email: data.email,
+                type: 'WEB',
+              });
+
+              setFormState(() => ({
+                isLoading: false,
+                success: false,
+                errors: { forgotPasswordSuccess: resp.message },
+              }));
+
+              return false;
             } catch (err) {
               setFieldError(
                 'forgotPassword',
-                err instanceof Error ? err.message : 'Failed to send code'
+                err instanceof Error
+                  ? err.message
+                  : 'Failed to request password reset'
               );
               return false;
             }
           }
-
-          case 'otp': {
-            if (!data.email || !data.otp) {
-              setFieldError('otp', 'Email and code are required');
-              return false;
-            }
-            try {
-              await verifyOTP({ email: data.email, otp: data.otp });
-              setSuccess(true);
-              return true;
-            } catch (err) {
-              setFieldError(
-                'otp',
-                err instanceof Error ? err.message : 'Invalid verification code'
-              );
-              return false;
-            }
-          }
-
           case 'password': {
             //TODO
             await new Promise((resolve) => setTimeout(resolve, 800));
@@ -274,7 +286,44 @@ export function useAuthHandlers() {
         return false;
       }
     },
-    [sendOTP, verifyOTP]
+    []
+  );
+
+  const handleResetPassword = useCallback(
+    async (payload: {
+      userId: number;
+      token: string;
+      newPassword: string;
+      email?: string;
+    }): Promise<boolean> => {
+      try {
+        setLoading(true);
+        const resp = await authApi.resetPassword({
+          userId: payload.userId,
+          token: payload.token,
+          newPassword: payload.newPassword,
+          email: payload.email,
+        });
+
+        setFormState((prev) => ({
+          ...prev,
+          isLoading: false,
+          success: true,
+          message: resp.message,
+          errors: {},
+        }));
+
+        return true;
+      } catch (err) {
+        setLoading(false);
+        const message =
+          err instanceof Error ? err.message : 'Failed to reset password';
+        // Surface error as a field error for consistency
+        setFieldError('resetPassword', message);
+        return false;
+      }
+    },
+    []
   );
 
   const clearFormState = useCallback((fieldName?: string) => {
@@ -303,6 +352,7 @@ export function useAuthHandlers() {
     handleLogin,
     handleSignup,
     handleForgotPassword,
+    handleResetPassword,
     clearFormState,
   };
 }

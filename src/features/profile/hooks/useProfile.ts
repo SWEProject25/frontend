@@ -23,18 +23,18 @@ export const useProfile = () => {
       const updateData: {
         name?: string;
         bio?: string;
-        profile_image_url?: string;
-        banner_image_url?: string;
+        profileImageUrl?: string;
+        bannerImageUrl?: string;
       } = {
         name: data.name,
         bio: data.bio,
       };
 
       if (profileImageUrl) {
-        updateData.profile_image_url = profileImageUrl;
+        updateData.profileImageUrl = profileImageUrl;
       }
       if (bannerImageUrl) {
-        updateData.banner_image_url = bannerImageUrl;
+        updateData.bannerImageUrl = bannerImageUrl;
       }
 
       updateMyProfile.mutate(updateData, {
