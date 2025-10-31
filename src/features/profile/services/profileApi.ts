@@ -90,7 +90,7 @@ export const profileApi = {
   // Upload profile image (multipart/form-data)
   async uploadProfileImage(file: File): Promise<ProfileResponseDto> {
     const form = new FormData();
-    form.append('profile_image', file, file.name);
+    form.append('file', file, file.name);
 
     const response = await fetch(
       `${PROFILE_API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.ADD_PROFILE_IMAGE}`,
@@ -108,7 +108,7 @@ export const profileApi = {
   async uploadBannerImage(file: File): Promise<ProfileResponseDto> {
     const form = new FormData();
     // Backend expects field name `banner_image` and a filename with extension
-    form.append('banner_image', file, file.name);
+    form.append('file', file, file.name);
 
     const response = await fetch(
       `${PROFILE_API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.ADD_BANNER_IMAGE}`,

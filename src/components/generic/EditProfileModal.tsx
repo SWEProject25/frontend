@@ -20,13 +20,13 @@ interface EditProfileModalProps {
     birthDate?: string;
   };
   onSave: (data: {
-    name: string;
-    bio: string;
+    name?: string;
+    bio?: string;
     profileImage?: File | null;
     bannerImage?: File | null;
-    location?: string;
-    website?: string;
-    birthDate?: string;
+    location?: string | null;
+    website?: string | null;
+    birthDate?: string | null;
   }) => void;
   isUpdating?: boolean;
 }
@@ -63,11 +63,18 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       return undefined;
     };
 
+    const fieldPayload = (value: string, initial?: string | undefined) => {
+      const v = value?.trim();
+      const init = initial?.trim() ?? '';
+      if (v === init) return undefined;
+      return value;
+    };
+
     onSave({
-      name,
-      bio,
-      location,
-      website,
+      name: fieldPayload(name, initialData.name),
+      bio: fieldPayload(bio, initialData.bio),
+      location: fieldPayload(location, initialData.location),
+      website: fieldPayload(website, initialData.website),
       profileImage: computeImagePayload(
         profileImage,
         profilePreview,

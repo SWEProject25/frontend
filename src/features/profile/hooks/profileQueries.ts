@@ -77,6 +77,7 @@ export const useUpdateMyProfile = () => {
 
 // Hook: Upload profile image (multipart)
 export const useUploadProfileImage = () => {
+  const queryClient = useQueryClient();
   const { setLoading, setError } = useProfileStore();
 
   return useMutation<ProfileResponseDto, Error, File>({
@@ -95,11 +96,17 @@ export const useUploadProfileImage = () => {
         setLoading(false);
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
+    },
   });
 };
 
 // Hook: Upload banner image (multipart)
 export const useUploadBannerImage = () => {
+  const queryClient = useQueryClient();
   const { setLoading, setError } = useProfileStore();
 
   return useMutation<ProfileResponseDto, Error, File>({
@@ -118,11 +125,17 @@ export const useUploadBannerImage = () => {
         setLoading(false);
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
+    },
   });
 };
 
 // Hook: Remove profile image
 export const useRemoveProfileImage = () => {
+  const queryClient = useQueryClient();
   const { setLoading, setError } = useProfileStore();
 
   return useMutation<ProfileResponseDto, Error, void>({
@@ -141,11 +154,17 @@ export const useRemoveProfileImage = () => {
         setLoading(false);
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
+    },
   });
 };
 
 // Hook: Remove banner image
 export const useRemoveBannerImage = () => {
+  const queryClient = useQueryClient();
   const { setLoading, setError } = useProfileStore();
 
   return useMutation<ProfileResponseDto, Error, void>({
@@ -163,6 +182,11 @@ export const useRemoveBannerImage = () => {
       } finally {
         setLoading(false);
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
     },
   });
 };

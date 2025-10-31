@@ -14,8 +14,8 @@ export const useProfile = () => {
   const removeBannerImage = useRemoveBannerImage();
 
   const handleSaveProfile = async (data: {
-    name: string;
-    bio: string;
+    name?: string;
+    bio?: string;
     profileImage?: File | null;
     bannerImage?: File | null;
     location?: string | null;
@@ -47,20 +47,18 @@ export const useProfile = () => {
       if (data.profileImage) {
         uploadProfileImage.mutateAsync(data.profileImage);
       } else if (data.profileImage === null) {
-        // Handle removal of profile image if explicitly set to null
         removeProfileImage.mutateAsync();
       }
       if (data.bannerImage) {
         uploadBannerImage.mutateAsync(data.bannerImage);
       } else if (data.bannerImage === null) {
-        // Handle removal of banner image if explicitly set to null
         removeBannerImage.mutateAsync();
       }
-
-      updateMyProfile.mutate(cleanedUpdateData);
+      if (Object.keys(cleanedUpdateData).length > 0) {
+        updateMyProfile.mutate(cleanedUpdateData);
+      }
     } catch (error) {
       console.error('Failed to process profile update:', error);
-      // TODO: Show error toast notification
     }
   };
 

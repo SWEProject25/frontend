@@ -1,6 +1,6 @@
 import React from 'react';
-import Cover from '../../../components/generic/Cover';
-import Avatar from '../../../components/generic/Avatar';
+import Cover from '@/components/generic/Cover';
+import Avatar from '@/components/generic/Avatar';
 import ActionsPanel from './ActionsPanel';
 import UserInfo from './UserInfo';
 import Description from './Description';
@@ -31,6 +31,9 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
           bio: profileData.bio || '',
           profileImage: profileData.profile_image_url || '',
           bannerImage: profileData.banner_image_url || '',
+          location: profileData.location || '',
+          website: profileData.website || '',
+          birthDate: profileData.birth_date || '',
         }}
         onSaveProfile={handleSaveProfile}
         isUpdating={isUpdating}
