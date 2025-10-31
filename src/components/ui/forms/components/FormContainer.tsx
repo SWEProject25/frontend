@@ -11,10 +11,8 @@ import {
   isFormValid,
   validatePasswordMatch,
 } from '../utils';
-import {
-  validateName,
-  validatePassword as validatePwd,
-} from '@/features/authentication/utils/validators';
+import { validatePassword as validatePwd } from '@/features/authentication/utils/passwordValidation';
+import { validateName } from '@/features/authentication/utils/nameValidation';
 
 export function FormContainer(
   props: GenericAuthFormProps & {
@@ -147,7 +145,7 @@ export function FormContainer(
         const value = e.target.value;
         setFormData((prev) => ({ ...prev, [fieldName]: value }));
 
-        // Realtime validation for name field
+        // Realtime validation for name field (display name)
         if (fieldName === 'name' || fieldName === 'fullName') {
           // mark touched so errors show immediately
           setTouched((prev) => ({ ...prev, [fieldName]: true }));

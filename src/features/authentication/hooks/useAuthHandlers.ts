@@ -6,6 +6,7 @@ import { formatBirthDate } from '../utils/dateUtils';
 import { AUTH_CLIENT_CONFIG } from '../constants/api';
 import { FormState } from '../types/hooks';
 import { useAuth } from './useAuth';
+import { normalizeEmail } from '../utils/emailValidation';
 
 export function useAuthHandlers() {
   const router = useRouter();
@@ -77,7 +78,7 @@ export function useAuthHandlers() {
           case 'password': {
             // Password step - make actual login request
             const loginData: LoginDto = {
-              email: data.identifier || data.email,
+              email: normalizeEmail(data.identifier || data.email),
               password: data.password,
             };
 
@@ -94,7 +95,7 @@ export function useAuthHandlers() {
           default: {
             // Fallback - make login request
             const fallbackLoginData: LoginDto = {
-              email: data.identifier || data.email,
+              email: normalizeEmail(data.identifier || data.email),
               password: data.password,
             };
 
@@ -150,7 +151,10 @@ export function useAuthHandlers() {
           case 'otp': {
             // OTP verification step - verify the OTP when button is clicked
             try {
-              await verifyOTP({ email: data.email, otp: data.otp });
+              await verifyOTP({
+                email: normalizeEmail(data.email),
+                otp: data.otp,
+              });
               setSuccess(true);
               return true; // Success - proceed to next step
             } catch (err) {
@@ -168,7 +172,7 @@ export function useAuthHandlers() {
             console.log(data);
             const signupData: CreateUserDto = {
               name: data.name,
-              email: data.email,
+              email: normalizeEmail(data.email),
               password: data.password,
               birthDate: formatBirthDate(
                 data.birthMonth,
@@ -227,7 +231,7 @@ export function useAuthHandlers() {
             }
             try {
               const resp = await authApi.forgotPassword({
-                email: data.email,
+                email: normalizeEmail(data.email),
                 type: 'WEB',
               });
 
