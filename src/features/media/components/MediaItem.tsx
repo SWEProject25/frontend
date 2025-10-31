@@ -22,7 +22,7 @@ export default function MediaItem({
         src={
           media.type === LOCAL_MEDIA
             ? URL.createObjectURL(media.data)
-            : media.data.images.original.url
+            : media.data.images.fixed_height_small.url
         }
         sizes="(max-width: 640px) 100vw, 514px"
         alt={media.type === LOCAL_MEDIA ? media.data.name : media.data.title}
