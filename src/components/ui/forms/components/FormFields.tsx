@@ -15,6 +15,7 @@ export function FormFields({
   onBlur,
   onClearState,
   onEmailValidationChange,
+  loading = false,
 }: FormFieldsProps) {
   // Group fields by their group.id
   const fieldGroups = fields.reduce(
@@ -114,6 +115,7 @@ export function FormFields({
           error={touched[field.name] ? errors[field.name] : undefined}
           required={field.required}
           fullWidth={true}
+          disabled={field.disabled || loading}
         />
       );
     }
@@ -133,7 +135,7 @@ export function FormFields({
           onBlur={onBlur(field.name)}
           placeholder={field.placeholder}
           required={field.required}
-          disabled={field.disabled}
+          disabled={field.disabled || loading}
           validation={field.validation}
           onValidationChange={onEmailValidationChange}
         />
@@ -155,7 +157,7 @@ export function FormFields({
         showCharCount={field.showCharCount}
         showPasswordToggle={field.showPasswordToggle}
         required={field.required}
-        disabled={field.disabled}
+        disabled={field.disabled || loading}
       />
     );
   }

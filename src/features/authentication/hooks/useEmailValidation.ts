@@ -6,7 +6,11 @@ import {
   EmailValidationState,
   UseEmailValidationOptions,
 } from '../types/hooks';
-import { isValidEmailFormat } from '@/features/authentication/utils/validators';
+import {
+  isValidEmailFormat,
+  validateEmailASCII,
+  normalizeEmail,
+} from '../utils/emailValidation';
 
 const API_BASE_URL = AUTH_API_CONFIG.BASE_URL;
 
@@ -33,9 +37,6 @@ export function useEmailValidation({
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Use shared email format helper from validators
-  // (no local regex duplication)
-
   // Email validation function
   const validateEmail = useCallback(
     async (email: string, remote: boolean = true) => {
@@ -49,7 +50,19 @@ export function useEmailValidation({
         return;
       }
 
-      // Check email format first
+      // Check ASCII characters first
+      const asciiError = validateEmailASCII(email);
+      if (asciiError) {
+        setValidationState({
+          isValidating: false,
+          error: asciiError,
+          isValid: false,
+        });
+        onValidationChange?.(false, asciiError);
+        return;
+      }
+
+      // Check email format
       if (!isValidEmailFormat(email)) {
         setValidationState({
           isValidating: false,
@@ -85,7 +98,7 @@ export function useEmailValidation({
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email }),
+            body: JSON.stringify({ email: normalizeEmail(email) }),
           }
         );
 
