@@ -33,7 +33,6 @@ export const useProfile = () => {
         birth_date: data.birthDate,
       };
 
-      // Remove undefined / null / empty string values so API receives only meaningful fields
       const cleanedUpdateData = Object.keys(updateData).reduce<{
         [key: string]: unknown;
       }>((acc, key) => {

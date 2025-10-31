@@ -18,13 +18,13 @@ interface ActionsPanelProps {
     birthDate?: string;
   };
   onSaveProfile: (data: {
-    name: string;
-    bio: string;
+    name?: string;
+    bio?: string;
     profileImage?: File | null;
     bannerImage?: File | null;
-    location?: string;
-    website?: string;
-    birthDate?: string;
+    location?: string | null;
+    website?: string | null;
+    birthDate?: string | null;
   }) => void;
   isUpdating?: boolean;
 }

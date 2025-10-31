@@ -51,6 +51,7 @@ export interface SelectProps
   error?: string;
   fullWidth?: boolean;
   className?: string;
+  wrapperClassName?: string;
 }
 
 export interface DividerProps {
