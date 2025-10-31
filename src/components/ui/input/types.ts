@@ -18,9 +18,17 @@ export interface CharCounterProps {
 }
 
 export interface InputBaseProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  inputRef?: React.Ref<HTMLInputElement>;
-  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  extends React.HTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
+  // loosened ref type to support both input and textarea refs
+  inputRef?: React.Ref<HTMLInputElement | HTMLTextAreaElement>;
+  type?: string;
+  // generic focus/blur handlers for input or textarea
+  onFocus?: (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+  onBlur?: (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
   styleProps: FieldStyleProps;
+  [key: string]: unknown;
 }

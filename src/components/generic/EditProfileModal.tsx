@@ -15,12 +15,18 @@ interface EditProfileModalProps {
     bio: string;
     profileImage?: string;
     bannerImage?: string;
+    location?: string;
+    website?: string;
+    birthDate?: string;
   };
   onSave: (data: {
     name: string;
     bio: string;
     profileImage?: File;
     bannerImage?: File;
+    location?: string;
+    website?: string;
+    birthDate?: string;
   }) => void;
   isUpdating?: boolean;
 }
@@ -34,6 +40,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 }) => {
   const [name, setName] = useState(initialData.name);
   const [bio, setBio] = useState(initialData.bio);
+  const [location, setLocation] = useState('');
+  const [website, setWebsite] = useState('');
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string | undefined>(
@@ -47,6 +55,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     onSave({
       name,
       bio,
+      location,
+      website,
       profileImage: profileImage || undefined,
       bannerImage: bannerImage || undefined,
     });
@@ -78,28 +88,30 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       size="xl"
       customLayout={false}
       overlayColor="bg-modal-overlay"
-      preventScroll={true}
+      preventScroll={false}
     >
-      <div className="flex justify-between gap-2 px-4 pt-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          shape="circle"
-          onClick={onClose}
-          aria-label="Close modal"
-          disabled={isUpdating}
-        >
-          <CloseIcon className="w-5 h-5 text-text-active" />
-        </Button>
-        <Button
-          variant="social"
-          size="sm"
-          shape="rounded"
-          onClick={handleSave}
-          disabled={isUpdating}
-        >
-          {isUpdating ? 'Saving...' : 'Save'}
-        </Button>
+      <div className="sticky top-0 z-40 backdrop-blur-sm bg-black/80">
+        <div className="flex justify-between gap-2 px-1 py-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            shape="circle"
+            onClick={onClose}
+            aria-label="Close modal"
+            disabled={isUpdating}
+          >
+            <CloseIcon className="w-5 h-5 text-text-active" />
+          </Button>
+          <Button
+            variant="social"
+            size="sm"
+            shape="rounded"
+            onClick={handleSave}
+            disabled={isUpdating}
+          >
+            {isUpdating ? 'Saving...' : 'Save'}
+          </Button>
+        </div>
       </div>
       <div className="flex flex-col w-full">
         <Cover coverImage={bannerPreview} className="mt-4">
@@ -135,9 +147,24 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             />
             <InputField
               label="Bio"
+              type="textarea"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               maxLength={160}
+              showCharCount
+            />
+            <InputField
+              label="Location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              maxLength={30}
+              showCharCount
+            />
+            <InputField
+              label="Website"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+              maxLength={100}
               showCharCount
             />
           </div>

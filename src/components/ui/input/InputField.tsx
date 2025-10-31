@@ -7,8 +7,12 @@ import { InputBase } from './components/InputBase';
 import { InputLabel } from './components/InputLabel';
 import { PasswordToggle } from './components/PasswordToggle';
 import { CharCounter } from './components/CharCounter';
+// styling handled in InputBase
 
-export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
+export const InputField = React.forwardRef<
+  HTMLInputElement | HTMLTextAreaElement,
+  InputProps
+>(
   (
     {
       className,
@@ -29,11 +33,39 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const [showPassword, setShowPassword] = useState(false);
 
-    const fieldState = useFieldState<HTMLInputElement>({
+    const fieldState = useFieldState<HTMLInputElement | HTMLTextAreaElement>({
       value: value,
-      onFocus,
-      onBlur,
     });
+
+    const handleFocus = (
+      e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      fieldState.handleFocus(e);
+      if (type === 'textarea') {
+        (onFocus as unknown as React.FocusEventHandler<HTMLTextAreaElement>)?.(
+          e as React.FocusEvent<HTMLTextAreaElement>
+        );
+      } else {
+        (onFocus as unknown as React.FocusEventHandler<HTMLInputElement>)?.(
+          e as React.FocusEvent<HTMLInputElement>
+        );
+      }
+    };
+
+    const handleBlur = (
+      e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      fieldState.handleBlur(e);
+      if (type === 'textarea') {
+        (onBlur as unknown as React.FocusEventHandler<HTMLTextAreaElement>)?.(
+          e as React.FocusEvent<HTMLTextAreaElement>
+        );
+      } else {
+        (onBlur as unknown as React.FocusEventHandler<HTMLInputElement>)?.(
+          e as React.FocusEvent<HTMLInputElement>
+        );
+      }
+    };
 
     const currentLength = typeof value === 'string' ? value.length : 0;
     const inputType = showPasswordToggle
@@ -52,7 +84,6 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
       showCharCount,
     };
 
-    // Compute a deterministic data-testid for the input when one isn't provided
     const providedTestId = (
       props as unknown as Record<string, string | undefined>
     )['data-testid'];
@@ -79,6 +110,10 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
       }
     };
 
+    const inputRefCast = ref as React.RefObject<
+      HTMLInputElement | HTMLTextAreaElement
+    >;
+
     return (
       <div className="relative">
         <div className="relative">
@@ -93,10 +128,14 @@ export const InputField = React.forwardRef<HTMLInputElement, InputProps>(
             type={inputType}
             value={value}
             maxLength={maxLength}
-            inputRef={ref}
-            onFocus={fieldState.handleFocus}
-            onBlur={fieldState.handleBlur}
-            onChange={onChange}
+            inputRef={inputRefCast}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onChange={
+              onChange as unknown as React.ChangeEventHandler<
+                HTMLInputElement | HTMLTextAreaElement
+              >
+            }
             className={className}
             data-testid={computedTestId}
             {...props}

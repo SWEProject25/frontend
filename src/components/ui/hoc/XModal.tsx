@@ -57,10 +57,10 @@ export default function XModal({
   if (!isOpen) return null;
 
   const sizeClasses = {
-    sm: 'sm:max-w-sm',
-    md: 'sm:max-w-md',
-    lg: 'sm:max-w-lg',
-    xl: 'sm:max-w-xl',
+    sm: 'sm:max-w-sm sm:max-h-[300px]',
+    md: 'sm:max-w-md sm:max-h-[400px]',
+    lg: 'sm:max-w-lg sm:max-h-[500px]',
+    xl: 'sm:max-w-xl sm:max-h-[600px]',
     '2xl': 'sm:h-[427.5px] sm:w-[600px]',
   };
 
@@ -83,7 +83,7 @@ export default function XModal({
               bg-modal-bg sm:rounded-2xl
               shadow-2xl
               h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto
-              sm:p-4
+              sm:p-0
               animate-in fade-in zoom-in-95 duration-200
                ${sizeClasses[size]}
               `}
@@ -116,7 +116,7 @@ export default function XModal({
           </>
         )}
         {/* Content */}
-        <div className="px-8 pb-8">{children}</div>
+        <div className="px-1 pb-1">{children}</div>
       </div>
     </div>
   );

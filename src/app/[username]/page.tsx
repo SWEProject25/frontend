@@ -21,7 +21,6 @@ const UserPage = ({ params }: UserPageProps) => {
 
   const currentUser = useAuthStore((s) => s.user);
 
-  // determine whether to use /me or fetch by username
   const useMy = Boolean(currentUser && currentUser.username === username);
 
   const myProfileQuery = useMyProfile();

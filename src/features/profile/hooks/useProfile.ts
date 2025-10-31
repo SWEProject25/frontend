@@ -10,6 +10,9 @@ export const useProfile = () => {
     bio: string;
     profileImage?: File;
     bannerImage?: File;
+    location?: string;
+    website?: string;
+    birthDate?: string;
   }) => {
     try {
       const profileImageUrl = data.profileImage
@@ -23,19 +26,23 @@ export const useProfile = () => {
       const updateData: {
         name?: string;
         bio?: string;
-        profileImageUrl?: string;
-        bannerImageUrl?: string;
+        location?: string;
+        website?: string;
+        birth_date?: string;
       } = {
         name: data.name,
         bio: data.bio,
+        location: data.location,
+        website: data.website,
+        birth_date: data.birthDate,
       };
 
-      if (profileImageUrl) {
-        updateData.profileImageUrl = profileImageUrl;
-      }
-      if (bannerImageUrl) {
-        updateData.bannerImageUrl = bannerImageUrl;
-      }
+      // if (profileImageUrl) {
+      //   updateData.profileImageUrl = profileImageUrl;
+      // }
+      // if (bannerImageUrl) {
+      //   updateData.bannerImageUrl = bannerImageUrl;
+      // }
 
       updateMyProfile.mutate(updateData, {
         onSuccess: (response: ProfileResponseDto) => {
