@@ -6,7 +6,7 @@ interface AvatarProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   position?: 'absolute' | 'relative';
-  customPosition?: boolean; // Flag to indicate if using custom positioning via className
+  customPosition?: boolean;
 }
 
 const Avatar = ({
@@ -23,7 +23,6 @@ const Avatar = ({
     lg: 'w-[132px] h-[132px]',
   };
 
-  // Only apply default positioning if not using custom positioning
   const positionStyle =
     position === 'absolute' && !customPosition
       ? { left: '16px', top: '134px', zIndex: 1 }

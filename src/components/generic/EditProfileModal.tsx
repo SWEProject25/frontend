@@ -72,8 +72,14 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   };
 
   return (
-    <XModal isOpen={isOpen} onClose={onClose} size="xl" customLayout={false}>
-      {/* <div className="z-50 fixed left-1/2 -translate-x-1/2 inset-0 flex flex-col bg-background rounded-2xl shadow-xl h-[427.5px] w-[600px] m-10 py-1"> */}
+    <XModal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="xl"
+      customLayout={false}
+      overlayColor="bg-modal-overlay"
+      preventScroll={true}
+    >
       <div className="flex justify-between gap-2 px-4 pt-4">
         <Button
           variant="ghost"

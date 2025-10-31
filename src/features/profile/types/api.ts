@@ -1,23 +1,23 @@
 // Profile API Types
 export interface UserProfile {
   id: number;
-  userId: number;
+  user_id: number;
   name: string;
-  birthDate: string;
-  profileImageUrl: string | null;
-  bannerImageUrl: string | null;
+  birth_date: string;
+  profile_image_url: string | null;
+  banner_image_url: string | null;
   bio: string | null;
   location: string | null;
   website: string | null;
-  isDeactivated: boolean;
-  createdAt: string;
-  updatedAt: string;
+  is_deactivated: boolean;
+  created_at: string;
+  updated_at: string;
   User: {
     id: number;
     username: string;
     email: string;
     role: string;
-    createdAt: string;
+    created_at: string;
   };
 }
 
