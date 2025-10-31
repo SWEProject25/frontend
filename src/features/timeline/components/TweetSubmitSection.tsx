@@ -8,13 +8,21 @@ import usePollStore from '../store/usePollStore';
 import {
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
-} from '@/features/timeline/constants/TweetConstants';
+} from '@/features/timeline/constants/tweetConstants';
+import { useAddTweet } from '../hooks/timelineQueries';
+import useMedia from '@/features/media/store/useMedia';
+import { LOCAL_MEDIA } from '@/features/media/constants/mediaConstants';
+import { options } from '../constants/replySettingsOptions';
+import { AddTweetData } from '../types/api';
 const MAX_ALLOWABLE_TWEET_LENGTH = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
 export default function TweetSubmitSection() {
   const tweetText = useAddTweetStore((state) => state.tweetText);
   const isOpen = usePollStore((state) => state.isOpen);
   const choices = usePollStore((state) => state.choices);
-
+  const media = useMedia((state) => state.media);
+  const selectedReplyOption = useAddTweetStore(
+    (state) => state.selectedReplyOption
+  );
   const isValidPoll =
     choices.filter((ch, ind) => {
       if (ind < 2) {
@@ -34,6 +42,28 @@ export default function TweetSubmitSection() {
         : false
       : false;
   const enableSection = tweetText.trim().length !== 0 || isOpen;
+
+  const mutate = useAddTweet();
+  function handleAddTweet() {
+    // setIsSending(true);
+
+    const mediaFormData = new FormData();
+    media.forEach((med) => {
+      if (med.type === LOCAL_MEDIA) mediaFormData.append('media', med.data);
+    });
+    const seclectdReply = options[selectedReplyOption - 1].Name;
+
+    const tweetData: AddTweetData = {
+      content: tweetText,
+      type: 'POST',
+      parentId: 1,
+      visibility: seclectdReply,
+      media: mediaFormData,
+    };
+    console.log(tweetData);
+    mutate.mutate(tweetData);
+  }
+
   return (
     <div className="flex  flex-row-reverse  items-center mt-2  ">
       <div className="ml-3 flex flex-1">
@@ -43,7 +73,7 @@ export default function TweetSubmitSection() {
           disabled={!enableAddTweet}
           size="text-base"
           label="Post"
-          onClick={() => {}}
+          onClick={handleAddTweet}
         />
       </div>
 

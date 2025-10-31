@@ -4,8 +4,9 @@ import XMenu from '@/components/ui/home/XMenu';
 
 import { onClose } from '@/components/ui/home/XMenu';
 import useAddTweetStore from '../store/useAddTweetStore';
-import { options } from '../constants/GrokOptions';
+import { options } from '../constants/grokOptions';
 import { useState } from 'react';
+import { GROK_MENU } from '../constants/menuName';
 const PANEL_HEIGHT = 88;
 export default function GrokMenu() {
   const [grokOption, setgrokOption] = useState(0);
@@ -14,7 +15,7 @@ export default function GrokMenu() {
     useAddTweetStore((state) => state.tweetText).length > 0;
   return (
     <XMenu>
-      <XMenu.Button name="GrokMenu" panelHeight={PANEL_HEIGHT}>
+      <XMenu.Button name={GROK_MENU} panelHeight={PANEL_HEIGHT}>
         <Icon
           title="Enhance you post with Grok"
           viewBox={33}

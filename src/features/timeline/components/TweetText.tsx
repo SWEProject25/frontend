@@ -4,7 +4,7 @@ import { RefObject, useEffect, useRef, useState } from 'react';
 import {
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
-} from '@/features/timeline/constants/TweetConstants';
+} from '@/features/timeline/constants/tweetConstants';
 
 const startRedText = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
 
@@ -14,7 +14,7 @@ export default function TweetText({
   divRef: RefObject<null | HTMLDivElement>;
 }) {
   const setTweetText = useAddTweetStore((state) => state.setTweetText);
-
+  const isSuccess = useAddTweetStore((state) => state.isSuccess);
   const spanRef1 = useRef<null | HTMLSpanElement>(null);
   const [spanText1, setSpanText1] = useState("What's happening?");
   const [spanText2, setSpanText2] = useState('');
@@ -22,6 +22,20 @@ export default function TweetText({
   useEffect(function () {
     setSpanText1("What's happening?");
   }, []);
+
+  useEffect(
+    function () {
+      if (isSuccess) {
+        setSpanText1("What's happening?");
+        if (spanRef1.current)
+          spanRef1.current.style.color = 'var(--color-text-inactive)';
+        setSpanText2('');
+        if (divRef.current) divRef.current.innerText = '';
+        // setTweetText('');
+      }
+    },
+    [isSuccess, divRef]
+  );
 
   function handleInput(e: React.ChangeEvent<HTMLDivElement>) {
     if (divRef.current && divRef.current.innerHTML === '<br>') {
@@ -63,7 +77,7 @@ export default function TweetText({
         >
           {spanText1}
         </span>
-        <span className="  bg-red-500 text-xl transition-[height] duration-100 ease-in-out">
+        <span className=" bg-[rgb(138,13,32)] text-xl transition-[height] duration-100 ease-in-out">
           {spanText2}
         </span>
       </div>

@@ -6,7 +6,8 @@ import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 import XMenu from '@/components/ui/home/XMenu';
 
 import { onClose } from '@/components/ui/home/XMenu';
-import { options } from '../constants/ReplySettingsOptions';
+import { options } from '../constants/replySettingsOptions';
+import { REPLY_MENU } from '../constants/menuName';
 
 const PANEL_HEIGHT = 332;
 
@@ -22,7 +23,7 @@ export default function TweetReplySettings() {
   return (
     <div className="select-text w-full max-h-9 pb-3 flex flex-1 items-stretch   border-b-1 border-border ">
       <XMenu>
-        <XMenu.Button name="ReplyMenu" panelHeight={PANEL_HEIGHT}>
+        <XMenu.Button name={REPLY_MENU} panelHeight={PANEL_HEIGHT}>
           <div className=" h-6 flex items-center justify-center cursor-pointer hover:bg-icon-hover hover:rounded-full text-primary text-sm font-bold pr-3 ">
             <Icon
               viewBox={options[selectedReplyOption - 1].viewBox}

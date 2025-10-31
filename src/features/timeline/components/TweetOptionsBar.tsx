@@ -1,29 +1,51 @@
+'use client';
+import useMedia from '@/features/media/store/useMedia';
 import Icon from '../../../components/ui/home/Icon';
 import usePollStore from '../store/usePollStore';
 import GrokMenu from './GrokMenu';
 
-import Schedule from './Schedule';
+import Schedule from './schedule/Schedule';
 import TweetImages from './TweetImages';
+import { MAX_MEDIA_NUM } from '@/features/media/constants/mediaConstants';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useGifACtions, useGifVisibility } from '@/features/media/store/useGif';
 export default function TweetOptionsBar() {
   const open = usePollStore((state) => state.open);
   const isPollOpen = usePollStore((state) => state.isOpen);
+  const { open: openGif, close: closeGif } = useGifACtions();
+  const isGifOpen = useGifVisibility();
+  const media = useMedia((state) => state.media);
+  const router = useRouter();
   const handleOpenPoll = () => {
     if (!isPollOpen) open();
   };
-
+  const handleOpenGif = () => {
+    if (!isPollOpen && media.length !== MAX_MEDIA_NUM) {
+      if (isGifOpen) {
+        closeGif();
+        router.replace('home');
+      } else {
+        openGif();
+        router.push('i/foundmedia/search');
+      }
+    }
+  };
   return (
     <div className="flex flex-1 items-center mt-2 mr-auto h-10">
       <TweetImages />
+
       <Icon
-        disabled={isPollOpen}
+        disabled={isPollOpen || media.length === MAX_MEDIA_NUM}
+        onClick={handleOpenGif}
         title="GIF"
         path="M3 5.5C3 4.119 4.12 3 5.5 3h13C19.88 3 21 4.119 21 5.5v13c0 1.381-1.12 2.5-2.5 2.5h-13C4.12 21 3 19.881 3 18.5v-13zM5.5 5c-.28 0-.5.224-.5.5v13c0 .276.22.5.5.5h13c.28 0 .5-.224.5-.5v-13c0-.276-.22-.5-.5-.5h-13zM18 10.711V9.25h-3.74v5.5h1.44v-1.719h1.7V11.57h-1.7v-.859H18zM11.79 9.25h1.44v5.5h-1.44v-5.5zm-3.07 1.375c.34 0 .77.172 1.02.43l1.03-.86c-.51-.601-1.28-.945-2.05-.945C7.19 9.25 6 10.453 6 12s1.19 2.75 2.72 2.75c.85 0 1.54-.344 2.05-.945v-2.149H8.38v1.032H9.4v.515c-.17.086-.42.172-.68.172-.76 0-1.36-.602-1.36-1.375 0-.688.6-1.375 1.36-1.375z"
-      ></Icon>
+      />
 
       <GrokMenu />
       <Icon
         onClick={handleOpenPoll}
-        disabled={isPollOpen}
+        disabled={isPollOpen || media.length > 0}
         title="Poll"
         path="M6 5c-1.1 0-2 .895-2 2s.9 2 2 2 2-.895 2-2-.9-2-2-2zM2 7c0-2.209 1.79-4 4-4s4 1.791 4 4-1.79 4-4 4-4-1.791-4-4zm20 1H12V6h10v2zM6 15c-1.1 0-2 .895-2 2s.9 2 2 2 2-.895 2-2-.9-2-2-2zm-4 2c0-2.209 1.79-4 4-4s4 1.791 4 4-1.79 4-4 4-4-1.791-4-4zm20 1H12v-2h10v2zM7 7c0 .552-.45 1-1 1s-1-.448-1-1 .45-1 1-1 1 .448 1 1z"
       />

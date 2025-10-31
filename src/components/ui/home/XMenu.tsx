@@ -169,4 +169,9 @@ function List({
 XMenu.Button = Button;
 XMenu.List = List;
 
+function useMenuName() {
+  const menuName = useXMenu((state) => state.menuName);
+  return menuName;
+}
 export const onClose = useXMenu.getState().close;
+export { useMenuName };
