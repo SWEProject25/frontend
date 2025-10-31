@@ -75,6 +75,98 @@ export const useUpdateMyProfile = () => {
   });
 };
 
+// Hook: Upload profile image (multipart)
+export const useUploadProfileImage = () => {
+  const { setLoading, setError } = useProfileStore();
+
+  return useMutation<ProfileResponseDto, Error, File>({
+    mutationFn: async (file: File) => {
+      setLoading(true);
+      try {
+        const response = await profileApi.uploadProfileImage(file);
+        setError(null);
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to upload image';
+        setError(errorMessage);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+};
+
+// Hook: Upload banner image (multipart)
+export const useUploadBannerImage = () => {
+  const { setLoading, setError } = useProfileStore();
+
+  return useMutation<ProfileResponseDto, Error, File>({
+    mutationFn: async (file: File) => {
+      setLoading(true);
+      try {
+        const response = await profileApi.uploadBannerImage(file);
+        setError(null);
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to upload image';
+        setError(errorMessage);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+};
+
+// Hook: Remove profile image
+export const useRemoveProfileImage = () => {
+  const { setLoading, setError } = useProfileStore();
+
+  return useMutation<ProfileResponseDto, Error, void>({
+    mutationFn: async () => {
+      setLoading(true);
+      try {
+        const response = await profileApi.removeProfileImage();
+        setError(null);
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to remove image';
+        setError(errorMessage);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+};
+
+// Hook: Remove banner image
+export const useRemoveBannerImage = () => {
+  const { setLoading, setError } = useProfileStore();
+
+  return useMutation<ProfileResponseDto, Error, void>({
+    mutationFn: async () => {
+      setLoading(true);
+      try {
+        const response = await profileApi.removeBannerImage();
+        setError(null);
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to remove image';
+        setError(errorMessage);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+};
+
 // Hook: Get profile by user ID
 export const useProfileByUserId = (userId: number, enabled: boolean = true) => {
   const { setCurrentProfile, setLoading, setError } = useProfileStore();

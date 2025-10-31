@@ -1,34 +1,26 @@
-import { useUpdateMyProfile } from './profileQueries';
-import type { ProfileResponseDto } from '../types/api';
-import { convertFileToDataURL } from '@/utils';
+import {
+  useUpdateMyProfile,
+  useUploadProfileImage,
+  useUploadBannerImage,
+} from './profileQueries';
 
 export const useProfile = () => {
   const updateMyProfile = useUpdateMyProfile();
+  const uploadProfileImage = useUploadProfileImage();
+  const uploadBannerImage = useUploadBannerImage();
 
   const handleSaveProfile = async (data: {
     name: string;
     bio: string;
     profileImage?: File;
     bannerImage?: File;
-    location?: string;
-    website?: string;
-    birthDate?: string;
+    location?: string | null;
+    website?: string | null;
+    birthDate?: string | null;
   }) => {
     try {
-      const profileImageUrl = data.profileImage
-        ? await convertFileToDataURL(data.profileImage)
-        : undefined;
-
-      const bannerImageUrl = data.bannerImage
-        ? await convertFileToDataURL(data.bannerImage)
-        : undefined;
-
       const updateData: {
-        name?: string;
-        bio?: string;
-        location?: string;
-        website?: string;
-        birth_date?: string;
+        [key: string]: unknown;
       } = {
         name: data.name,
         bio: data.bio,
@@ -37,23 +29,29 @@ export const useProfile = () => {
         birth_date: data.birthDate,
       };
 
-      // if (profileImageUrl) {
-      //   updateData.profileImageUrl = profileImageUrl;
-      // }
-      // if (bannerImageUrl) {
-      //   updateData.bannerImageUrl = bannerImageUrl;
-      // }
+      // Remove undefined / null / empty string values so API receives only meaningful fields
+      const cleanedUpdateData = Object.keys(updateData).reduce<{
+        [key: string]: unknown;
+      }>((acc, key) => {
+        const val = updateData[key];
+        if (val !== undefined && val !== null) {
+          acc[key] = val;
+        }
+        return acc;
+      }, {});
 
-      updateMyProfile.mutate(updateData, {
-        onSuccess: (response: ProfileResponseDto) => {
-          console.log('Profile updated successfully:', response);
-          // TODO: Show success toast notification
-        },
-        onError: (error: Error) => {
-          console.error('Failed to update profile:', error);
-          // TODO: Show error toast notification
-        },
-      });
+      if (data.profileImage) {
+        uploadProfileImage.mutateAsync(data.profileImage);
+      } else if (data.profileImage === null) {
+        // Handle removal of profile image if explicitly set to null
+      }
+      if (data.bannerImage) {
+        uploadBannerImage.mutateAsync(data.bannerImage);
+      } else if (data.bannerImage === null) {
+        // Handle removal of banner image if explicitly set to null
+      }
+
+      updateMyProfile.mutate(cleanedUpdateData);
     } catch (error) {
       console.error('Failed to process profile update:', error);
       // TODO: Show error toast notification

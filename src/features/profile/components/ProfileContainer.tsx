@@ -38,7 +38,11 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
       <UserInfo name={profileData.name} username={profileData.User.username} />
       <div className="flex flex-col items-start px-4 gap-3 w-full">
         <Description bio={profileData.bio || ''} />
-        <UserDetails joinDate={profileData.created_at} />
+        <UserDetails
+          joinDate={profileData.created_at}
+          location={profileData.location}
+          website={profileData.website}
+        />
         <FollowStats
           followingCount={0} // TODO: Add to API
           followersCount={0} // TODO: Add to API

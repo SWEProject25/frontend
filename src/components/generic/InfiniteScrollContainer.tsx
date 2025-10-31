@@ -57,7 +57,6 @@ const InfiniteScrollContainer: React.FC<InfiniteScrollContainerProps> = ({
           {loader || (
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              <span className="text-text-secondary">Loading...</span>
             </div>
           )}
         </div>

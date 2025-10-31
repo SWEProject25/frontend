@@ -29,12 +29,20 @@ export interface ProfileResponseDto {
 
 export interface UpdateProfileDto {
   name?: string;
-  birthDate?: string;
-  profileImageUrl?: string;
-  bannerImageUrl?: string;
+  birth_date?: string;
   bio?: string;
   location?: string;
   website?: string;
+  profile_image_url?: string;
+  banner_image_url?: string;
+}
+
+export interface UpdateProfileImageDto {
+  profile_image_url: string;
+}
+
+export interface UpdateBannerImageDto {
+  banner_image_url: string;
 }
 
 export interface ProfileSearchResponseDto {
