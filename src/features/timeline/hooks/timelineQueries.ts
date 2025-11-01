@@ -1,22 +1,29 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  InfiniteData,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { timelineApi } from '../services/timelineAPi';
-import { AddTweetData, AddTweetResponse } from '../types/api';
+import { AddTweetResponse, TimelineFeedDtoResponse } from '../types/api';
 import { useActions } from '../store/useAddTweetStore';
 
 import toasterMessage from '@/components/ui/home/ToasterMessage';
 import { useMediaActions } from '@/features/media/store/useMedia';
 export const TIMELINE_QUERY_KEYS = {
   ADD_TWEET: ['tweet'] as const,
+  TIMELINE_FEED_FOR_YOU: ['timelie-forYou'] as const,
 };
 export const useAddTweet = () => {
   const { onSuccess, startSending, seterror } = useActions();
   const queryClient = useQueryClient();
   const { clearMedia } = useMediaActions();
-  return useMutation<AddTweetResponse, Error, AddTweetData>({
+  console.log('inside useAddTweet');
+  return useMutation<AddTweetResponse, Error, FormData>({
     mutationFn: async (tweetData) => {
-      startSending();
       try {
         const response = await timelineApi.addTweet(tweetData);
+        console.log(response);
         return response;
       } catch (error) {
         const errorMessage =
@@ -38,5 +45,25 @@ export const useAddTweet = () => {
       clearMedia();
       toasterMessage('Your post was sent.');
     },
+    networkMode: 'always',
+    onMutate: () => {
+      startSending();
+    },
+  });
+};
+
+export const useFeedForYou = () => {
+  return useInfiniteQuery<
+    TimelineFeedDtoResponse,
+    Error,
+    InfiniteData<TimelineFeedDtoResponse, number>,
+    typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
+    number
+  >({
+    queryKey: TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
+    queryFn: ({ pageParam }) => timelineApi.getForYouTweets(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.data.posts.length ? pages.length + 1 : undefined,
   });
 };

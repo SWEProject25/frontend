@@ -1,6 +1,6 @@
 import { API_CONFIG } from '@/constants/api';
 import { TIMELINE_ENDPOINTS } from '../constants/api';
-import { AddTweetData, AddTweetResponse } from '../types/api';
+import { AddTweetResponse, TimelineFeedDtoResponse } from '../types/api';
 
 class ApiError extends Error {
   constructor(
@@ -41,22 +41,43 @@ async function handleResponse<T>(response: Response): Promise<T> {
     }
 
     throw new ApiError(errorMessage, statusCode);
+    // console.log(errorMessage, statusCode);
   }
 
   return response.json();
 }
 
 export const timelineApi = {
-  async addTweet(tweetData: AddTweetData): Promise<AddTweetResponse> {
+  async addTweet(tweetData: FormData): Promise<AddTweetResponse> {
     const response = await fetch(
       `${API_CONFIG.BASE_URL}${TIMELINE_ENDPOINTS.ADD_TWEET}`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        body: tweetData,
         credentials: 'include',
-        body: JSON.stringify(tweetData),
       }
     );
     return handleResponse<AddTweetResponse>(response);
+  },
+  async getForYouTweets(
+    pageNumber = 1,
+    limit = 2
+  ): Promise<TimelineFeedDtoResponse> {
+    const response = await fetch(
+      `${API_CONFIG.BASE_URL}${TIMELINE_ENDPOINTS.TIMELINE_FEED_FOR_YOU}?` +
+        new URLSearchParams({ page: `${pageNumber}`, limit: `${limit}` }),
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    console.log(
+      `${API_CONFIG.BASE_URL}${TIMELINE_ENDPOINTS.TIMELINE_FEED_FOR_YOU}?` +
+        new URLSearchParams({ page: `${pageNumber}`, limit: `${limit}` })
+    );
+    return handleResponse<TimelineFeedDtoResponse>(response);
   },
 };

@@ -13,7 +13,7 @@ import { useAddTweet } from '../hooks/timelineQueries';
 import useMedia from '@/features/media/store/useMedia';
 import { LOCAL_MEDIA } from '@/features/media/constants/mediaConstants';
 import { options } from '../constants/replySettingsOptions';
-import { AddTweetData } from '../types/api';
+import { TweetFormDataKeys } from '../types/api';
 const MAX_ALLOWABLE_TWEET_LENGTH = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
 export default function TweetSubmitSection() {
   const tweetText = useAddTweetStore((state) => state.tweetText);
@@ -23,6 +23,8 @@ export default function TweetSubmitSection() {
   const selectedReplyOption = useAddTweetStore(
     (state) => state.selectedReplyOption
   );
+  const mutate = useAddTweet();
+
   const isValidPoll =
     choices.filter((ch, ind) => {
       if (ind < 2) {
@@ -43,25 +45,16 @@ export default function TweetSubmitSection() {
       : false;
   const enableSection = tweetText.trim().length !== 0 || isOpen;
 
-  const mutate = useAddTweet();
   function handleAddTweet() {
-    // setIsSending(true);
-
-    const mediaFormData = new FormData();
+    const tweetFormData = new FormData();
     media.forEach((med) => {
-      if (med.type === LOCAL_MEDIA) mediaFormData.append('media', med.data);
+      if (med.type === LOCAL_MEDIA) tweetFormData.append('media', med.data);
     });
     const seclectdReply = options[selectedReplyOption - 1].Name;
-
-    const tweetData: AddTweetData = {
-      content: tweetText,
-      type: 'POST',
-      parentId: 1,
-      visibility: seclectdReply,
-      media: mediaFormData,
-    };
-    console.log(tweetData);
-    mutate.mutate(tweetData);
+    tweetFormData.append(TweetFormDataKeys.CONTENT, tweetText);
+    tweetFormData.append(TweetFormDataKeys.TYPE, 'POST');
+    tweetFormData.append(TweetFormDataKeys.VISIBILITY, seclectdReply);
+    mutate.mutate(tweetFormData);
   }
 
   return (
