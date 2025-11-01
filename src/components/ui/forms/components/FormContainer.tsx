@@ -11,10 +11,8 @@ import {
   isFormValid,
   validatePasswordMatch,
 } from '../utils';
-import {
-  validateName,
-  validatePassword as validatePwd,
-} from '@/features/authentication/utils/validators';
+import { validatePassword as validatePwd } from '@/features/authentication/utils/passwordValidation';
+import { validateName } from '@/features/authentication/utils/nameValidation';
 
 export function FormContainer(
   props: GenericAuthFormProps & {
@@ -121,18 +119,24 @@ export function FormContainer(
     );
   }, [fields, formData, allErrors, emailValidationState, passwordErrors]);
 
-  // Update formData when initialValues change
+  // Update formData when initialValues change (but not during loading to preserve user input)
   useEffect(() => {
+    // Don't reset form data while loading to preserve values like password
+    if (formState?.isLoading) return;
+
     setFormData((prev) => {
       const init = initialValues || {};
       const initKeys = Object.keys(init);
       if (initKeys.length === 0) return prev;
-      for (const k of initKeys) {
-        if (prev[k] === init[k]) return init;
-      }
-      return prev;
+
+      // Merge initialValues with existing formData to preserve user input
+      // Only update fields that are in initialValues
+      const hasChanges = initKeys.some((k) => prev[k] !== init[k]);
+      if (!hasChanges) return prev;
+
+      return { ...prev, ...init };
     });
-  }, [initialValues]);
+  }, [initialValues, formState?.isLoading]);
 
   // Event handlers
   const handleInputChange = useCallback(
@@ -141,7 +145,7 @@ export function FormContainer(
         const value = e.target.value;
         setFormData((prev) => ({ ...prev, [fieldName]: value }));
 
-        // Realtime validation for name field
+        // Realtime validation for name field (display name)
         if (fieldName === 'name' || fieldName === 'fullName') {
           // mark touched so errors show immediately
           setTouched((prev) => ({ ...prev, [fieldName]: true }));
