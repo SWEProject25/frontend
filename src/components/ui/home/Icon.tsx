@@ -4,7 +4,6 @@ interface IconOptions {
   path: string;
   viewBox?: number;
   size?: string;
-  children?: ReactNode;
   title?: string;
   disabled?: boolean;
   tooltip?: boolean;
@@ -19,7 +18,6 @@ export default function Icon({
   viewBox = 24,
   size = 'w-5 h-5',
   title = '',
-  children,
   disabled = false,
   color = disabled ? 'text-primary/50' : 'text-primary',
   hoverColor = !disabled ? 'bg-icon-hover' : '',
@@ -41,7 +39,6 @@ export default function Icon({
           <path d={path}></path>
         </g>
       </svg>
-      {children}
     </div>
   );
 
