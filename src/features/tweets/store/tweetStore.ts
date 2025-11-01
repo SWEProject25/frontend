@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Tweet } from '../types/api';
+import { TimelineFeed } from '@/features/timeline/types/api';
 import { TweetStore } from '../types/store';
 
 export const useTweetStore = create<TweetStore>()(
@@ -12,7 +12,7 @@ export const useTweetStore = create<TweetStore>()(
       error: null,
 
       // Actions
-      setCurrentTweet: (tweet: Tweet | null) => {
+      setCurrentTweet: (tweet: TimelineFeed | null) => {
         set({ currentTweet: tweet, error: null });
       },
 

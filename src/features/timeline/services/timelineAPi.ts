@@ -61,7 +61,7 @@ export const timelineApi = {
   },
   async getForYouTweets(
     pageNumber = 1,
-    limit = 2
+    limit = 10
   ): Promise<TimelineFeedDtoResponse> {
     const response = await fetch(
       `${API_CONFIG.BASE_URL}${TIMELINE_ENDPOINTS.TIMELINE_FEED_FOR_YOU}?` +

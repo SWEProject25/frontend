@@ -6,14 +6,11 @@ import { useState } from 'react';
 type Direction = 'horizontal' | 'vertical';
 
 type User = {
+  id: number;
   name: string;
   username: string;
-  avatar: string;
-  bio?: string;
-  following?: number;
-  followers?: string;
-  isVerified: boolean;
-  isFollowed?: boolean;
+  verified: boolean;
+  avatar: string | null;
 };
 
 export default function UserInfo({
@@ -57,7 +54,7 @@ export default function UserInfo({
             onMouseLeave={() => setTimeout(() => setShowNameCard(false), delay)}
           >
             {data.name}{' '}
-            {data.isVerified && (
+            {data.verified && (
               <RiVerifiedBadgeFill className="inline text-blue-400" size={16} />
             )}
           </span>

@@ -24,8 +24,7 @@ export default function TweetList() {
   const renderTweets = pages?.map((group, i) => (
     <React.Fragment key={i}>
       {group.data.posts.map((tweet, ind) => (
-        // <Tweet data={tweet} key={ind} />
-        <div key={ind}>{tweet.name}</div>
+        <Tweet data={tweet} key={ind} />
       ))}
     </React.Fragment>
   ));
@@ -49,7 +48,8 @@ export default function TweetList() {
         loadMore={() => hasNextPage && fetchNextPage()}
         hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
       >
-        <ul>{renderTweets} </ul>
+        <div className="flex flex-col gap-2 w-full">{renderTweets} </div>
+        {/* <ul className="w-full">{renderTweets} </ul> */}
       </InfiniteScroll>
     </>
   );

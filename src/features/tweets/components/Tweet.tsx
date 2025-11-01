@@ -17,6 +17,8 @@ import { HiOutlineEmojiSad } from 'react-icons/hi';
 import { useRouter } from 'next/navigation';
 import { useTweetById } from '../hooks/tweetQueries';
 import { TweetResponseDto } from '../types';
+import { TimelineFeed } from '@/features/timeline/types/api';
+import { useTweetStore } from '../store/tweetStore';
 const dropItems = [
   {
     key: 'not_interested',
@@ -87,14 +89,11 @@ type TweetContent = {
 };
 
 type User = {
+  id: number;
   name: string;
   username: string;
-  avatar: string;
-  bio?: string;
-  following?: number;
-  followers?: string;
-  isVerified: boolean;
-  isFollowed?: boolean;
+  verified: boolean;
+  avatar: string | null;
 };
 
 type TweetData = {
@@ -105,23 +104,47 @@ type TweetData = {
   Actions: TweetActions;
 };
 
-export default function Tweet({ data }: { data: TweetData }) {
+export default function Tweet({ data }: { data: TimelineFeed }) {
   const [Hovered, setHovered] = useState(false);
   const router = useRouter();
+  const user = {
+    id: data.userId,
+    name: data.name,
+    username: data.username,
+    verified: data.verified,
+    avatar: data.avatar,
+  };
+  const content = {
+    text: data.text,
+    media: data.media,
+  };
 
+  const actionsStats = {
+    likesCount: data.likesCount,
+    retweetsCount: data.retweetsCount,
+    commentsCount: data.commentsCount,
+    isLikedByMe: data.isLikedByMe,
+    isFollowedByMe: data.isFollowedByMe,
+    isRepostedByMe: data.isRepostedByMe,
+  };
+
+  const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
   return (
     <div
-      onClick={() => router.push(`/home/${data.id}`)}
+      onClick={() => {
+        setCurrentTweet(data);
+        router.push(`/home/${data.userId}`);
+      }}
       className={`block mx-auto w-full border-b border-gray-700 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer p-4`}
     >
       <div className="flex w-full gap-2">
-        <Avatar size={30} data={data.user} onHoverCard={setHovered} />
+        <Avatar size={30} data={user} onHoverCard={setHovered} />
         <div className="flex flex-col items-center flex-1">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-1">
-              <UserInfo data={data.user} onHoverCard={setHovered} />
+              <UserInfo data={user} onHoverCard={setHovered} />
               <span className="text-gray-500">.</span>
-              <Timing time={data.time} />
+              <Timing time={data.date} />
             </div>
             <div className="ml-2 flex items-center space-x-2 text-gray-500">
               <Action
@@ -139,8 +162,8 @@ export default function Tweet({ data }: { data: TweetData }) {
               </DropDown>
             </div>
           </div>
-          <Content content={data.content} />
-          <Actions stats={data.Actions} />
+          <Content content={content} />
+          <Actions stats={actionsStats} />
         </div>
       </div>
     </div>

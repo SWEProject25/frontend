@@ -53,14 +53,12 @@ const SECONDARY_ACTIONS_META = [
 ];
 
 type stats = {
-  replies: number;
-  retweets: number;
-  likes: number;
-  bookmarks: number;
-  views: string;
-  booked: boolean;
-  liked: boolean;
-  reposted: boolean;
+  likesCount: number;
+  retweetsCount: number;
+  commentsCount: number;
+  isLikedByMe: boolean;
+  isFollowedByMe: boolean;
+  isRepostedByMe: boolean;
 };
 
 export default function Actions({
@@ -75,23 +73,28 @@ export default function Actions({
       <div className="flex justify-between items-center w-full mt-3 text-gray-500 text-sm">
         <Action
           icon={ACTIONS_META[0].icon}
-          count={stats.replies.toString()}
+          count={stats.commentsCount.toString()}
           label={ACTIONS_META[0].label}
           color={ACTIONS_META[0].color}
         />
         <Action
           icon={ACTIONS_META[1].icon}
-          count={stats.retweets.toString()}
+          count={stats.retweetsCount.toString()}
           label={ACTIONS_META[1].label}
           color={ACTIONS_META[1].color}
         />
         <Action
           icon={ACTIONS_META[2].icon}
-          count={stats.likes.toString()}
+          count={stats.likesCount.toString()}
           label={ACTIONS_META[2].label}
           color={ACTIONS_META[2].color}
         />
-        {!full ? (
+        <Action
+          icon={SECONDARY_ACTIONS_META[1].icon}
+          label={SECONDARY_ACTIONS_META[1].label}
+          color={SECONDARY_ACTIONS_META[1].color}
+        />
+        {/* {!full ? (
           <Action
             icon={ACTIONS_META[3].icon}
             count={stats.views}
@@ -118,7 +121,7 @@ export default function Actions({
             label={SECONDARY_ACTIONS_META[1].label}
             color={SECONDARY_ACTIONS_META[1].color}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -4,16 +4,12 @@ import { RiVerifiedBadgeFill } from 'react-icons/ri';
 type Direction = 'horizontal' | 'vertical';
 
 type User = {
+  id: number;
   name: string;
   username: string;
-  avatar: string;
-  bio?: string;
-  following?: number;
-  followers?: string;
-  isVerified: boolean;
-  isFollowed?: boolean;
+  verified: boolean;
+  avatar: string | null;
 };
-
 export default function CardUserInfo({
   data,
   direction = 'horizontal',
@@ -39,7 +35,7 @@ export default function CardUserInfo({
         <Link href="/profile" onClick={(e) => e.stopPropagation()}>
           <span className={nameRowClass}>
             {data.name}{' '}
-            {data.isVerified && (
+            {data.verified && (
               <RiVerifiedBadgeFill className="inline text-blue-400" size={16} />
             )}
           </span>

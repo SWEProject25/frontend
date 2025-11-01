@@ -17,6 +17,7 @@ import { HiOutlineEmojiSad } from 'react-icons/hi';
 import Tweet from './Tweet';
 import { Grok } from '@lobehub/icons/es/icons';
 import Header from './Header';
+import { TimelineFeed } from '@/features/timeline/types/api';
 
 const dropItems = [
   {
@@ -106,15 +107,45 @@ type TweetData = {
   Actions: TweetActions;
 };
 
-function FullTweet({ data, reply }: { data: TweetData; reply: TweetData }) {
+function FullTweet({
+  data,
+  reply,
+}: {
+  data: TimelineFeed | null;
+  reply: TimelineFeed | null;
+}) {
+  if (!data || !reply) {
+    return <div>Loading...</div>;
+  }
+  const user = {
+    id: data.userId,
+    name: data.name,
+    username: data.username,
+    verified: data.verified,
+    avatar: data.avatar,
+  };
+  const content = {
+    text: data.text,
+    media: data.media,
+  };
+
+  const actionsStats = {
+    likesCount: data.likesCount,
+    retweetsCount: data.retweetsCount,
+    commentsCount: data.commentsCount,
+    isLikedByMe: data.isLikedByMe,
+    isFollowedByMe: data.isFollowedByMe,
+    isRepostedByMe: data.isRepostedByMe,
+  };
+
   return (
     <div>
       <Header />
       <div className="mx-auto sm:max-w-[600px] p-4 text-white relative ">
         <div className="flex items-start justify-between">
           <div className="flex space-x-3">
-            <Avatar data={data.user} />
-            <UserInfo data={data.user} direction="vertical" />
+            <Avatar data={user} />
+            <UserInfo data={user} direction="vertical" />
           </div>
           <div className="ml-2 flex items-center space-x-2 text-gray-500">
             <Action
@@ -133,17 +164,17 @@ function FullTweet({ data, reply }: { data: TweetData; reply: TweetData }) {
           </div>
         </div>
         <div className="mt-4 space-y-4">
-          <Content content={data.content} />
+          <Content content={content} />
           <div className="flex items-center space-x-1">
-            <Timing time={data.time} full={true} />
-            <span className="text-gray-400 text-sm"> · </span>
+            <Timing time={data.date} full={true} />
+            {/* <span className="text-gray-400 text-sm"> · </span>
             <span className="text-gray-200 bold text-sm">
               {data.Actions.views}{' '}
               <span className="text-gray-400 text-sm">Views</span>
-            </span>
+            </span> */}
           </div>
           <div className="border-b border-gray-700 my-2" />
-          <Actions stats={data.Actions} full={true} />
+          <Actions stats={actionsStats} full={true} />
           <div className="border-b border-gray-700 mt-3" />
         </div>
       </div>

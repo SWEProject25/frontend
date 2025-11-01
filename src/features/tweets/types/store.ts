@@ -1,11 +1,11 @@
-import { Tweet } from './api';
+import { TimelineFeed } from '@/features/timeline/types/api';
 
 export interface TweetStore {
-  currentTweet: Tweet | null;
+  currentTweet: TimelineFeed | null;
   isLoading: boolean;
   error: string | null;
 
-  setCurrentTweet: (tweet: Tweet | null) => void;
+  setCurrentTweet: (tweet: TimelineFeed | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearTweet: () => void;

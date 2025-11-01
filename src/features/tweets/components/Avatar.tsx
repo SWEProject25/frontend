@@ -4,14 +4,11 @@ import Link from 'next/link';
 import ProfileCard from './ProfileCard';
 
 type User = {
+  id: number;
   name: string;
   username: string;
-  avatar: string;
-  bio?: string;
-  following?: number;
-  followers?: string;
-  isVerified: boolean;
-  isFollowed?: boolean;
+  verified: boolean;
+  avatar: string | null;
 };
 
 export default function Avatar({
