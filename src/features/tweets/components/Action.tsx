@@ -7,6 +7,7 @@ function Action({
   color,
   stopPropagation = true,
   onClick,
+  isColored,
 }: {
   icon: React.ReactNode;
   count?: string;
@@ -14,15 +15,10 @@ function Action({
   color: string;
   stopPropagation?: boolean;
   onClick?: () => void;
+  isColored?: boolean;
 }) {
   // Icon and glow color classes
   const colorMap: Record<string, string> = {
-    blue: 'group-hover:text-blue-400',
-    green: 'group-hover:text-green-500',
-    rose: 'group-hover:text-rose-400',
-    gray: 'group-hover:text-gray-400',
-  };
-  const countColorMap: Record<string, string> = {
     blue: 'group-hover:text-blue-400',
     green: 'group-hover:text-green-500',
     rose: 'group-hover:text-rose-400',
@@ -34,6 +30,12 @@ function Action({
     green: 'group-hover:before:bg-green-500/20',
     rose: 'group-hover:before:bg-rose-400/20',
     gray: 'group-hover:before:bg-gray-400/20',
+  };
+  const activeMap: Record<string, string> = {
+    blue: 'text-blue-400',
+    green: 'text-green-500',
+    rose: 'text-rose-400',
+    gray: 'text-gray-500',
   };
   // All hints gray, text white
   return (
@@ -64,10 +66,16 @@ function Action({
             transition-all
           `}
         >
-          <span className={`transition-colors ${colorMap[color]}`}>{icon}</span>
+          <span
+            className={`transition-colors ${colorMap[color]} ${isColored !== undefined ? (isColored === true ? activeMap[color] : '') : ''}`}
+          >
+            {icon}
+          </span>
         </button>
         {count !== undefined && (
-          <span className={`text-xs transition-colors ${countColorMap[color]}`}>
+          <span
+            className={`text-xs transition-colors ${colorMap[color]} ${isColored !== undefined ? (isColored === true ? activeMap[color] : '') : ''}`}
+          >
             {count}
           </span>
         )}

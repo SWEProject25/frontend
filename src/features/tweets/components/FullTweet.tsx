@@ -4,20 +4,19 @@ import Content from './Content';
 import Actions from './Actions';
 import UserInfo from './UserInfo';
 import Avatar from './Avatar';
-import { FaEllipsisH } from 'react-icons/fa';
 import { TbSpeakerphone } from 'react-icons/tb';
 import { IoStatsChart } from 'react-icons/io5';
 import { TiVolumeMute } from 'react-icons/ti';
 import Action from './Action';
 import DropDown from './DropDown';
 import Timing from './Timing';
-
 import { FaUserPlus, FaListUl, FaBan, FaCode, FaFlag } from 'react-icons/fa';
 import { HiOutlineEmojiSad } from 'react-icons/hi';
 import Tweet from './Tweet';
-import { Grok } from '@lobehub/icons/es/icons';
 import Header from './Header';
 import { TimelineFeed } from '@/features/timeline/types/api';
+import { GrokIcon } from '@/components/ui/icons/BrandIcons';
+import { DropIcon } from '@/components/ui/icons/UIIcons';
 
 const dropItems = [
   {
@@ -149,13 +148,13 @@ function FullTweet({
           </div>
           <div className="ml-2 flex items-center space-x-2 text-gray-500">
             <Action
-              icon={<Grok size={18} color="white" />} // smaller icon
+              icon={<GrokIcon />} // smaller icon
               label="Explain this post"
               color="blue"
             />
             <DropDown items={dropItems}>
               <Action
-                icon={<FaEllipsisH size={12} />}
+                icon={<DropIcon />}
                 label="more"
                 color="blue"
                 stopPropagation={false}

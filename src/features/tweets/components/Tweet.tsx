@@ -4,21 +4,19 @@ import Content from './Content';
 import Actions from './Actions';
 import UserInfo from './UserInfo';
 import Avatar from './Avatar';
-import { FaEllipsisH } from 'react-icons/fa';
 import { TbSpeakerphone } from 'react-icons/tb';
 import { IoStatsChart } from 'react-icons/io5';
 import { TiVolumeMute } from 'react-icons/ti';
 import Action from './Action';
 import DropDown from './DropDown';
 import Timing from './Timing';
-import { Grok } from '@lobehub/icons';
 import { FaUserPlus, FaListUl, FaBan, FaCode, FaFlag } from 'react-icons/fa';
 import { HiOutlineEmojiSad } from 'react-icons/hi';
 import { useRouter } from 'next/navigation';
-import { useTweetById } from '../hooks/tweetQueries';
-import { TweetResponseDto } from '../types';
 import { TimelineFeed } from '@/features/timeline/types/api';
 import { useTweetStore } from '../store/tweetStore';
+import { DropIcon } from '@/components/ui/icons/UIIcons';
+import { GrokIcon } from '@/components/ui/icons/BrandIcons';
 const dropItems = [
   {
     key: 'not_interested',
@@ -148,13 +146,13 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
             </div>
             <div className="ml-2 flex items-center space-x-2 text-gray-500">
               <Action
-                icon={<Grok size={18} />} // smaller icon
+                icon={<GrokIcon />} // smaller icon
                 label="Explain this post"
                 color="blue"
               />
               <DropDown items={dropItems} onOpened={setHovered}>
                 <Action
-                  icon={<FaEllipsisH size={12} />} // smaller icon
+                  icon={<DropIcon />} // smaller icon
                   label="more"
                   color="blue"
                   stopPropagation={false}

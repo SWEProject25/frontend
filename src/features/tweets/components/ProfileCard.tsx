@@ -1,6 +1,6 @@
 'use client';
 
-import { Grok } from '@lobehub/icons/es/icons';
+import { GrokIcon } from '@/components/ui/icons/BrandIcons';
 import CardAvatar from './CardAvatar';
 import CardUserInfo from './CardUserInfo';
 import FollowButton from './FollowButton';
@@ -36,7 +36,7 @@ export default function ProfileCard({ data }: { data: User }) {
       </div>
 
       <div className="mt-3 border border-gray-700 rounded-full py-2 text-center text-sm text-white hover:bg-gray-900 cursor-pointer transition flex items-center justify-center gap-2">
-        <Grok size={18} />
+        <GrokIcon />
         <span className="font-bold">Profile Summary</span>
       </div>
     </div>

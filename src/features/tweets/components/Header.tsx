@@ -1,7 +1,6 @@
 import React from 'react';
 import Action from './Action';
-import { SlidersHorizontal } from 'lucide-react';
-import { FaArrowLeft } from 'react-icons/fa6';
+import { BackArrowIcon, FilterIcon } from '@/components/ui/icons/UIIcons';
 function Header() {
   function handleBackClick() {
     window.history.back();
@@ -10,7 +9,7 @@ function Header() {
     <div className="flex items-center justify-between px-4 py-3 cursor-pointer">
       <div className="flex items-center gap-8">
         <Action
-          icon={<FaArrowLeft size={16} />}
+          icon={<BackArrowIcon />}
           color="gray"
           onClick={handleBackClick}
           label="Back"
@@ -23,23 +22,10 @@ function Header() {
         >
           Reply
         </button>
-        <Action icon={<SlidersHorizontal size={18} />} color="gray" />
+        <Action icon={<FilterIcon />} color="gray" />
       </div>
     </div>
   );
 }
 
 export default Header;
-
-{
-  /* <svg
-  viewBox="0 0 24 24"
-  aria-hidden="true"
-  class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-z80fyv r-19wmn03"
-  style="color: rgb(239, 243, 244);"
->
-  <g>
-    <path d="M14 6V3h2v8h-2V8H3V6h11zm7 2h-3.5V6H21v2zM8 16v-3h2v8H8v-3H3v-2h5zm13 2h-9.5v-2H21v2z"></path>
-  </g>
-</svg>; */
-}
