@@ -16,6 +16,7 @@ import { FaUserPlus, FaListUl, FaBan, FaCode, FaFlag } from 'react-icons/fa';
 import { HiOutlineEmojiSad } from 'react-icons/hi';
 import Tweet from './Tweet';
 import { Grok } from '@lobehub/icons/es/icons';
+import Header from './Header';
 
 const dropItems = [
   {
@@ -103,7 +104,8 @@ type TweetData = {
 function FullTweet({ data, reply }: { data: TweetData; reply: TweetData }) {
   return (
     <div>
-      <div className="mx-auto sm:max-w-[600px] p-4 text-white relative">
+      <Header />
+      <div className="mx-auto sm:max-w-[600px] p-4 text-white relative ">
         <div className="flex items-start justify-between">
           <div className="flex space-x-3">
             <Avatar data={data.user} />

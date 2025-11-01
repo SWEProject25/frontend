@@ -1,5 +1,5 @@
 import React from 'react';
-import Tweet from '../../features/tweets/components/Tweet';
+import Tweet from '../../features/tweets/components/Tweet2';
 function Page() {
   const time = new Date(Date.now() - 250 * 30 * 10 * 100 * 1000 * 60);
   const data = {

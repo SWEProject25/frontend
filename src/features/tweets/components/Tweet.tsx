@@ -76,9 +76,14 @@ type TweetActions = {
   reposted: boolean;
 };
 
+type MediaItem = {
+  url: string;
+  type: string | 'image' | 'video';
+};
+
 type TweetContent = {
   text?: string;
-  image?: string;
+  media?: MediaItem[];
 };
 
 type User = {
@@ -100,55 +105,44 @@ type TweetData = {
   Actions: TweetActions;
 };
 
-export default function Tweet({ id }: { id: number }) {
+export default function Tweet({ data }: { data: TweetData }) {
   const [Hovered, setHovered] = useState(false);
   const router = useRouter();
-  const { data, isLoading, error } = useTweetById(id);
 
-  if (isLoading) {
-    return <div className="p-4 text-gray-500">Loading tweet...</div>;
-  }
-
-  if (error) {
-    return <div className="p-4 text-red-500">Error loading tweet</div>;
-  }
-
-  console.log('Tweet data:', data);
   return (
-    <div>hello</div>
-    // <div
-    //   onClick={() => router.push('/fullTweet')}
-    //   className={`block mx-auto w-full border-b border-gray-700 p-4 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer`}
-    // >
-    //   <div className="flex w-full gap-2">
-    //     <Avatar size={48} data={data.user} onHoverCard={setHovered} />
-    //     <div className="flex flex-col items-center flex-1">
-    //       <div className="flex items-center justify-between w-full">
-    //         <div className="flex items-center gap-1">
-    //           <UserInfo data={data.user} onHoverCard={setHovered} />
-    //           <span className="text-gray-500">.</span>
-    //           <Timing time={data.time} />
-    //         </div>
-    //         <div className="ml-2 flex items-center space-x-2 text-gray-500">
-    //           <Action
-    //             icon={<Grok size={18} />} // smaller icon
-    //             label="Explain this post"
-    //             color="blue"
-    //           />
-    //           <DropDown items={dropItems} onOpened={setHovered}>
-    //             <Action
-    //               icon={<FaEllipsisH size={12} />} // smaller icon
-    //               label="more"
-    //               color="blue"
-    //               stopPropagation={false}
-    //             />
-    //           </DropDown>
-    //         </div>
-    //       </div>
-    //       <Content content={data.content} />
-    //       <Actions stats={data.Actions} />
-    //     </div>
-    //   </div>
-    // </div>
+    <div
+      onClick={() => router.push(`/home/${data.id}`)}
+      className={`block mx-auto w-full border-b border-gray-700 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer p-4`}
+    >
+      <div className="flex w-full gap-2">
+        <Avatar size={30} data={data.user} onHoverCard={setHovered} />
+        <div className="flex flex-col items-center flex-1">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-1">
+              <UserInfo data={data.user} onHoverCard={setHovered} />
+              <span className="text-gray-500">.</span>
+              <Timing time={data.time} />
+            </div>
+            <div className="ml-2 flex items-center space-x-2 text-gray-500">
+              <Action
+                icon={<Grok size={18} />} // smaller icon
+                label="Explain this post"
+                color="blue"
+              />
+              <DropDown items={dropItems} onOpened={setHovered}>
+                <Action
+                  icon={<FaEllipsisH size={12} />} // smaller icon
+                  label="more"
+                  color="blue"
+                  stopPropagation={false}
+                />
+              </DropDown>
+            </div>
+          </div>
+          <Content content={data.content} />
+          <Actions stats={data.Actions} />
+        </div>
+      </div>
+    </div>
   );
 }

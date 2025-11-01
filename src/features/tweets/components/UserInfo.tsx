@@ -37,7 +37,7 @@ export default function UserInfo({
       ? 'flex items-center gap-1'
       : 'flex flex-col items-start';
 
-  const nameRowClass = 'font-bold hover:underline';
+  const nameRowClass = 'font-bold text-sm hover:underline';
 
   const usernameClass = 'text-gray-400 text-sm relative';
 
