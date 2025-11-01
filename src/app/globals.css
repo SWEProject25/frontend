@@ -63,6 +63,9 @@
     --color-button-x-hover: #181818;
     --color-text-placeholder: #71767b;
     --color-text-counter: #8b98a5;
+    --color-media-button-hover: #1d2124;
+    --color-media-button: #0b0f13;
+    --color-error-message: #3d0105;
   }
 }
 

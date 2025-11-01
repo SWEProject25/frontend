@@ -5,7 +5,7 @@ import {
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
   MAX_RED_PROGRESS_STEPS,
-} from '@/features/timeline/constants/TweetConstants';
+} from '@/features/timeline/constants/tweetConstants';
 
 export default function TypingProgressCircle() {
   const tweetText = useAddTweetStore((state) => state.tweetText);
