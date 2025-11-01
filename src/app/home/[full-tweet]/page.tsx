@@ -7,7 +7,7 @@ function Page() {
     id: '1',
     content: {
       text: 'Tweet content goes here. This is a sample tweet to demonstrate the layout.',
-      image: '/Personal photo.jpeg',
+      media: [{ url: '/Personal photo.jpeg', type: 'image' }],
     },
     user: {
       name: 'Omda Hancker',
@@ -36,8 +36,8 @@ function Page() {
   const replyData = {
     id: '2',
     content: {
-      text: 'This is a reply to the original tweet.',
-      image: '',
+      text: ' tweet to demonstrate the layout.',
+      media: [],
     },
     user: {
       name: 'Omda Hancker',

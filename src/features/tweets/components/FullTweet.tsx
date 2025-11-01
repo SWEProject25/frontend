@@ -77,9 +77,14 @@ type TweetActions = {
   reposted: boolean;
 };
 
+type MediaItem = {
+  url: string;
+  type: string | 'image' | 'video';
+};
+
 type TweetContent = {
   text?: string;
-  image?: string;
+  media?: MediaItem[];
 };
 
 type User = {

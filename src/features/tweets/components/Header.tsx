@@ -13,6 +13,7 @@ function Header() {
           icon={<FaArrowLeft size={16} />}
           color="gray"
           onClick={handleBackClick}
+          label="Back"
         />
         <h1 className="text-xl font-bold">Post</h1>
       </div>
