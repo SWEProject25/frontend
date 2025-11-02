@@ -35,7 +35,7 @@ export default function LayoutWrapper({
           pb-20
         `}
       >
-        <div className="border-x-border border-x-[1px] ">{children}</div>
+        <div className="border-x-border border-x-[1px] w-full">{children}</div>
         {/* Right Sidebar - Conditional */}
         {showRightSidebar && (
           <div className="hidden xl:flex right-0 top-0 h-full">
