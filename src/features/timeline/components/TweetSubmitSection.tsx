@@ -60,6 +60,7 @@ export default function TweetSubmitSection() {
     <div className="flex  flex-row-reverse  items-center mt-2  ">
       <div className="ml-3 flex flex-1">
         <Button
+          data-testid={`submit`}
           height="h-9"
           width="w-16"
           disabled={!enableAddTweet}

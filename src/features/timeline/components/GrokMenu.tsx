@@ -32,6 +32,7 @@ export default function GrokMenu() {
           {options.map((opt, index) => (
             <li key={opt.value} className="flex-1">
               <button
+                data-testid={`${opt.value}`}
                 disabled={index === 1 ? !canEnhanceTweet : false}
                 type="button"
                 onClick={() => {

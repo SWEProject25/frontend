@@ -67,6 +67,7 @@ function Button({ panelHeight, children, name }: ButtonProp) {
       aria-label="Open the Menu"
       ref={triggerRef}
       onClick={handleOpenMenu} // open model
+      data-testid={`button-xmenu${menuName}`}
     >
       {children}
     </button>
@@ -155,6 +156,7 @@ function List({
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
+      data-testid={`overlay-xmenu${menuName}`}
     >
       <div
         ref={menuRef}

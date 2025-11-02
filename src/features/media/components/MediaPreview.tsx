@@ -22,6 +22,7 @@ export default function MediaPreview() {
           {/* Left arrow */}
           {currentIndex > 0 && media.length > 2 && (
             <button
+              data-testid={`left-arrow-${currentIndex}`}
               className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-media-button hover:bg-media-button-hover cursor-pointer text-white rounded-full"
               onClick={() => setCurrentIndex(currentIndex - 1)}
               aria-label="left arrow"
@@ -58,6 +59,7 @@ export default function MediaPreview() {
             {/* Right arrow */}
             {currentIndex < media.length - 2 && media.length > 2 && (
               <button
+                data-testid={`right-arrow-${currentIndex}`}
                 className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-media-button hover:bg-media-button-hover cursor-pointer text-white rounded-full"
                 onClick={() => setCurrentIndex(currentIndex + 1)}
                 aria-label="right arrow"
@@ -73,7 +75,10 @@ export default function MediaPreview() {
         )}
       </div>
       <div className="px-3 flex items-center gap-x-4 text-base">
-        <button className="hover:underline cursor-pointer flex items-center">
+        <button
+          data-testid={`Tag-people`}
+          className="hover:underline cursor-pointer flex items-center"
+        >
           <Icon
             size="w-3.5 h-3.5"
             disabled={true}
@@ -82,7 +87,10 @@ export default function MediaPreview() {
           />
           <span className="  text-text-inactive text-xs">Tag people</span>
         </button>
-        <button className=" hover:underline cursor-pointer flex items-center">
+        <button
+          data-testid={`Add-descriptions`}
+          className=" hover:underline cursor-pointer flex items-center"
+        >
           <Icon
             size="w-3.5 h-3.5"
             disabled={true}

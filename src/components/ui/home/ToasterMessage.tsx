@@ -8,6 +8,7 @@ export default function toasterMessage(
   return toast.custom(
     (t) => (
       <div
+        data-testid="toaster-message"
         onMouseLeave={() => toast.dismiss(t.id)}
         className={`${
           t.visible ? 'animate-custom-enter' : 'animate-custom-leave'

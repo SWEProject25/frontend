@@ -23,6 +23,7 @@ export default function MediaItem({
       (media.type === LOCAL_MEDIA &&
         media.data.type.split('/')[0].toLowerCase() === 'image') ? (
         <Image
+          data-testid={`image-${media.id}`}
           fill
           className="object-contain"
           src={

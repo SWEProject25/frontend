@@ -85,7 +85,10 @@ export default function TypingProgressCircle() {
       </svg>
       {tweetText.length >= MAX_TWEET_LENGTH && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className={`text-xs ${progress.valueColor}`}>
+          <span
+            data-testid="words-count"
+            className={`text-xs ${progress.valueColor}`}
+          >
             {MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH - tweetText.length}
           </span>
         </div>

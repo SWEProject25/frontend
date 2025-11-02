@@ -71,6 +71,7 @@ export default function TweetImages() {
       </label>
       <input
         disabled={isPollOpen || mediaNum === MAX_MEDIA_NUM}
+        data-testid={`media-import`}
         type="file"
         id="media"
         multiple

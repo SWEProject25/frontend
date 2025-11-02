@@ -62,6 +62,7 @@ export default function TweetReplySettings() {
                 return (
                   <li key={opt.value}>
                     <button
+                      data-testid={`${opt.value}`}
                       type="button"
                       onClick={() => {
                         updateReplyOption(opt.id);
