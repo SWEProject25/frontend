@@ -167,11 +167,6 @@ function FullTweet({
           <Content content={content} />
           <div className="flex items-center space-x-1">
             <Timing time={data.date} full={true} />
-            {/* <span className="text-gray-400 text-sm"> · </span>
-            <span className="text-gray-200 bold text-sm">
-              {data.Actions.views}{' '}
-              <span className="text-gray-400 text-sm">Views</span>
-            </span> */}
           </div>
           <div className="border-b border-gray-700 my-2" />
           <Actions stats={actionsStats} full={true} />

@@ -10,6 +10,8 @@ export const TWEET_ENDPOINTS = {
     `/api/${TWEET_API_CONFIG.VERSION}/posts/${tweetId}/like`,
   TOGGLE_REPOST_TWEET: (tweetId: number) =>
     `/api/${TWEET_API_CONFIG.VERSION}/posts/${tweetId}/repost`,
+  GET_REPLIES_BY_TWEET_ID: (tweetId: number) =>
+    `/api/${TWEET_API_CONFIG.VERSION}/posts/${tweetId}/replies`,
 } as const;
 
 export const TWEET_CONSTANTS = {

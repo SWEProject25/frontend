@@ -132,7 +132,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     <div
       onClick={() => {
         setCurrentTweet(data);
-        router.push(`/home/${data.userId}`);
+        router.push(`/home/${data.postId}`);
       }}
       className={`block mx-auto w-full border-b border-gray-700 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer p-4`}
     >

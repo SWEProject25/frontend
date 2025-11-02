@@ -29,3 +29,25 @@ export interface TweetResponseDto {
   message: string;
   data: Tweet;
 }
+
+export interface Media {
+  url: string;
+  type: 'IMAGE' | 'VIDEO';
+}
+export interface Reply {
+  userId: number;
+  username: string;
+  verified: boolean;
+  name: string;
+  avatar: string | null;
+  postId: number;
+  date: string;
+  likesCount: number;
+  retweetsCount: number;
+  commentsCount: number;
+  isLikedByMe: boolean;
+  isFollowedByMe: boolean;
+  isRepostedByMe: boolean;
+  text: string;
+  media: Media[];
+}
