@@ -59,12 +59,15 @@ export const timelineApi = {
     );
     return handleResponse<AddTweetResponse>(response);
   },
-  async getForYouTweets(
+  async getTimelineFeed(
     pageNumber = 1,
-    limit = 2
+    queryEndPoint:
+      | typeof TIMELINE_ENDPOINTS.TIMELINE_FEED_FLLOWING
+      | typeof TIMELINE_ENDPOINTS.TIMELINE_FEED_FOR_YOU,
+    limit = 10
   ): Promise<TimelineFeedDtoResponse> {
     const response = await fetch(
-      `${API_CONFIG.BASE_URL}${TIMELINE_ENDPOINTS.TIMELINE_FEED_FOR_YOU}?` +
+      `${API_CONFIG.BASE_URL}${queryEndPoint}?` +
         new URLSearchParams({ page: `${pageNumber}`, limit: `${limit}` }),
       {
         method: 'GET',
@@ -73,10 +76,6 @@ export const timelineApi = {
         },
         credentials: 'include',
       }
-    );
-    console.log(
-      `${API_CONFIG.BASE_URL}${TIMELINE_ENDPOINTS.TIMELINE_FEED_FOR_YOU}?` +
-        new URLSearchParams({ page: `${pageNumber}`, limit: `${limit}` })
     );
     return handleResponse<TimelineFeedDtoResponse>(response);
   },

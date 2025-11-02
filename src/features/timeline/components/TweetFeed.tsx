@@ -3,13 +3,17 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import TweetList from './TweetList';
 import { TIMELINE_QUERY_KEYS } from '../hooks/timelineQueries';
 import { timelineApi } from '../services/timelineAPi';
+import { TIMELINE_ENDPOINTS } from '../constants/api';
 
 export default async function TweetFeed() {
   const queryClient = getQueryClient();
   await queryClient.prefetchInfiniteQuery({
     queryKey: TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
     queryFn: ({ pageParam }) => {
-      timelineApi.getForYouTweets(pageParam);
+      timelineApi.getTimelineFeed(
+        pageParam,
+        TIMELINE_ENDPOINTS.TIMELINE_FEED_FLLOWING
+      );
     },
     initialPageParam: 1,
   });

@@ -1,15 +1,14 @@
 'use client';
 import Icon from '@/components/ui/home/Icon';
-import React, { useState } from 'react';
+import React from 'react';
 import usePollStore from '../store/usePollStore';
-import { toast } from 'react-hot-toast';
 import useMedia from '@/features/media/store/useMedia';
 import {
-  LOCAL_MEDIA,
   MAX_MEDIA_NUM,
   MAX_MEDIA_SIZE,
 } from '@/features/media/constants/mediaConstants';
 import toasterMessage from '@/components/ui/home/ToasterMessage';
+import { MEDIA_TYPES } from '@/features/media/constants/mediaTypes';
 
 //  accept=".jfif,.pjp,.jpg,.jpeg,.pjpeg,.png,.webp,.gif,.m4v,.mp4,.mov"
 
@@ -26,28 +25,19 @@ export default function TweetImages() {
     const files = e.target.files;
     if (!files) return;
     const arrayFiles = Array.from(files);
-    // const newSizes = arrayFiles.reduce((size, img) => size + img.size, 0);
-    // if (size + newSizes > MAX_MEDIA_SIZE) {
-    //   e.target.value = '';
-    //   // present error
-    //   alert(
-    //     'Alert : You reach max size of uploading 100 MB choose smaller one'
-    //   );
-    //   return;
-    // }
-    if (arrayFiles.length + mediaNum > MAX_MEDIA_NUM) {
-      // present error
-      // toast.error(
-      //   'Alert : You can not upload more than 4 media (image , video , Gif)'
-      // );
-
-      toasterMessage('Please choose up to 4 photos, video or GIFs');
-
+    console.log(arrayFiles);
+    if (!arrayFiles.every((media) => MEDIA_TYPES.includes(media.type))) {
+      toasterMessage('Please choose up valid format ' + MEDIA_TYPES.join(','));
       e.target.value = '';
       return;
     }
+    if (arrayFiles.length + mediaNum > MAX_MEDIA_NUM) {
+      toasterMessage('Please choose up to 4 photos, video or GIFs');
+      e.target.value = '';
+      return;
+    }
+
     if (!arrayFiles.every((media) => media.size <= MAX_MEDIA_SIZE)) {
-      // present error
       toasterMessage(
         'You can not upload any media larger than 100 MB please choose smaller media'
       );
@@ -55,15 +45,8 @@ export default function TweetImages() {
       e.target.value = '';
       return;
     }
-    // console.log(arrayFiles);
 
     addMedia(arrayFiles);
-    console.log(media);
-
-    // const k = new FormData();
-    // k.append('file', files[0]);
-    // console.log(k.getAll('file'));
-    // Clear input to allow re-uploading same file
     e.target.value = '';
   }
 
@@ -86,10 +69,11 @@ export default function TweetImages() {
       </label>
       <input
         disabled={isPollOpen || mediaNum === MAX_MEDIA_NUM}
+        data-testid={`media-import`}
         type="file"
         id="media"
         multiple
-        accept="image/jpeg,image/png,image/gif,video/mp4,video/mpeg,video/webm,video/quicktime"
+        accept={MEDIA_TYPES.join(',')}
         className="hidden"
         onChange={handleImportImage}
       />

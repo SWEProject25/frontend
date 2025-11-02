@@ -7,6 +7,6 @@ export default function layout({
   children: ReactNode;
   // compose: ReactNode;
 }) {
-  return <>{children}</>;
-  // return <LayoutWrapper>{children}</LayoutWrapper>;
+  // return <>{children}</>;
+  return <LayoutWrapper>{children}</LayoutWrapper>;
 }

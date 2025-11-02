@@ -76,6 +76,7 @@ export default function XModal({
       <div
         className={`fixed inset-0 z-50 flex items-center justify-center  ${overlayColor}`}
         onClick={handleOverlayClick}
+        data-testid={`overlay-xmodal`}
         role="dialog"
         aria-modal="true"
       >
@@ -97,6 +98,7 @@ export default function XModal({
                   onClick={onClose}
                   className="absolute top-4 left-4 p-2 rounded-full hover:bg-muted transition-colors z-10"
                   aria-label="Close modal"
+                  data-testid={`close-xmodal`}
                 >
                   <CloseIcon className="w-5 h-5 text-text-active" />
                 </button>

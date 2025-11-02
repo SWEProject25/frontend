@@ -1,13 +1,11 @@
 'use client';
 
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { TIMELINE_QUERY_KEYS, useFeedForYou } from '../hooks/timelineQueries';
-import { timelineApi } from '../services/timelineAPi';
-import { TimelineFeedDtoResponse } from '../types/api';
+import { useTimelineFeed } from '../hooks/timelineQueries';
 import React from 'react';
 import Tweet from '@/features/tweets/components/Tweet';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import InfiniteScrollContainer from '@/components/generic/InfiniteScrollContainer';
+import Loader from '@/components/generic/Loader';
 
 export default function TweetList() {
   const {
@@ -18,38 +16,33 @@ export default function TweetList() {
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
-  } = useFeedForYou();
+  } = useTimelineFeed();
 
   const pages = data?.pages.flat();
   const renderTweets = pages?.map((group, i) => (
     <React.Fragment key={i}>
       {group.data.posts.map((tweet, ind) => (
-        // <Tweet data={tweet} key={ind} />
-        <div key={ind}>{tweet.name}</div>
+        <Tweet data={tweet} key={ind} />
       ))}
     </React.Fragment>
   ));
 
+  const hasInitialData = pages ? pages[0].data.posts.length > 0 : false;
   return isError ? (
     <div>Error {error.message}</div>
   ) : isLoading ? (
-    <div>...loading</div>
+    <Loader />
   ) : (
     <>
-      {/* <InfiniteScrollContainer
-        onLoadMore={() => hasNextPage && fetchNextPage()}
-        isLoading={isFetchingNextPage || isLoading}
-        hasMore={hasNextPage}
-      >
-        <ul>{renderTweets} </ul>
-      </InfiniteScrollContainer> */}
       <InfiniteScroll
         isLoadingInitial={isLoading}
         isLoadingMore={isFetchingNextPage}
         loadMore={() => hasNextPage && fetchNextPage()}
         hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
+        hasInitialData={hasInitialData}
       >
-        <ul>{renderTweets} </ul>
+        <div className="flex flex-col gap-2 w-full">{renderTweets} </div>
+        {/* <ul className="w-full">{renderTweets} </ul> */}
       </InfiniteScroll>
     </>
   );
