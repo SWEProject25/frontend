@@ -29,7 +29,7 @@ export default function LayoutWrapper({
           flex
           flex-1
           flex-row
-          ${showRightSidebar ? 'max-w-[942px]' : 'max-w-[942px]'}
+          ${showRightSidebar ? 'max-w-[930px]' : 'max-w-[930px]'}
           min-h-screen
           pt-0
           pb-20

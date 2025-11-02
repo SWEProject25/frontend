@@ -6,3 +6,4 @@ export { default as SecuritySettings } from './SecuritySettings';
 export { default as SettingsLayout } from './SettingsLayout';
 export { default as SettingsList } from './SettingsList';
 export { default as SettingsDetail } from './SettingsDetail';
+export { default as PasswordConfirm } from './PasswordConfirm';

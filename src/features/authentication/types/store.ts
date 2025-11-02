@@ -13,6 +13,8 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  isPasswordVerified: boolean;
+  passwordVerifiedAt: number | null;
 }
 
 export interface AuthActions {
@@ -20,6 +22,8 @@ export interface AuthActions {
   clearUser: () => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  setPasswordVerified: (verified: boolean) => void;
+  checkPasswordVerification: () => boolean;
   login: (credentials: LoginDto) => Promise<void>;
   register: (userData: CreateUserDto) => Promise<void>;
   logout: () => Promise<void>;

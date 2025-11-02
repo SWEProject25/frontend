@@ -65,21 +65,33 @@ export const useLogoutMutation = () => {
   });
 };
 
+// Verify Password Mutation
+export const useVerifyPasswordMutation = () => {
+  return useMutation({
+    mutationFn: authApi.verifyPassword,
+  });
+};
+
 // Custom hook for authentication state
 export const useAuth = () => {
   const authStore = useAuthStore();
   const loginMutation = useLoginMutation();
   const registerMutation = useRegisterMutation();
   const logoutMutation = useLogoutMutation();
+  const verifyPasswordMutation = useVerifyPasswordMutation();
 
   return {
     ...authStore,
     login: loginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
+    verifyPassword: verifyPasswordMutation.mutateAsync,
     oAuthLogin: authStore.oAuthLogin,
     isLoginLoading: loginMutation.isPending,
     isRegisterLoading: registerMutation.isPending,
     isLogoutLoading: logoutMutation.isPending,
+    isVerifyPasswordLoading: verifyPasswordMutation.isPending,
+    setPasswordVerified: authStore.setPasswordVerified,
+    checkPasswordVerification: authStore.checkPasswordVerification,
   };
 };

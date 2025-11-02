@@ -11,15 +11,20 @@ import {
 import { AuthStore } from '../types/store';
 import { authApi } from '../services/authApi';
 
+// Password verification expiry time (30 minutes)
+const PASSWORD_VERIFICATION_TTL = 30 * 60 * 1000;
+
 export const useAuthStore = create<AuthStore>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         // State
         user: null,
         isAuthenticated: false,
         isLoading: false,
         error: null,
+        isPasswordVerified: false,
+        passwordVerifiedAt: null,
 
         // Actions
         setUser: (user: UserResponse) => {
@@ -27,7 +32,13 @@ export const useAuthStore = create<AuthStore>()(
         },
 
         clearUser: () => {
-          set({ user: null, isAuthenticated: false, error: null });
+          set({
+            user: null,
+            isAuthenticated: false,
+            error: null,
+            isPasswordVerified: false,
+            passwordVerifiedAt: null,
+          });
         },
 
         setLoading: (loading: boolean) => {
@@ -36,6 +47,31 @@ export const useAuthStore = create<AuthStore>()(
 
         setError: (error: string | null) => {
           set({ error });
+        },
+
+        setPasswordVerified: (verified: boolean) => {
+          set({
+            isPasswordVerified: verified,
+            passwordVerifiedAt: verified ? Date.now() : null,
+          });
+        },
+
+        checkPasswordVerification: () => {
+          const state = get();
+          if (!state.isPasswordVerified || !state.passwordVerifiedAt) {
+            return false;
+          }
+
+          // Check if verification has expired
+          const isExpired =
+            Date.now() - state.passwordVerifiedAt > PASSWORD_VERIFICATION_TTL;
+
+          if (isExpired) {
+            set({ isPasswordVerified: false, passwordVerifiedAt: null });
+            return false;
+          }
+
+          return true;
         },
 
         login: async (credentials: LoginDto) => {
@@ -196,6 +232,8 @@ export const useAuthStore = create<AuthStore>()(
         partialize: (state) => ({
           user: state.user,
           isAuthenticated: state.isAuthenticated,
+          isPasswordVerified: state.isPasswordVerified,
+          passwordVerifiedAt: state.passwordVerifiedAt,
         }),
       }
     )
