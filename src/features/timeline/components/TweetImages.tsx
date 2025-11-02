@@ -1,11 +1,9 @@
 'use client';
 import Icon from '@/components/ui/home/Icon';
-import React, { useState } from 'react';
+import React from 'react';
 import usePollStore from '../store/usePollStore';
-import { toast } from 'react-hot-toast';
 import useMedia from '@/features/media/store/useMedia';
 import {
-  LOCAL_MEDIA,
   MAX_MEDIA_NUM,
   MAX_MEDIA_SIZE,
 } from '@/features/media/constants/mediaConstants';

@@ -12,7 +12,7 @@ export default function toasterMessage(
         onMouseLeave={() => toast.dismiss(t.id)}
         className={`${
           t.visible ? 'animate-custom-enter' : 'animate-custom-leave'
-        }  max-w-max w-full p-2 px-4 ${state === 'success' ? 'bg-primary' : 'bg-error-message'} shadow-lg rounded-lg pointer-events-auto flex just ring-1 ring-black ring-opacity-5`}
+        }  max-w-max w-full p-2 px-4 ${state === 'success' ? 'bg-primary' : 'bg-error-message'} shadow-lg rounded-lg pointer-events-auto flex just ring-1 ring-offset-primary ring-opacity-5`}
       >
         <p className=" text-sm">{message}</p>
       </div>

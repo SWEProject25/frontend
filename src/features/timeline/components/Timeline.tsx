@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import AddTweet from './AddTweet';
 import Header from './Header';
 import ShowTweets from './ShowTweets';

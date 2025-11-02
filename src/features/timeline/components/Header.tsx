@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Tabs from '@/components/generic/Tabs';
 import { FOLLOWING_TAB, FOR_YOU_TAB } from '../constants/menuName';
 import { useActions, useSelectedTab } from '../store/useTimelineStore';
