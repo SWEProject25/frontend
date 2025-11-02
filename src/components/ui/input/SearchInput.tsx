@@ -48,10 +48,12 @@ export default function SearchInput({
     <div
       className={`
         relative flex items-center
+        flex-1
         rounded-full
         border border-border
         focus-within:border-primary focus-within:bg-background
         transition-colors duration-200
+
         ${className}
       `}
     >

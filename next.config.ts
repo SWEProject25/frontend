@@ -1,3 +1,4 @@
+import { MEDIA_TYPES } from '@/features/media/constants/mediaTypes';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
@@ -12,6 +13,11 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'via.placeholder.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'stsimpleappiee20o.blob.core.windows.net',
+        pathname: '/media/**',
       },
     ],
   },

@@ -15,7 +15,9 @@ export default function MediaItem({
 }) {
   const removeMedia = useMedia((state) => state.removeMedia);
   return (
-    <div className={`relative ${full && 'w - full'} aspect-square bg-black `}>
+    <div
+      className={`relative ${full && 'w-full'} max-h-[490px] aspect-square bg-black `}
+    >
       <Image
         fill
         className="object-contain"

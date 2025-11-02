@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useCallback } from 'react';
-
+import Loader from '@/components/generic/Loader';
 interface InfiniteScrollContainerProps {
   children: React.ReactNode;
   onLoadMore: () => void;
@@ -54,12 +54,7 @@ const InfiniteScrollContainer: React.FC<InfiniteScrollContainerProps> = ({
       <div ref={observerTarget} className="w-full h-4" />
       {isLoading && (
         <div className="flex justify-center items-center py-4">
-          {loader || (
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              <span className="text-text-secondary">Loading...</span>
-            </div>
-          )}
+          {loader || <Loader />}
         </div>
       )}
       {!hasMore && !isLoading && (

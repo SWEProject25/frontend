@@ -100,7 +100,7 @@ export default function AddTweet() {
             )}
             <TweetText divRef={textRef} />
 
-            <div className="pt-3">
+            <div>
               <Poll />
               <MediaPreview />
             </div>

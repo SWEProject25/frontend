@@ -24,7 +24,6 @@ export default function TweetSubmitSection() {
     (state) => state.selectedReplyOption
   );
   const mutate = useAddTweet();
-
   const isValidPoll =
     choices.filter((ch, ind) => {
       if (ind < 2) {
@@ -42,7 +41,7 @@ export default function TweetSubmitSection() {
           ? isValidPoll
           : true
         : false
-      : false;
+      : media.length > 0;
   const enableSection = tweetText.trim().length !== 0 || isOpen;
 
   function handleAddTweet() {
