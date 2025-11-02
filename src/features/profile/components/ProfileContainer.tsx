@@ -23,6 +23,7 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
       <Avatar
         avatarImage={profileData.profile_image_url}
         name={profileData.name}
+        className="border-2"
       />
       <ActionsPanel
         isOwnProfile={isMine}

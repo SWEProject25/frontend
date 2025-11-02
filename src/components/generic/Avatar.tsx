@@ -6,7 +6,7 @@ interface AvatarProps {
   name?: string;
   children?: React.ReactNode;
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   position?: 'absolute' | 'relative';
   customPosition?: boolean;
 }
@@ -21,12 +21,14 @@ const Avatar = ({
   customPosition = false,
 }: AvatarProps) => {
   const sizeClasses = {
-    sm: 'w-[64px] h-[64px]',
+    xs: 'w-[32px] h-[32px]',
+    sm: 'w-[48px] h-[48px]',
     md: 'w-[96px] h-[96px]',
     lg: 'w-[132px] h-[132px]',
   };
 
   const fontSizes = {
+    xs: 'text-xl',
     sm: 'text-2xl',
     md: 'text-4xl',
     lg: 'text-5xl',
@@ -53,7 +55,7 @@ const Avatar = ({
 
   return (
     <div
-      className={`${position} ${sizeClasses[size]} rounded-full border-4 border-[#15202B] ${className}`}
+      className={`${position} ${sizeClasses[size]} rounded-full border-[#15202B] ${className}`}
       style={positionStyle}
     >
       <div

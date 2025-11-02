@@ -1,6 +1,6 @@
 import React from 'react';
-import Image from 'next/image';
 import Button from './Button';
+import Avatar from '@/components/generic/Avatar';
 
 export interface UserCardAction {
   label: string;
@@ -30,19 +30,13 @@ export default function UserCard({
     <div className={`flex items-center justify-between w-full ${className}`}>
       <div className="flex items-center gap-3 flex-1 min-w-0">
         {/* Avatar */}
-        <div className="w-10 h-10 bg-gray-700 rounded-full flex-shrink-0 overflow-hidden">
-          {avatarUrl ? (
-            <Image
-              src={avatarUrl}
-              alt={name}
-              width={40}
-              height={40}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full bg-gray-700" />
-          )}
-        </div>
+        <Avatar
+          avatarImage={avatarUrl}
+          name={name}
+          size="xs"
+          position="relative"
+          className="border-0"
+        />
 
         {/* User Info */}
         <div className="flex-1 min-w-0">
