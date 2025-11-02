@@ -49,4 +49,32 @@ export const tweetApi = {
     );
     return handleResponse<TweetResponseDto>(response);
   },
+
+  async toggleLikeTweet(tweetId: number): Promise<{ liked: boolean }> {
+    const response = await fetch(
+      `${TWEET_API_CONFIG.BASE_URL}${TWEET_ENDPOINTS.TOGGLE_LIKE_TWEET(tweetId)}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    return handleResponse<{ liked: boolean }>(response);
+  },
+
+  async toggleRepostTweet(tweetId: number): Promise<{ reposted: boolean }> {
+    const response = await fetch(
+      `${TWEET_API_CONFIG.BASE_URL}${TWEET_ENDPOINTS.TOGGLE_REPOST_TWEET(tweetId)}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    return handleResponse<{ reposted: boolean }>(response);
+  },
 };

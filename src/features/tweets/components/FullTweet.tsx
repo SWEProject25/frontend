@@ -129,6 +129,7 @@ function FullTweet({
   };
 
   const actionsStats = {
+    postId: data.postId,
     likesCount: data.likesCount,
     retweetsCount: data.retweetsCount,
     commentsCount: data.commentsCount,

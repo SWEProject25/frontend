@@ -8,6 +8,10 @@ import {
   ShareIcon,
   LikeIconFilled,
 } from '@/components/ui/icons/UIIcons';
+import {
+  useToggleLikeTweet,
+  useToggleRepostTweet,
+} from '@/features/tweets/hooks/tweetQueries';
 
 const ACTIONS_META = [
   {
@@ -37,6 +41,7 @@ const ACTIONS_META = [
 ];
 
 type stats = {
+  postId: number;
   likesCount: number;
   retweetsCount: number;
   commentsCount: number;
@@ -54,11 +59,16 @@ export default function Actions({
 }) {
   const [liked, setLiked] = useState(stats.isLikedByMe);
   const [retweeted, setRetweeted] = useState(stats.isRepostedByMe);
+  const toggleLikeMutation = useToggleLikeTweet(stats.postId); // ✅ Call hook here
+  const toggleRepostMutation = useToggleRepostTweet(stats.postId);
+
   function handleLike() {
     setLiked(!liked);
+    toggleLikeMutation.mutate();
   }
   function handleRetweet() {
     setRetweeted(!retweeted);
+    toggleRepostMutation.mutate();
   }
   return (
     <div className="w-full my-.5">
