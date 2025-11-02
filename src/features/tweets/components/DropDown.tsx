@@ -47,14 +47,14 @@ export default function DropDown({ children, items, onOpened }: DropProps) {
         className="p-0"
       >
         <DropdownTrigger>
-          <button
+          <span
             className="h-auto w-auto"
             onClick={() => {
               setIsOpened(true);
             }}
           >
             {children}
-          </button>
+          </span>
         </DropdownTrigger>
         {/* Position the dropdown menu at top right of tweet */}
         <div className="w-full">

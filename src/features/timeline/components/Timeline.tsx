@@ -4,7 +4,6 @@ import Header from './Header';
 import ShowTweets from './ShowTweets';
 import TweetFeed from './TweetFeed';
 import TweetList from './TweetList';
-import Tweets from './Tweets';
 
 export default function Timeline() {
   return (

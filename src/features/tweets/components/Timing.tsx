@@ -1,9 +1,10 @@
 import React from 'react';
 import Label from './Label';
 
-function Timing({ time, full = false }: { time: Date; full?: boolean }) {
-  const hours = time.getHours();
-  const minutes = time.getMinutes();
+function Timing({ time, full = false }: { time: string; full?: boolean }) {
+  const date = new Date(time);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
   const ampm = hours >= 12 ? 'PM' : 'AM';
   const hour12 = hours % 12 === 0 ? 12 : hours % 12;
   const monthNames = [
@@ -20,13 +21,12 @@ function Timing({ time, full = false }: { time: Date; full?: boolean }) {
     'Nov',
     'Dec',
   ];
-  const month = monthNames[time.getMonth()];
-  const day = time.getDate();
-  const year = time.getFullYear();
-  const formatted = `${hour12}:${minutes.toString().padStart(2, '0')} ${ampm} · ${month} ${day}, ${year}
-`;
+  const month = monthNames[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const formatted = `${hour12}:${minutes.toString().padStart(2, '0')} ${ampm} · ${month} ${day}, ${year}`;
   const now = new Date();
-  const seconds = Math.floor((now.getTime() - time.getTime()) / 1000);
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
   let shownDate = '';
   if (seconds < 60) {
     shownDate = `${seconds}s`;
