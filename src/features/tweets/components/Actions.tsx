@@ -1,44 +1,12 @@
 'use client';
 import React, { useState } from 'react';
 import Action from './Action';
-import {
-  LikeIcon,
-  ReplyIcon,
-  RetweetIcon,
-  ShareIcon,
-  LikeIconFilled,
-} from '@/components/ui/icons/UIIcons';
+import { LikeIconFilled } from '@/components/ui/icons/UIIcons';
+import { ACTIONS_META } from '../constants';
 import {
   useToggleLikeTweet,
   useToggleRepostTweet,
 } from '@/features/tweets/hooks/tweetQueries';
-const ACTIONS_META = [
-  {
-    key: 'reply',
-    icon: <ReplyIcon />,
-    label: 'Reply',
-    color: 'blue',
-  },
-  {
-    key: 'retweet',
-    icon: <RetweetIcon />,
-    label: 'Repost',
-    color: 'green',
-  },
-  {
-    key: 'like',
-    icon: <LikeIcon />,
-    label: 'Like',
-    color: 'rose', // use rose for pinkish-red
-  },
-  {
-    key: 'share',
-    icon: <ShareIcon />,
-    label: 'Share',
-    color: 'blue',
-  },
-];
-
 type stats = {
   postId: number;
   likesCount: number;
@@ -58,16 +26,15 @@ export default function Actions({
 }) {
   const [liked, setLiked] = useState(stats.isLikedByMe);
   const [retweeted, setRetweeted] = useState(stats.isRepostedByMe);
-  const toggleLikeMutation = useToggleLikeTweet(stats.postId); // ✅ Call hook here
-  const toggleRepostMutation = useToggleRepostTweet(stats.postId);
-
+  const toggleLikeTweet = useToggleLikeTweet(stats.postId);
+  const toggleRepostTweet = useToggleRepostTweet(stats.postId);
   function handleLike() {
     setLiked(!liked);
-    toggleLikeMutation.mutate();
+    toggleLikeTweet.mutate();
   }
   function handleRetweet() {
     setRetweeted(!retweeted);
-    toggleRepostMutation.mutate();
+    toggleRepostTweet.mutate();
   }
   return (
     <div className="w-full my-.5">
