@@ -66,6 +66,7 @@ function Page() {
   // };
 
   const data = useTweetStore((store) => store.currentTweet);
+  console.log('FullTweet Page Rendered with data:', data);
   return (
     <>
       <FullTweet data={data} reply={data} />

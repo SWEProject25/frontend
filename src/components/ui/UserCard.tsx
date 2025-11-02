@@ -35,7 +35,7 @@ export default function UserCard({
           name={name}
           size="xs"
           position="relative"
-          className="border-0"
+          className="border-0 hover:brightness-75 cursor-pointer"
         />
 
         {/* User Info */}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import ProfileCard from './ProfileCard';
+import Avatar from '@/components/generic/Avatar';
 
 type User = {
   id: number;
@@ -11,13 +11,11 @@ type User = {
   avatar: string | null;
 };
 
-export default function Avatar({
-  size = 48,
+export default function TweetAvatar({
   data,
   cardShow,
   onHoverCard,
 }: {
-  size?: number;
   data: User;
   cardShow?: boolean;
   onHoverCard?: (hovered: boolean) => void;
@@ -27,23 +25,24 @@ export default function Avatar({
 
   const show = (cardShow ?? true) && (showProfileCard || cardHover);
   const delay = 400;
+
   return (
     <div className="flex-shrink-0">
       <div className="relative">
         <Link
-          href="/profile"
+          href={`/${data.username}`}
           onClick={(e) => e.stopPropagation()}
           onMouseEnter={() => setTimeout(() => setShowProfileCard(true), delay)}
           onMouseLeave={() =>
             setTimeout(() => setShowProfileCard(false), delay)
           }
         >
-          <Image
-            width={size || 48}
-            height={size || 48}
-            src={data.avatar || '/default-avatar.png'}
-            alt="User avatar"
-            className="w-12 h-12 rounded-full"
+          <Avatar
+            avatarImage={data.avatar ?? undefined}
+            name={data.name}
+            size="sm"
+            position="relative"
+            className="border-0"
           />
         </Link>
         {show && (
@@ -55,11 +54,11 @@ export default function Avatar({
             }`}
             onMouseEnter={() => {
               setCardHover(true);
-              onHoverCard ? onHoverCard(true) : null;
+              if (onHoverCard) onHoverCard(true);
             }}
             onMouseLeave={() => {
               setCardHover(false);
-              onHoverCard ? onHoverCard(false) : null;
+              if (onHoverCard) onHoverCard(false);
             }}
             onClick={(e) => {
               e.stopPropagation();
