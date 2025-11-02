@@ -15,7 +15,7 @@ const Avatar = ({
   avatarImage,
   name,
   children,
-  className = '',
+  className = 'border-4',
   size = 'lg',
   position = 'absolute',
   customPosition = false,

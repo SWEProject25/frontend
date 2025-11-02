@@ -13,7 +13,7 @@ const EditProfileAvatar: React.FC<EditProfileAvatarProps> = ({
 }) => (
   <Avatar
     avatarImage={avatarImage}
-    className="-top-[66px] left-3"
+    className="-top-[66px] left-3 border-2"
     position="absolute"
     customPosition={true}
   >

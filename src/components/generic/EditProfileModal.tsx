@@ -161,7 +161,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       size="xl"
       customLayout={false}
       overlayColor="bg-modal-overlay"
-      preventScroll={false}
     >
       <EditProfileHeader
         onClose={onCloseModal}
