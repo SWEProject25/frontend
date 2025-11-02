@@ -1,24 +1,26 @@
 'use client';
 
-import { useState } from 'react';
-import Tab from '../../../components/ui/Tab';
+import Tabs from '@/components/generic/Tabs';
+import { FOLLOWING_TAB, FOR_YOU_TAB } from '../constants/menuName';
+import { useActions, useSelectedTab } from '../store/useTimelineStore';
 
 export default function Header() {
-  const [selectedTab, setSelectedTab] = useState<null | number>(1);
-  const tabs = [{ text: 'For you' }, { text: 'Following' }];
-  const selectTab = (id: number) => setSelectedTab(id);
+  const selectedTab = useSelectedTab();
+  const { selectTab } = useActions();
+  const tabs = [
+    { title: 'For you', value: FOR_YOU_TAB },
+    { title: 'Following', value: FOLLOWING_TAB },
+  ];
+
   //left-[calc(50%-300px)]
   return (
-    <header className="z-10 flex fixed top-0  w-[599px] border-b-1 border-border h-14 bg-black/50 backdrop-blur-md ">
-      {tabs.map((tab, i) => (
-        <Tab
-          selected={selectedTab === i}
-          onClick={selectTab}
-          id={i}
-          key={tab.text}
-          text={tab.text}
-        />
-      ))}
+    <header className="z-10  flex sticky top-0  w-[599px] bg-black/50 backdrop-blur-md ">
+      <Tabs
+        height="h-[53px]"
+        selectedValue={selectedTab}
+        tabs={tabs}
+        onClick={selectTab}
+      />
     </header>
   );
 }

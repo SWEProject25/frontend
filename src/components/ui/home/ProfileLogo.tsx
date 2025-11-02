@@ -1,9 +1,12 @@
+'use client';
+import { useAuth } from '@/features/authentication/hooks';
 import Image from 'next/image';
 import Link from 'next/link';
 export default function ProfileLogo() {
+  const username = useAuth().user?.username;
   return (
     <div className="flex-none w-fit mr-2 pt-3  ">
-      <Link href={'./profile'}>
+      <Link href={`./${username}`}>
         <Image
           src="/profilePhoto.png"
           role="button"

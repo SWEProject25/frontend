@@ -10,9 +10,13 @@ import { useActions } from '../store/useAddTweetStore';
 
 import toasterMessage from '@/components/ui/home/ToasterMessage';
 import { useMediaActions } from '@/features/media/store/useMedia';
+import { useSelectedTab } from '../store/useTimelineStore';
+import { FOLLOWING_TAB } from '../constants/menuName';
+import { TIMELINE_ENDPOINTS } from '../constants/api';
 export const TIMELINE_QUERY_KEYS = {
   ADD_TWEET: ['tweet'] as const,
-  TIMELINE_FEED_FOR_YOU: ['timelie-forYou'] as const,
+  TIMELINE_FEED_FOR_YOU: ['timeline', 'forYou'] as const,
+  TIMELINE_FEED_FOLLOWING: ['timeline', 'following'] as const,
 };
 export const useAddTweet = () => {
   const { onSuccess, startSending, seterror } = useActions();
@@ -52,16 +56,30 @@ export const useAddTweet = () => {
   });
 };
 
-export const useFeedForYou = () => {
+export const useTimelineFeed = () => {
+  const selectedTab = useSelectedTab();
+  let queryKey,
+    queryEndPoint:
+      | typeof TIMELINE_ENDPOINTS.TIMELINE_FEED_FLLOWING
+      | typeof TIMELINE_ENDPOINTS.TIMELINE_FEED_FOR_YOU;
+  if (selectedTab === FOLLOWING_TAB) {
+    queryKey = TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING;
+    queryEndPoint = TIMELINE_ENDPOINTS.TIMELINE_FEED_FLLOWING;
+  } else {
+    queryKey = TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU;
+    queryEndPoint = TIMELINE_ENDPOINTS.TIMELINE_FEED_FOR_YOU;
+  }
   return useInfiniteQuery<
     TimelineFeedDtoResponse,
     Error,
     InfiniteData<TimelineFeedDtoResponse, number>,
-    typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
+    | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU
+    | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
     number
   >({
-    queryKey: TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
-    queryFn: ({ pageParam }) => timelineApi.getForYouTweets(pageParam),
+    queryKey: queryKey,
+    queryFn: ({ pageParam }) =>
+      timelineApi.getTimelineFeed(pageParam, queryEndPoint),
     initialPageParam: 1,
     getNextPageParam: (lastPage, pages) =>
       lastPage.data.posts.length ? pages.length + 1 : undefined,

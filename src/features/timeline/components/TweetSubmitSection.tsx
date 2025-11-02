@@ -24,7 +24,6 @@ export default function TweetSubmitSection() {
     (state) => state.selectedReplyOption
   );
   const mutate = useAddTweet();
-
   const isValidPoll =
     choices.filter((ch, ind) => {
       if (ind < 2) {
@@ -42,7 +41,7 @@ export default function TweetSubmitSection() {
           ? isValidPoll
           : true
         : false
-      : false;
+      : media.length > 0;
   const enableSection = tweetText.trim().length !== 0 || isOpen;
 
   function handleAddTweet() {
@@ -61,6 +60,7 @@ export default function TweetSubmitSection() {
     <div className="flex  flex-row-reverse  items-center mt-2  ">
       <div className="ml-3 flex flex-1">
         <Button
+          data-testid={`submit`}
           height="h-9"
           width="w-16"
           disabled={!enableAddTweet}

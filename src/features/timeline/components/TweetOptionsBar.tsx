@@ -36,6 +36,7 @@ export default function TweetOptionsBar() {
       <TweetImages />
 
       <Icon
+        data-testid={`open-GIF`}
         disabled={isPollOpen || media.length === MAX_MEDIA_NUM}
         onClick={handleOpenGif}
         title="GIF"
@@ -44,6 +45,7 @@ export default function TweetOptionsBar() {
 
       <GrokMenu />
       <Icon
+        data-testid={`handleOpenPoll`}
         onClick={handleOpenPoll}
         disabled={isPollOpen || media.length > 0}
         title="Poll"

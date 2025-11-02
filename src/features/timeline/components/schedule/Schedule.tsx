@@ -28,6 +28,7 @@ export default function Schedule() {
   };
   return (
     <Icon
+      data-testid={`handleOpenSchedule`}
       onClick={handleOpenSchedule}
       title="Schedule"
       disabled={disable}

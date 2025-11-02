@@ -12,6 +12,7 @@ interface IconOptions {
   hoverColor?: string;
   width?: string;
   height?: string;
+  dataTestId?: string;
 }
 export default function Icon({
   path,
@@ -24,9 +25,11 @@ export default function Icon({
   width = 'h-9',
   height = 'w-9',
   onClick,
+  dataTestId = 'icon',
 }: IconOptions) {
   const icon = (
     <div
+      data-testid={dataTestId}
       onClick={onClick}
       className={` relative flex items-center justify-center ${width} ${height}  ${!disabled && 'hover:cursor-pointer'} rounded-full  hover:${hoverColor}`}
     >

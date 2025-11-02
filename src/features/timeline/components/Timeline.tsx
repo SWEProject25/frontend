@@ -8,7 +8,7 @@ export default function Timeline() {
   return (
     <div className="flex flex-col w-full ">
       <Header />
-      <div className="flex-col w-full justify-items-center pt-14">
+      <div className="flex-col w-full justify-items-center ">
         <AddTweet />
         <ShowTweets />
         {/* <TweetFeed /> */}
