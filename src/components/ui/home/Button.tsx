@@ -19,7 +19,8 @@ export default function Button({
   return (
     <div className="flex items-center ">
       <button
-        disabled
+        data-testid={`button-${label}`}
+        disabled={disabled}
         onClick={onClick}
         className={`    bg-text-button rounded-r-full rounded-l-full p-1 ${disabled ? 'bg-text-inactive' : 'hover:bg-button-hover hover:cursor-pointer'} font-semibold text-muted  ${size} ${height} ${width}`}
       >

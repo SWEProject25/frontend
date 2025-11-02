@@ -108,6 +108,7 @@ export interface FormFieldsProps {
   onBlur: (fieldName: string) => () => void;
   onClearState?: (fieldName?: string) => void;
   onEmailValidationChange?: (isValid: boolean, isValidating: boolean) => void;
+  loading?: boolean;
 }
 
 export interface FormHeaderProps {

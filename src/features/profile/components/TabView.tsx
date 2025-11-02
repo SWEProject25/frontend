@@ -77,7 +77,12 @@ const TabView = () => {
 
   return (
     <div className="w-full mt-4">
-      <Tabs tabs={tabs} selectedValue={selectedTab} onClick={handleTabClick} />
+      <Tabs
+        tabs={tabs}
+        selectedValue={selectedTab}
+        onClick={handleTabClick}
+        height="h-[53px]"
+      />
       <div className="mt-0">{renderContent()}</div>
     </div>
   );

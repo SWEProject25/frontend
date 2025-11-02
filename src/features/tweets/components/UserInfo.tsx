@@ -1,19 +1,16 @@
 import Link from 'next/link';
-import { RiVerifiedBadgeFill } from 'react-icons/ri';
 import ProfileCard from './ProfileCard';
 import { useState } from 'react';
+import { VerifiedIcon } from '@/components/ui/icons/BrandIcons';
 
 type Direction = 'horizontal' | 'vertical';
 
 type User = {
+  id: number;
   name: string;
   username: string;
-  avatar: string;
-  bio?: string;
-  following?: number;
-  followers?: string;
-  isVerified: boolean;
-  isFollowed?: boolean;
+  verified: boolean;
+  avatar: string | null;
 };
 
 export default function UserInfo({
@@ -56,10 +53,12 @@ export default function UserInfo({
             onMouseEnter={() => setTimeout(() => setShowNameCard(true), delay)}
             onMouseLeave={() => setTimeout(() => setShowNameCard(false), delay)}
           >
-            {data.name}{' '}
-            {data.isVerified && (
-              <RiVerifiedBadgeFill className="inline text-blue-400" size={16} />
-            )}
+            <span className="flex items-center gap-0.5">
+              {data.name}
+              {data.verified && (
+                <VerifiedIcon className="w-4.5 h-4.5 text-blue-400" />
+              )}
+            </span>
           </span>
         </Link>
         {nameCardShow && (
