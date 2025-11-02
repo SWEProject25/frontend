@@ -32,7 +32,7 @@ export default function CardUserInfo({
   return (
     <div className={containerClass}>
       <div className="relative">
-        <Link href="/profile" onClick={(e) => e.stopPropagation()}>
+        <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span className={nameRowClass}>
             <span className="flex items-center gap-0.5">
               {data.name}
@@ -44,7 +44,7 @@ export default function CardUserInfo({
         </Link>
       </div>
       <div className="relative">
-        <Link href="/profile" onClick={(e) => e.stopPropagation()}>
+        <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span className={usernameClass}>{data.username}</span>
         </Link>
       </div>

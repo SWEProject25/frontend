@@ -1,40 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import Action from './Action';
-import {
-  LikeIcon,
-  ReplyIcon,
-  RetweetIcon,
-  ShareIcon,
-  LikeIconFilled,
-} from '@/components/ui/icons/UIIcons';
-
-const ACTIONS_META = [
-  {
-    key: 'reply',
-    icon: <ReplyIcon />,
-    label: 'Reply',
-    color: 'blue',
-  },
-  {
-    key: 'retweet',
-    icon: <RetweetIcon />,
-    label: 'Repost',
-    color: 'green',
-  },
-  {
-    key: 'like',
-    icon: <LikeIcon />,
-    label: 'Like',
-    color: 'rose', // use rose for pinkish-red
-  },
-  {
-    key: 'share',
-    icon: <ShareIcon />,
-    label: 'Share',
-    color: 'blue',
-  },
-];
+import { LikeIconFilled } from '@/components/ui/icons/UIIcons';
+import { ACTIONS_META } from '../constants';
 
 type stats = {
   likesCount: number;

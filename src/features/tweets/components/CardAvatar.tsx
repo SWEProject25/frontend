@@ -1,25 +1,27 @@
 // import { useState } from 'react';
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import Avatar from '@/components/generic/Avatar';
 
 export default function CardAvatar({
-  size = 48,
   avatar,
+  name,
+  username,
 }: {
-  size?: number;
   avatar: string | null;
+  name?: string;
+  username?: string;
 }) {
   return (
     <div className="flex-shrink-0">
       <div className="relative">
-        <Link href="/profile" onClick={(e) => e.stopPropagation()}>
-          <Image
-            width={size || 48}
-            height={size || 48}
-            src={avatar || '/default-avatar.png'}
-            alt="User avatar"
-            className="w-12 h-12 rounded-full"
+        <Link href={`/${username}`} onClick={(e) => e.stopPropagation()}>
+          <Avatar
+            avatarImage={avatar ?? undefined}
+            name={name}
+            size="sm"
+            position="relative"
+            className="border-0"
           />
         </Link>
       </div>

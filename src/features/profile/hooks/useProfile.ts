@@ -1,55 +1,63 @@
-import { useUpdateMyProfile } from './profileQueries';
-import type { ProfileResponseDto } from '../types/api';
-import { convertFileToDataURL } from '@/utils';
+import {
+  useUpdateMyProfile,
+  useUploadProfileImage,
+  useUploadBannerImage,
+  useRemoveBannerImage,
+  useRemoveProfileImage,
+} from './profileQueries';
 
 export const useProfile = () => {
   const updateMyProfile = useUpdateMyProfile();
+  const uploadProfileImage = useUploadProfileImage();
+  const uploadBannerImage = useUploadBannerImage();
+  const removeProfileImage = useRemoveProfileImage();
+  const removeBannerImage = useRemoveBannerImage();
 
   const handleSaveProfile = async (data: {
-    name: string;
-    bio: string;
-    profileImage?: File;
-    bannerImage?: File;
+    name?: string;
+    bio?: string;
+    profileImage?: File | null;
+    bannerImage?: File | null;
+    location?: string | null;
+    website?: string | null;
+    birthDate?: string | null;
   }) => {
     try {
-      const profileImageUrl = data.profileImage
-        ? await convertFileToDataURL(data.profileImage)
-        : undefined;
-
-      const bannerImageUrl = data.bannerImage
-        ? await convertFileToDataURL(data.bannerImage)
-        : undefined;
-
       const updateData: {
-        name?: string;
-        bio?: string;
-        profileImageUrl?: string;
-        bannerImageUrl?: string;
+        [key: string]: unknown;
       } = {
         name: data.name,
         bio: data.bio,
+        location: data.location,
+        website: data.website,
+        birth_date: data.birthDate,
       };
 
-      if (profileImageUrl) {
-        updateData.profileImageUrl = profileImageUrl;
-      }
-      if (bannerImageUrl) {
-        updateData.bannerImageUrl = bannerImageUrl;
-      }
+      const cleanedUpdateData = Object.keys(updateData).reduce<{
+        [key: string]: unknown;
+      }>((acc, key) => {
+        const val = updateData[key];
+        if (val !== undefined && val !== null) {
+          acc[key] = val;
+        }
+        return acc;
+      }, {});
 
-      updateMyProfile.mutate(updateData, {
-        onSuccess: (response: ProfileResponseDto) => {
-          console.log('Profile updated successfully:', response);
-          // TODO: Show success toast notification
-        },
-        onError: (error: Error) => {
-          console.error('Failed to update profile:', error);
-          // TODO: Show error toast notification
-        },
-      });
+      if (data.profileImage) {
+        uploadProfileImage.mutateAsync(data.profileImage);
+      } else if (data.profileImage === null) {
+        removeProfileImage.mutateAsync();
+      }
+      if (data.bannerImage) {
+        uploadBannerImage.mutateAsync(data.bannerImage);
+      } else if (data.bannerImage === null) {
+        removeBannerImage.mutateAsync();
+      }
+      if (Object.keys(cleanedUpdateData).length > 0) {
+        updateMyProfile.mutate(cleanedUpdateData);
+      }
     } catch (error) {
       console.error('Failed to process profile update:', error);
-      // TODO: Show error toast notification
     }
   };
 

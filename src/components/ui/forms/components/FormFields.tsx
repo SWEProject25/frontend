@@ -80,7 +80,9 @@ export function FormFields({
             if (isValid) {
               onInputChange(field.name)({
                 target: { value: 'verified' },
-              } as React.ChangeEvent<HTMLInputElement>);
+              } as React.ChangeEvent<
+                HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+              >);
             }
           }}
         />
@@ -94,7 +96,9 @@ export function FormFields({
           onComplete={(otp) => {
             onInputChange(field.name)({
               target: { value: otp },
-            } as React.ChangeEvent<HTMLInputElement>);
+            } as React.ChangeEvent<
+              HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+            >);
           }}
           email={formData.email}
           error={errors.otp || undefined}

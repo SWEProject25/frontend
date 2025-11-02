@@ -1,23 +1,23 @@
 // Profile API Types
 export interface UserProfile {
   id: number;
-  userId: number;
+  user_id: number;
   name: string;
-  birthDate: string;
-  profileImageUrl: string | null;
-  bannerImageUrl: string | null;
+  birth_date: string;
+  profile_image_url?: string;
+  banner_image_url?: string;
   bio: string | null;
   location: string | null;
   website: string | null;
-  isDeactivated: boolean;
-  createdAt: string;
-  updatedAt: string;
+  is_deactivated: boolean;
+  created_at: string;
+  updated_at: string;
   User: {
     id: number;
     username: string;
     email: string;
     role: string;
-    createdAt: string;
+    created_at: string;
   };
 }
 
@@ -29,12 +29,20 @@ export interface ProfileResponseDto {
 
 export interface UpdateProfileDto {
   name?: string;
-  birthDate?: string;
-  profileImageUrl?: string;
-  bannerImageUrl?: string;
+  birth_date?: string;
   bio?: string;
   location?: string;
   website?: string;
+  profile_image_url?: string;
+  banner_image_url?: string;
+}
+
+export interface UpdateProfileImageDto {
+  profile_image_url: string;
+}
+
+export interface UpdateBannerImageDto {
+  banner_image_url: string;
 }
 
 export interface ProfileSearchResponseDto {

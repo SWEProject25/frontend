@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import XModal from '@/components/ui/hoc/XModal';
-import { InputField } from '@/components/ui/input/InputField';
-import Button from '@/components/ui/Button';
-import { CloseIcon } from '@/components/ui/icons';
-import UploadImage from '@/components/ui/UploadImage';
-import Cover from './Cover';
-import Avatar from './Avatar';
+import {
+  compareDatesOrUndefined,
+  isoStringToDatePickerValue,
+  getBirthDateOrNull,
+  datePickerValueToISOString,
+} from '@/utils';
+import { DatePickerValue } from '@/components/ui/DatePicker';
+import EditProfileHeader from './components/EditProfileHeader';
+import EditProfileAvatar from './components/EditProfileAvatar';
+import EditProfileCover from './components/EditProfileCover';
+import EditProfileForm from './components/EditProfileForm';
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -15,12 +20,18 @@ interface EditProfileModalProps {
     bio: string;
     profileImage?: string;
     bannerImage?: string;
+    location?: string;
+    website?: string;
+    birthDate?: string; // ISO string
   };
   onSave: (data: {
-    name: string;
-    bio: string;
-    profileImage?: File;
-    bannerImage?: File;
+    name?: string;
+    bio?: string;
+    profileImage?: File | null;
+    bannerImage?: File | null;
+    location?: string | null;
+    website?: string | null;
+    birthDate?: string | null;
   }) => void;
   isUpdating?: boolean;
 }
@@ -34,6 +45,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 }) => {
   const [name, setName] = useState(initialData.name);
   const [bio, setBio] = useState(initialData.bio);
+  const [location, setLocation] = useState(initialData.location ?? '');
+  const [website, setWebsite] = useState(initialData.website ?? '');
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string | undefined>(
@@ -42,15 +55,54 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [bannerPreview, setBannerPreview] = useState<string | undefined>(
     initialData.bannerImage
   );
+  const [birth, setBirth] = useState<DatePickerValue | undefined>(() => {
+    return isoStringToDatePickerValue(initialData.birthDate);
+  });
 
   const handleSave = () => {
+    const computeImagePayload = (
+      file: File | null,
+      preview: string | undefined,
+      initial?: string
+    ): File | null | undefined => {
+      if (file) return file;
+      if (preview === '') return null;
+      if (preview === initial) return undefined;
+      return undefined;
+    };
+
+    const fieldPayload = (value: string, initial?: string | undefined) => {
+      const v = value?.trim();
+      const init = initial?.trim() ?? '';
+      if (v === init) return undefined;
+      return value;
+    };
+
     onSave({
-      name,
-      bio,
-      profileImage: profileImage || undefined,
-      bannerImage: bannerImage || undefined,
+      name: fieldPayload(name, initialData.name),
+      bio: fieldPayload(bio, initialData.bio),
+      location: fieldPayload(location, initialData.location),
+      website: fieldPayload(website, initialData.website),
+      birthDate: (() => {
+        const selected = getBirthDateOrNull(birth);
+        const initial = initialData.birthDate;
+        if (!selected) return selected; // undefined/null
+        const composedIso = datePickerValueToISOString(selected);
+        if (!composedIso) return undefined;
+        return compareDatesOrUndefined(composedIso, initial);
+      })(),
+      profileImage: computeImagePayload(
+        profileImage,
+        profilePreview,
+        initialData.profileImage
+      ),
+      bannerImage: computeImagePayload(
+        bannerImage,
+        bannerPreview,
+        initialData.bannerImage
+      ),
     });
-    onClose();
+    onCloseModal();
   };
 
   const handleProfileImageChange = (file: File | null) => {
@@ -58,7 +110,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     if (file) {
       setProfilePreview(URL.createObjectURL(file));
     } else {
-      setProfilePreview(initialData.profileImage);
+      setProfilePreview('');
     }
   };
 
@@ -67,77 +119,80 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     if (file) {
       setBannerPreview(URL.createObjectURL(file));
     } else {
-      setBannerPreview(initialData.bannerImage);
+      setBannerPreview('');
     }
   };
 
+  const resetToInitial = () => {
+    setName(initialData.name);
+    setBio(initialData.bio);
+    setLocation(initialData.location ?? '');
+    setWebsite(initialData.website ?? '');
+    setProfileImage(null);
+    setBannerImage(null);
+    setProfilePreview(initialData.profileImage);
+    setBannerPreview(initialData.bannerImage);
+    setBirth(isoStringToDatePickerValue(initialData.birthDate));
+  };
+
+  const onCloseModal = () => {
+    resetToInitial();
+    onClose();
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      setName(initialData.name);
+      setBio(initialData.bio);
+      setLocation(initialData.location ?? '');
+      setWebsite(initialData.website ?? '');
+      setProfileImage(null);
+      setBannerImage(null);
+      setProfilePreview(initialData.profileImage);
+      setBannerPreview(initialData.bannerImage);
+      setBirth(isoStringToDatePickerValue(initialData.birthDate));
+    }
+  }, [isOpen, initialData]);
+
   return (
-    <XModal isOpen={isOpen} onClose={onClose} size="xl" customLayout={false}>
-      {/* <div className="z-50 fixed left-1/2 -translate-x-1/2 inset-0 flex flex-col bg-background rounded-2xl shadow-xl h-[427.5px] w-[600px] m-10 py-1"> */}
-      <div className="flex justify-between gap-2 px-4 pt-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          shape="circle"
-          onClick={onClose}
-          aria-label="Close modal"
-          disabled={isUpdating}
-        >
-          <CloseIcon className="w-5 h-5 text-text-active" />
-        </Button>
-        <Button
-          variant="social"
-          size="sm"
-          shape="rounded"
-          onClick={handleSave}
-          disabled={isUpdating}
-        >
-          {isUpdating ? 'Saving...' : 'Save'}
-        </Button>
-      </div>
+    <XModal
+      isOpen={isOpen}
+      onClose={onCloseModal}
+      size="xl"
+      customLayout={false}
+      overlayColor="bg-modal-overlay"
+    >
+      <EditProfileHeader
+        onClose={onCloseModal}
+        onSave={handleSave}
+        isUpdating={isUpdating}
+      />
       <div className="flex flex-col w-full">
-        <Cover coverImage={bannerPreview} className="mt-4">
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <UploadImage
-              onFileSelect={handleBannerImageChange}
-              showClearButton={!!bannerPreview}
-              onClear={() => handleBannerImageChange(null)}
-            />
-          </div>
-        </Cover>
-
+        <EditProfileCover
+          coverImage={bannerPreview}
+          onFileSelect={handleBannerImageChange}
+          showClearButton={!!bannerPreview}
+          onClear={() => handleBannerImageChange(null)}
+        />
         <div className="relative pb-4">
-          <Avatar
+          <EditProfileAvatar
             avatarImage={profilePreview}
-            className="-top-[66px] left-3"
-            position="absolute"
-            customPosition={true}
-          >
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <UploadImage onFileSelect={handleProfileImageChange} />
-            </div>
-          </Avatar>
-
-          {/* Form Fields */}
-          <div className="mt-20 space-y-6">
-            <InputField
-              label="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              maxLength={50}
-              showCharCount
-            />
-            <InputField
-              label="Bio"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              maxLength={160}
-              showCharCount
-            />
-          </div>
+            onFileSelect={handleProfileImageChange}
+          />
+          <EditProfileForm
+            name={name}
+            setName={setName}
+            bio={bio}
+            setBio={setBio}
+            location={location}
+            setLocation={setLocation}
+            website={website}
+            setWebsite={setWebsite}
+            birth={birth}
+            setBirth={setBirth}
+          />
         </div>
       </div>
-      {/* </div> */}
     </XModal>
   );
 };

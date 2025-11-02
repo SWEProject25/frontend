@@ -24,7 +24,7 @@ export default function TweetImages() {
   function handleImportImage(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (!files) return;
-    const arrayFiles = Array.from(files);
+    const arrayFiles: File[] = Array.from(files);
     console.log(arrayFiles);
     if (!arrayFiles.every((media) => MEDIA_TYPES.includes(media.type))) {
       toasterMessage('Please choose up valid format ' + MEDIA_TYPES.join(','));

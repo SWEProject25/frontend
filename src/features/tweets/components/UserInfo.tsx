@@ -47,7 +47,7 @@ export default function UserInfo({
   return (
     <div className={containerClass}>
       <div className="relative">
-        <Link href="/profile" onClick={(e) => e.stopPropagation()}>
+        <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span
             className={nameRowClass}
             onMouseEnter={() => setTimeout(() => setShowNameCard(true), delay)}
@@ -70,11 +70,11 @@ export default function UserInfo({
             }`}
             onMouseEnter={() => {
               setCardNameHover(true);
-              onHoverCard ? onHoverCard(true) : null;
+              if (onHoverCard) onHoverCard(true);
             }}
             onMouseLeave={() => {
               setCardNameHover(false);
-              onHoverCard ? onHoverCard(false) : null;
+              if (onHoverCard) onHoverCard(false);
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -85,7 +85,7 @@ export default function UserInfo({
         )}
       </div>
       <div className="relative">
-        <Link href="/profile" onClick={(e) => e.stopPropagation()}>
+        <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span
             className={usernameClass}
             onMouseEnter={() =>
@@ -107,11 +107,11 @@ export default function UserInfo({
             }`}
             onMouseEnter={() => {
               setCardUsernameHover(true);
-              onHoverCard ? onHoverCard(true) : null;
+              if (onHoverCard) onHoverCard(true);
             }}
             onMouseLeave={() => {
               setCardUsernameHover(false);
-              onHoverCard ? onHoverCard(false) : null;
+              if (onHoverCard) onHoverCard(false);
             }}
             onClick={(e) => {
               e.stopPropagation();
