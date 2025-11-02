@@ -6,11 +6,13 @@ import MobileBottomBar from './MobileBottomBar';
 interface LayoutWrapperProps {
   children: React.ReactNode;
   showRightSidebar?: boolean;
+  showMobileBottomBar?: boolean;
 }
 
 export default function LayoutWrapper({
   children,
   showRightSidebar = true,
+  showMobileBottomBar = true,
 }: LayoutWrapperProps) {
   return (
     <div className="container flex flex-row justify-center min-h-screen">
@@ -18,11 +20,12 @@ export default function LayoutWrapper({
         <LeftSidebar />
       </div>
 
-      <div className="xs:hidden">
-        <MobileBottomBar />
-      </div>
+      {showMobileBottomBar && (
+        <div className="xs:hidden">
+          <MobileBottomBar />
+        </div>
+      )}
 
-      {/* Main Content */}
       <main
         className={`
           flex-1
@@ -31,13 +34,11 @@ export default function LayoutWrapper({
           border-x
           border-gray-800
           pt-0
-          pb-20
         `}
       >
         <div>{children}</div>
       </main>
 
-      {/* Right Sidebar - Conditional */}
       {showRightSidebar && (
         <div className="hidden xl:flex right-0 top-0 h-full">
           <RightSidebar />

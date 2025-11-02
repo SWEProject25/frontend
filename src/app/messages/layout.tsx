@@ -1,3 +1,5 @@
+'use client';
+import { usePathname } from 'next/navigation';
 import LayoutWrapper from '@/features/layout/components/LayoutWrapper';
 
 export default function MessagesRootLayout({
@@ -5,5 +7,15 @@ export default function MessagesRootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <LayoutWrapper showRightSidebar={false}>{children}</LayoutWrapper>;
+  const pathname = usePathname();
+  const isConversationView = pathname !== '/messages';
+
+  return (
+    <LayoutWrapper
+      showRightSidebar={false}
+      showMobileBottomBar={!isConversationView}
+    >
+      {children}
+    </LayoutWrapper>
+  );
 }

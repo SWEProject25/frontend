@@ -8,7 +8,7 @@ export default function ProfileSection() {
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center relative">
           <Image
-            src="https://via.placeholder.com/40"
+            src="https://avatar.iran.liara.run/public/42"
             alt="Profile"
             width={40}
             height={40}
