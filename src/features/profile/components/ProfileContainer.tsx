@@ -20,7 +20,10 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
   return (
     <div className="flex flex-col w-[600px] mx-auto relative">
       <Cover coverImage={profileData.banner_image_url || ''} />
-      <Avatar avatarImage={profileData.profile_image_url || ''} />
+      <Avatar
+        avatarImage={profileData.profile_image_url}
+        name={profileData.name}
+      />
       <ActionsPanel
         isOwnProfile={isMine}
         isFollowing={false}
@@ -43,8 +46,8 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
         <Description bio={profileData.bio || ''} />
         <UserDetails
           joinDate={profileData.created_at}
-          location={profileData.location}
-          website={profileData.website}
+          location="Giza"
+          website="mrfathi.tech"
         />
         <FollowStats
           followingCount={0} // TODO: Add to API

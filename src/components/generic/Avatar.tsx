@@ -1,7 +1,9 @@
 import React from 'react';
+import { getColorFromLetter } from '@/constants/colors';
 
 interface AvatarProps {
   avatarImage?: string;
+  name?: string;
   children?: React.ReactNode;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -11,6 +13,7 @@ interface AvatarProps {
 
 const Avatar = ({
   avatarImage,
+  name,
   children,
   className = '',
   size = 'lg',
@@ -22,6 +25,24 @@ const Avatar = ({
     md: 'w-[96px] h-[96px]',
     lg: 'w-[132px] h-[132px]',
   };
+
+  const fontSizes = {
+    sm: 'text-2xl',
+    md: 'text-4xl',
+    lg: 'text-5xl',
+  };
+
+  const getInitial = (): { letter: string; color: string } | null => {
+    if (!name || avatarImage) return null;
+    const firstLetter = name.trim()[0];
+    if (!firstLetter) return null;
+    return {
+      letter: firstLetter.toUpperCase(),
+      color: getColorFromLetter(firstLetter),
+    };
+  };
+
+  const initial = getInitial();
 
   const positionStyle =
     position === 'absolute' && !customPosition
@@ -36,14 +57,21 @@ const Avatar = ({
       style={positionStyle}
     >
       <div
-        className="w-full h-full rounded-full relative"
+        className="w-full h-full rounded-full relative flex items-center justify-center"
         style={{
           backgroundImage: avatarImage ? `url(${avatarImage})` : 'none',
-          backgroundColor: '#333639',
+          backgroundColor: initial ? initial.color : '#333639',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       >
+        {initial && (
+          <span
+            className={`${fontSizes[size]} font-bold text-white select-none`}
+          >
+            {initial.letter}
+          </span>
+        )}
         {children}
       </div>
     </div>

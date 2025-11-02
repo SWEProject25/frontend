@@ -4,8 +4,8 @@ export interface UserProfile {
   user_id: number;
   name: string;
   birth_date: string;
-  profile_image_url: string | null;
-  banner_image_url: string | null;
+  profile_image_url?: string;
+  banner_image_url?: string;
   bio: string | null;
   location: string | null;
   website: string | null;
