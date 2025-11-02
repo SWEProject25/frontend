@@ -41,7 +41,12 @@ export function InputFieldsDemo() {
   });
 
   const handleInputChange =
-    (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    (field: string) =>
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
       setFormData((prev) => ({
         ...prev,
         [field]: e.target.value,

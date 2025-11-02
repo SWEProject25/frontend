@@ -80,7 +80,14 @@ export interface FormState {
 export interface FormHandlers {
   handleInputChange: (
     fieldName: string
-  ) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  ) => (
+    e: React.ChangeEvent<
+      | HTMLInputElement
+      | HTMLTextAreaElement
+      | HTMLSelectElement
+      | HTMLSelectElement
+    >
+  ) => void;
   handleBlur: (fieldName: string) => () => void;
   handleSubmit: (e: React.FormEvent) => void;
   handleSocialAuth: (providerId: string) => void;
@@ -104,7 +111,14 @@ export interface FormFieldsProps {
   touched: Record<string, boolean>;
   onInputChange: (
     fieldName: string
-  ) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  ) => (
+    e: React.ChangeEvent<
+      | HTMLInputElement
+      | HTMLTextAreaElement
+      | HTMLSelectElement
+      | HTMLSelectElement
+    >
+  ) => void;
   onBlur: (fieldName: string) => () => void;
   onClearState?: (fieldName?: string) => void;
   onEmailValidationChange?: (isValid: boolean, isValidating: boolean) => void;

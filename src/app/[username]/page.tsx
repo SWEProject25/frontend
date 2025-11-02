@@ -35,7 +35,7 @@ const UserPage = ({ params }: UserPageProps) => {
   const error = useMy ? myProfileQuery.error : errorByUsername;
 
   const handleBack = () => {
-    console.log('Back button clicked');
+    window.history.back();
   };
 
   // Loading state

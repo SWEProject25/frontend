@@ -125,8 +125,6 @@ export const parseFormattedDate = (
     return 'Invalid date';
   }
 
-  const pad = (n: number) => n.toString().padStart(2, '0');
-
   try {
     // short: expected "M/D/YYYY" or "MM/DD/YYYY" (en-US)
     if (format === 'short') {
@@ -184,7 +182,7 @@ export const parseFormattedDate = (
     }
 
     return 'Invalid date';
-  } catch (err) {
+  } catch {
     return 'Invalid date';
   }
 };

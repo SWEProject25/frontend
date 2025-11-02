@@ -10,7 +10,7 @@ import { CharCounter } from './components/CharCounter';
 // styling handled in InputBase
 
 export const InputField = React.forwardRef<
-  HTMLInputElement | HTMLTextAreaElement,
+  HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
   InputProps
 >(
   (
@@ -33,12 +33,16 @@ export const InputField = React.forwardRef<
   ) => {
     const [showPassword, setShowPassword] = useState(false);
 
-    const fieldState = useFieldState<HTMLInputElement | HTMLTextAreaElement>({
+    const fieldState = useFieldState<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >({
       value: value,
     });
 
     const handleFocus = (
-      e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+      e: React.FocusEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
     ) => {
       fieldState.handleFocus(e);
       if (type === 'textarea') {
@@ -46,14 +50,22 @@ export const InputField = React.forwardRef<
           e as React.FocusEvent<HTMLTextAreaElement>
         );
       } else {
-        (onFocus as unknown as React.FocusEventHandler<HTMLInputElement>)?.(
-          e as React.FocusEvent<HTMLInputElement>
+        (
+          onFocus as unknown as React.FocusEventHandler<
+            HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+          >
+        )?.(
+          e as React.FocusEvent<
+            HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+          >
         );
       }
     };
 
     const handleBlur = (
-      e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+      e: React.FocusEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
     ) => {
       fieldState.handleBlur(e);
       if (type === 'textarea') {
@@ -61,8 +73,14 @@ export const InputField = React.forwardRef<
           e as React.FocusEvent<HTMLTextAreaElement>
         );
       } else {
-        (onBlur as unknown as React.FocusEventHandler<HTMLInputElement>)?.(
-          e as React.FocusEvent<HTMLInputElement>
+        (
+          onBlur as unknown as React.FocusEventHandler<
+            HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+          >
+        )?.(
+          e as React.FocusEvent<
+            HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+          >
         );
       }
     };
@@ -111,7 +129,7 @@ export const InputField = React.forwardRef<
     };
 
     const inputRefCast = ref as React.RefObject<
-      HTMLInputElement | HTMLTextAreaElement
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >;
 
     return (
@@ -133,7 +151,7 @@ export const InputField = React.forwardRef<
             onBlur={handleBlur}
             onChange={
               onChange as unknown as React.ChangeEventHandler<
-                HTMLInputElement | HTMLTextAreaElement
+                HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
               >
             }
             className={className}
@@ -146,7 +164,11 @@ export const InputField = React.forwardRef<
             <PasswordToggle
               showPassword={showPassword}
               onToggle={() => setShowPassword(!showPassword)}
-              inputRef={ref as React.RefObject<HTMLInputElement>}
+              inputRef={
+                ref as React.RefObject<
+                  HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+                >
+              }
             />
           )}
 
