@@ -18,7 +18,7 @@ import { GROK_MENU, REPLY_MENU } from '../constants/menuName';
 export default function AddTweet() {
   const scheduledTime = useAddTweetStore((state) => state.scheduledTime);
   const isSending = useAddTweetStore((state) => state.isSending);
-  const error = useAddTweetStore((state) => state.error);
+  // const error = useAddTweetStore((state) => state.error);
   const isReplySettingsVisible = useAddTweetStore(
     (state) => state.selectedReplyOption
   );
