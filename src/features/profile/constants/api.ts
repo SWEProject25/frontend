@@ -6,6 +6,10 @@ export const PROFILE_API_CONFIG = {
 export const PROFILE_ENDPOINTS = {
   GET_MY_PROFILE: `/api/${PROFILE_API_CONFIG.VERSION}/profile/me`,
   UPDATE_MY_PROFILE: `/api/${PROFILE_API_CONFIG.VERSION}/profile/me`,
+  ADD_PROFILE_IMAGE: `/api/${PROFILE_API_CONFIG.VERSION}/profile/me/profile-picture`,
+  ADD_BANNER_IMAGE: `/api/${PROFILE_API_CONFIG.VERSION}/profile/me/banner`,
+  REMOVE_PROFILE_IMAGE: `/api/${PROFILE_API_CONFIG.VERSION}/profile/me/profile-picture`,
+  REMOVE_BANNER_IMAGE: `/api/${PROFILE_API_CONFIG.VERSION}/profile/me/banner`,
   GET_PROFILE_BY_USER_ID: (userId: number) =>
     `/api/${PROFILE_API_CONFIG.VERSION}/profile/user/${userId}`,
   GET_PROFILE_BY_USERNAME: (username: string) =>

@@ -24,7 +24,7 @@ export default function Breadcrumb({
         {onBack && (
           <button
             onClick={onBack}
-            className={`${showArrow && showArrow == true ? '' : 'lg:hidden'} hover:bg-muted rounded-full transition-colors`}
+            className={`${showArrow && showArrow == true ? '' : 'lg:hidden'} hover:bg-muted rounded-full transition-colors cursor-pointer`}
             aria-label="Go back"
           >
             <ArrowLeftIcon className="w-5 h-5 text-text-active" />

@@ -3,108 +3,16 @@ import React from 'react';
 import Content from './Content';
 import Actions from './Actions';
 import UserInfo from './UserInfo';
-import Avatar from './Avatar';
-import { TbSpeakerphone } from 'react-icons/tb';
-import { IoStatsChart } from 'react-icons/io5';
-import { TiVolumeMute } from 'react-icons/ti';
+import TweetAvatar from './TweetAvatar';
 import Action from './Action';
 import DropDown from './DropDown';
 import Timing from './Timing';
-import { FaUserPlus, FaListUl, FaBan, FaCode, FaFlag } from 'react-icons/fa';
-import { HiOutlineEmojiSad } from 'react-icons/hi';
 import Tweet from './Tweet';
 import Header from './Header';
 import { TimelineFeed } from '@/features/timeline/types/api';
 import { GrokIcon } from '@/components/ui/icons/BrandIcons';
 import { DropIcon } from '@/components/ui/icons/UIIcons';
-
-const dropItems = [
-  {
-    key: 'not_interested',
-    label: 'Not interested in this post',
-    icon: <HiOutlineEmojiSad />,
-  },
-  {
-    key: 'follow',
-    label: 'Follow @max_misk',
-    icon: <FaUserPlus />,
-  },
-  {
-    key: 'lists',
-    label: 'Add/remove from Lists',
-    icon: <FaListUl />,
-  },
-  {
-    key: 'mute',
-    label: 'Mute',
-    icon: <TiVolumeMute />,
-  },
-  {
-    key: 'block',
-    label: 'Block @max_misk',
-    icon: <FaBan />,
-  },
-  {
-    key: 'engagement',
-    label: 'View post engagements',
-    icon: <IoStatsChart />,
-  },
-  {
-    key: 'embed',
-    label: 'Embed post',
-    icon: <FaCode />,
-  },
-  {
-    key: 'report',
-    label: 'Report post',
-    icon: <FaFlag />,
-  },
-  {
-    key: 'community_note',
-    label: 'Request Community Note',
-    icon: <TbSpeakerphone />,
-  },
-];
-
-type TweetActions = {
-  replies: number;
-  retweets: number;
-  likes: number;
-  bookmarks: number;
-  views: string;
-  booked: boolean;
-  liked: boolean;
-  reposted: boolean;
-};
-
-type MediaItem = {
-  url: string;
-  type: string | 'image' | 'video';
-};
-
-type TweetContent = {
-  text?: string;
-  media?: MediaItem[];
-};
-
-type User = {
-  name: string;
-  username: string;
-  avatar: string;
-  bio?: string;
-  following?: number;
-  followers?: string;
-  isVerified: boolean;
-  isFollowed?: boolean;
-};
-
-type TweetData = {
-  id: string;
-  content: TweetContent;
-  user: User;
-  time: Date;
-  Actions: TweetActions;
-};
+import { TWEET_DROPDOWN_ITEMS } from '../constants';
 
 function FullTweet({
   data,
@@ -144,7 +52,7 @@ function FullTweet({
       <div className="mx-auto sm:max-w-[600px] p-4 text-white relative ">
         <div className="flex items-start justify-between">
           <div className="flex space-x-3">
-            <Avatar data={user} />
+            <TweetAvatar data={user} />
             <UserInfo data={user} direction="vertical" />
           </div>
           <div className="ml-2 flex items-center space-x-2 text-gray-500">
@@ -153,7 +61,7 @@ function FullTweet({
               label="Explain this post"
               color="blue"
             />
-            <DropDown items={dropItems}>
+            <DropDown items={TWEET_DROPDOWN_ITEMS}>
               <Action
                 icon={<DropIcon />}
                 label="more"

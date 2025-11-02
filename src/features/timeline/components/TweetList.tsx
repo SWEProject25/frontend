@@ -4,7 +4,7 @@ import { useTimelineFeed } from '../hooks/timelineQueries';
 import React from 'react';
 import Tweet from '@/features/tweets/components/Tweet';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
-import InfiniteScrollContainer from '@/components/generic/InfiniteScrollContainer';
+// import InfiniteScrollContainer from '@/components/generic/InfiniteScrollContainer';
 import Loader from '@/components/generic/Loader';
 
 export default function TweetList() {

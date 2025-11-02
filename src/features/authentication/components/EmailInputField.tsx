@@ -28,7 +28,11 @@ export function EmailInputField({
   });
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
       onChange(e);
 
       if (validation?.enableRealTimeValidation && e.target.value) {

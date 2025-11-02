@@ -42,7 +42,9 @@ export default function DropDown({ children, items, onOpened }: DropProps) {
       <Dropdown
         onOpenChange={(open) => {
           setIsOpened(open);
-          onOpened && onOpened(open);
+          if (onOpened) {
+            onOpened(open);
+          }
         }}
         className="p-0"
       >

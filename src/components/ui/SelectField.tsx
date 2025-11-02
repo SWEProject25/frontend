@@ -16,6 +16,7 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
     {
       className,
       label,
+      wrapperClassName,
       options,
       value,
       fullWidth = false,
@@ -70,7 +71,13 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
     };
 
     return (
-      <div className={cn('relative', fullWidth ? 'block' : 'inline-block')}>
+      <div
+        className={cn(
+          'relative',
+          fullWidth ? 'block' : 'inline-block',
+          wrapperClassName
+        )}
+      >
         <select
           value={value}
           className={cn(
@@ -103,7 +110,7 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
 
         {/* Custom dropdown arrow */}
         <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-          <ChevronDownIcon className="w-5 h-5 text-text-inactive" />
+          <ChevronDownIcon className="w-5 h-5 text-text-inactive " />
         </div>
 
         {/* Floating Label - matches InputField behavior */}

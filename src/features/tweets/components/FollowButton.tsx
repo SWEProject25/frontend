@@ -1,9 +1,15 @@
 'use client';
 import React, { useState } from 'react';
-function FollowButton({ isFollowed }) {
-  const [followed, setFollowed] = useState(isFollowed || false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [followClicked, setFollowClicked] = useState(false);
+
+interface FollowButtonProps {
+  isFollowed?: boolean;
+}
+
+function FollowButton({ isFollowed }: FollowButtonProps) {
+  const [followed, setFollowed] = useState<boolean>(isFollowed || false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [followClicked, setFollowClicked] = useState<boolean>(false);
+
   return (
     <div>
       <button
@@ -23,7 +29,7 @@ function FollowButton({ isFollowed }) {
             setFollowClicked(false);
           }
         }}
-        onMouseEnter={(e) => {
+        onMouseEnter={() => {
           setIsHovered(true);
         }}
         onMouseLeave={() => {
