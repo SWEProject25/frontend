@@ -23,6 +23,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     username: data.username,
     verified: data.verified,
     avatar: data.avatar,
+    isFollowedByMe: data.isFollowedByMe,
   };
   const content = {
     text: data.text,

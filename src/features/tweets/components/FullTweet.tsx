@@ -13,16 +13,21 @@ import { TimelineFeed } from '@/features/timeline/types/api';
 import { GrokIcon } from '@/components/ui/icons/BrandIcons';
 import { DropIcon } from '@/components/ui/icons/UIIcons';
 import { TWEET_DROPDOWN_ITEMS } from '../constants';
+import Loader from '@/components/generic/Loader';
 
 function FullTweet({
   data,
-  reply,
+  replies,
 }: {
   data: TimelineFeed | null;
-  reply: TimelineFeed | null;
+  replies: TimelineFeed[] | null;
 }) {
-  if (!data || !reply) {
-    return <div>Loading...</div>;
+  if (!data || !replies) {
+    return (
+      <div className="flex justify-center items-center h-32">
+        <Loader />
+      </div>
+    );
   }
   const user = {
     id: data.userId,
@@ -82,9 +87,9 @@ function FullTweet({
         </div>
       </div>
       <div>
-        <Tweet data={reply} />
-        <Tweet data={reply} />
-        <Tweet data={reply} />
+        {replies.map((reply, index) => (
+          <Tweet key={index} data={reply} />
+        ))}
       </div>
     </div>
   );

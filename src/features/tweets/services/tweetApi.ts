@@ -1,5 +1,9 @@
-import { TweetResponseDto } from '../types';
-import { TWEET_API_CONFIG, TWEET_ENDPOINTS } from '../constants/api';
+import { ReplyResponseDto, TweetResponseDto } from '../types';
+import {
+  TWEET_API_CONFIG,
+  TWEET_ENDPOINTS,
+  TWEET_CONSTANTS,
+} from '../constants/api';
 
 class ApiError extends Error {
   constructor(
@@ -77,4 +81,37 @@ export const tweetApi = {
     );
     return handleResponse<{ reposted: boolean }>(response);
   },
+
+  async getRepliesByTweetId(tweetId: number): Promise<ReplyResponseDto> {
+    const response = await fetch(
+      `${TWEET_API_CONFIG.BASE_URL}${TWEET_ENDPOINTS.GET_REPLIES_BY_TWEET_ID(tweetId)}?` +
+        `${new URLSearchParams({ page: `${TWEET_CONSTANTS.DEFAULT_PAGE}`, limit: `${TWEET_CONSTANTS.DEFAULT_LIMIT}` })}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    return handleResponse<ReplyResponseDto>(response);
+  },
+
+  //   async getRepliesByTweetId(
+  //     tweetId: number,
+  //     pageParam: number
+  //   ): Promise<ReplyResponseDto> {
+  //     const response = await fetch(
+  //       `${TWEET_API_CONFIG.BASE_URL}${TWEET_ENDPOINTS.GET_REPLIES_BY_TWEET_ID(tweetId)}?` +
+  //         `${new URLSearchParams({ page: `${pageParam}`, limit: `${TWEET_CONSTANTS.DEFAULT_LIMIT}` })}`,
+  //       {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         credentials: 'include',
+  //       }
+  //     );
+  //     return handleResponse<ReplyResponseDto>(response);
+  //   },
 };

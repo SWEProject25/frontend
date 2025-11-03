@@ -1,3 +1,5 @@
+import { TimelineFeed } from '../../timeline/types/api';
+
 export interface Tweet {
   id: number;
   user_id: number;
@@ -50,4 +52,10 @@ export interface Reply {
   isRepostedByMe: boolean;
   text: string;
   media: Media[];
+}
+
+export interface ReplyResponseDto {
+  status: string;
+  message: string;
+  data: TimelineFeed[];
 }
