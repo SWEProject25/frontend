@@ -13,9 +13,11 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuthStore } from '@/features/authentication/store/authStore';
 
 export default function MenuItems() {
   const pathname = usePathname();
+  const user = useAuthStore((s) => s.user);
 
   const menuItems = [
     {
@@ -57,7 +59,7 @@ export default function MenuItems() {
     {
       icon: User,
       label: 'Profile',
-      href: '/profile',
+      href: `/${user?.username}`,
       hideOnShortScreen: false,
     },
     {
