@@ -9,23 +9,18 @@ export const useAuthStore = create<AuthStore>()(
     user: null,
     isAuthenticated: false,
     isLoading: false,
-    error: null,
 
     // Actions
     setUser: (user: UserResponse) => {
-      set({ user, isAuthenticated: true, error: null });
+      set({ user, isAuthenticated: true });
     },
 
     clearUser: () => {
-      set({ user: null, isAuthenticated: false, error: null });
+      set({ user: null, isAuthenticated: false });
     },
 
     setLoading: (loading: boolean) => {
       set({ isLoading: loading });
-    },
-
-    setError: (error: string | null) => {
-      set({ error });
     },
   }))
 );

@@ -1,18 +1,18 @@
 import { UserResponse } from './api';
 
-// Auth Store Types
+// Auth State
 export interface AuthState {
   user: UserResponse | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  error: string | null;
 }
 
+// Auth Actions
 export interface AuthActions {
   setUser: (user: UserResponse) => void;
   clearUser: () => void;
   setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
 }
 
-export interface AuthStore extends AuthState, AuthActions {}
+// Combined Auth Store
+export type AuthStore = AuthState & AuthActions;
