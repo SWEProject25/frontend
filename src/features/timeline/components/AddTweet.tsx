@@ -67,7 +67,7 @@ export default function AddTweet() {
     <div
       id="Add tweet"
       ref={ref}
-      className=" relative flex flex-col items-start w-full   border-b-1 border-border "
+      className=" relative flex flex-col items-start w-full border-b-1 border-border "
     >
       {/* {error && (
         <div className="flex w-full  p-1 bg-error-message rounded-xs h-8">

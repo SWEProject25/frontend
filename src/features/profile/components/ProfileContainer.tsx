@@ -18,7 +18,7 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
   const { handleSaveProfile, isUpdating } = useProfile();
 
   return (
-    <div className="flex flex-col w-[600px] mx-auto relative">
+    <div className="flex flex-col w-full mx-auto relative">
       <Cover coverImage={profileData.banner_image_url || ''} />
       <Avatar
         avatarImage={profileData.profile_image_url}
