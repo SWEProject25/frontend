@@ -10,7 +10,6 @@ function Page() {
 
   const repliesResponse = useGetRepliesByTweetId(tweet?.postId || 0);
   const replies = repliesResponse?.data?.data || null;
-  console.log({ replies });
 
   return (
     <>
