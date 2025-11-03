@@ -31,8 +31,6 @@ interface ConversationDetails {
   isVerified: boolean;
 }
 
-const DEFAULT_AVATAR = 'https://avatar.iran.liara.run/public/1';
-
 export const useConversationDetails = (
   conversation?: Conversation
 ): ConversationDetails => {
@@ -53,7 +51,7 @@ export const useConversationDetails = (
       displayName = participant.name;
     }
 
-    let profileImageUrl = null;
+    let profileImageUrl = '';
     if (conversation?.avatar) {
       profileImageUrl = conversation.avatar;
     } else if (user?.profile_image_url) {
@@ -75,7 +73,7 @@ export const useConversationDetails = (
     return {
       name: displayName,
       username,
-      avatar: profileImageUrl ?? DEFAULT_AVATAR,
+      avatar: profileImageUrl,
       isVerified,
     };
   }, [conversation]);
