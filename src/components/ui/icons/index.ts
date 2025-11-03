@@ -30,6 +30,7 @@ export {
   BirthdateIcon,
   JoinDateIcon,
   CameraIcon,
+  SettingsIcon,
 } from './UIIcons';
 
 // Brand Icons

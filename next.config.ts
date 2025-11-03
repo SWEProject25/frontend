@@ -3,6 +3,17 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
+
+  // Proxy API requests to avoid third-party cookie blocking
+  async rewrites() {
+    return [
+      {
+        source: '/api/v1.0/:path*',
+        destination: 'https://api.hankers.myaddr.tools/api/v1.0/:path*',
+      },
+    ];
+  },
+
   images: {
     remotePatterns: [
       {
@@ -13,6 +24,14 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'via.placeholder.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatar.iran.liara.run',
+      },
+      {
+        protocol: 'http',
+        hostname: 'avatar.iran.liara.run',
       },
       {
         protocol: 'https',
