@@ -56,6 +56,23 @@ export function useAuthHandlers() {
       };
     });
 
+  const setSuccessMessage = (field: string, message: string) =>
+    setFormState((prev) => ({
+      ...prev,
+      isLoading: false,
+      success: false,
+      errors: { [field]: message },
+    }));
+
+  const setMessage = (message: string) =>
+    setFormState((prev) => ({
+      ...prev,
+      isLoading: false,
+      success: true,
+      message,
+      errors: {},
+    }));
+
   const handleSocialAuth = useCallback(
     async (providerId: string) => {
       try {
@@ -151,21 +168,13 @@ export function useAuthHandlers() {
         switch (step) {
           case 'register': {
             // Register step - just proceed to captcha
-            setFormState((prev) => ({
-              ...prev,
-              isLoading: false,
-              success: true,
-            }));
+            setSuccess(true);
             return true;
           }
 
           case 'captcha': {
             // Captcha step - verify captcha and proceed to OTP step
-            setFormState((prev) => ({
-              ...prev,
-              isLoading: false,
-              success: true,
-            }));
+            setSuccess(true);
             return true;
           }
 
@@ -203,11 +212,7 @@ export function useAuthHandlers() {
             };
 
             await register(signupData);
-            setFormState((prev) => ({
-              ...prev,
-              isLoading: false,
-              success: true,
-            }));
+            setSuccess(true);
 
             // Redirect to configured success page after registration
             localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
@@ -220,11 +225,7 @@ export function useAuthHandlers() {
 
           default: {
             // Handle other cases
-            setFormState((prev) => ({
-              ...prev,
-              isLoading: false,
-              success: true,
-            }));
+            setSuccess(true);
             return true;
           }
         }
@@ -257,12 +258,7 @@ export function useAuthHandlers() {
                 type: 'WEB',
               });
 
-              setFormState(() => ({
-                isLoading: false,
-                success: false,
-                errors: { forgotPasswordSuccess: resp.message },
-              }));
-
+              setSuccessMessage('forgotPasswordSuccess', resp.message);
               return false;
             } catch (err) {
               setFieldError(
@@ -312,14 +308,7 @@ export function useAuthHandlers() {
           email: payload.email,
         });
 
-        setFormState((prev) => ({
-          ...prev,
-          isLoading: false,
-          success: true,
-          message: resp.message,
-          errors: {},
-        }));
-
+        setMessage(resp.message);
         return true;
       } catch (err) {
         setLoading(false);
