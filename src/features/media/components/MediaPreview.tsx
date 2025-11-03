@@ -16,7 +16,7 @@ export default function MediaPreview() {
   return (
     <div>
       <div
-        className={`${media.length == 1 ? 'w-full' : ' grid grid-cols-2 gap-1'} max-w-[514px] mx-auto rounded-2xl overflow-hidden`}
+        className={`${media.length == 1 ? 'w-full' : ' grid grid-cols-2 gap-1 max-h-[250px]'} max-w-[514px] mx-auto rounded-2xl overflow-hidden`}
       >
         <div className="relative">
           {/* Left arrow */}
@@ -36,7 +36,7 @@ export default function MediaPreview() {
           )}
           {/* Left or only image */}
           <MediaItem
-            full={false}
+            full={media.length === 1}
             id={media[currentIndex].id}
             media={media[currentIndex]}
             onClick={() => {
