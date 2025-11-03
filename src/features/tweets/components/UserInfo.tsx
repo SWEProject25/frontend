@@ -48,7 +48,7 @@ export default function UserInfo({
   return (
     <div className={containerClass}>
       <div className="relative">
-        <Link href={`ب/${data.username}`} onClick={(e) => e.stopPropagation()}>
+        <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span
             className={nameRowClass}
             onMouseEnter={() => setTimeout(() => setShowNameCard(true), delay)}
