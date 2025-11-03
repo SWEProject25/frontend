@@ -1,4 +1,4 @@
-import NextImage from 'next/image';
+import Avatar from '@/components/generic/Avatar';
 import { Info } from 'lucide-react';
 import TypingIndicator from './TypingIndicator';
 
@@ -21,12 +21,12 @@ export default function ChatHeader({
     <div className="shrink-0 bg-black/80 backdrop-blur-sm z-10 border-b border-gray-800">
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
-          <NextImage
-            src={avatar}
-            alt={name}
-            width={40}
-            height={40}
-            className="rounded-full"
+          <Avatar
+            avatarImage={avatar}
+            name={name}
+            size="sm"
+            position="relative"
+            className="shrink-0"
           />
           <div>
             <div className="flex items-center gap-1">

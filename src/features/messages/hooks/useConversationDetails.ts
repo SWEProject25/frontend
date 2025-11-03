@@ -53,7 +53,7 @@ export const useConversationDetails = (
       displayName = participant.name;
     }
 
-    let profileImageUrl = DEFAULT_AVATAR;
+    let profileImageUrl = null;
     if (conversation?.avatar) {
       profileImageUrl = conversation.avatar;
     } else if (user?.profile_image_url) {
@@ -75,7 +75,7 @@ export const useConversationDetails = (
     return {
       name: displayName,
       username,
-      avatar: profileImageUrl,
+      avatar: profileImageUrl ?? DEFAULT_AVATAR,
       isVerified,
     };
   }, [conversation]);
