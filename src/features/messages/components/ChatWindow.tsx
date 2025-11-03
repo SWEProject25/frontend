@@ -1,8 +1,8 @@
 'use client';
-import ChatHeader from './ChatWindow/ChatHeader';
-import ChatMessageList from './ChatWindow/ChatMessageList';
-import ChatInput from './ChatWindow/ChatInput';
-import { useChatWindow } from './ChatWindow/useChatWindow';
+import ChatHeader from './chatwindow/ChatHeader';
+import ChatMessageList from './chatwindow/ChatMessageList';
+import ChatInput from './chatwindow/ChatInput';
+import { useChatWindow } from './chatwindow/useChatWindow';
 
 interface ChatWindowProps {
   conversationId?: string;
