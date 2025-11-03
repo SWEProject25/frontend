@@ -1,19 +1,15 @@
 import Link from 'next/link';
-import { RiVerifiedBadgeFill } from 'react-icons/ri';
+import { VerifiedIcon } from '@/components/ui/icons/BrandIcons';
 
 type Direction = 'horizontal' | 'vertical';
 
 type User = {
+  id: number;
   name: string;
   username: string;
-  avatar: string;
-  bio?: string;
-  following?: number;
-  followers?: string;
-  isVerified: boolean;
-  isFollowed?: boolean;
+  verified: boolean;
+  avatar: string | null;
 };
-
 export default function CardUserInfo({
   data,
   direction = 'horizontal',
@@ -36,17 +32,19 @@ export default function CardUserInfo({
   return (
     <div className={containerClass}>
       <div className="relative">
-        <Link href="/profile" onClick={(e) => e.stopPropagation()}>
+        <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span className={nameRowClass}>
-            {data.name}{' '}
-            {data.isVerified && (
-              <RiVerifiedBadgeFill className="inline text-blue-400" size={16} />
-            )}
+            <span className="flex items-center gap-0.5">
+              {data.name}
+              {data.verified && (
+                <VerifiedIcon className="w-4.5 h-4.5 text-blue-400" />
+              )}
+            </span>
           </span>
         </Link>
       </div>
       <div className="relative">
-        <Link href="/profile" onClick={(e) => e.stopPropagation()}>
+        <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span className={usernameClass}>{data.username}</span>
         </Link>
       </div>

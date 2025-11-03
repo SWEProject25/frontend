@@ -10,11 +10,17 @@ interface TabsProps {
   tabs: TabItem[];
   selectedValue: string | number;
   onClick: (value: string) => void;
+  height: string;
 }
 
-export default function Tabs({ tabs, selectedValue, onClick }: TabsProps) {
+export default function Tabs({
+  tabs,
+  selectedValue,
+  onClick,
+  height,
+}: TabsProps) {
   return (
-    <div className="flex w-full h-[53px] border-b border-border">
+    <div className={`flex w-full border-b border-border ${height}`}>
       {tabs.map((tab, index) => (
         <Tab
           key={tab.value}

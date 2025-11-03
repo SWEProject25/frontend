@@ -35,7 +35,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "src/app/@gifModal/(.)i/foundmedia/(.)search/default.js"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,19 +1,16 @@
 import Link from 'next/link';
-import { RiVerifiedBadgeFill } from 'react-icons/ri';
 import ProfileCard from './ProfileCard';
 import { useState } from 'react';
+import { VerifiedIcon } from '@/components/ui/icons/BrandIcons';
 
 type Direction = 'horizontal' | 'vertical';
 
 type User = {
+  id: number;
   name: string;
   username: string;
-  avatar: string;
-  bio?: string;
-  following?: number;
-  followers?: string;
-  isVerified: boolean;
-  isFollowed?: boolean;
+  verified: boolean;
+  avatar: string | null;
 };
 
 export default function UserInfo({
@@ -50,16 +47,18 @@ export default function UserInfo({
   return (
     <div className={containerClass}>
       <div className="relative">
-        <Link href="/profile" onClick={(e) => e.stopPropagation()}>
+        <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span
             className={nameRowClass}
             onMouseEnter={() => setTimeout(() => setShowNameCard(true), delay)}
             onMouseLeave={() => setTimeout(() => setShowNameCard(false), delay)}
           >
-            {data.name}{' '}
-            {data.isVerified && (
-              <RiVerifiedBadgeFill className="inline text-blue-400" size={16} />
-            )}
+            <span className="flex items-center gap-0.5">
+              {data.name}
+              {data.verified && (
+                <VerifiedIcon className="w-4.5 h-4.5 text-blue-400" />
+              )}
+            </span>
           </span>
         </Link>
         {nameCardShow && (
@@ -71,11 +70,11 @@ export default function UserInfo({
             }`}
             onMouseEnter={() => {
               setCardNameHover(true);
-              onHoverCard ? onHoverCard(true) : null;
+              if (onHoverCard) onHoverCard(true);
             }}
             onMouseLeave={() => {
               setCardNameHover(false);
-              onHoverCard ? onHoverCard(false) : null;
+              if (onHoverCard) onHoverCard(false);
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -86,7 +85,7 @@ export default function UserInfo({
         )}
       </div>
       <div className="relative">
-        <Link href="/profile" onClick={(e) => e.stopPropagation()}>
+        <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span
             className={usernameClass}
             onMouseEnter={() =>
@@ -108,11 +107,11 @@ export default function UserInfo({
             }`}
             onMouseEnter={() => {
               setCardUsernameHover(true);
-              onHoverCard ? onHoverCard(true) : null;
+              if (onHoverCard) onHoverCard(true);
             }}
             onMouseLeave={() => {
               setCardUsernameHover(false);
-              onHoverCard ? onHoverCard(false) : null;
+              if (onHoverCard) onHoverCard(false);
             }}
             onClick={(e) => {
               e.stopPropagation();

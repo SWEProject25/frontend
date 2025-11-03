@@ -7,17 +7,12 @@ export interface CreateUserDto {
 }
 
 export interface UserResponse {
+  id: number;
   username: string;
-  email: string;
   role: string;
+  email: string;
   name: string;
-  birthDate?: string;
   profileImageUrl?: string | null;
-  bannerImageUrl?: string | null;
-  bio?: string | null;
-  location?: string | null;
-  website?: string | null;
-  createdAt?: string;
 }
 
 export interface RegisterResponseDto {

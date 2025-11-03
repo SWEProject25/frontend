@@ -50,6 +50,7 @@ export function FormContent({
           onBlur={handleBlur}
           onClearState={onClearState}
           onEmailValidationChange={onEmailValidationChange}
+          loading={loading}
         />
 
         {/* General form errors */}

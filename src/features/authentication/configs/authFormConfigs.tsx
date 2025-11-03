@@ -231,6 +231,7 @@ export const authFormConfigs = {
         type: FIELD_TYPES.PASSWORD,
         required: true,
         showPasswordToggle: true,
+        maxLength: 50,
       },
       {
         name: 'confirmPassword',
@@ -238,6 +239,7 @@ export const authFormConfigs = {
         type: FIELD_TYPES.PASSWORD,
         required: true,
         showPasswordToggle: true,
+        maxLength: 50,
       },
     ],
     submitButton: { text: 'Create Account' },
@@ -261,6 +263,7 @@ export const authFormConfigs = {
         type: FIELD_TYPES.PASSWORD,
         required: true,
         showPasswordToggle: true,
+        maxLength: 50,
       },
       {
         name: 'confirmPassword',
@@ -268,6 +271,7 @@ export const authFormConfigs = {
         type: FIELD_TYPES.PASSWORD,
         required: true,
         showPasswordToggle: true,
+        maxLength: 50,
       },
     ],
     submitButton: { text: 'Reset Password' },

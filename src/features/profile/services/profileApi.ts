@@ -87,6 +87,73 @@ export const profileApi = {
     return handleResponse<ProfileResponseDto>(response);
   },
 
+  // Upload profile image (multipart/form-data)
+  async uploadProfileImage(file: File): Promise<ProfileResponseDto> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+
+    const response = await fetch(
+      `${PROFILE_API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.ADD_PROFILE_IMAGE}`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        body: form,
+      }
+    );
+
+    return handleResponse<ProfileResponseDto>(response);
+  },
+
+  // Upload banner image (multipart/form-data)
+  async uploadBannerImage(file: File): Promise<ProfileResponseDto> {
+    const form = new FormData();
+    // Backend expects field name `banner_image` and a filename with extension
+    form.append('file', file, file.name);
+
+    const response = await fetch(
+      `${PROFILE_API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.ADD_BANNER_IMAGE}`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        body: form,
+      }
+    );
+
+    return handleResponse<ProfileResponseDto>(response);
+  },
+
+  // Remove profile image
+  async removeProfileImage(): Promise<ProfileResponseDto> {
+    const response = await fetch(
+      `${PROFILE_API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.REMOVE_PROFILE_IMAGE}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+
+    return handleResponse<ProfileResponseDto>(response);
+  },
+
+  // Remove banner image
+  async removeBannerImage(): Promise<ProfileResponseDto> {
+    const response = await fetch(
+      `${PROFILE_API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.REMOVE_BANNER_IMAGE}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+
+    return handleResponse<ProfileResponseDto>(response);
+  },
+
   // Get profile by user ID
   async getProfileByUserId(userId: number): Promise<ProfileResponseDto> {
     const response = await fetch(

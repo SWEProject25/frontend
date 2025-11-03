@@ -75,11 +75,144 @@ export const useUpdateMyProfile = () => {
   });
 };
 
+// Hook: Upload profile image (multipart)
+export const useUploadProfileImage = () => {
+  const queryClient = useQueryClient();
+  const { setLoading, setError } = useProfileStore();
+
+  return useMutation<ProfileResponseDto, Error, File>({
+    mutationFn: async (file: File) => {
+      setLoading(true);
+      try {
+        const response = await profileApi.uploadProfileImage(file);
+        setError(null);
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to upload image';
+        setError(errorMessage);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
+    },
+  });
+};
+
+// Hook: Upload banner image (multipart)
+export const useUploadBannerImage = () => {
+  const queryClient = useQueryClient();
+  const { setLoading, setError } = useProfileStore();
+
+  return useMutation<ProfileResponseDto, Error, File>({
+    mutationFn: async (file: File) => {
+      setLoading(true);
+      try {
+        const response = await profileApi.uploadBannerImage(file);
+        setError(null);
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to upload image';
+        setError(errorMessage);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
+    },
+  });
+};
+
+// Hook: Remove profile image
+export const useRemoveProfileImage = () => {
+  const queryClient = useQueryClient();
+  const { setLoading, setError } = useProfileStore();
+
+  return useMutation<ProfileResponseDto, Error, void>({
+    mutationFn: async () => {
+      setLoading(true);
+      try {
+        const response = await profileApi.removeProfileImage();
+        setError(null);
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to remove image';
+        setError(errorMessage);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
+    },
+  });
+};
+
+// Hook: Remove banner image
+export const useRemoveBannerImage = () => {
+  const queryClient = useQueryClient();
+  const { setLoading, setError } = useProfileStore();
+
+  return useMutation<ProfileResponseDto, Error, void>({
+    mutationFn: async () => {
+      setLoading(true);
+      try {
+        const response = await profileApi.removeBannerImage();
+        setError(null);
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to remove image';
+        setError(errorMessage);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
+    },
+  });
+};
+
 // Hook: Get profile by user ID
 export const useProfileByUserId = (userId: number, enabled: boolean = true) => {
+  const { setCurrentProfile, setLoading, setError } = useProfileStore();
+
   return useQuery<ProfileResponseDto, Error>({
     queryKey: PROFILE_QUERY_KEYS.profileByUserId(userId),
-    queryFn: () => profileApi.getProfileByUserId(userId),
+    queryFn: async () => {
+      setLoading(true);
+      try {
+        const response = await profileApi.getProfileByUserId(userId);
+        setCurrentProfile(response.data);
+        setError(null);
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to fetch profile';
+        setError(errorMessage);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
     enabled: enabled && userId > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 1,
@@ -91,9 +224,26 @@ export const useProfileByUsername = (
   username: string,
   enabled: boolean = true
 ) => {
+  const { setCurrentProfile, setLoading, setError } = useProfileStore();
+
   return useQuery<ProfileResponseDto, Error>({
     queryKey: PROFILE_QUERY_KEYS.profileByUsername(username),
-    queryFn: () => profileApi.getProfileByUsername(username),
+    queryFn: async () => {
+      setLoading(true);
+      try {
+        const response = await profileApi.getProfileByUsername(username);
+        setCurrentProfile(response.data);
+        setError(null);
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to fetch profile';
+        setError(errorMessage);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
     enabled: enabled && username.length > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 1,
@@ -105,9 +255,25 @@ export const useSearchProfiles = (
   params: SearchProfilesParams,
   enabled: boolean = true
 ) => {
+  const { setLoading, setError } = useProfileStore();
+
   return useQuery<ProfileSearchResponseDto, Error>({
     queryKey: PROFILE_QUERY_KEYS.searchProfiles(params),
-    queryFn: () => profileApi.searchProfiles(params),
+    queryFn: async () => {
+      setLoading(true);
+      try {
+        const response = await profileApi.searchProfiles(params);
+        setError(null);
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to search profiles';
+        setError(errorMessage);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
     enabled: enabled && params.query.length > 0,
     staleTime: 2 * 60 * 1000, // 2 minutes
     retry: 1,

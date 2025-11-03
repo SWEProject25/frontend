@@ -4,7 +4,6 @@ interface IconOptions {
   path: string;
   viewBox?: number;
   size?: string;
-  children?: ReactNode;
   title?: string;
   disabled?: boolean;
   tooltip?: boolean;
@@ -13,22 +12,24 @@ interface IconOptions {
   hoverColor?: string;
   width?: string;
   height?: string;
+  dataTestId?: string;
 }
 export default function Icon({
   path,
   viewBox = 24,
   size = 'w-5 h-5',
   title = '',
-  children,
   disabled = false,
   color = disabled ? 'text-primary/50' : 'text-primary',
   hoverColor = !disabled ? 'bg-icon-hover' : '',
   width = 'h-9',
   height = 'w-9',
   onClick,
+  dataTestId = 'icon',
 }: IconOptions) {
   const icon = (
     <div
+      data-testid={dataTestId}
       onClick={onClick}
       className={` relative flex items-center justify-center ${width} ${height}  ${!disabled && 'hover:cursor-pointer'} rounded-full  hover:${hoverColor}`}
     >
@@ -41,7 +42,6 @@ export default function Icon({
           <path d={path}></path>
         </g>
       </svg>
-      {children}
     </div>
   );
 

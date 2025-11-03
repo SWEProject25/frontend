@@ -288,10 +288,7 @@ export const authApi = {
     throw new ApiError('Failed to parse current user', 500, result);
   },
 
-  oAuthLogin(
-    provider: string,
-    callback: (user: UserResponse | Record<string, unknown>) => void
-  ): void {
+  oAuthLogin(provider: string, callback: (user: UserResponse) => void): void {
     const width = AUTH_CLIENT_CONFIG.POPUP_WIDTH;
     const height = AUTH_CLIENT_CONFIG.POPUP_HEIGHT;
     const left = AUTH_CLIENT_CONFIG.LEFT_MARGIN;
@@ -324,7 +321,7 @@ export const authApi = {
       const { user } = payload.data;
 
       if (user) {
-        callback(user);
+        callback(user as UserResponse);
         window.removeEventListener('message', handleMessage);
       }
     }

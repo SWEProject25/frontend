@@ -1,3 +1,4 @@
+import { MEDIA_TYPES } from '@/features/media/constants/mediaTypes';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {

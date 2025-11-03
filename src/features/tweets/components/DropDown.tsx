@@ -42,19 +42,21 @@ export default function DropDown({ children, items, onOpened }: DropProps) {
       <Dropdown
         onOpenChange={(open) => {
           setIsOpened(open);
-          onOpened && onOpened(open);
+          if (onOpened) {
+            onOpened(open);
+          }
         }}
         className="p-0"
       >
         <DropdownTrigger>
-          <button
+          <span
             className="h-auto w-auto"
             onClick={() => {
               setIsOpened(true);
             }}
           >
             {children}
-          </button>
+          </span>
         </DropdownTrigger>
         {/* Position the dropdown menu at top right of tweet */}
         <div className="w-full">

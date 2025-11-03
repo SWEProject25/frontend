@@ -1,25 +1,29 @@
+'use client';
 import React from 'react';
-import Image from 'next/image';
 import { MoreHorizontal } from 'lucide-react';
+import Avatar from '@/components/generic/Avatar';
+import { useAuthStore } from '@/features/authentication/store/authStore';
 
 export default function ProfileSection() {
+  const user = useAuthStore((s) => s.user);
+
+  if (!user) return null;
+
   return (
     <div className="flex items-center justify-between hover:bg-gray-900 rounded-full p-3 mb-3 cursor-pointer transition-colors ">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center relative">
-          <Image
-            src="https://avatar.iran.liara.run/public/42"
-            alt="Profile"
-            width={40}
-            height={40}
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <Avatar
+          avatarImage={user.profileImageUrl ?? undefined}
+          name={user.name}
+          size="sm"
+          position="relative"
+          className="border-0"
+        />
         <div className="hidden xl:block">
           <p className="text-white font-semibold text-sm leading-tight">
-            Ammar Yasser
+            {user.name}
           </p>
-          <p className="text-gray-400 text-sm">@ammar10695</p>
+          <p className="text-gray-400 text-sm">@{user.username}</p>
         </div>
       </div>
       <MoreHorizontal className="text-white hidden xl:block" />

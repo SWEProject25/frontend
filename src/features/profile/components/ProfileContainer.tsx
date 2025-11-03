@@ -1,36 +1,43 @@
 import React from 'react';
-import Cover from '../../../components/generic/Cover';
-import Avatar from '../../../components/generic/Avatar';
+import Cover from '@/components/generic/Cover';
+import Avatar from '@/components/generic/Avatar';
 import ActionsPanel from './ActionsPanel';
 import UserInfo from './UserInfo';
 import Description from './Description';
 import UserDetails from './UserDetails';
 import FollowStats from './FollowStats';
 import { UserProfile } from '../types/api';
-import { mockCurrentUserProfile } from '../../../mocks/mockData';
 import { useProfile } from '../hooks';
 
 interface ProfileContainerProps {
   profileData: UserProfile;
+  isMine: boolean;
 }
 
-const ProfileContainer = ({ profileData }: ProfileContainerProps) => {
+const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
   const { handleSaveProfile, isUpdating } = useProfile();
 
   return (
     <div className="flex flex-col w-[600px] mx-auto relative">
-      <Cover coverImage={profileData.bannerImageUrl || ''} />
-      <Avatar avatarImage={profileData.profileImageUrl || ''} />
+      <Cover coverImage={profileData.banner_image_url || ''} />
+      <Avatar
+        avatarImage={profileData.profile_image_url}
+        name={profileData.name}
+        className="border-2 hover:brightness-75 cursor-pointer"
+      />
       <ActionsPanel
-        isOwnProfile={profileData.id === mockCurrentUserProfile.id}
+        isOwnProfile={isMine}
         isFollowing={false}
         onFollow={() => console.log('Follow clicked')}
         onUnfollow={() => console.log('Unfollow clicked')}
         userData={{
           name: profileData.name,
           bio: profileData.bio || '',
-          profileImage: profileData.profileImageUrl || '',
-          bannerImage: profileData.bannerImageUrl || '',
+          profileImage: profileData.profile_image_url || '',
+          bannerImage: profileData.banner_image_url || '',
+          location: profileData.location || '',
+          website: profileData.website || '',
+          birthDate: profileData.birth_date || '',
         }}
         onSaveProfile={handleSaveProfile}
         isUpdating={isUpdating}
@@ -38,7 +45,11 @@ const ProfileContainer = ({ profileData }: ProfileContainerProps) => {
       <UserInfo name={profileData.name} username={profileData.User.username} />
       <div className="flex flex-col items-start px-4 gap-3 w-full">
         <Description bio={profileData.bio || ''} />
-        <UserDetails joinDate={profileData.createdAt} />
+        <UserDetails
+          joinDate={profileData.created_at}
+          location="Giza"
+          website="mrfathi.tech"
+        />
         <FollowStats
           followingCount={0} // TODO: Add to API
           followersCount={0} // TODO: Add to API
