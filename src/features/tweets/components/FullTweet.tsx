@@ -13,16 +13,21 @@ import { TimelineFeed } from '@/features/timeline/types/api';
 import { GrokIcon } from '@/components/ui/icons/BrandIcons';
 import { DropIcon } from '@/components/ui/icons/UIIcons';
 import { TWEET_DROPDOWN_ITEMS } from '../constants';
+import Loader from '@/components/generic/Loader';
 
 function FullTweet({
   data,
-  reply,
+  replies,
 }: {
   data: TimelineFeed | null;
-  reply: TimelineFeed | null;
+  replies: TimelineFeed[] | null;
 }) {
-  if (!data || !reply) {
-    return <div>Loading...</div>;
+  if (!data || !replies) {
+    return (
+      <div className="flex justify-center items-center h-32">
+        <Loader />
+      </div>
+    );
   }
   const user = {
     id: data.userId,
@@ -37,6 +42,7 @@ function FullTweet({
   };
 
   const actionsStats = {
+    postId: data.postId,
     likesCount: data.likesCount,
     retweetsCount: data.retweetsCount,
     commentsCount: data.commentsCount,
@@ -74,11 +80,6 @@ function FullTweet({
           <Content content={content} />
           <div className="flex items-center space-x-1">
             <Timing time={data.date} full={true} />
-            {/* <span className="text-gray-400 text-sm"> · </span>
-            <span className="text-gray-200 bold text-sm">
-              {data.Actions.views}{' '}
-              <span className="text-gray-400 text-sm">Views</span>
-            </span> */}
           </div>
           <div className="border-b border-gray-700 my-2" />
           <Actions stats={actionsStats} full={true} />
@@ -86,9 +87,9 @@ function FullTweet({
         </div>
       </div>
       <div>
-        <Tweet data={reply} />
-        <Tweet data={reply} />
-        <Tweet data={reply} />
+        {replies.map((reply, index) => (
+          <Tweet key={index} data={reply} />
+        ))}
       </div>
     </div>
   );

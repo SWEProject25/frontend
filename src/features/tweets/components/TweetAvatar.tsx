@@ -9,6 +9,7 @@ type User = {
   username: string;
   verified: boolean;
   avatar: string | null;
+  isFollowedByMe?: boolean;
 };
 
 export default function TweetAvatar({

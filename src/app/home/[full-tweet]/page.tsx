@@ -2,74 +2,19 @@
 import React from 'react';
 import FullTweet from '@/features/tweets/components/FullTweet';
 import { useTweetStore } from '@/features/tweets/store/tweetStore';
+import Replies from '@/features/tweets/components/Replies';
+import { useGetRepliesByTweetId } from '@/features/tweets/hooks/tweetQueries';
 
 function Page() {
-  // const time = new Date(Date.now() - 250 * 30 * 10 * 100 * 1000 * 60);
-  // const data = {
-  //   id: '1',
-  //   content: {
-  //     text: 'Tweet content goes here. This is a sample tweet to demonstrate the layout.',
-  //     media: [{ url: '/Personal photo.jpeg', type: 'image' }],
-  //   },
-  //   user: {
-  //     name: 'Omda Hancker',
-  //     username: '@mohamedemad',
-  //     avatar: '/apple.png',
-  //     bio: 'Developer at XYZ. Love coding and coffee.',
-  //     following: 150,
-  //     followers: '2.5K',
-  //     isVerified: true,
-  //     isFollowed: false,
-  //   },
-  //   time: time,
-  //   Actions: {
-  //     replies: 2,
-  //     retweets: 4,
-  //     likes: 24,
-  //     bookmarks: 10,
-  //     views: '1.5K',
-  //     booked: true,
-  //     shared: false,
-  //     liked: false,
-  //     reposted: false,
-  //   },
-  // };
+  const tweet = useTweetStore((store) => store.currentTweet);
 
-  // const replyData = {
-  //   id: '2',
-  //   content: {
-  //     text: ' tweet to demonstrate the layout.',
-  //     media: [],
-  //   },
-  //   user: {
-  //     name: 'Omda Hancker',
-  //     username: '@mohamedemad',
-  //     avatar: '/apple.png',
-  //     bio: 'Developer at XYZ. Love coding and coffee.',
-  //     following: 150,
-  //     followers: '2.5K',
-  //     isVerified: true,
-  //     isFollowed: false,
-  //   },
-  //   time: time,
-  //   Actions: {
-  //     replies: 2,
-  //     retweets: 4,
-  //     likes: 24,
-  //     bookmarks: 10,
-  //     views: '1.5K',
-  //     booked: true,
-  //     shared: false,
-  //     liked: false,
-  //     reposted: false,
-  //   },
-  // };
+  const repliesResponse = useGetRepliesByTweetId(tweet?.postId || 0);
+  const replies = repliesResponse?.data?.data || null;
 
-  const data = useTweetStore((store) => store.currentTweet);
-  console.log('FullTweet Page Rendered with data:', data);
   return (
     <>
-      <FullTweet data={data} reply={data} />
+      <FullTweet data={tweet} replies={replies} />
+      {/* <Replies id={tweet?.postId || 0} /> */}
     </>
   );
 }

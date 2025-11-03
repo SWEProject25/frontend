@@ -15,7 +15,7 @@ function Action({
   isColored,
 }: {
   icon: React.ReactNode;
-  count?: string;
+  count?: number;
   label?: string;
   color: string;
   stopPropagation?: boolean;

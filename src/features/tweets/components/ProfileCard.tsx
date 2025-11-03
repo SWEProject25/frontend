@@ -11,6 +11,7 @@ type User = {
   username: string;
   verified: boolean;
   avatar: string | null;
+  isFollowedByMe?: boolean;
 };
 
 export default function ProfileCard({ data }: { data: User }) {
@@ -22,7 +23,7 @@ export default function ProfileCard({ data }: { data: User }) {
           name={data.name}
           username={data.username}
         />
-        <FollowButton isFollowed={true} />
+        <FollowButton isFollowed={data.isFollowedByMe} />
       </div>
       <div className="mt-3">
         <div className="flex items-center space-x-1">
