@@ -6,6 +6,7 @@ export interface FormField {
   placeholder?: string;
   required?: boolean;
   maxLength?: number;
+  minLength?: number;
   showCharCount?: boolean;
   showPasswordToggle?: boolean;
   disabled?: boolean;

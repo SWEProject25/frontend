@@ -10,6 +10,7 @@ import {
 export interface UseOTPInputProps {
   length: number;
   onComplete: (otp: string) => void;
+  onChange?: (otp: string) => void;
   error?: string;
   onClearError?: () => void;
 }
@@ -31,6 +32,7 @@ export interface UseOTPInputReturn {
 export function useOTPInput({
   length,
   onComplete,
+  onChange,
   error,
   onClearError,
 }: UseOTPInputProps): UseOTPInputReturn {
@@ -56,6 +58,11 @@ export function useOTPInput({
       newOtp[index] = value;
       setOtp(newOtp);
 
+      // Call onChange with current OTP value (for partial updates)
+      if (onChange) {
+        onChange(newOtp.join(''));
+      }
+
       // Move to next input
       if (value && index < length - 1) {
         const nextIndex = getNextOTPIndex(index, length);
@@ -68,7 +75,7 @@ export function useOTPInput({
         onComplete(newOtp.join(''));
       }
     },
-    [otp, length, error, onClearError, onComplete]
+    [otp, length, error, onClearError, onChange, onComplete]
   );
 
   const handleKeyDown = useCallback(
@@ -89,10 +96,15 @@ export function useOTPInput({
           const newOtp = [...otp];
           newOtp[index] = '';
           setOtp(newOtp);
+
+          // Call onChange with updated OTP value
+          if (onChange) {
+            onChange(newOtp.join(''));
+          }
         }
       }
     },
-    [otp, error, onClearError]
+    [otp, error, onClearError, onChange]
   );
 
   const handlePaste = useCallback(
@@ -123,7 +135,11 @@ export function useOTPInput({
     if (onClearError) {
       onClearError();
     }
-  }, [length, onClearError]);
+    // Notify parent that OTP has been cleared
+    if (onChange) {
+      onChange('');
+    }
+  }, [length, onClearError, onChange]);
 
   return {
     otp,

@@ -1,6 +1,5 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { authApi } from '../services/authApi';
 import { CreateUserDto, LoginDto } from '../types/api';
 import { formatBirthDate } from '../utils/dateUtils';
 import { AUTH_CLIENT_CONFIG } from '../constants/api';
@@ -22,8 +21,12 @@ export function useAuthHandlers() {
     register,
     verifyOTP,
     oAuthLogin,
+    forgotPassword,
+    resetPassword,
     isLoginLoading,
     isRegisterLoading,
+    isForgotPasswordLoading,
+    isResetPasswordLoading,
   } = useAuth();
 
   // Small helpers to update form state consistently
@@ -249,7 +252,7 @@ export function useAuthHandlers() {
               return false;
             }
             try {
-              const resp = await authApi.forgotPassword({
+              const resp = await forgotPassword({
                 email: normalizeEmail(data.email),
                 type: 'WEB',
               });
@@ -290,7 +293,7 @@ export function useAuthHandlers() {
         return false;
       }
     },
-    []
+    [forgotPassword]
   );
 
   const handleResetPassword = useCallback(
@@ -302,7 +305,7 @@ export function useAuthHandlers() {
     }): Promise<boolean> => {
       try {
         setLoading(true);
-        const resp = await authApi.resetPassword({
+        const resp = await resetPassword({
           userId: payload.userId,
           token: payload.token,
           newPassword: payload.newPassword,
@@ -327,7 +330,7 @@ export function useAuthHandlers() {
         return false;
       }
     },
-    []
+    [resetPassword]
   );
 
   const clearFormState = useCallback((fieldName?: string) => {
@@ -350,7 +353,12 @@ export function useAuthHandlers() {
   return {
     formState: {
       ...formState,
-      isLoading: formState.isLoading || isLoginLoading || isRegisterLoading,
+      isLoading:
+        formState.isLoading ||
+        isLoginLoading ||
+        isRegisterLoading ||
+        isForgotPasswordLoading ||
+        isResetPasswordLoading,
     },
     handleSocialAuth,
     handleLogin,
