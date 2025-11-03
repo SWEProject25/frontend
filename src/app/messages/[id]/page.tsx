@@ -3,6 +3,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import ChatWindow from '@/features/messages/components/ChatWindow';
 import ConversationsList from '@/features/messages/components/ConversationsList';
+import '@/features/messages/utils/mockMessages';
 
 export default function MessagePage() {
   const params = useParams();
@@ -20,18 +21,15 @@ export default function MessagePage() {
 
   return (
     <div className="flex h-screen bg-black w-full">
-      {/* Conversations List - Only visible on desktop (lg+) */}
-      <div className="hidden lg:flex lg:w-[400px] border-r border-gray-800 flex-shrink-0">
+      <div className="hidden lg:flex lg:w-[400px] border-r border-gray-800 shrink-0 flex-col overflow-y-auto">
         <ConversationsList
           selectedConversation={conversationId}
           onSelectConversation={handleSelectConversation}
         />
       </div>
 
-      {/* Chat Window Container - Takes remaining space */}
-      <div className="flex-1 flex flex-col min-w-0 bg-black">
-        {/* Back button for mobile/tablet (< lg) */}
-        <div className="lg:hidden bg-black/95 backdrop-blur-sm border-b border-gray-800">
+      <div className="flex-1 flex flex-col min-w-0 bg-black overflow-hidden">
+        <div className="lg:hidden bg-black/95 backdrop-blur-sm border-b border-gray-800 shrink-0">
           <div className="p-4">
             <button
               onClick={() => router.push('/messages')}
@@ -44,7 +42,6 @@ export default function MessagePage() {
           </div>
         </div>
 
-        {/* Chat Window - Full width of available space */}
         <div className="flex-1 overflow-hidden">
           <ChatWindow conversationId={conversationId} />
         </div>

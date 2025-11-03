@@ -11,14 +11,19 @@ type User = {
   username: string;
   verified: boolean;
   avatar: string | null;
+  isFollowedByMe?: boolean;
 };
 
 export default function ProfileCard({ data }: { data: User }) {
   return (
     <div className="w-64 h-full bg-black text-white rounded-2xl p-4 shadow-lg shadow-white/20 border border-gray-800 hover:border-gray-700 transition-all duration-200 mt-2">
       <div className="flex justify-between items-start">
-        <CardAvatar size={48} avatar={data.avatar} />
-        <FollowButton isFollowed={true} />
+        <CardAvatar
+          avatar={data.avatar}
+          name={data.name}
+          username={data.username}
+        />
+        <FollowButton isFollowed={data.isFollowedByMe} />
       </div>
       <div className="mt-3">
         <div className="flex items-center space-x-1">

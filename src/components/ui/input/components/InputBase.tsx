@@ -11,13 +11,43 @@ export function InputBase({
   styleProps,
   ...inputProps
 }: InputBaseProps) {
-  // If the caller passed a data-testid use it, otherwise try to provide a stable default
   const providedTestId = (
     inputProps as unknown as Record<string, string | undefined>
   )['data-testid'];
-  const nameAttr = inputProps.name as string | undefined;
+  const nameAttr = (inputProps as Record<string, unknown>).name as
+    | string
+    | undefined;
   const computedTestId =
     providedTestId ?? (nameAttr ? `auth-input-${nameAttr}` : undefined);
+
+  const isTextarea =
+    (inputProps as Record<string, unknown>).type === 'textarea';
+
+  if (isTextarea) {
+    const textareaProps =
+      inputProps as React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+    return (
+      <textarea
+        className={cn(
+          getFieldBaseStyles(styleProps),
+          getInputPadding(styleProps.shouldFloatLabel || false),
+          'min-h-[140px] resize-vertical',
+          className
+        )}
+        onFocus={
+          onFocus as unknown as React.FocusEventHandler<HTMLTextAreaElement>
+        }
+        onBlur={
+          onBlur as unknown as React.FocusEventHandler<HTMLTextAreaElement>
+        }
+        ref={inputRef as React.RefObject<HTMLTextAreaElement>}
+        placeholder=""
+        data-testid={computedTestId}
+        rows={textareaProps.rows ?? 6}
+        {...textareaProps}
+      />
+    );
+  }
 
   return (
     <input
@@ -26,12 +56,12 @@ export function InputBase({
         getInputPadding(styleProps.shouldFloatLabel || false),
         className
       )}
-      onFocus={onFocus}
-      onBlur={onBlur}
-      ref={inputRef}
+      onFocus={onFocus as unknown as React.FocusEventHandler<HTMLInputElement>}
+      onBlur={onBlur as unknown as React.FocusEventHandler<HTMLInputElement>}
+      ref={inputRef as React.RefObject<HTMLInputElement>}
       placeholder=""
       data-testid={computedTestId}
-      {...inputProps}
+      {...(inputProps as React.InputHTMLAttributes<HTMLInputElement>)}
     />
   );
 }

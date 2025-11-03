@@ -1,4 +1,9 @@
 import Label from './Label';
+import {
+  ACTION_COLOR_MAP,
+  ACTION_GLOW_MAP,
+  ACTION_ACTIVE_MAP,
+} from '../constants';
 
 function Action({
   icon,
@@ -10,33 +15,13 @@ function Action({
   isColored,
 }: {
   icon: React.ReactNode;
-  count?: string;
+  count?: number;
   label?: string;
   color: string;
   stopPropagation?: boolean;
   onClick?: () => void;
   isColored?: boolean;
 }) {
-  // Icon and glow color classes
-  const colorMap: Record<string, string> = {
-    blue: 'group-hover:text-blue-400',
-    green: 'group-hover:text-green-500',
-    rose: 'group-hover:text-rose-400',
-    gray: 'group-hover:text-gray-400',
-  };
-  // Lower brightness for glow
-  const glowMap: Record<string, string> = {
-    blue: 'group-hover:before:bg-blue-400/20',
-    green: 'group-hover:before:bg-green-500/20',
-    rose: 'group-hover:before:bg-rose-400/20',
-    gray: 'group-hover:before:bg-gray-400/20',
-  };
-  const activeMap: Record<string, string> = {
-    blue: 'text-blue-400',
-    green: 'text-green-500',
-    rose: 'text-rose-400',
-    gray: 'text-gray-500',
-  };
   // All hints gray, text white
   return (
     <div className="flex flex-col items-center group relative">
@@ -62,19 +47,19 @@ function Action({
             before:opacity-0
             group-hover:before:opacity-100
             before:z-[1]
-            ${glowMap[color]}
+            ${ACTION_GLOW_MAP[color]}
             transition-all
           `}
         >
           <span
-            className={`transition-colors ${colorMap[color]} ${isColored !== undefined ? (isColored === true ? activeMap[color] : '') : ''}`}
+            className={`transition-colors ${ACTION_COLOR_MAP[color]} ${isColored !== undefined ? (isColored === true ? ACTION_ACTIVE_MAP[color] : '') : ''}`}
           >
             {icon}
           </span>
         </button>
         {count !== undefined && (
           <span
-            className={`text-xs transition-colors ${colorMap[color]} ${isColored !== undefined ? (isColored === true ? activeMap[color] : '') : ''}`}
+            className={`text-xs transition-colors ${ACTION_COLOR_MAP[color]} ${isColored !== undefined ? (isColored === true ? ACTION_ACTIVE_MAP[color] : '') : ''}`}
           >
             {count}
           </span>

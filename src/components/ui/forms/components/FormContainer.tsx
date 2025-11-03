@@ -141,7 +141,11 @@ export function FormContainer(
   // Event handlers
   const handleInputChange = useCallback(
     (fieldName: string) =>
-      (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      (
+        e: React.ChangeEvent<
+          HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+        >
+      ) => {
         const value = e.target.value;
         setFormData((prev) => ({ ...prev, [fieldName]: value }));
 

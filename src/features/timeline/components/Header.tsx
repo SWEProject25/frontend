@@ -14,7 +14,7 @@ export default function Header() {
 
   //left-[calc(50%-300px)]
   return (
-    <header className="z-10  flex sticky top-0  w-[599px] bg-black/50 backdrop-blur-md ">
+    <header className="z-10 flex sticky top-0 w-full bg-black/50 backdrop-blur-md">
       <Tabs
         height="h-[53px]"
         selectedValue={selectedTab}

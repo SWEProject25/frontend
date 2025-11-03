@@ -16,7 +16,11 @@ export interface CaptchaInputProps {
 export interface EmailInputFieldProps {
   label: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => void;
   onBlur: () => void;
   placeholder?: string;
   required?: boolean;

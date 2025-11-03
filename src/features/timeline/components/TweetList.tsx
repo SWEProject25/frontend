@@ -4,7 +4,7 @@ import { useTimelineFeed } from '../hooks/timelineQueries';
 import React from 'react';
 import Tweet from '@/features/tweets/components/Tweet';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
-import InfiniteScrollContainer from '@/components/generic/InfiniteScrollContainer';
+// import InfiniteScrollContainer from '@/components/generic/InfiniteScrollContainer';
 import Loader from '@/components/generic/Loader';
 
 export default function TweetList() {
@@ -41,7 +41,7 @@ export default function TweetList() {
         hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
         hasInitialData={hasInitialData}
       >
-        <div className="flex flex-col gap-2 w-full">{renderTweets} </div>
+        <div className="flex flex-col w-full">{renderTweets} </div>
         {/* <ul className="w-full">{renderTweets} </ul> */}
       </InfiniteScroll>
     </>

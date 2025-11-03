@@ -2,7 +2,9 @@
  * Handles label click behavior for input fields
  */
 export const handleLabelClick = (
-  inputRef: React.RefObject<HTMLInputElement>
+  inputRef: React.RefObject<
+    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  >
 ) => {
   inputRef.current?.focus();
 };
@@ -12,7 +14,9 @@ export const handleLabelClick = (
  */
 export const handlePasswordToggleClick = (
   e: React.MouseEvent,
-  inputRef: React.RefObject<HTMLInputElement>
+  inputRef: React.RefObject<
+    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  >
 ) => {
   e.preventDefault();
   e.stopPropagation();

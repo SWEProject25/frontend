@@ -1,6 +1,5 @@
 import { GIF_ENDPOINTS } from '../constants/api';
 import { GifResponse } from '../types/api';
-import GifData from '../types/components';
 
 class ApiError extends Error {
   constructor(

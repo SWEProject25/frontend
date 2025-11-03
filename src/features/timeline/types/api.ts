@@ -57,8 +57,8 @@ export interface TimelineTweet {
   media: Media[];
 }
 export interface TimelineFeed extends TimelineTweet {
-  isRepost: boolean;
-  isQuote: boolean;
+  isRepost?: boolean;
+  isQuote?: boolean;
   originalPostData?: TimelineTweet;
 }
 export interface TimelineFeedDtoResponse {

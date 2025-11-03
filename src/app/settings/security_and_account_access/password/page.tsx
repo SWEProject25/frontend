@@ -26,8 +26,12 @@ export default function PasswordPage() {
   };
 
   const handlePasswordChange =
-    (field: 'current' | 'new' | 'confirm') =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (field: keyof typeof passwords) =>
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
       setPasswords((prev) => ({
         ...prev,
         [field]: e.target.value,
