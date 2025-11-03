@@ -57,8 +57,9 @@ export default function NewConversationModal({
 
           <div className="bg-blue-900/20 border border-blue-800 rounded-lg p-3">
             <p className="text-sm text-blue-400">
-              💡 <strong>Tip:</strong> You need to know the user&apos;s ID to start a
-              conversation. You can find user IDs in profiles or user lists.
+              💡 <strong>Tip:</strong> You need to know the user&apos;s ID to
+              start a start a conversation. You can find user IDs in profiles or
+              user lists.
             </p>
           </div>
 

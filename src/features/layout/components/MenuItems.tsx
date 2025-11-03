@@ -9,6 +9,7 @@ import {
   Users,
   User,
   MoreHorizontal,
+  Settings,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -58,6 +59,12 @@ export default function MenuItems() {
       label: 'Profile',
       href: '/profile',
       hideOnShortScreen: false,
+    },
+    {
+      icon: Settings,
+      label: 'Settings',
+      href: '/settings',
+      hideOnShortScreen: true,
     },
     {
       icon: MoreHorizontal,

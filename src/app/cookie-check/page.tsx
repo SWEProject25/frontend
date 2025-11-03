@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function CookieCheckPage() {
   const [cookies, setCookies] = useState<string>('');
@@ -56,9 +57,9 @@ export default function CookieCheckPage() {
             <li>Open this page in BOTH browsers you want to test</li>
             <li>
               If access_token is missing, go to{' '}
-              <a href="/" className="text-blue-400 underline">
+              <Link href="/" className="text-blue-400 underline">
                 Login Page
-              </a>
+              </Link>
             </li>
             <li>After login, refresh this page to see the token</li>
             <li>Once BOTH browsers show the token, you can test messaging</li>

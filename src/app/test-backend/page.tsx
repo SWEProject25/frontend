@@ -128,8 +128,8 @@ export default function BackendTestPage() {
         <div className="mt-4 p-4 bg-gray-900 border border-gray-800 rounded-lg">
           <h3 className="font-semibold mb-2">🧪 How to Use:</h3>
           <ol className="space-y-1 text-sm list-decimal list-inside">
-            <li>Make sure you're logged in (user ID 6)</li>
-            <li>Click "Run Test" on each endpoint</li>
+            <li>Make sure you&apos;re logged in (user ID 6)</li>
+            <li>Click &quot;Run Test&quot; on each endpoint</li>
             <li>Check if status is SUCCESS (green) or FAILED (red)</li>
             <li>Review the response data</li>
             <li>Share results with backend team if any fail</li>

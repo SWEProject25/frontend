@@ -132,11 +132,12 @@ export default function AuthDebugPage() {
           <div className="border border-yellow-700 bg-yellow-900/20 rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">🔍 Debugging Steps</h2>
             <ol className="space-y-2 text-sm list-decimal list-inside">
-              <li>Check if "Is Authenticated" shows ✅ Yes</li>
-              <li>Check if "User ID" is a number (not null)</li>
-              <li>Check if "access_token" cookie exists</li>
+              <li>Check if &quot;Is Authenticated&quot; shows ✅ Yes</li>
+              <li>Check if &quot;User ID&quot; is a number (not null)</li>
+              <li>Check if &quot;access_token&quot; cookie exists</li>
               <li>
-                Click "Test Backend /auth/me" to verify backend recognizes you
+                Click &quot;Test Backend /auth/me&quot; to verify backend
+                recognizes you
               </li>
               <li>If backend returns 401, you need to login again</li>
             </ol>
@@ -171,7 +172,8 @@ export default function AuthDebugPage() {
                   Issue: No access_token cookie
                 </div>
                 <div className="text-gray-300">
-                  → You're not logged in. Go to login page and authenticate.
+                  → You&apos;re not logged in. Go to login page and
+                  authenticate.
                 </div>
               </div>
             </div>

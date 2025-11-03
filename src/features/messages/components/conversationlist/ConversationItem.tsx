@@ -1,8 +1,8 @@
-import NextImage from 'next/image';
+import Avatar from '@/components/generic/Avatar';
 
 interface ConversationItemProps {
   id: number;
-  avatar: string;
+  avatar?: string;
   name: string;
   username: string;
   isVerified: boolean;
@@ -33,12 +33,12 @@ export default function ConversationItem({
     >
       <div className="flex items-start gap-3">
         {/* Avatar */}
-        <NextImage
-          src={avatar}
-          alt={name}
-          width={48}
-          height={48}
-          className="rounded-full shrink-0"
+        <Avatar
+          avatarImage={avatar}
+          name={name}
+          size="sm"
+          position="relative"
+          className="shrink-0"
         />
 
         {/* Content */}

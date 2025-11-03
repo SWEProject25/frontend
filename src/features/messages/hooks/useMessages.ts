@@ -184,6 +184,7 @@ export const useMessages = (onError?: (err: any) => void) => {
     markMessagesAsSeen,
     markAllMessagesAsSeen,
     onError,
+    getCurrentUserId,
   ]);
 
   // Helper functions
@@ -338,6 +339,7 @@ export const useMessages = (onError?: (err: any) => void) => {
         }, MESSAGES_CONSTANTS.TYPING_TIMEOUT);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

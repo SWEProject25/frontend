@@ -75,13 +75,15 @@ export function useConversationsList(
         console.log('📥 Raw conversations from backend:', conversations);
 
         if (Array.isArray(conversations)) {
-          const normalizedConversations = conversations.map((conv: Record<string, unknown>) => {
-            console.log('📋 Individual conversation:', conv);
-            return {
-              ...conv,
-              id: conv.conversationId || conv.id,
-            };
-          });
+          const normalizedConversations = conversations.map(
+            (conv: Record<string, unknown>) => {
+              console.log('📋 Individual conversation:', conv);
+              return {
+                ...conv,
+                id: conv.conversationId || conv.id,
+              } as any;
+            }
+          );
           setConversations(normalizedConversations);
         }
       } catch (err) {
@@ -118,10 +120,12 @@ export function useConversationsList(
         const conversations = await fetchConversations();
 
         if (Array.isArray(conversations)) {
-          const normalizedConversations = conversations.map((conv: Record<string, unknown>) => ({
-            ...conv,
-            id: conv.conversationId || conv.id,
-          }));
+          const normalizedConversations = conversations.map(
+            (conv: Record<string, unknown>) => ({
+              ...conv,
+              id: conv.conversationId || conv.id,
+            })
+          ) as any[];
           setConversations(normalizedConversations);
         }
 
@@ -134,7 +138,9 @@ export function useConversationsList(
       }
     } catch (err: unknown) {
       console.error('Error creating conversation:', err);
-      alert(err instanceof Error ? err.message : 'Failed to create conversation.');
+      alert(
+        err instanceof Error ? err.message : 'Failed to create conversation.'
+      );
     } finally {
       setCreatingConvo(false);
     }
@@ -154,25 +160,41 @@ export function useConversationsList(
   }, []);
 
   const getConversationDisplay = useCallback(
-    (conversation: Record<string, unknown>) => {
+    (
+      conversation: Record<string, unknown>
+    ): {
+      displayName: string;
+      displayUsername: string;
+      displayAvatar: string;
+      isVerified: boolean;
+      isTyping: boolean;
+      lastMessageText: string;
+      timestamp: string;
+    } => {
       console.log('🔍 Processing conversation for display:', conversation);
 
       // Backend returns 'user' object, not 'participants' array
-      const otherUser = (conversation.user || (conversation.participants as unknown[])?.[0]) as Record<string, unknown> | undefined;
+      const otherUser = (conversation.user ||
+        (conversation.participants as unknown[])?.[0]) as
+        | Record<string, unknown>
+        | undefined;
       console.log('👤 Other user:', otherUser);
 
-      const displayName =
+      const displayName = String(
         conversation.name ||
-        otherUser?.displayName ||
-        otherUser?.name ||
-        'Unknown';
-      const displayUsername =
-        conversation.username || otherUser?.username || 'unknown';
-      const displayAvatar =
+          otherUser?.displayName ||
+          otherUser?.name ||
+          'Unknown'
+      );
+      const displayUsername = String(
+        conversation.username || otherUser?.username || 'unknown'
+      );
+      const displayAvatar = String(
         conversation.avatar ||
-        otherUser?.profile_image_url ||
-        otherUser?.avatar ||
-        'https://avatar.iran.liara.run/public/1';
+          otherUser?.profile_image_url ||
+          otherUser?.avatar ||
+          ''
+      );
       const isVerified = !!(conversation.verified || otherUser?.verified);
 
       const convId = conversation.conversationId || conversation.id;
@@ -180,7 +202,9 @@ export function useConversationsList(
       const isTyping = usersTypingInConvo.length > 0;
 
       // Check if last message was sent by current user
-      const lastMessage = conversation.lastMessage;
+      const lastMessage = conversation.lastMessage as
+        | Record<string, unknown>
+        | undefined;
       let lastMessageText = 'No messages yet';
 
       if (isTyping) {
@@ -188,14 +212,17 @@ export function useConversationsList(
       } else if (lastMessage?.text) {
         // If current user sent the message, prefix with "You: "
         if (currentUserId && lastMessage.senderId === currentUserId) {
-          lastMessageText = `You: ${lastMessage.text}`;
+          lastMessageText = `You: ${String(lastMessage.text)}`;
         } else {
-          lastMessageText = lastMessage.text;
+          lastMessageText = String(lastMessage.text);
         }
       }
 
-      const timestamp = conversation.lastMessage?.createdAt
-        ? formatTimestamp(conversation.lastMessage.createdAt)
+      const lastMessageObj = conversation.lastMessage as
+        | Record<string, unknown>
+        | undefined;
+      const timestamp = lastMessageObj?.createdAt
+        ? formatTimestamp(lastMessageObj.createdAt as string)
         : '';
 
       return {

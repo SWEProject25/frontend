@@ -38,21 +38,45 @@ export const useConversationDetails = (
 ): ConversationDetails => {
   return useMemo(() => {
     // Backend returns 'user' object with displayName and profile_image_url
-    const otherUser = conversation?.user || conversation?.participants?.[0];
+    const user = conversation?.user;
+    const participant = conversation?.participants?.[0];
+
+    // Handle both user and participant types
+    let displayName = 'Unknown';
+    if (conversation?.name) {
+      displayName = conversation.name;
+    } else if (user?.displayName) {
+      displayName = user.displayName;
+    } else if (user?.name) {
+      displayName = user.name;
+    } else if (participant?.name) {
+      displayName = participant.name;
+    }
+
+    let profileImageUrl = DEFAULT_AVATAR;
+    if (conversation?.avatar) {
+      profileImageUrl = conversation.avatar;
+    } else if (user?.profile_image_url) {
+      profileImageUrl = user.profile_image_url;
+    } else if (user?.avatar) {
+      profileImageUrl = user.avatar;
+    } else if (participant?.avatar) {
+      profileImageUrl = participant.avatar;
+    }
+
+    const isVerified = !!(conversation?.verified || user?.verified);
+
+    const username =
+      conversation?.username ||
+      user?.username ||
+      participant?.username ||
+      'unknown';
 
     return {
-      name:
-        conversation?.name ||
-        otherUser?.displayName ||
-        otherUser?.name ||
-        'Unknown',
-      username: conversation?.username || otherUser?.username || 'unknown',
-      avatar:
-        conversation?.avatar ||
-        otherUser?.profile_image_url ||
-        otherUser?.avatar ||
-        DEFAULT_AVATAR,
-      isVerified: conversation?.verified || otherUser?.verified || false,
+      name: displayName,
+      username,
+      avatar: profileImageUrl,
+      isVerified,
     };
   }, [conversation]);
 };
