@@ -5,7 +5,11 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { timelineApi } from '../services/timelineAPi';
-import { AddTweetResponse, TimelineFeedDtoResponse } from '../types/api';
+import {
+  AddTweetResponse,
+  TimelineFeed,
+  TimelineFeedDtoResponse,
+} from '../types/api';
 import { useActions } from '../store/useAddTweetStore';
 
 import toasterMessage from '@/components/ui/home/ToasterMessage';
@@ -13,6 +17,7 @@ import { useMediaActions } from '@/features/media/store/useMedia';
 import { useSelectedTab } from '../store/useTimelineStore';
 import { FOLLOWING_TAB } from '../constants/menuName';
 import { TIMELINE_ENDPOINTS } from '../constants/api';
+import { useAuth } from '@/features/authentication/hooks';
 export const TIMELINE_QUERY_KEYS = {
   ADD_TWEET: ['tweet'] as const,
   TIMELINE_FEED_FOR_YOU: ['timeline', 'forYou'] as const,
@@ -22,6 +27,7 @@ export const useAddTweet = () => {
   const { onSuccess, startSending, seterror } = useActions();
   const queryClient = useQueryClient();
   const { clearMedia } = useMediaActions();
+  const user = useAuth().user;
   console.log('inside useAddTweet');
   return useMutation<AddTweetResponse, Error, FormData>({
     mutationFn: async (tweetData) => {
@@ -43,11 +49,61 @@ export const useAddTweet = () => {
         throw error;
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       // queryClient.invalidateQueries({ queryKey: [''] });
       onSuccess();
       clearMedia();
       toasterMessage('Your post was sent.');
+      console.log(data);
+      const newTweet: TimelineFeed = {
+        isRepost: false,
+        isQuote: false,
+        originalPostData: undefined,
+        userId: data.data.user_id,
+        username: data.data.User.username,
+        verified: false,
+        name: user?.name ?? '',
+        avatar: user?.profileImageUrl ?? '',
+        postId: data.data.id,
+        date: data.data.created_at,
+        likesCount: data.data._count.likes,
+        retweetsCount: data.data._count.repostedBy,
+        commentsCount: data.data._count.Replies,
+        isLikedByMe: false,
+        isFollowedByMe: false,
+        isRepostedByMe: false,
+        text: data.data.content,
+        media: data.data.media.map((med) => ({
+          type: med.type.toLowerCase() === 'image' ? 'IMAGE' : 'VIDEO',
+          url: med.media_url,
+        })),
+      };
+      queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
+        TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
+        (old) => {
+          console.log('Old data:', old);
+          if (!old) return old;
+
+          const updated = {
+            ...old,
+            pages: old.pages.map((page, ind) => {
+              if (ind === 0) {
+                return {
+                  ...page,
+                  data: {
+                    ...page.data,
+                    posts: [newTweet, ...page.data.posts],
+                  },
+                };
+              }
+              return page;
+            }),
+          };
+
+          console.log('Updated data:', updated);
+          return updated;
+        }
+      );
     },
     networkMode: 'always',
     onMutate: () => {
