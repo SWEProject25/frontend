@@ -14,15 +14,31 @@ import { GrokIcon } from '@/components/ui/icons/BrandIcons';
 import { DropIcon } from '@/components/ui/icons/UIIcons';
 import { TWEET_DROPDOWN_ITEMS } from '../constants';
 import Loader from '@/components/generic/Loader';
+import { useGetRepliesByTweetId } from '../hooks/tweetQueries';
+import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 
-function FullTweet({
-  data,
-  replies,
-}: {
-  data: TimelineFeed | null;
-  replies: TimelineFeed[] | null;
-}) {
-  if (!data || !replies) {
+function FullTweet({ data }: { data: TimelineFeed | null }) {
+  const {
+    data: repliesResponse,
+    error,
+    isError,
+    isLoading,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+  } = useGetRepliesByTweetId(data?.postId || 0);
+  const pages = repliesResponse?.pages.flat();
+  const renderReplys = pages?.map((group, i) => (
+    <React.Fragment key={i}>
+      {group.data.map((reply, index) => (
+        <Tweet key={index} data={reply} />
+      ))}
+    </React.Fragment>
+  ));
+
+  const hasInitialData = pages ? pages[0].data.length > 0 : false;
+
+  if (!data) {
     return (
       <div className="flex justify-center items-center h-32">
         <Loader />
@@ -50,7 +66,6 @@ function FullTweet({
     isFollowedByMe: data.isFollowedByMe,
     isRepostedByMe: data.isRepostedByMe,
   };
-
   return (
     <div>
       <Header />
@@ -87,9 +102,24 @@ function FullTweet({
         </div>
       </div>
       <div>
-        {replies.map((reply, index) => (
-          <Tweet key={index} data={reply} />
-        ))}
+        {isError ? (
+          <div>Error {error.message}</div>
+        ) : isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <InfiniteScroll
+              isLoadingInitial={isLoading}
+              isLoadingMore={isFetchingNextPage}
+              loadMore={() => hasNextPage && fetchNextPage()}
+              hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
+              hasInitialData={hasInitialData}
+            >
+              <div className="flex flex-col w-full">{renderReplys} </div>
+              {/* <ul className="w-full">{renderTweets} </ul> */}
+            </InfiniteScroll>
+          </>
+        )}
       </div>
     </div>
   );

@@ -31,37 +31,37 @@ export default function Actions({
   const toggleLikeTweet = useToggleLikeTweet(stats.postId);
   const toggleRepostTweet = useToggleRepostTweet(stats.postId);
   function handleLike() {
-    if (stats.isLikedByMe) {
-      if (liked) {
-        setLikeAddr(-1);
-      } else {
-        setLikeAddr(0);
-      }
-    } else {
-      if (liked) {
-        setLikeAddr(0);
-      } else {
-        setLikeAddr(1);
-      }
-    }
-    setLiked(!liked);
+    // if (stats.isLikedByMe) {
+    //   if (liked) {
+    //     setLikeAddr(-1);
+    //   } else {
+    //     setLikeAddr(0);
+    //   }
+    // } else {
+    //   if (liked) {
+    //     setLikeAddr(0);
+    //   } else {
+    //     setLikeAddr(1);
+    //   }
+    // }
+    // setLiked(!liked);
     toggleLikeTweet.mutate();
   }
   function handleRetweet() {
-    if (stats.isRepostedByMe) {
-      if (retweeted) {
-        setRetweetAddr(-1);
-      } else {
-        setRetweetAddr(0);
-      }
-    } else {
-      if (retweeted) {
-        setRetweetAddr(0);
-      } else {
-        setRetweetAddr(1);
-      }
-    }
-    setRetweeted(!retweeted);
+    // if (stats.isRepostedByMe) {
+    //   if (retweeted) {
+    //     setRetweetAddr(-1);
+    //   } else {
+    //     setRetweetAddr(0);
+    //   }
+    // } else {
+    //   if (retweeted) {
+    //     setRetweetAddr(0);
+    //   } else {
+    //     setRetweetAddr(1);
+    //   }
+    // }
+    // setRetweeted(!stats.is);
     toggleRepostTweet.mutate();
   }
   return (
@@ -76,18 +76,19 @@ export default function Actions({
         <Action
           icon={ACTIONS_META[1].icon}
           count={
-            stats.retweetsCount !== undefined
-              ? stats.retweetsCount + retweetAddr
-              : 0
+            stats.retweetsCount
+            // stats.retweetsCount !== undefined
+            //   ? stats.retweetsCount + retweetAddr
+            //   : 0
           }
           label={ACTIONS_META[1].label}
           color={ACTIONS_META[1].color}
           onClick={handleRetweet}
-          isColored={retweeted}
+          isColored={stats.isRepostedByMe}
         />
         <Action
           icon={
-            liked ? (
+            stats.isLikedByMe ? (
               <LikeIconFilled className="w-5 h-5 text-rose-400" />
             ) : (
               ACTIONS_META[2].icon
@@ -99,7 +100,7 @@ export default function Actions({
           label={ACTIONS_META[2].label}
           color={ACTIONS_META[2].color}
           onClick={handleLike}
-          isColored={liked}
+          isColored={stats.isLikedByMe}
         />
         <Action
           icon={ACTIONS_META[3].icon}

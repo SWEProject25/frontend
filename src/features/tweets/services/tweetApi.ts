@@ -82,10 +82,13 @@ export const tweetApi = {
     return handleResponse<{ reposted: boolean }>(response);
   },
 
-  async getRepliesByTweetId(tweetId: number): Promise<ReplyResponseDto> {
+  async getRepliesByTweetId(
+    tweetId: number,
+    page: number = TWEET_CONSTANTS.DEFAULT_PAGE
+  ): Promise<ReplyResponseDto> {
     const response = await fetch(
       `${TWEET_API_CONFIG.BASE_URL}${TWEET_ENDPOINTS.GET_REPLIES_BY_TWEET_ID(tweetId)}?` +
-        `${new URLSearchParams({ page: `${TWEET_CONSTANTS.DEFAULT_PAGE}`, limit: `${TWEET_CONSTANTS.DEFAULT_LIMIT}` })}`,
+        `${new URLSearchParams({ page: `${page}`, limit: `${TWEET_CONSTANTS.DEFAULT_LIMIT}` })}`,
       {
         method: 'GET',
         headers: {
