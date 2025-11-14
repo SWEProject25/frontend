@@ -27,11 +27,11 @@ export default function LayoutWrapper({
         </div>
       )}
 
-      <main className="flex flex-1 flex-row min-h-screen max-w-[942px]">
+      <main className="flex flex-1 flex-row min-h-screen max-w-[1000px]">
         <div className="border-x-border border-x-[1px] flex-1">{children}</div>
 
         {showRightSidebar && (
-          <div className="hidden xl:flex right-0 top-0 h-full">
+          <div className="xl:flex right-0 top-0 h-full w-[390px] hidden">
             <RightSidebar />
           </div>
         )}
