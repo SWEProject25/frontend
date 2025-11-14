@@ -78,7 +78,7 @@ export function useOptimisticTweet() {
   const queryKey = useTimelineQueryKey();
 
   const onMutate = async (tweetId: number, type: string) => {
-    await queryClient.cancelQueries({ queryKey });
+    await queryClient.cancelQueries({ queryKey: queryKey as any });
     const previousFeed =
       queryClient.getQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
         queryKey
