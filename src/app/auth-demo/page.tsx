@@ -6,6 +6,7 @@ import { useAuthModals } from '@/features/authentication/hooks';
 import { CheckIcon, CloseXIcon } from '@/components/ui/icons';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
+import XLoader from '@/components/ui/XLoader';
 
 function AuthDemoContent() {
   const searchParams = useSearchParams();
@@ -215,7 +216,7 @@ function AuthDemoContent() {
 
 export default function AuthDemoPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<XLoader />}>
       <AuthDemoContent />
     </Suspense>
   );
