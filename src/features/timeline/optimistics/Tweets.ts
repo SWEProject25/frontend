@@ -64,7 +64,9 @@ function chooseUpdateTweet(type: string, tweet: TimelineFeed): TimelineFeed {
   }
 }
 
-export function useTimelineQueryKey() {
+export function useTimelineQueryKey():
+  | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING
+  | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU {
   const selectedTab = useSelectedTab();
   if (selectedTab === FOLLOWING_TAB)
     return TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING;
@@ -99,11 +101,10 @@ export function handleErrorOptimisticTweet(
     previousFeed: InfiniteData<TimelineFeedDtoResponse, number> | undefined;
     queryKey:
       | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING
-      | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU
-      | undefined;
+      | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU;
   }
 ) {
-  if (context?.previousFeed && context.queryKey) {
+  if (context?.previousFeed) {
     queryClient.setQueryData(context.queryKey, context.previousFeed);
   }
 }
