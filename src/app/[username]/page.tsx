@@ -9,6 +9,7 @@ import { use } from 'react';
 import { useProfileByUsername } from '@/features/profile/hooks';
 import { useMyProfile } from '@/features/profile/hooks';
 import { useAuthStore } from '@/features/authentication/store/authStore';
+import Loader from '@/components/generic/Loader';
 
 interface UserPageProps {
   params: Promise<{
@@ -50,8 +51,8 @@ const UserPage = ({ params }: UserPageProps) => {
             showArrow={true}
           />
         </div>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-text-secondary">Loading profile...</div>
+        <div className="flex justify-center items-center h-64 mx-4">
+          <Loader />
         </div>
       </main>
     );

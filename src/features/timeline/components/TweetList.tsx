@@ -31,7 +31,9 @@ export default function TweetList() {
   return isError ? (
     <div>Error {error.message}</div>
   ) : isLoading ? (
-    <Loader />
+    <div className="flex justify-center items-center h-64 mx-4">
+      <Loader />
+    </div>
   ) : (
     <>
       <InfiniteScroll
