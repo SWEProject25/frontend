@@ -19,7 +19,7 @@ export default function Breadcrumb({
   showSubtitleOnMobile = false,
 }: BreadcrumbProps) {
   return (
-    <div className="mb-3 p-4">
+    <div className="p-4 w-full">
       <div className="flex items-center gap-4">
         {onBack && (
           <button
@@ -31,7 +31,7 @@ export default function Breadcrumb({
           </button>
         )}
         <div className="flex flex-col gap-0">
-          <h1 className="xs:text-[15px]  text-[12px] mt-2 xs:mt-0 font-bold text-text-active">
+          <h1 className="xs:text-[15px] text-[12px] mt-2 xs:mt-0 font-bold text-text-active">
             {title}
           </h1>
           {subtitle && (

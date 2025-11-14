@@ -7,7 +7,7 @@ interface FollowStatsProps {
 
 const FollowStats = ({ followingCount, followersCount }: FollowStatsProps) => {
   return (
-    <div className="flex flex-row flex-wrap items-baseline gap-x-3 w-[600px] h-[20px]">
+    <div className="flex flex-row flex-wrap items-baseline gap-x-3 w-full min-h-[20px]">
       <div className="flex flex-row items-baseline gap-1">
         <span className="font-inter font-bold text-base text-text-active">
           {followingCount}

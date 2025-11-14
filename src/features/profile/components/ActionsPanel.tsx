@@ -45,7 +45,7 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
     setIsModalOpen(true);
   };
   return (
-    <div className="flex flex-row justify-end items-start p-3 gap-3 w-[600px] h-[60px]">
+    <div className="flex flex-row justify-end items-start p-3 gap-3 w-full h-[60px]">
       {isOwnProfile ? (
         <Button
           variant="outline"
