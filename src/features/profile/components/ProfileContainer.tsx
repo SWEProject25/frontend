@@ -20,11 +20,15 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
   return (
     <div className="flex flex-col w-full mx-auto relative">
       <Cover coverImage={profileData.banner_image_url || ''} />
-      <Avatar
-        avatarImage={profileData.profile_image_url}
-        name={profileData.name}
-        className="border-2 hover:brightness-75 cursor-pointer"
-      />
+      <div className="absolute left-3 sm:left-4 top-[76px] sm:top-[134px] z-10">
+        <Avatar
+          avatarImage={profileData.profile_image_url}
+          name={profileData.name}
+          className="border-2 sm:border-4 hover:brightness-75 cursor-pointer"
+          position="relative"
+          customPosition={true}
+        />
+      </div>
       <ActionsPanel
         isOwnProfile={isMine}
         isFollowing={false}
@@ -50,10 +54,7 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
           location="Giza"
           website="mrfathi.tech"
         />
-        <FollowStats
-          followingCount={0} // TODO: Add to API
-          followersCount={0} // TODO: Add to API
-        />
+        <FollowStats followingCount={0} followersCount={0} />
       </div>
     </div>
   );

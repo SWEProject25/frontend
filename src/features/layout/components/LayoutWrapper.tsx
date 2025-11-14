@@ -15,7 +15,7 @@ export default function LayoutWrapper({
   showMobileBottomBar = true,
 }: LayoutWrapperProps) {
   return (
-    <div className="container flex flex-row justify-center min-h-screen">
+    <div className="flex flex-row w-full min-h-screen justify-center">
       <Toaster position="bottom-center" />
       <div className="hidden xs:block">
         <LeftSidebar />
@@ -27,23 +27,16 @@ export default function LayoutWrapper({
         </div>
       )}
 
-      <main
-        className={`
-          flex
-          flex-1
-          flex-row
-          ${showRightSidebar ? 'max-w-[942px]' : 'max-w-[942px]'}
-          min-h-screen
-          pt-0
-        `}
-      >
-        <div className="border-x-border border-x-[1px] w-full">{children}</div>
-        {/* Right Sidebar - Conditional */}
-        {showRightSidebar && (
-          <div className="hidden xl:flex right-0 top-0 h-full">
-            <RightSidebar />
-          </div>
-        )}
+      <main className="flex flex-1 flex-row min-h-screen max-w-[1000px]">
+        <div className="border-x-border border-x-[1px] sm:w-[560px] w-full flex-1">
+          {children}
+        </div>
+
+        <div
+          className={`lg:block right-0 top-0 h-full hidden ${!showRightSidebar ? 'lg:hidden' : ''}`}
+        >
+          <RightSidebar />
+        </div>
       </main>
     </div>
   );
