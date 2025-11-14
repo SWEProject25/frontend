@@ -19,7 +19,7 @@ export default function Breadcrumb({
   showSubtitleOnMobile = false,
 }: BreadcrumbProps) {
   return (
-    <div className="p-4 w-full">
+    <div className="sm:p-4 p-2 w-full">
       <div className="flex items-center gap-4">
         {onBack && (
           <button

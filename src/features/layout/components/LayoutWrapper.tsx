@@ -28,13 +28,15 @@ export default function LayoutWrapper({
       )}
 
       <main className="flex flex-1 flex-row min-h-screen max-w-[1000px]">
-        <div className="border-x-border border-x-[1px] flex-1">{children}</div>
+        <div className="border-x-border border-x-[1px] sm:w-[560px] w-full flex-1">
+          {children}
+        </div>
 
-        {showRightSidebar && (
-          <div className="xl:flex right-0 top-0 h-full w-[390px] hidden">
-            <RightSidebar />
-          </div>
-        )}
+        <div
+          className={`lg:block right-0 top-0 h-full hidden ${!showRightSidebar ? 'lg:hidden' : ''}`}
+        >
+          <RightSidebar />
+        </div>
       </main>
     </div>
   );

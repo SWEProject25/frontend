@@ -9,7 +9,7 @@ interface CoverProps {
 const Cover = ({ coverImage, children, className = '' }: CoverProps) => {
   return (
     <div
-      className={`relative flex flex-row items-start p-8 w-full h-[200px] ${className}`}
+      className={`relative flex flex-row items-start p-4 sm:p-8 w-full h-[120px] sm:h-[200px] ${className}`}
       style={{
         backgroundImage: coverImage ? `url(${coverImage})` : 'none',
         backgroundColor: '#333639',
