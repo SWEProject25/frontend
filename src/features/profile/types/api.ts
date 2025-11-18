@@ -12,6 +12,7 @@ export interface UserProfile {
   is_deactivated: boolean;
   created_at: string;
   updated_at: string;
+  is_followed?: boolean;
   User: {
     id: number;
     username: string;
@@ -19,6 +20,8 @@ export interface UserProfile {
     role: string;
     created_at: string;
   };
+  followers_count: number;
+  following_count: number;
 }
 
 export interface ProfileResponseDto {
