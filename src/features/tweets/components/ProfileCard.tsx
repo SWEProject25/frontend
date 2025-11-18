@@ -23,7 +23,7 @@ export default function ProfileCard({ data }: { data: User }) {
           name={data.name}
           username={data.username}
         />
-        <FollowBtn isFollowed={data.isFollowedByMe} />
+        <FollowBtn userId={data.id} isFollowed={data.isFollowedByMe} />
       </div>
       <div className="mt-3">
         <div className="flex items-center space-x-1">

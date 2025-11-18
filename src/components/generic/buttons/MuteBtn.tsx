@@ -1,34 +1,53 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MuteIcon, UnMuteIcon } from '@/components/ui/icons';
+import { useInteractions } from '@/hooks/useInteractions';
 
 interface MuteBtnProps {
+  userId: number;
   isMuted?: boolean;
 }
 
-function MuteBtn({ isMuted }: MuteBtnProps) {
+function MuteBtn({ userId, isMuted }: MuteBtnProps) {
   const [muted, setMuted] = useState<boolean>(isMuted || false);
 
-  const handleMute = () => {
-    // TODO: Implement mute functionality
-    console.log('Mute clicked');
+  const { muteUser, unmuteUser, isMuteLoading } = useInteractions();
+
+  // Update local state when prop changes
+  useEffect(() => {
+    setMuted(isMuted || false);
+  }, [isMuted]);
+
+  const handleMute = async () => {
+    try {
+      await muteUser(userId);
+    } catch {
+      // Revert state on error
+      setMuted(false);
+    }
   };
 
-  const handleUnmute = () => {
-    // TODO: Implement unmute functionality
-    console.log('Unmute clicked');
+  const handleUnmute = async () => {
+    try {
+      await unmuteUser(userId);
+    } catch {
+      // Revert state on error
+      setMuted(true);
+    }
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
 
+    if (isMuteLoading) return;
+
     if (!muted) {
       setMuted(true);
-      handleMute();
+      await handleMute();
     } else {
       setMuted(false);
-      handleUnmute();
+      await handleUnmute();
     }
   };
 

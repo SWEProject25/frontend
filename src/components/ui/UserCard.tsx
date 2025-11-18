@@ -6,6 +6,7 @@ import MuteBtn from '@/components/generic/buttons/MuteBtn';
 
 export interface UserCardProps {
   name: string;
+  userId: number;
   handle: string;
   verified?: boolean;
   avatarUrl?: string;
@@ -18,6 +19,7 @@ export interface UserCardProps {
 
 export default function UserCard({
   name,
+  userId,
   handle,
   verified = false,
   avatarUrl,
@@ -61,11 +63,11 @@ export default function UserCard({
       {/* Action Button */}
       <div className="ml-3 flex-shrink-0">
         {actionType === 'block' ? (
-          <BlockBtn isBlocked={isBlocked} />
+          <BlockBtn userId={userId} isBlocked={isBlocked} />
         ) : actionType === 'mute' ? (
-          <MuteBtn isMuted={isMuted} />
+          <MuteBtn userId={userId} isMuted={isMuted} />
         ) : (
-          <FollowBtn isFollowed={isFollowed} />
+          <FollowBtn userId={userId} isFollowed={isFollowed} />
         )}
       </div>
     </div>

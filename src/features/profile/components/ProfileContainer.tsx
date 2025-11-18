@@ -16,7 +16,9 @@ interface ProfileContainerProps {
 const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
   const userData = {
     name: profileData.name,
+    userId: profileData.User.id,
     bio: profileData.bio || '',
+    isFollowed: profileData.is_followed || false,
     profileImage: profileData.profile_image_url || '',
     bannerImage: profileData.banner_image_url || '',
     location: profileData.location || '',
@@ -35,11 +37,7 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
           customPosition={true}
         />
       </div>
-      <ActionsPanel
-        isOwnProfile={isMine}
-        isFollowing={false}
-        userData={userData}
-      />
+      <ActionsPanel isOwnProfile={isMine} userData={userData} />
       <UserInfo name={profileData.name} username={profileData.User.username} />
       <div className="flex flex-col items-start px-4 gap-3 w-full">
         <Description bio={profileData.bio || ''} />
@@ -48,7 +46,10 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
           location="Giza"
           website="mrfathi.tech"
         />
-        <FollowStats followingCount={0} followersCount={0} />
+        <FollowStats
+          followingCount={profileData.following_count}
+          followersCount={profileData.followers_count}
+        />
       </div>
     </div>
   );

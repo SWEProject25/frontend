@@ -7,10 +7,11 @@ import { useProfile } from '../hooks';
 
 interface ActionsPanelProps {
   isOwnProfile: boolean;
-  isFollowing: boolean;
   userData: {
     name: string;
+    userId: number;
     bio: string;
+    isFollowed: boolean;
     profileImage?: string;
     bannerImage?: string;
     location?: string;
@@ -21,7 +22,6 @@ interface ActionsPanelProps {
 
 const ActionsPanel: React.FC<ActionsPanelProps> = ({
   isOwnProfile,
-  isFollowing,
   userData,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -61,7 +61,10 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
           >
             <MessagesIcon className="w-5 h-5 text-text-primary" />
           </Button>
-          <FollowBtn isFollowed={isFollowing} />
+          <FollowBtn
+            userId={userData.userId}
+            isFollowed={userData.isFollowed}
+          />
         </>
       )}
       <EditProfileModal

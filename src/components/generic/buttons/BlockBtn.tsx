@@ -1,34 +1,53 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useInteractions } from '@/hooks/useInteractions';
 
 interface BlockBtnProps {
+  userId: number;
   isBlocked?: boolean;
 }
 
-function BlockBtn({ isBlocked }: BlockBtnProps) {
+function BlockBtn({ userId, isBlocked }: BlockBtnProps) {
   const [blocked, setBlocked] = useState<boolean>(isBlocked || false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  const handleBlock = () => {
-    // TODO: Implement block functionality
-    console.log('Block clicked');
+  const { blockUser, unblockUser, isBlockLoading } = useInteractions();
+
+  // Update local state when prop changes
+  useEffect(() => {
+    setBlocked(isBlocked || false);
+  }, [isBlocked]);
+
+  const handleBlock = async () => {
+    try {
+      await blockUser(userId);
+    } catch {
+      // Revert state on error
+      setBlocked(false);
+    }
   };
 
-  const handleUnblock = () => {
-    // TODO: Implement unblock functionality
-    console.log('Unblock clicked');
+  const handleUnblock = async () => {
+    try {
+      await unblockUser(userId);
+    } catch {
+      // Revert state on error
+      setBlocked(true);
+    }
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
 
+    if (isBlockLoading) return;
+
     if (!blocked) {
       setBlocked(true);
-      handleBlock();
+      await handleBlock();
     } else {
       setBlocked(false);
-      handleUnblock();
+      await handleUnblock();
     }
   };
 

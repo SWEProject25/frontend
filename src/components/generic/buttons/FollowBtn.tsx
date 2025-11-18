@@ -1,37 +1,57 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useInteractions } from '@/hooks/useInteractions';
 
 interface FollowBtnProps {
+  userId: number;
   isFollowed?: boolean;
 }
 
-function FollowBtn({ isFollowed }: FollowBtnProps) {
+function FollowBtn({ userId, isFollowed }: FollowBtnProps) {
   const [followed, setFollowed] = useState<boolean>(isFollowed || false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [followClicked, setFollowClicked] = useState<boolean>(false);
 
-  const handleFollow = () => {
-    // TODO: Implement follow functionality
-    console.log('Follow clicked');
+  const { followUser, unfollowUser, isFollowLoading } = useInteractions();
+
+  // Update local state when prop changes
+  useEffect(() => {
+    setFollowed(isFollowed || false);
+  }, [isFollowed]);
+
+  const handleFollow = async () => {
+    try {
+      await followUser(userId);
+    } catch {
+      // Revert state on error
+      setFollowed(false);
+      setFollowClicked(false);
+    }
   };
 
-  const handleUnfollow = () => {
-    // TODO: Implement unfollow functionality
-    console.log('Unfollow clicked');
+  const handleUnfollow = async () => {
+    try {
+      await unfollowUser(userId);
+    } catch {
+      // Revert state on error
+      setFollowed(true);
+    }
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
+
+    if (isFollowLoading) return;
 
     if (!followed) {
       setFollowClicked(true);
       setFollowed(true);
-      handleFollow();
+      await handleFollow();
     } else {
       setFollowed(false);
       setFollowClicked(false);
-      handleUnfollow();
+      await handleUnfollow();
     }
   };
 
