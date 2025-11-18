@@ -65,7 +65,7 @@ export default function TweetAvatar({
               e.stopPropagation();
             }}
           >
-            {data.name && data.username && <ProfileCard data={data} />}
+            {data.name && data.username && <ProfileCard userId={data.id} />}
           </div>
         )}
       </div>
