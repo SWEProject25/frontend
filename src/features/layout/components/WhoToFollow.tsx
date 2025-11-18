@@ -5,6 +5,7 @@ export default function WhoToFollow() {
   const suggestions = [
     {
       name: 'Bassem Youssef',
+      id: 1,
       handle: '@Byoussef',
       verified: true,
       isFollowed: false,
@@ -12,6 +13,7 @@ export default function WhoToFollow() {
     {
       name: 'mbc3',
       handle: '@mbc3',
+      id: 2,
       verified: true,
       isFollowed: false,
     },
@@ -25,6 +27,7 @@ export default function WhoToFollow() {
           <UserCard
             key={i}
             name={user.name}
+            userId={user.id}
             handle={user.handle}
             verified={user.verified}
             isFollowed={user.isFollowed}
