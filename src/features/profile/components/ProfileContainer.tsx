@@ -7,7 +7,6 @@ import Description from './Description';
 import UserDetails from './UserDetails';
 import FollowStats from './FollowStats';
 import { UserProfile } from '../types/api';
-import { useProfile } from '../hooks';
 
 interface ProfileContainerProps {
   profileData: UserProfile;
@@ -15,8 +14,15 @@ interface ProfileContainerProps {
 }
 
 const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
-  const { handleSaveProfile, isUpdating } = useProfile();
-
+  const userData = {
+    name: profileData.name,
+    bio: profileData.bio || '',
+    profileImage: profileData.profile_image_url || '',
+    bannerImage: profileData.banner_image_url || '',
+    location: profileData.location || '',
+    website: profileData.website || '',
+    birthDate: profileData.birth_date || '',
+  };
   return (
     <div className="flex flex-col w-full mx-auto relative">
       <Cover coverImage={profileData.banner_image_url || ''} />
@@ -32,19 +38,7 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
       <ActionsPanel
         isOwnProfile={isMine}
         isFollowing={false}
-        onFollow={() => console.log('Follow clicked')}
-        onUnfollow={() => console.log('Unfollow clicked')}
-        userData={{
-          name: profileData.name,
-          bio: profileData.bio || '',
-          profileImage: profileData.profile_image_url || '',
-          bannerImage: profileData.banner_image_url || '',
-          location: profileData.location || '',
-          website: profileData.website || '',
-          birthDate: profileData.birth_date || '',
-        }}
-        onSaveProfile={handleSaveProfile}
-        isUpdating={isUpdating}
+        userData={userData}
       />
       <UserInfo name={profileData.name} username={profileData.User.username} />
       <div className="flex flex-col items-start px-4 gap-3 w-full">

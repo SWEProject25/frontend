@@ -3,7 +3,7 @@
 import { GrokIcon } from '@/components/ui/icons/BrandIcons';
 import CardAvatar from './CardAvatar';
 import CardUserInfo from './CardUserInfo';
-import FollowButton from './FollowButton';
+import FollowBtn from '@/components/generic/buttons/FollowBtn';
 
 type User = {
   id: number;
@@ -23,7 +23,7 @@ export default function ProfileCard({ data }: { data: User }) {
           name={data.name}
           username={data.username}
         />
-        <FollowButton isFollowed={data.isFollowedByMe} />
+        <FollowBtn isFollowed={data.isFollowedByMe} />
       </div>
       <div className="mt-3">
         <div className="flex items-center space-x-1">
