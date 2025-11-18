@@ -81,7 +81,7 @@ export default function UserInfo({
               e.stopPropagation();
             }}
           >
-            {data.name && data.username && <ProfileCard data={data} />}
+            {data.name && data.username && <ProfileCard userId={data.id} />}
           </div>
         )}
       </div>
@@ -118,7 +118,7 @@ export default function UserInfo({
               e.stopPropagation();
             }}
           >
-            {data.name && data.username && <ProfileCard data={data} />}
+            {data.name && data.username && <ProfileCard userId={data.id} />}
           </div>
         )}
       </div>
