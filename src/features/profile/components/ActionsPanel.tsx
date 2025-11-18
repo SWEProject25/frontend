@@ -2,48 +2,35 @@ import React, { useState } from 'react';
 import Button from '@/components/ui/Button';
 import { MoreIcon, MessagesIcon } from '@/components/ui/icons';
 import EditProfileModal from '../../../components/generic/EditProfileModal';
+import FollowBtn from '@/components/generic/buttons/FollowBtn';
+import { useProfile } from '../hooks';
 
 interface ActionsPanelProps {
   isOwnProfile: boolean;
-  isFollowing: boolean;
-  onFollow?: () => void;
-  onUnfollow?: () => void;
   userData: {
     name: string;
+    userId: number;
     bio: string;
+    isFollowed: boolean;
     profileImage?: string;
     bannerImage?: string;
     location?: string;
     website?: string;
     birthDate?: string;
   };
-  onSaveProfile: (data: {
-    name?: string;
-    bio?: string;
-    profileImage?: File | null;
-    bannerImage?: File | null;
-    location?: string | null;
-    website?: string | null;
-    birthDate?: string | null;
-  }) => void;
-  isUpdating?: boolean;
 }
 
 const ActionsPanel: React.FC<ActionsPanelProps> = ({
   isOwnProfile,
-  isFollowing,
-  onFollow,
-  onUnfollow,
   userData,
-  onSaveProfile,
-  isUpdating = false,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { handleSaveProfile, isUpdating } = useProfile();
 
   const handleEditProfileClick = () => {
     setIsModalOpen(true);
   };
+
   return (
     <div className="flex flex-row justify-end items-start p-3 gap-3 w-full h-[60px]">
       {isOwnProfile ? (
@@ -74,36 +61,17 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
           >
             <MessagesIcon className="w-5 h-5 text-text-primary" />
           </Button>
-          {isFollowing ? (
-            <Button
-              variant={isHovered ? 'error-outline' : 'outline'}
-              size="md"
-              shape="rounded"
-              className="px-5"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              onClick={onUnfollow}
-            >
-              {isHovered ? 'Unfollow' : 'Following'}
-            </Button>
-          ) : (
-            <Button
-              variant="social"
-              size="md"
-              shape="rounded"
-              className="px-5"
-              onClick={onFollow}
-            >
-              Follow
-            </Button>
-          )}
+          <FollowBtn
+            userId={userData.userId}
+            isFollowed={userData.isFollowed}
+          />
         </>
       )}
       <EditProfileModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         initialData={userData}
-        onSave={onSaveProfile}
+        onSave={handleSaveProfile}
         isUpdating={isUpdating}
       />
     </div>

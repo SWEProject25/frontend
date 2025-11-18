@@ -3,13 +3,21 @@ import UserCard from '@/components/ui/UserCard';
 
 export default function WhoToFollow() {
   const suggestions = [
-    { name: 'Bassem Youssef', handle: '@Byoussef', verified: true },
-    { name: 'mbc3', handle: '@mbc3', verified: true },
+    {
+      name: 'Bassem Youssef',
+      id: 1,
+      handle: '@Byoussef',
+      verified: true,
+      isFollowed: false,
+    },
+    {
+      name: 'mbc3',
+      handle: '@mbc3',
+      id: 2,
+      verified: true,
+      isFollowed: false,
+    },
   ];
-
-  const handleFollow = (userName: string) => {
-    console.log(`Following ${userName}`);
-  };
 
   return (
     <div className="bg-black rounded-2xl p-4 border border-gray-700">
@@ -19,13 +27,10 @@ export default function WhoToFollow() {
           <UserCard
             key={i}
             name={user.name}
+            userId={user.id}
             handle={user.handle}
             verified={user.verified}
-            action={{
-              label: 'Follow',
-              onClick: () => handleFollow(user.name),
-              variant: 'secondary',
-            }}
+            isFollowed={user.isFollowed}
           />
         ))}
       </div>
