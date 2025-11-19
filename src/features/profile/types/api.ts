@@ -12,7 +12,7 @@ export interface UserProfile {
   is_deactivated: boolean;
   created_at: string;
   updated_at: string;
-  is_followed?: boolean;
+  is_followed_by_me?: boolean;
   User: {
     id: number;
     username: string;

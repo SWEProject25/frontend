@@ -26,6 +26,7 @@ export default function MutedAccountsList() {
         <ListItem key={user.id} href={`/profile/${user.handle.slice(1)}`}>
           <UserCard
             name={user.name}
+            userId={user.id}
             handle={user.handle}
             verified={user.verified}
             avatarUrl={user.avatarUrl}

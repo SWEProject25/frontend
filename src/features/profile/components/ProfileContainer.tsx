@@ -18,7 +18,7 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
     name: profileData.name,
     userId: profileData.User.id,
     bio: profileData.bio || '',
-    isFollowed: profileData.is_followed || false,
+    isFollowed: profileData.is_followed_by_me || false,
     profileImage: profileData.profile_image_url || '',
     bannerImage: profileData.banner_image_url || '',
     location: profileData.location || '',

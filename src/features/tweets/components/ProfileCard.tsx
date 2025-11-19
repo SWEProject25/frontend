@@ -52,7 +52,7 @@ export default function ProfileCard({ userId }: ProfileCardProps) {
         />
         <FollowBtn
           userId={profile.user_id}
-          isFollowed={profile.is_followed ?? false}
+          isFollowed={profile.is_followed_by_me ?? false}
         />
       </div>
       <div className="mt-3">
