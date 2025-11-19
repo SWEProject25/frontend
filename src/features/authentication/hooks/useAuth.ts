@@ -100,15 +100,15 @@ export const useResendOTPMutation = () => {
 
 // Update Email Mutation
 export const useUpdateEmailMutation = () => {
-  const setUser = useAuthStore((state) => state.setUser);
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: authApi.updateEmail,
-    onSuccess: (data) => {
-      setUser(data.data.user);
-      queryClient.setQueryData(authKeys.user(), data.data.user);
-      // Invalidate profile queries since email is part of user data
+    onSuccess: () => {
+      // Invalidate auth user and profile queries to refetch updated data
+      queryClient.invalidateQueries({
+        queryKey: authKeys.user(),
+      });
       queryClient.invalidateQueries({
         queryKey: ['profile'],
       });
@@ -118,15 +118,15 @@ export const useUpdateEmailMutation = () => {
 
 // Update Username Mutation
 export const useUpdateUsernameMutation = () => {
-  const setUser = useAuthStore((state) => state.setUser);
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: authApi.updateUsername,
-    onSuccess: (data) => {
-      setUser(data.data.user);
-      queryClient.setQueryData(authKeys.user(), data.data.user);
-      // Invalidate profile queries since username is part of user data
+    onSuccess: () => {
+      // Invalidate auth user and profile queries to refetch updated data
+      queryClient.invalidateQueries({
+        queryKey: authKeys.user(),
+      });
       queryClient.invalidateQueries({
         queryKey: ['profile'],
       });

@@ -369,11 +369,8 @@ export const authApi = {
 
     const data = await handleResponse<UpdateEmailResponseDto>(response);
 
-    const user = data?.data?.user;
-    if (user) {
-      cachedUser = user;
-      cachedAt = Date.now();
-    }
+    cachedUser = null;
+    cachedAt = 0;
 
     return data;
   },
@@ -395,11 +392,8 @@ export const authApi = {
 
     const data = await handleResponse<UpdateUsernameResponseDto>(response);
 
-    const user = data?.data?.user;
-    if (user) {
-      cachedUser = user;
-      cachedAt = Date.now();
-    }
+    cachedUser = null;
+    cachedAt = 0;
 
     return data;
   },

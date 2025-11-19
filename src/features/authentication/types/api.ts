@@ -93,26 +93,18 @@ export interface VerifyPasswordResponseDto {
 
 export interface UpdateEmailDto {
   email: string;
-  password: string;
 }
 
 export interface UpdateEmailResponseDto {
   status: string;
   message: string;
-  data: {
-    user: UserResponse;
-  };
 }
 
 export interface UpdateUsernameDto {
   username: string;
-  password: string;
 }
 
 export interface UpdateUsernameResponseDto {
   status: string;
   message: string;
-  data: {
-    user: UserResponse;
-  };
 }
