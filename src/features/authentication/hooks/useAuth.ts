@@ -123,6 +123,12 @@ export const useAuth = () => {
   const setUser = useAuthStore((state) => state.setUser);
   const clearUser = useAuthStore((state) => state.clearUser);
   const setLoading = useAuthStore((state) => state.setLoading);
+  const setPasswordVerified = useAuthStore(
+    (state) => state.setPasswordVerified
+  );
+  const checkPasswordVerification = useAuthStore(
+    (state) => state.checkPasswordVerification
+  );
 
   const loginMutation = useLoginMutation();
   const registerMutation = useRegisterMutation();
@@ -144,6 +150,8 @@ export const useAuth = () => {
     setUser,
     clearUser,
     setLoading,
+    setPasswordVerified,
+    checkPasswordVerification,
     login: loginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
