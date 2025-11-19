@@ -21,6 +21,11 @@ export const isFormValid = (
       return false;
     }
 
+    // Check if field meets minimum length requirement
+    if (field.minLength && value.length < field.minLength) {
+      return false;
+    }
+
     // Check if field has an error
     if (errors[field.name]) {
       return false;

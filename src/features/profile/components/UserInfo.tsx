@@ -7,7 +7,7 @@ interface UserInfoProps {
 
 const UserInfo = ({ name, username }: UserInfoProps) => {
   return (
-    <div className="flex flex-col items-start p-4 gap-1 w-[600px] h-[80px]">
+    <div className="flex flex-col items-start p-4 gap-1 w-full min-h-[90px] relative sm:top-[0px] top-[-7px]">
       <div className="flex flex-row items-center gap-1">
         <span className="font-inter font-bold text-xl text-[#F7F9F9]">
           {name}

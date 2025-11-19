@@ -3,8 +3,12 @@ import React, { useState } from 'react';
 import Action from './Action';
 import { LikeIconFilled } from '@/components/ui/icons/UIIcons';
 import { ACTIONS_META } from '../constants';
-
+import {
+  useToggleLikeTweet,
+  useToggleRepostTweet,
+} from '@/features/tweets/hooks/tweetQueries';
 type stats = {
+  postId: number;
   likesCount: number;
   retweetsCount: number;
   commentsCount: number;
@@ -22,42 +26,81 @@ export default function Actions({
 }) {
   const [liked, setLiked] = useState(stats.isLikedByMe);
   const [retweeted, setRetweeted] = useState(stats.isRepostedByMe);
+  const [likeAddr, setLikeAddr] = useState(0);
+  const [retweetAddr, setRetweetAddr] = useState(0);
+  const toggleLikeTweet = useToggleLikeTweet(stats.postId);
+  const toggleRepostTweet = useToggleRepostTweet(stats.postId);
   function handleLike() {
-    setLiked(!liked);
+    // if (stats.isLikedByMe) {
+    //   if (liked) {
+    //     setLikeAddr(-1);
+    //   } else {
+    //     setLikeAddr(0);
+    //   }
+    // } else {
+    //   if (liked) {
+    //     setLikeAddr(0);
+    //   } else {
+    //     setLikeAddr(1);
+    //   }
+    // }
+    // setLiked(!liked);
+    toggleLikeTweet.mutate();
   }
   function handleRetweet() {
-    setRetweeted(!retweeted);
+    // if (stats.isRepostedByMe) {
+    //   if (retweeted) {
+    //     setRetweetAddr(-1);
+    //   } else {
+    //     setRetweetAddr(0);
+    //   }
+    // } else {
+    //   if (retweeted) {
+    //     setRetweetAddr(0);
+    //   } else {
+    //     setRetweetAddr(1);
+    //   }
+    // }
+    // setRetweeted(!stats.is);
+    toggleRepostTweet.mutate();
   }
   return (
     <div className="w-full my-.5">
       <div className="flex justify-between items-center w-full mt-3 text-gray-500 text-sm">
         <Action
           icon={ACTIONS_META[0].icon}
-          count={stats.commentsCount.toString()}
+          count={stats.commentsCount !== undefined ? stats.commentsCount : 0}
           label={ACTIONS_META[0].label}
           color={ACTIONS_META[0].color}
         />
         <Action
           icon={ACTIONS_META[1].icon}
-          count={stats.retweetsCount.toString()}
+          count={
+            stats.retweetsCount
+            // stats.retweetsCount !== undefined
+            //   ? stats.retweetsCount + retweetAddr
+            //   : 0
+          }
           label={ACTIONS_META[1].label}
           color={ACTIONS_META[1].color}
           onClick={handleRetweet}
-          isColored={retweeted}
+          isColored={stats.isRepostedByMe}
         />
         <Action
           icon={
-            liked ? (
+            stats.isLikedByMe ? (
               <LikeIconFilled className="w-5 h-5 text-rose-400" />
             ) : (
               ACTIONS_META[2].icon
             )
           }
-          count={stats.likesCount.toString()}
+          count={
+            stats.likesCount !== undefined ? stats.likesCount + likeAddr : 0
+          }
           label={ACTIONS_META[2].label}
           color={ACTIONS_META[2].color}
           onClick={handleLike}
-          isColored={liked}
+          isColored={stats.isLikedByMe}
         />
         <Action
           icon={ACTIONS_META[3].icon}

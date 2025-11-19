@@ -213,6 +213,7 @@ export const authFormConfigs = {
         required: true,
         placeholder: 'Enter 6-digit code',
         maxLength: 6,
+        minLength: 6,
         showCharCount: true,
       },
     ],

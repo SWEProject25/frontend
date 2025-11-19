@@ -21,6 +21,7 @@ export {
   ArrowLeftIcon,
   ArrowRightIcon,
   SearchIcon,
+  UnMuteIcon,
   MuteIcon,
   MessagesIcon,
   MoreIcon,
@@ -30,6 +31,7 @@ export {
   BirthdateIcon,
   JoinDateIcon,
   CameraIcon,
+  SettingsIcon,
 } from './UIIcons';
 
 // Brand Icons

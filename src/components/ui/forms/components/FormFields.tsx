@@ -94,11 +94,22 @@ export function FormFields({
         <OTPInput
           key={field.name}
           onComplete={(otp) => {
+            // Only update form data when OTP is complete (all 6 digits)
             onInputChange(field.name)({
               target: { value: otp },
             } as React.ChangeEvent<
               HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
             >);
+          }}
+          onChange={(otp) => {
+            // Clear form data if OTP is incomplete
+            if (otp.length < 6) {
+              onInputChange(field.name)({
+                target: { value: '' },
+              } as React.ChangeEvent<
+                HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+              >);
+            }
           }}
           email={formData.email}
           error={errors.otp || undefined}

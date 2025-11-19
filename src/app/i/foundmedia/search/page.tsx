@@ -4,6 +4,7 @@ import { useGifACtions } from '@/features/media/store/useGif';
 import Timeline from '@/features/timeline/components/Timeline';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Loader from '@/components/generic/Loader';
 export default function Page() {
   const { open } = useGifACtions();
   const router = useRouter();
@@ -24,7 +25,12 @@ export default function Page() {
     },
     [open, router]
   );
-  if (isLoading) return <div>Loading ....</div>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center h-64 mx-4">
+        <Loader />
+      </div>
+    );
   return (
     <>
       <div className="grid grid-cols-[1fr_600px_1fr] min-h-screen overflow-x-hidden  ">

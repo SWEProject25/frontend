@@ -13,16 +13,37 @@ import { TimelineFeed } from '@/features/timeline/types/api';
 import { GrokIcon } from '@/components/ui/icons/BrandIcons';
 import { DropIcon } from '@/components/ui/icons/UIIcons';
 import { TWEET_DROPDOWN_ITEMS } from '../constants';
+import Loader from '@/components/generic/Loader';
+import { useGetRepliesByTweetId } from '../hooks/tweetQueries';
+import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 
-function FullTweet({
-  data,
-  reply,
-}: {
-  data: TimelineFeed | null;
-  reply: TimelineFeed | null;
-}) {
-  if (!data || !reply) {
-    return <div>Loading...</div>;
+function FullTweet({ data }: { data: TimelineFeed | null }) {
+  const {
+    data: repliesResponse,
+    error,
+    isError,
+    isLoading,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+  } = useGetRepliesByTweetId(data?.postId || 0);
+  const pages = repliesResponse?.pages.flat();
+  const renderReplys = pages?.map((group, i) => (
+    <React.Fragment key={i}>
+      {group.data.map((reply, index) => (
+        <Tweet key={index} data={reply} />
+      ))}
+    </React.Fragment>
+  ));
+
+  const hasInitialData = pages ? pages[0].data.length > 0 : false;
+
+  if (!data) {
+    return (
+      <div className="flex justify-center items-center h-32">
+        <Loader />
+      </div>
+    );
   }
   const user = {
     id: data.userId,
@@ -37,6 +58,7 @@ function FullTweet({
   };
 
   const actionsStats = {
+    postId: data.postId,
     likesCount: data.likesCount,
     retweetsCount: data.retweetsCount,
     commentsCount: data.commentsCount,
@@ -44,7 +66,6 @@ function FullTweet({
     isFollowedByMe: data.isFollowedByMe,
     isRepostedByMe: data.isRepostedByMe,
   };
-
   return (
     <div>
       <Header />
@@ -74,11 +95,6 @@ function FullTweet({
           <Content content={content} />
           <div className="flex items-center space-x-1">
             <Timing time={data.date} full={true} />
-            {/* <span className="text-gray-400 text-sm"> · </span>
-            <span className="text-gray-200 bold text-sm">
-              {data.Actions.views}{' '}
-              <span className="text-gray-400 text-sm">Views</span>
-            </span> */}
           </div>
           <div className="border-b border-gray-700 my-2" />
           <Actions stats={actionsStats} full={true} />
@@ -86,9 +102,24 @@ function FullTweet({
         </div>
       </div>
       <div>
-        <Tweet data={reply} />
-        <Tweet data={reply} />
-        <Tweet data={reply} />
+        {isError ? (
+          <div>Error {error.message}</div>
+        ) : isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <InfiniteScroll
+              isLoadingInitial={isLoading}
+              isLoadingMore={isFetchingNextPage}
+              loadMore={() => hasNextPage && fetchNextPage()}
+              hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
+              hasInitialData={hasInitialData}
+            >
+              <div className="flex flex-col w-full">{renderReplys} </div>
+              {/* <ul className="w-full">{renderTweets} </ul> */}
+            </InfiniteScroll>
+          </>
+        )}
       </div>
     </div>
   );

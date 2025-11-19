@@ -9,6 +9,7 @@ type User = {
   username: string;
   verified: boolean;
   avatar: string | null;
+  isFollowedByMe?: boolean;
 };
 
 export default function TweetAvatar({
@@ -64,7 +65,7 @@ export default function TweetAvatar({
               e.stopPropagation();
             }}
           >
-            {data.name && data.username && <ProfileCard data={data} />}
+            {data.name && data.username && <ProfileCard userId={data.id} />}
           </div>
         )}
       </div>

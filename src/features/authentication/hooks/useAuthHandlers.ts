@@ -1,6 +1,5 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { authApi } from '../services/authApi';
 import { CreateUserDto, LoginDto } from '../types/api';
 import { formatBirthDate } from '../utils/dateUtils';
 import { AUTH_CLIENT_CONFIG } from '../constants/api';
@@ -22,8 +21,12 @@ export function useAuthHandlers() {
     register,
     verifyOTP,
     oAuthLogin,
+    forgotPassword,
+    resetPassword,
     isLoginLoading,
     isRegisterLoading,
+    isForgotPasswordLoading,
+    isResetPasswordLoading,
   } = useAuth();
 
   // Small helpers to update form state consistently
@@ -52,6 +55,23 @@ export function useAuthHandlers() {
         errors: newErrors,
       };
     });
+
+  const setSuccessMessage = (field: string, message: string) =>
+    setFormState((prev) => ({
+      ...prev,
+      isLoading: false,
+      success: false,
+      errors: { [field]: message },
+    }));
+
+  const setMessage = (message: string) =>
+    setFormState((prev) => ({
+      ...prev,
+      isLoading: false,
+      success: true,
+      message,
+      errors: {},
+    }));
 
   const handleSocialAuth = useCallback(
     async (providerId: string) => {
@@ -148,21 +168,13 @@ export function useAuthHandlers() {
         switch (step) {
           case 'register': {
             // Register step - just proceed to captcha
-            setFormState((prev) => ({
-              ...prev,
-              isLoading: false,
-              success: true,
-            }));
+            setSuccess(true);
             return true;
           }
 
           case 'captcha': {
             // Captcha step - verify captcha and proceed to OTP step
-            setFormState((prev) => ({
-              ...prev,
-              isLoading: false,
-              success: true,
-            }));
+            setSuccess(true);
             return true;
           }
 
@@ -200,11 +212,7 @@ export function useAuthHandlers() {
             };
 
             await register(signupData);
-            setFormState((prev) => ({
-              ...prev,
-              isLoading: false,
-              success: true,
-            }));
+            setSuccess(true);
 
             // Redirect to configured success page after registration
             localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
@@ -217,11 +225,7 @@ export function useAuthHandlers() {
 
           default: {
             // Handle other cases
-            setFormState((prev) => ({
-              ...prev,
-              isLoading: false,
-              success: true,
-            }));
+            setSuccess(true);
             return true;
           }
         }
@@ -249,17 +253,12 @@ export function useAuthHandlers() {
               return false;
             }
             try {
-              const resp = await authApi.forgotPassword({
+              const resp = await forgotPassword({
                 email: normalizeEmail(data.email),
                 type: 'WEB',
               });
 
-              setFormState(() => ({
-                isLoading: false,
-                success: false,
-                errors: { forgotPasswordSuccess: resp.message },
-              }));
-
+              setSuccessMessage('forgotPasswordSuccess', resp.message);
               return false;
             } catch (err) {
               setFieldError(
@@ -290,7 +289,7 @@ export function useAuthHandlers() {
         return false;
       }
     },
-    []
+    [forgotPassword]
   );
 
   const handleResetPassword = useCallback(
@@ -302,21 +301,14 @@ export function useAuthHandlers() {
     }): Promise<boolean> => {
       try {
         setLoading(true);
-        const resp = await authApi.resetPassword({
+        const resp = await resetPassword({
           userId: payload.userId,
           token: payload.token,
           newPassword: payload.newPassword,
           email: payload.email,
         });
 
-        setFormState((prev) => ({
-          ...prev,
-          isLoading: false,
-          success: true,
-          message: resp.message,
-          errors: {},
-        }));
-
+        setMessage(resp.message);
         return true;
       } catch (err) {
         setLoading(false);
@@ -327,7 +319,7 @@ export function useAuthHandlers() {
         return false;
       }
     },
-    []
+    [resetPassword]
   );
 
   const clearFormState = useCallback((fieldName?: string) => {
@@ -350,7 +342,12 @@ export function useAuthHandlers() {
   return {
     formState: {
       ...formState,
-      isLoading: formState.isLoading || isLoginLoading || isRegisterLoading,
+      isLoading:
+        formState.isLoading ||
+        isLoginLoading ||
+        isRegisterLoading ||
+        isForgotPasswordLoading ||
+        isResetPasswordLoading,
     },
     handleSocialAuth,
     handleLogin,

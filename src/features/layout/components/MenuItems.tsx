@@ -9,12 +9,15 @@ import {
   Users,
   User,
   MoreHorizontal,
+  Settings,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuthStore } from '@/features/authentication/store/authStore';
 
 export default function MenuItems() {
   const pathname = usePathname();
+  const user = useAuthStore((s) => s.user);
 
   const menuItems = [
     {
@@ -56,8 +59,14 @@ export default function MenuItems() {
     {
       icon: User,
       label: 'Profile',
-      href: '/profile',
+      href: `/${user?.username}`,
       hideOnShortScreen: false,
+    },
+    {
+      icon: Settings,
+      label: 'Settings',
+      href: '/settings',
+      hideOnShortScreen: true,
     },
     {
       icon: MoreHorizontal,
@@ -68,7 +77,7 @@ export default function MenuItems() {
   ];
 
   return (
-    <nav className="flex flex-col mt-1 w-full">
+    <nav className="flex flex-col mt-1 gap-4 min-[1400px]:items-start items-center">
       {menuItems.map((item, index) => {
         const isActive = pathname === item.href;
         return (
@@ -76,16 +85,16 @@ export default function MenuItems() {
             key={index}
             href={item.href}
             aria-label={item.label}
-            className={`flex items-center justify-center xl:justify-start gap-5 px-3 py-3 rounded-full hover:bg-gray-900 cursor-pointer transition-colors w-full ${
+            className={`flex items-center justify-center xl:justify-start gap-5 px-3 py-3 rounded-full hover:bg-gray-900 cursor-pointer transition-colors ${
               item.hideOnShortScreen ? 'max-[699px]:hidden' : ''
             }`}
           >
             <item.icon
               strokeWidth={isActive ? 3 : 2}
-              className="w-7 h-7 text-white flex-shrink-0"
+              className="w-7 h-7 text-text-active flex-shrink-0"
             />
             <span
-              className={`hidden xl:block text-xl ${isActive ? 'font-bold' : ''} text-white/95`}
+              className={`hidden min-[1400px]:block text-[20px] ${isActive ? 'font-bold' : ''} text-text-active/95`}
             >
               {item.label}
             </span>

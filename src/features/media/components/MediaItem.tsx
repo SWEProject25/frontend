@@ -16,16 +16,14 @@ export default function MediaItem({
 }) {
   const removeMedia = useMedia((state) => state.removeMedia);
   return (
-    <div
-      className={`relative ${full && 'w-full'} max-h-[490px] aspect-square bg-black `}
-    >
+    <div className={`relative  aspect-square bg-black `}>
       {media.type === EXTERNAL_GIF ||
       (media.type === LOCAL_MEDIA &&
         media.data.type.split('/')[0].toLowerCase() === 'image') ? (
         <Image
           data-testid={`image-${media.id}`}
           fill
-          className="object-contain"
+          className="object-contain "
           src={
             media.type === LOCAL_MEDIA
               ? URL.createObjectURL(media.data)

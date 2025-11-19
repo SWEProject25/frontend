@@ -1,29 +1,32 @@
 import React from 'react';
-import Button from './Button';
 import Avatar from '@/components/generic/Avatar';
-
-export interface UserCardAction {
-  label: string;
-  onClick: () => void;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  loading?: boolean;
-}
+import FollowBtn from '@/components/generic/buttons/FollowBtn';
+import BlockBtn from '@/components/generic/buttons/BlockBtn';
+import MuteBtn from '@/components/generic/buttons/MuteBtn';
 
 export interface UserCardProps {
   name: string;
+  userId: number;
   handle: string;
   verified?: boolean;
   avatarUrl?: string;
-  action: UserCardAction;
+  isFollowed?: boolean;
+  isBlocked?: boolean;
+  isMuted?: boolean;
+  actionType?: 'follow' | 'block' | 'mute';
   className?: string;
 }
 
 export default function UserCard({
   name,
+  userId,
   handle,
   verified = false,
   avatarUrl,
-  action,
+  isFollowed = false,
+  isBlocked = false,
+  isMuted = false,
+  actionType = 'follow',
   className = '',
 }: UserCardProps) {
   return (
@@ -58,15 +61,15 @@ export default function UserCard({
       </div>
 
       {/* Action Button */}
-      <Button
-        variant={action.variant || 'primary'}
-        size="sm"
-        onClick={action.onClick}
-        loading={action.loading}
-        className="ml-3 flex-shrink-0"
-      >
-        {action.label}
-      </Button>
+      <div className="ml-3 flex-shrink-0">
+        {actionType === 'block' ? (
+          <BlockBtn userId={userId} isBlocked={isBlocked} />
+        ) : actionType === 'mute' ? (
+          <MuteBtn userId={userId} isMuted={isMuted} />
+        ) : (
+          <FollowBtn userId={userId} isFollowed={isFollowed} />
+        )}
+      </div>
     </div>
   );
 }

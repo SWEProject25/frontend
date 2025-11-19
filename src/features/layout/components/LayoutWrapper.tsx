@@ -6,42 +6,37 @@ import { Toaster } from 'react-hot-toast';
 interface LayoutWrapperProps {
   children: React.ReactNode;
   showRightSidebar?: boolean;
+  showMobileBottomBar?: boolean;
 }
 
 export default function LayoutWrapper({
   children,
   showRightSidebar = true,
+  showMobileBottomBar = true,
 }: LayoutWrapperProps) {
   return (
-    <div className="container flex flex-row justify-center min-h-screen">
+    <div className="flex flex-row w-full min-h-screen justify-center">
       <Toaster position="bottom-center" />
       <div className="hidden xs:block">
         <LeftSidebar />
       </div>
 
-      <div className="xs:hidden">
-        <MobileBottomBar />
-      </div>
+      {showMobileBottomBar && (
+        <div className="xs:hidden">
+          <MobileBottomBar />
+        </div>
+      )}
 
-      {/* Main Content */}
-      <main
-        className={`
-          flex
-          flex-1
-          flex-row
-          ${showRightSidebar ? 'max-w-[930px]' : 'max-w-[930px]'}
-          min-h-screen
-          pt-0
-          pb-20
-        `}
-      >
-        <div className="border-x-border border-x-[1px] w-full">{children}</div>
-        {/* Right Sidebar - Conditional */}
-        {showRightSidebar && (
-          <div className="hidden xl:flex right-0 top-0 h-full">
-            <RightSidebar />
-          </div>
-        )}
+      <main className="flex flex-1 flex-row min-h-screen max-w-[1000px]">
+        <div className="border-x-border border-x-[1px] sm:w-[560px] w-full flex-1">
+          {children}
+        </div>
+
+        <div
+          className={`lg:block right-0 top-0 h-full hidden ${!showRightSidebar ? 'lg:hidden' : ''}`}
+        >
+          <RightSidebar />
+        </div>
       </main>
     </div>
   );

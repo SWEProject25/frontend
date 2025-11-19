@@ -1,5 +1,6 @@
-import { UserCardDemo } from '../components/UserCardDemo';
+// import { UserCardDemo } from '../components/UserCardDemo';
 
 export default function UserCardPage() {
-  return <UserCardDemo />;
+  return <div className="p-4">User Card Demo Page</div>;
+  // return <UserCardDemo />;
 }
