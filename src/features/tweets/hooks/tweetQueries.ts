@@ -56,7 +56,7 @@ export const useToggleLikeTweet = (tweetId: number) => {
       });
 
       if (onMutateResult) {
-        console.log('on mutate', onMutateResult);
+        // console.log('on mutate', onMutateResult);
         const newTweets = onMutateResult.previousFeed?.pages
           .flatMap((page) => page.data.posts)
           .filter((tweet) => tweet.postId === tweetId);
@@ -64,7 +64,7 @@ export const useToggleLikeTweet = (tweetId: number) => {
         console.log('new tweets', newTweets);
         if (newTweets && newTweets.length > 0) {
           const originalTweet = newTweets[0];
-          console.log('newTweet', originalTweet);
+          // console.log('newTweet', originalTweet);
 
           const isLiked = originalTweet.isLikedByMe;
           const countLikes = originalTweet.likesCount;
@@ -76,10 +76,10 @@ export const useToggleLikeTweet = (tweetId: number) => {
             isLikedByMe: !isLiked,
           };
 
-          console.log('updated tweet', updatedTweet.postId);
-          console.log('currentFullTweet', currentFullTweet);
+          // console.log('updated tweet', updatedTweet.postId);
+          // console.log('currentFullTweet', currentFullTweet);
           if (updatedTweet.postId === currentFullTweet?.postId) {
-            console.log('setting current tweet', updatedTweet);
+            // console.log('setting current tweet', updatedTweet);
             setCurrentTweet(updatedTweet);
           }
         }
