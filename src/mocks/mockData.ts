@@ -18,6 +18,7 @@ export const mockCurrentUserProfile: UserProfile = {
   is_deactivated: false,
   created_at: '2024-11-01T00:00:00.000Z',
   updated_at: '2025-01-24T12:00:00.000Z',
+  is_followed_by_me: false,
   User: {
     id: 1,
     username: 'ahmedfathy',
@@ -42,6 +43,7 @@ export const mockUserProfile1: UserProfile = {
   is_deactivated: false,
   created_at: '2025-01-01T00:00:00.000Z',
   updated_at: '2025-01-15T10:30:00.000Z',
+  is_followed_by_me: false,
   User: {
     id: 2,
     username: 'john_doe',
@@ -66,6 +68,7 @@ export const mockUserProfile2: UserProfile = {
   is_deactivated: false,
   created_at: '2025-01-05T00:00:00.000Z',
   updated_at: '2025-01-20T14:20:00.000Z',
+  is_followed_by_me: false,
   User: {
     id: 3,
     username: 'jane_smith',
@@ -90,6 +93,7 @@ export const mockUserProfile3: UserProfile = {
   is_deactivated: false,
   created_at: '2024-12-15T00:00:00.000Z',
   updated_at: '2025-01-18T09:45:00.000Z',
+  is_followed_by_me: false,
   User: {
     id: 4,
     username: 'mike_johnson',
@@ -114,6 +118,7 @@ export const mockUserProfile4: UserProfile = {
   is_deactivated: false,
   created_at: '2025-01-10T00:00:00.000Z',
   updated_at: '2025-01-22T16:15:00.000Z',
+  is_followed_by_me: false,
   User: {
     id: 5,
     username: 'sarah_williams',
@@ -138,6 +143,7 @@ export const mockUserProfile5: UserProfile = {
   is_deactivated: false,
   created_at: '2024-12-20T00:00:00.000Z',
   updated_at: '2025-01-19T11:30:00.000Z',
+  is_followed_by_me: false,
   User: {
     id: 6,
     username: 'david_chen',
@@ -154,12 +160,15 @@ export const mockUserProfileDeactivated: UserProfile = {
   user_id: 7,
   name: 'Deleted User',
   birth_date: '1985-01-01T00:00:00.000Z',
+  profile_image_url: null,
+  banner_image_url: null,
   bio: null,
   location: null,
   website: null,
   is_deactivated: true,
   created_at: '2024-11-01T00:00:00.000Z',
   updated_at: '2025-01-10T00:00:00.000Z',
+  is_followed_by_me: false,
   User: {
     id: 7,
     username: 'deleted_user',
@@ -176,12 +185,15 @@ export const mockUserProfileMinimal: UserProfile = {
   user_id: 8,
   name: 'Alex Brown',
   birth_date: '1993-09-12T00:00:00.000Z',
+  profile_image_url: null,
+  banner_image_url: null,
   bio: null,
   location: null,
   website: null,
   is_deactivated: false,
   created_at: '2025-01-23T00:00:00.000Z',
   updated_at: '2025-01-23T00:00:00.000Z',
+  is_followed_by_me: false,
   User: {
     id: 8,
     username: 'alex_brown',

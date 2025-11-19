@@ -28,7 +28,7 @@ export default function ProfileMenu() {
         <div className="flex items-center justify-between hover:bg-gray-900 rounded-full p-3 mb-3 cursor-pointer transition-colors w-full">
           <div className="flex items-center gap-3">
             <Avatar
-              avatarImage={user.profileImageUrl ?? undefined}
+              avatarImage={user.profileImageUrl ?? null}
               name={user.name}
               size="sm"
               position="relative"

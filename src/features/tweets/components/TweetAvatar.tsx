@@ -39,7 +39,7 @@ export default function TweetAvatar({
           }
         >
           <Avatar
-            avatarImage={data.avatar ?? undefined}
+            avatarImage={data.avatar ?? null}
             name={data.name}
             size="sm"
             position="relative"
