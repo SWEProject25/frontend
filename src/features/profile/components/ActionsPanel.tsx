@@ -10,13 +10,13 @@ interface ActionsPanelProps {
   userData: {
     name: string;
     userId: number;
-    bio: string;
+    bio: string | null;
     isFollowed: boolean;
-    profileImage?: string;
-    bannerImage?: string;
-    location?: string;
-    website?: string;
-    birthDate?: string;
+    profileImage: string | null;
+    bannerImage: string | null;
+    location: string | null;
+    website: string | null;
+    birthDate: string;
   };
 }
 

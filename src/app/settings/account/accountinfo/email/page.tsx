@@ -7,18 +7,18 @@ import { InputField } from '@/components/ui/input';
 import Button from '@/components/ui/Button';
 import { useAuth } from '@/features/authentication/hooks/useAuth';
 
-export default function UsernamePage() {
+export default function EmailPage() {
   const router = useRouter();
-  const { user, updateUsername, isUpdateUsernameLoading } = useAuth();
+  const { user, updateEmail, isUpdateEmailLoading } = useAuth();
 
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Initialize username from auth store
+  // Initialize email from auth store
   useEffect(() => {
-    if (user?.username) {
-      setUsername(user.username);
+    if (user?.email) {
+      setEmail(user.email);
     }
   }, [user]);
 
@@ -27,67 +27,59 @@ export default function UsernamePage() {
   };
 
   const handleSave = async () => {
-    if (!username || !user) return;
+    if (!email || !user) return;
 
     // Clear previous messages
     setError('');
     setSuccess('');
 
-    // Validate username
-    if (username.length < 3) {
-      setError('Username must be at least 3 characters long');
-      return;
-    }
-
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      setError('Username can only contain letters, numbers, and underscores');
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
       return;
     }
 
     try {
-      await updateUsername({ username: username });
-      setSuccess('Username updated successfully!');
+      await updateEmail({ email: email });
+      setSuccess('Email updated successfully!');
     } catch (err) {
-      console.error('Update username error:', err);
+      console.error('Update email error:', err);
       if (err instanceof Error) {
-        setError(err.message || 'Failed to update username');
+        setError(err.message || 'Failed to update email');
       } else {
-        setError('Failed to update username. Please try again.');
+        setError('Failed to update email. Please try again.');
       }
     }
   };
 
   // Check if button should be disabled
-  const isDisabled =
-    !username || username === user?.username || isUpdateUsernameLoading;
+  const isDisabled = !email || email === user?.email || isUpdateEmailLoading;
 
   return (
     <div className="border-r border-border min-h-screen">
-      <Breadcrumb
-        title="Change username"
-        onBack={handleBack}
-        showArrow={true}
-      />
+      <Breadcrumb title="Change email" onBack={handleBack} showArrow={true} />
       <div className="px-4 py-6">
         <div className="mb-4">
           <p className="text-sm text-text-secondary mb-4">
-            Your username is how others find and mention you on the platform.
-            Choose wisely!
+            Update your email address. You&apos;ll use this email to sign in to
+            your account.
           </p>
         </div>
 
         <InputField
-          label="Username"
-          type="text"
-          value={username}
+          label="Email"
+          type="email"
+          value={email}
           onChange={(e) => {
-            setUsername(e.target.value);
+            setEmail(e.target.value);
             setError('');
             setSuccess('');
           }}
-          maxLength={50}
+          maxLength={100}
           showCharCount
           error={error && !success ? error : undefined}
+          placeholder="your.email@example.com"
         />
 
         {success && (
@@ -101,7 +93,7 @@ export default function UsernamePage() {
             variant="primary"
             size="md"
             disabled={isDisabled}
-            loading={isUpdateUsernameLoading}
+            loading={isUpdateEmailLoading}
             onClick={handleSave}
           >
             Save

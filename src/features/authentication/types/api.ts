@@ -90,3 +90,21 @@ export interface VerifyPasswordResponseDto {
     isValid: boolean;
   };
 }
+
+export interface UpdateEmailDto {
+  email: string;
+}
+
+export interface UpdateEmailResponseDto {
+  status: string;
+  message: string;
+}
+
+export interface UpdateUsernameDto {
+  username: string;
+}
+
+export interface UpdateUsernameResponseDto {
+  status: string;
+  message: string;
+}

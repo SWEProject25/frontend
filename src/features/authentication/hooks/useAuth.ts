@@ -98,6 +98,42 @@ export const useResendOTPMutation = () => {
   });
 };
 
+// Update Email Mutation
+export const useUpdateEmailMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: authApi.updateEmail,
+    onSuccess: () => {
+      // Invalidate auth user and profile queries to refetch updated data
+      queryClient.invalidateQueries({
+        queryKey: authKeys.user(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
+    },
+  });
+};
+
+// Update Username Mutation
+export const useUpdateUsernameMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: authApi.updateUsername,
+    onSuccess: () => {
+      // Invalidate auth user and profile queries to refetch updated data
+      queryClient.invalidateQueries({
+        queryKey: authKeys.user(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
+    },
+  });
+};
+
 // OAuth Login Handler (not a mutation due to popup window mechanism)
 export const useOAuthLogin = () => {
   const setUser = useAuthStore((state) => state.setUser);
@@ -139,6 +175,8 @@ export const useAuth = () => {
   const sendOTPMutation = useSendOTPMutation();
   const verifyOTPMutation = useVerifyOTPMutation();
   const resendOTPMutation = useResendOTPMutation();
+  const updateEmailMutation = useUpdateEmailMutation();
+  const updateUsernameMutation = useUpdateUsernameMutation();
   const oAuthLogin = useOAuthLogin();
 
   return {
@@ -161,6 +199,8 @@ export const useAuth = () => {
     sendOTP: sendOTPMutation.mutateAsync,
     verifyOTP: verifyOTPMutation.mutateAsync,
     resendOTP: resendOTPMutation.mutateAsync,
+    updateEmail: updateEmailMutation.mutateAsync,
+    updateUsername: updateUsernameMutation.mutateAsync,
     oAuthLogin,
     // Mutation loading states
     isLoginLoading: loginMutation.isPending,
@@ -172,5 +212,7 @@ export const useAuth = () => {
     isSendOTPLoading: sendOTPMutation.isPending,
     isVerifyOTPLoading: verifyOTPMutation.isPending,
     isResendOTPLoading: resendOTPMutation.isPending,
+    isUpdateEmailLoading: updateEmailMutation.isPending,
+    isUpdateUsernameLoading: updateUsernameMutation.isPending,
   };
 };

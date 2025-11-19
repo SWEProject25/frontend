@@ -34,7 +34,7 @@ export default function UserCard({
       <div className="flex items-center gap-3 flex-1 min-w-0">
         {/* Avatar */}
         <Avatar
-          avatarImage={avatarUrl}
+          avatarImage={avatarUrl ?? null}
           name={name}
           size="xs"
           position="relative"

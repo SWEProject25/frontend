@@ -22,6 +22,8 @@ export const useProfile = () => {
     website?: string | null;
     birthDate?: string | null;
   }) => {
+    // console.log('🔧 useProfile received data:', data);
+
     try {
       const updateData: {
         [key: string]: unknown;
@@ -44,17 +46,21 @@ export const useProfile = () => {
       }, {});
 
       if (data.profileImage) {
-        uploadProfileImage.mutateAsync(data.profileImage);
+        // console.log('📤 Uploading profile image');
+        await uploadProfileImage.mutateAsync(data.profileImage);
       } else if (data.profileImage === null) {
-        removeProfileImage.mutateAsync();
+        // console.log('🗑️ Removing profile image');
+        await removeProfileImage.mutateAsync();
       }
       if (data.bannerImage) {
-        uploadBannerImage.mutateAsync(data.bannerImage);
+        // console.log('📤 Uploading banner image');
+        await uploadBannerImage.mutateAsync(data.bannerImage);
       } else if (data.bannerImage === null) {
-        removeBannerImage.mutateAsync();
+        // console.log('🗑️ Removing banner image - THIS SHOULD BE CALLED!');
+        await removeBannerImage.mutateAsync();
       }
       if (Object.keys(cleanedUpdateData).length > 0) {
-        updateMyProfile.mutate(cleanedUpdateData);
+        await updateMyProfile.mutateAsync(cleanedUpdateData);
       }
     } catch (error) {
       console.error('Failed to process profile update:', error);

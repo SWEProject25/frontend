@@ -8,7 +8,7 @@ export const validatePasswordMatch = (
   password: string,
   confirmPassword: string
 ): string => {
-  console.log(password, confirmPassword);
+  // console.log(password, confirmPassword);
   // Don't show error if either field is empty
   if (!password || !confirmPassword) {
     return '';
