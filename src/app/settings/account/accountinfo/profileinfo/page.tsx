@@ -14,12 +14,13 @@ import { DatePickerValue } from '@/components/ui/DatePicker';
 import EditProfileAvatar from '@/components/generic/components/EditProfileAvatar';
 import EditProfileCover from '@/components/generic/components/EditProfileCover';
 import EditProfileForm from '@/components/generic/components/EditProfileForm';
-import { useMyProfile, useUpdateMyProfile } from '@/features/profile/hooks';
+import { useMyProfile } from '@/features/profile/hooks';
+import { useProfile } from '@/features/profile/hooks/useProfile';
 
 export default function ProfileInfoPage() {
   const router = useRouter();
   const { data: profileData, isLoading } = useMyProfile();
-  const updateProfileMutation = useUpdateMyProfile();
+  const { handleSaveProfile, isUpdating } = useProfile();
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
@@ -96,7 +97,7 @@ export default function ProfileInfoPage() {
       bio: fieldPayload(bio, profile.bio ?? undefined),
       location: fieldPayload(location, profile.location ?? undefined),
       website: fieldPayload(website, profile.website ?? undefined),
-      birth_date: birthDateValue === null ? undefined : birthDateValue,
+      birthDate: birthDateValue === null ? undefined : birthDateValue,
       profileImage: computeImagePayload(
         profileImage,
         profilePreview,
@@ -110,13 +111,8 @@ export default function ProfileInfoPage() {
     };
 
     try {
-      await updateProfileMutation.mutateAsync(updateData);
+      await handleSaveProfile(updateData);
       setSuccess('Profile updated successfully!');
-
-      // Redirect back after 2 seconds
-      setTimeout(() => {
-        router.back();
-      }, 2000);
     } catch (err) {
       console.error('Update profile error:', err);
       if (err instanceof Error) {
@@ -132,7 +128,7 @@ export default function ProfileInfoPage() {
     if (file) {
       setProfilePreview(URL.createObjectURL(file));
     } else {
-      setProfilePreview(undefined);
+      setProfilePreview('');
     }
   };
 
@@ -141,7 +137,7 @@ export default function ProfileInfoPage() {
     if (file) {
       setBannerPreview(URL.createObjectURL(file));
     } else {
-      setBannerPreview(undefined);
+      setBannerPreview('');
     }
   };
 
@@ -173,8 +169,8 @@ export default function ProfileInfoPage() {
             variant="primary"
             size="sm"
             onClick={handleSave}
-            loading={updateProfileMutation.isPending}
-            disabled={updateProfileMutation.isPending}
+            loading={isUpdating}
+            disabled={isUpdating}
           >
             Save
           </Button>

@@ -41,16 +41,8 @@ export default function EmailPage() {
     }
 
     try {
-      const response = await updateEmail({ email: email });
-
-      console.log('Update email response:', response);
-
+      await updateEmail({ email: email });
       setSuccess('Email updated successfully!');
-
-      // Redirect back after 2 seconds
-      setTimeout(() => {
-        router.back();
-      }, 2000);
     } catch (err) {
       console.error('Update email error:', err);
       if (err instanceof Error) {

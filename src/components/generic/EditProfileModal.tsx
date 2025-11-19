@@ -110,7 +110,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     if (file) {
       setProfilePreview(URL.createObjectURL(file));
     } else {
-      setProfilePreview(undefined);
+      setProfilePreview('');
     }
   };
 
@@ -119,7 +119,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     if (file) {
       setBannerPreview(URL.createObjectURL(file));
     } else {
-      setBannerPreview(undefined);
+      setBannerPreview('');
     }
   };
 

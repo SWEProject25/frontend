@@ -45,16 +45,8 @@ export default function UsernamePage() {
     }
 
     try {
-      const response = await updateUsername({ username: username });
-
-      console.log('Update username response:', response);
-
+      await updateUsername({ username: username });
       setSuccess('Username updated successfully!');
-
-      // Redirect back after 2 seconds
-      setTimeout(() => {
-        router.back();
-      }, 2000);
     } catch (err) {
       console.error('Update username error:', err);
       if (err instanceof Error) {
