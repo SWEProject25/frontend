@@ -36,9 +36,8 @@ export const useFollowUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['interactions', 'following'],
       });
-      // Invalidate the specific user's profile
       queryClient.invalidateQueries({
-        queryKey: ['profile', 'user', userId],
+        queryKey: ['profile'],
       });
     },
   });
@@ -70,9 +69,9 @@ export const useUnfollowUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['interactions', 'following'],
       });
-      // Invalidate the specific user's profile
+      // Invalidate all profile queries to ensure UI updates everywhere
       queryClient.invalidateQueries({
-        queryKey: ['profile', 'user', userId],
+        queryKey: ['profile'],
       });
     },
   });

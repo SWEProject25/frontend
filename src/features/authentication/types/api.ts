@@ -78,3 +78,15 @@ export interface VerifyRecaptchaResponseDto {
   status: string;
   message: string;
 }
+
+export interface VerifyPasswordDto {
+  password: string;
+}
+
+export interface VerifyPasswordResponseDto {
+  status: string;
+  message: string;
+  data: {
+    isValid: boolean;
+  };
+}

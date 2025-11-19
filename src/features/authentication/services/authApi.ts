@@ -11,6 +11,8 @@ import {
   ResendOTPResponseDto,
   VerifyRecaptchaDto,
   VerifyRecaptchaResponseDto,
+  VerifyPasswordDto,
+  VerifyPasswordResponseDto,
   UserResponse,
   MeResponse,
 } from '../types/api';
@@ -195,6 +197,24 @@ export const authApi = {
     );
 
     return handleResponse<ResendOTPResponseDto>(response);
+  },
+
+  async verifyPassword(
+    passwordData: VerifyPasswordDto
+  ): Promise<VerifyPasswordResponseDto> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.VERIFY_PASSWORD}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Important for HTTPOnly cookies
+        body: JSON.stringify(passwordData),
+      }
+    );
+
+    return handleResponse<VerifyPasswordResponseDto>(response);
   },
 
   async forgotPassword(payload: {

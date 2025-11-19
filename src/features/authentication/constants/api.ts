@@ -12,6 +12,7 @@ export const AUTH_ENDPOINTS = {
   VERIFICATION_OTP: `/api/${AUTH_API_CONFIG.VERSION}/auth/verification-otp`,
   VERIFY_OTP: `/api/${AUTH_API_CONFIG.VERSION}/auth/verify-otp`,
   RESEND_OTP: `/api/${AUTH_API_CONFIG.VERSION}/auth/resend-otp`,
+  VERIFY_PASSWORD: `/api/${AUTH_API_CONFIG.VERSION}/auth/verifyPassword`,
   TEST: `/api/${AUTH_API_CONFIG.VERSION}/auth/test`,
   ME: `/api/${AUTH_API_CONFIG.VERSION}/auth/me`,
   CHECK_EMAIL: `/api/${AUTH_API_CONFIG.VERSION}/auth/check-email`,

@@ -56,6 +56,13 @@ export const useLogoutMutation = () => {
   });
 };
 
+// Verify Password Mutation
+export const useVerifyPasswordMutation = () => {
+  return useMutation({
+    mutationFn: authApi.verifyPassword,
+  });
+};
+
 // Forgot Password Mutation
 export const useForgotPasswordMutation = () => {
   return useMutation({
@@ -120,6 +127,7 @@ export const useAuth = () => {
   const loginMutation = useLoginMutation();
   const registerMutation = useRegisterMutation();
   const logoutMutation = useLogoutMutation();
+  const verifyPasswordMutation = useVerifyPasswordMutation();
   const forgotPasswordMutation = useForgotPasswordMutation();
   const resetPasswordMutation = useResetPasswordMutation();
   const sendOTPMutation = useSendOTPMutation();
@@ -139,6 +147,7 @@ export const useAuth = () => {
     login: loginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
+    verifyPassword: verifyPasswordMutation.mutateAsync,
     forgotPassword: forgotPasswordMutation.mutateAsync,
     resetPassword: resetPasswordMutation.mutateAsync,
     sendOTP: sendOTPMutation.mutateAsync,
@@ -149,6 +158,7 @@ export const useAuth = () => {
     isLoginLoading: loginMutation.isPending,
     isRegisterLoading: registerMutation.isPending,
     isLogoutLoading: logoutMutation.isPending,
+    isVerifyPasswordLoading: verifyPasswordMutation.isPending,
     isForgotPasswordLoading: forgotPasswordMutation.isPending,
     isResetPasswordLoading: resetPasswordMutation.isPending,
     isSendOTPLoading: sendOTPMutation.isPending,
