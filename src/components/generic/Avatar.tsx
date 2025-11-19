@@ -2,7 +2,7 @@ import React from 'react';
 import { getColorFromLetter } from '@/constants/colors';
 
 interface AvatarProps {
-  avatarImage?: string;
+  avatarImage: string | null;
   name?: string;
   children?: React.ReactNode;
   className?: string;

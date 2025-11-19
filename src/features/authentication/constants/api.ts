@@ -21,6 +21,8 @@ export const AUTH_ENDPOINTS = {
   RESET_PASSWORD: `/api/${AUTH_API_CONFIG.VERSION}/auth/resetPassword`,
   GOOGLE_OAUTH_LOGIN: `/api/v1.0/auth/google/login`,
   GITHUB_OAUTH_LOGIN: `/api/v1.0/auth/github/login`,
+  UPDATE_EMAIL: `/api/${AUTH_API_CONFIG.VERSION}/auth/update-email`,
+  UPDATE_USERNAME: `/api/${AUTH_API_CONFIG.VERSION}/auth/update-username`,
 } as const;
 
 // Authentication Constants

@@ -3,16 +3,16 @@ export interface UserProfile {
   id: number;
   user_id: number;
   name: string;
-  birth_date: string;
-  profile_image_url?: string;
-  banner_image_url?: string;
+  profile_image_url: string | null;
+  banner_image_url: string | null;
   bio: string | null;
   location: string | null;
   website: string | null;
+  birth_date: string;
   is_deactivated: boolean;
   created_at: string;
   updated_at: string;
-  is_followed_by_me?: boolean;
+  is_followed_by_me: boolean;
   User: {
     id: number;
     username: string;

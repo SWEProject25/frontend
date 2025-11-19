@@ -13,6 +13,10 @@ import {
   VerifyRecaptchaResponseDto,
   VerifyPasswordDto,
   VerifyPasswordResponseDto,
+  UpdateEmailDto,
+  UpdateEmailResponseDto,
+  UpdateUsernameDto,
+  UpdateUsernameResponseDto,
   UserResponse,
   MeResponse,
 } from '../types/api';
@@ -346,5 +350,57 @@ export const authApi = {
       }
     }
     window.addEventListener('message', handleMessage);
+  },
+
+  async updateEmail(
+    emailData: UpdateEmailDto
+  ): Promise<UpdateEmailResponseDto> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.UPDATE_EMAIL}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(emailData),
+      }
+    );
+
+    const data = await handleResponse<UpdateEmailResponseDto>(response);
+
+    const user = data?.data?.user;
+    if (user) {
+      cachedUser = user;
+      cachedAt = Date.now();
+    }
+
+    return data;
+  },
+
+  async updateUsername(
+    usernameData: UpdateUsernameDto
+  ): Promise<UpdateUsernameResponseDto> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.UPDATE_USERNAME}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(usernameData),
+      }
+    );
+
+    const data = await handleResponse<UpdateUsernameResponseDto>(response);
+
+    const user = data?.data?.user;
+    if (user) {
+      cachedUser = user;
+      cachedAt = Date.now();
+    }
+
+    return data;
   },
 };

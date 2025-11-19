@@ -25,10 +25,7 @@ const UserDetails = ({ joinDate, location, website }: UserDetailsProps) => {
       {location && (
         <div className="flex flex-row items-center gap-1">
           <LocationIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-placeholder" />
-          <span
-            className="font-inter text-sm sm:text-base text-text-placeholder
-"
-          >
+          <span className="font-inter text-sm sm:text-base text-text-placeholder">
             {location}
           </span>
         </div>
