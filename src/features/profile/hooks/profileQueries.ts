@@ -7,6 +7,7 @@ import {
   ProfileSearchResponseDto,
 } from '../types/api';
 import { useProfileStore } from '../store/profileStore';
+import { useAuthStore } from '@/features/authentication/store/authStore';
 
 // Query keys
 export const PROFILE_QUERY_KEYS = {
@@ -67,7 +68,30 @@ export const useUpdateMyProfile = () => {
         setLoading(false);
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const profileImageUrl = data.data.profile_image_url;
+
+      // Update auth store user with new profile image if it changed
+      if (profileImageUrl !== undefined) {
+        const currentUser = useAuthStore.getState().user;
+        if (currentUser) {
+          useAuthStore.getState().setUser({
+            ...currentUser,
+            profileImageUrl: profileImageUrl,
+          });
+        }
+
+        // Update auth store cache in React Query
+        queryClient.setQueryData(['auth', 'user'], (oldUser: any) => {
+          if (!oldUser) return oldUser;
+          return {
+            ...oldUser,
+            profileImageUrl: profileImageUrl,
+          };
+        });
+      }
+
+      // Invalidate profile queries to refetch
       queryClient.invalidateQueries({
         queryKey: ['profile'],
       });
@@ -96,7 +120,28 @@ export const useUploadProfileImage = () => {
         setLoading(false);
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const profileImageUrl = data.data.profile_image_url;
+
+      // Update auth store user with new profile image
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser) {
+        useAuthStore.getState().setUser({
+          ...currentUser,
+          profileImageUrl: profileImageUrl,
+        });
+      }
+
+      // Update auth store cache in React Query
+      queryClient.setQueryData(['auth', 'user'], (oldUser: any) => {
+        if (!oldUser) return oldUser;
+        return {
+          ...oldUser,
+          profileImageUrl: profileImageUrl,
+        };
+      });
+
+      // Invalidate profile queries to refetch
       queryClient.invalidateQueries({
         queryKey: ['profile'],
       });
@@ -126,6 +171,7 @@ export const useUploadBannerImage = () => {
       }
     },
     onSuccess: () => {
+      // Invalidate profile queries to refetch
       queryClient.invalidateQueries({
         queryKey: ['profile'],
       });
@@ -155,6 +201,25 @@ export const useRemoveProfileImage = () => {
       }
     },
     onSuccess: () => {
+      // Update auth store user with null profile image
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser) {
+        useAuthStore.getState().setUser({
+          ...currentUser,
+          profileImageUrl: null,
+        });
+      }
+
+      // Update auth store cache in React Query
+      queryClient.setQueryData(['auth', 'user'], (oldUser: any) => {
+        if (!oldUser) return oldUser;
+        return {
+          ...oldUser,
+          profileImageUrl: null,
+        };
+      });
+
+      // Invalidate profile queries to refetch
       queryClient.invalidateQueries({
         queryKey: ['profile'],
       });
