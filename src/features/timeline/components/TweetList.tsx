@@ -17,6 +17,7 @@ export default function TweetList() {
     isFetchingNextPage,
     hasNextPage,
   } = useTimelineFeed();
+  console.log(data);
 
   const pages = data?.pages.flat();
   const renderTweets = pages?.map((group, i) => (
@@ -31,7 +32,9 @@ export default function TweetList() {
   return isError ? (
     <div>Error {error.message}</div>
   ) : isLoading ? (
-    <Loader />
+    <div className="flex justify-center items-center h-64 mx-4">
+      <Loader />
+    </div>
   ) : (
     <>
       <InfiniteScroll

@@ -34,7 +34,7 @@ export default function ConversationItem({
       <div className="flex items-start gap-3">
         {/* Avatar */}
         <Avatar
-          avatarImage={avatar}
+          avatarImage={avatar ?? null}
           name={name}
           size="sm"
           position="relative"

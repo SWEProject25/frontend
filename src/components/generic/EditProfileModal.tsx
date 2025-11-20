@@ -17,12 +17,12 @@ interface EditProfileModalProps {
   onClose: () => void;
   initialData: {
     name: string;
-    bio: string;
-    profileImage?: string;
-    bannerImage?: string;
-    location?: string;
-    website?: string;
-    birthDate?: string; // ISO string
+    bio: string | null;
+    profileImage: string | null;
+    bannerImage: string | null;
+    location: string | null;
+    website: string | null;
+    birthDate: string; // ISO string
   };
   onSave: (data: {
     name?: string;
@@ -44,26 +44,26 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   isUpdating = false,
 }) => {
   const [name, setName] = useState(initialData.name);
-  const [bio, setBio] = useState(initialData.bio);
+  const [bio, setBio] = useState(initialData.bio ?? '');
   const [location, setLocation] = useState(initialData.location ?? '');
   const [website, setWebsite] = useState(initialData.website ?? '');
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string | undefined>(
-    initialData.profileImage
+    initialData.profileImage ?? undefined
   );
   const [bannerPreview, setBannerPreview] = useState<string | undefined>(
-    initialData.bannerImage
+    initialData.bannerImage ?? undefined
   );
-  const [birth, setBirth] = useState<DatePickerValue | undefined>(() => {
-    return isoStringToDatePickerValue(initialData.birthDate);
+  const [birth, setBirth] = useState<DatePickerValue>(() => {
+    return isoStringToDatePickerValue(initialData.birthDate) ?? {};
   });
 
   const handleSave = () => {
     const computeImagePayload = (
       file: File | null,
       preview: string | undefined,
-      initial?: string
+      initial?: string | null
     ): File | null | undefined => {
       if (file) return file;
       if (preview === '') return null;
@@ -71,7 +71,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       return undefined;
     };
 
-    const fieldPayload = (value: string, initial?: string | undefined) => {
+    const fieldPayload = (value: string, initial?: string | null) => {
       const v = value?.trim();
       const init = initial?.trim() ?? '';
       if (v === init) return undefined;
@@ -80,9 +80,9 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
     onSave({
       name: fieldPayload(name, initialData.name),
-      bio: fieldPayload(bio, initialData.bio),
-      location: fieldPayload(location, initialData.location),
-      website: fieldPayload(website, initialData.website),
+      bio: fieldPayload(bio, initialData.bio ?? undefined),
+      location: fieldPayload(location, initialData.location ?? undefined),
+      website: fieldPayload(website, initialData.website ?? undefined),
       birthDate: (() => {
         const selected = getBirthDateOrNull(birth);
         const initial = initialData.birthDate;
@@ -94,12 +94,12 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       profileImage: computeImagePayload(
         profileImage,
         profilePreview,
-        initialData.profileImage
+        initialData.profileImage ?? undefined
       ),
       bannerImage: computeImagePayload(
         bannerImage,
         bannerPreview,
-        initialData.bannerImage
+        initialData.bannerImage ?? undefined
       ),
     });
     onCloseModal();
@@ -125,14 +125,14 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
   const resetToInitial = () => {
     setName(initialData.name);
-    setBio(initialData.bio);
+    setBio(initialData.bio ?? '');
     setLocation(initialData.location ?? '');
     setWebsite(initialData.website ?? '');
     setProfileImage(null);
     setBannerImage(null);
-    setProfilePreview(initialData.profileImage);
-    setBannerPreview(initialData.bannerImage);
-    setBirth(isoStringToDatePickerValue(initialData.birthDate));
+    setProfilePreview(initialData.profileImage ?? undefined);
+    setBannerPreview(initialData.bannerImage ?? undefined);
+    setBirth(isoStringToDatePickerValue(initialData.birthDate) ?? {});
   };
 
   const onCloseModal = () => {
@@ -143,14 +143,14 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       setName(initialData.name);
-      setBio(initialData.bio);
+      setBio(initialData.bio ?? '');
       setLocation(initialData.location ?? '');
       setWebsite(initialData.website ?? '');
       setProfileImage(null);
       setBannerImage(null);
-      setProfilePreview(initialData.profileImage);
-      setBannerPreview(initialData.bannerImage);
-      setBirth(isoStringToDatePickerValue(initialData.birthDate));
+      setProfilePreview(initialData.profileImage ?? undefined);
+      setBannerPreview(initialData.bannerImage ?? undefined);
+      setBirth(isoStringToDatePickerValue(initialData.birthDate) ?? {});
     }
   }, [isOpen, initialData]);
 
@@ -189,7 +189,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             website={website}
             setWebsite={setWebsite}
             birth={birth}
-            setBirth={setBirth}
+            setBirth={(v) => setBirth(v ?? {})}
           />
         </div>
       </div>

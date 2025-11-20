@@ -1,15 +1,14 @@
 'use client';
 import XMenu from '@/components/ui/home/XMenu';
-import { LogOut, MoreHorizontal } from 'lucide-react';
-import { useAuthStore } from '@/features/authentication/store/authStore';
+import { MoreHorizontal } from 'lucide-react';
+import { useAuth } from '@/features/authentication/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import Avatar from '@/components/generic/Avatar';
 
 const PANEL_HEIGHT = 44; // Single item height
 
 export default function ProfileMenu() {
-  const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
+  const { user, logout } = useAuth();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -29,7 +28,7 @@ export default function ProfileMenu() {
         <div className="flex items-center justify-between hover:bg-gray-900 rounded-full p-3 mb-3 cursor-pointer transition-colors w-full">
           <div className="flex items-center gap-3">
             <Avatar
-              avatarImage={user.profileImageUrl ?? undefined}
+              avatarImage={user.profileImageUrl ?? null}
               name={user.name}
               size="sm"
               position="relative"

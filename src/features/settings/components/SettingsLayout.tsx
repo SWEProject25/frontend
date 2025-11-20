@@ -22,14 +22,14 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
   const isMainPage = pathname === '/settings';
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr] min-h-screen">
+    <div className="flex flex-col lg:flex-row min-h-screen w-full">
       <div
-        className={`${!isMainPage && selectedOption ? 'hidden lg:block' : 'block'}`}
+        className={`${!isMainPage && selectedOption ? 'hidden lg:block' : 'block'} lg:w-4/9`}
       >
         <SettingsList options={SETTINGS_ITEMS} />
       </div>
 
-      <div className={`${isMainPage ? 'hidden lg:block' : 'block'}`}>
+      <div className={`${isMainPage ? 'hidden lg:block' : 'block'} lg:w-5/9`}>
         {isMainCategoryPage ? (
           <SettingsDetail selectedOption={selectedOption} />
         ) : (

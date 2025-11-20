@@ -60,28 +60,14 @@ export const useToggleLikeTweet = (tweetId: number) => {
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.toggleLikeTweet(tweetId),
       });
-
-      // setCurrentTweet({ ...currentTweet });
-
-      // if (onMutateResult) {
-      //   const newTweets = onMutateResult.previousFeed?.pages.filter((page) =>
-      //     page.data.posts.filter((tweet) => tweet.postId === tweetId)
-      //   );
-      //   if (newTweets) {
-      //     const newTweet = newTweets[0].data.posts[0];
-      //     const isLiked = newTweet.isLikedByMe;
-      //     const countLikes = newTweet.likesCount;
-      //     newTweet.likesCount = isLiked ? countLikes - 1 : countLikes + 1;
-      //     newTweet.isLikedByMe = !isLiked;
-      //     setCurrentTweet(newTweet);
-      //   }
-      // }
     },
   });
 };
 
 // Hook: Toggle repost tweet
 export const useToggleRepostTweet = (tweetId: number) => {
+  const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
+  const currentFullTweet = useTweetStore((store) => store.currentTweet);
   const queryClient = useQueryClient();
   const { onMutate } = useOptimisticTweet();
 
@@ -92,10 +78,33 @@ export const useToggleRepostTweet = (tweetId: number) => {
       if (onMutateResult)
         handleErrorOptimisticTweet(queryClient, onMutateResult);
     },
-    onSuccess: () => {
+    onSuccess: (data, variables, onMutateResult) => {
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.toggleRepostTweet(tweetId),
       });
+
+      if (onMutateResult) {
+        const newTweets = onMutateResult.previousFeed?.pages
+          .flatMap((page) => page.data.posts)
+          .filter((tweet) => tweet.postId === tweetId);
+
+        if (newTweets && newTweets.length > 0) {
+          const originalTweet = newTweets[0];
+          const isReposted = originalTweet.isRepostedByMe;
+          const countReposts = originalTweet.retweetsCount;
+
+          // ✅ Create a new object instead of mutating
+          const updatedTweet = {
+            ...originalTweet,
+            retweetsCount: isReposted ? countReposts - 1 : countReposts + 1,
+            isRepostedByMe: !isReposted,
+          };
+
+          if (updatedTweet.postId === currentFullTweet?.postId) {
+            setCurrentTweet(updatedTweet);
+          }
+        }
+      }
     },
   });
 };

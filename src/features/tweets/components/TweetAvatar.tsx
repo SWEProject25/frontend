@@ -39,7 +39,7 @@ export default function TweetAvatar({
           }
         >
           <Avatar
-            avatarImage={data.avatar ?? undefined}
+            avatarImage={data.avatar ?? null}
             name={data.name}
             size="sm"
             position="relative"
@@ -65,7 +65,7 @@ export default function TweetAvatar({
               e.stopPropagation();
             }}
           >
-            {data.name && data.username && <ProfileCard data={data} />}
+            {data.name && data.username && <ProfileCard userId={data.id} />}
           </div>
         )}
       </div>

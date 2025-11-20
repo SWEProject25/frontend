@@ -2,7 +2,7 @@ import React from 'react';
 import { getColorFromLetter } from '@/constants/colors';
 
 interface AvatarProps {
-  avatarImage?: string;
+  avatarImage: string | null;
   name?: string;
   children?: React.ReactNode;
   className?: string;
@@ -23,15 +23,15 @@ const Avatar = ({
   const sizeClasses = {
     xs: 'w-[32px] h-[32px]',
     sm: 'w-[48px] h-[48px]',
-    md: 'w-[96px] h-[96px]',
-    lg: 'w-[132px] h-[132px]',
+    md: 'w-[96px] h-[96px] sm:w-[96px] sm:h-[96px]',
+    lg: 'w-[100px] h-[100px] sm:w-[132px] sm:h-[132px]',
   };
 
   const fontSizes = {
     xs: 'text-xl',
     sm: 'text-2xl',
     md: 'text-4xl',
-    lg: 'text-5xl',
+    lg: 'text-3xl sm:text-5xl',
   };
 
   const getInitial = (): { letter: string; color: string } | null => {
@@ -48,14 +48,14 @@ const Avatar = ({
 
   const positionStyle =
     position === 'absolute' && !customPosition
-      ? { left: '16px', top: '134px', zIndex: 1 }
+      ? { left: '12px', top: '80px', zIndex: 1 }
       : position === 'absolute'
         ? { zIndex: 1 }
         : {};
 
   return (
     <div
-      className={`${position} ${sizeClasses[size]} rounded-full border-[#15202B] ${className}`}
+      className={`${position} ${sizeClasses[size]} rounded-full border-[#15202B] ${className.includes('border-') ? className : `border-2 sm:border-4 ${className}`}`}
       style={positionStyle}
     >
       <div

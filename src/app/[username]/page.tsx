@@ -9,6 +9,7 @@ import { use } from 'react';
 import { useProfileByUsername } from '@/features/profile/hooks';
 import { useMyProfile } from '@/features/profile/hooks';
 import { useAuthStore } from '@/features/authentication/store/authStore';
+import Loader from '@/components/generic/Loader';
 
 interface UserPageProps {
   params: Promise<{
@@ -41,7 +42,7 @@ const UserPage = ({ params }: UserPageProps) => {
   // Loading state
   if (isLoading) {
     return (
-      <main className="flex flex-col w-full min-h-screen">
+      <main className="flex flex-col">
         <div className="flex flex-row justify-between items-center px-4">
           <Breadcrumb
             title={`${username}'s Profile`}
@@ -50,8 +51,8 @@ const UserPage = ({ params }: UserPageProps) => {
             showArrow={true}
           />
         </div>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-text-secondary">Loading profile...</div>
+        <div className="flex justify-center items-center h-64 mx-4">
+          <Loader />
         </div>
       </main>
     );
@@ -60,7 +61,7 @@ const UserPage = ({ params }: UserPageProps) => {
   // Error state
   if (error || !profileData) {
     return (
-      <main className="flex flex-col w-full min-h-screen">
+      <main className="flex flex-col">
         <div className="flex flex-row justify-between items-center px-4">
           <Breadcrumb
             title={`${username}'s Profile`}
@@ -81,8 +82,8 @@ const UserPage = ({ params }: UserPageProps) => {
   const profile = profileData.data;
 
   return (
-    <main className="flex flex-col w-full min-h-screen">
-      <div className="flex flex-row justify-between items-center px-4">
+    <main className="flex flex-col">
+      <div className="flex flex-row justify-between items-center px-4 sticky top-0 bg-background/90 z-10">
         <Breadcrumb
           title={`${profile.name}'s Profile`}
           subtitle={`@${profile.User.username}`}
@@ -93,7 +94,7 @@ const UserPage = ({ params }: UserPageProps) => {
           <SearchIcon className="w-5 h-6 text-text-primary" />
         </Button>
       </div>
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col">
         <ProfileContainer profileData={profile} isMine={useMy} />
         <TabView />
       </div>

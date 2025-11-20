@@ -14,6 +14,7 @@ import { OTPInputProps } from '../types';
 export function OTPInput({
   length = OTP_CONSTANTS.DEFAULT_LENGTH,
   onComplete,
+  onChange,
   email,
   error,
   onClearError,
@@ -26,6 +27,7 @@ export function OTPInput({
     useOTPInput({
       length,
       onComplete,
+      onChange,
       error,
       onClearError,
     });

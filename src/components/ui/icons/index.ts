@@ -21,6 +21,7 @@ export {
   ArrowLeftIcon,
   ArrowRightIcon,
   SearchIcon,
+  UnMuteIcon,
   MuteIcon,
   MessagesIcon,
   MoreIcon,

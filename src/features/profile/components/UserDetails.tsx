@@ -21,34 +21,31 @@ const UserDetails = ({ joinDate, location, website }: UserDetailsProps) => {
     : null;
 
   return (
-    <div className="flex flex-row items-center gap-3">
+    <div className="flex flex-row items-center gap-2 sm:gap-3 flex-wrap">
       {location && (
         <div className="flex flex-row items-center gap-1">
-          <LocationIcon className="w-4 h-4 text-text-placeholder" />
-          <span
-            className="font-inter text-base text-text-placeholder
-"
-          >
+          <LocationIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-placeholder" />
+          <span className="font-inter text-sm sm:text-base text-text-placeholder">
             {location}
           </span>
         </div>
       )}
       {externalUrl && (
         <div className="flex flex-row items-center gap-1">
-          <LinkIcon className="w-4 h-4 text-text-placeholder" />
+          <LinkIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-placeholder" />
           <Link
             href={externalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-inter text-base text-primary hover:underline"
+            className="font-inter text-sm sm:text-base text-primary hover:underline"
           >
             {normalizedWebsite}
           </Link>
         </div>
       )}
       <div className="flex flex-row items-center gap-1">
-        <JoinDateIcon className="w-4 h-4 text-text-placeholder" />
-        <span className="font-inter text-base text-text-placeholder">
+        <JoinDateIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-placeholder" />
+        <span className="font-inter text-sm sm:text-base text-text-placeholder">
           Joined {formattedDate}
         </span>
       </div>

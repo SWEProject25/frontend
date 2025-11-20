@@ -5,6 +5,7 @@ import { useTweetStore } from '@/features/tweets/store/tweetStore';
 
 function Page() {
   const tweet = useTweetStore((store) => store.currentTweet);
+
   return (
     <>
       <FullTweet data={tweet} />
