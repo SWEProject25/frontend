@@ -39,14 +39,21 @@ export const useTweetById = (tweetId: number) => {
 // Hook: Toggle like tweet
 export const useToggleLikeTweet = (tweetId: number) => {
   const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
+  const currentTweet = useTweetStore((state) => state.currentTweet);
   const queryClient = useQueryClient();
   const { onMutate } = useOptimisticTweet();
   return useMutation({
     mutationFn: () => tweetApi.toggleLikeTweet(tweetId),
     onMutate: () => onMutate(tweetId, OPTIMISTIC_TYPES.LIKE),
     onError(error, variables, onMutateResult) {
-      if (onMutateResult)
+      if (onMutateResult?.previousFeed) {
         handleErrorOptimisticTweet(queryClient, onMutateResult);
+        // setCurrentTweet(
+        //   onMutateResult.previousFeed.pages.flatMap((pages) =>
+        //     pages.data.posts.filter((posts) => posts.postId === tweetId)
+        //   )[0]
+        // );
+      }
     },
 
     onSuccess(data, variables, onMutateResult, context) {
@@ -54,19 +61,21 @@ export const useToggleLikeTweet = (tweetId: number) => {
         queryKey: TWEET_QUERY_KEYS.toggleLikeTweet(tweetId),
       });
 
-      if (onMutateResult) {
-        const newTweets = onMutateResult.previousFeed?.pages.filter((page) =>
-          page.data.posts.filter((tweet) => tweet.postId === tweetId)
-        );
-        if (newTweets) {
-          const newTweet = newTweets[0].data.posts[0];
-          const isLiked = newTweet.isLikedByMe;
-          const countLikes = newTweet.likesCount;
-          newTweet.likesCount = isLiked ? countLikes - 1 : countLikes + 1;
-          newTweet.isLikedByMe = !isLiked;
-          setCurrentTweet(newTweet);
-        }
-      }
+      // setCurrentTweet({ ...currentTweet });
+
+      // if (onMutateResult) {
+      //   const newTweets = onMutateResult.previousFeed?.pages.filter((page) =>
+      //     page.data.posts.filter((tweet) => tweet.postId === tweetId)
+      //   );
+      //   if (newTweets) {
+      //     const newTweet = newTweets[0].data.posts[0];
+      //     const isLiked = newTweet.isLikedByMe;
+      //     const countLikes = newTweet.likesCount;
+      //     newTweet.likesCount = isLiked ? countLikes - 1 : countLikes + 1;
+      //     newTweet.isLikedByMe = !isLiked;
+      //     setCurrentTweet(newTweet);
+      //   }
+      // }
     },
   });
 };

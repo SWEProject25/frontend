@@ -1,3 +1,4 @@
+'use clinet';
 import {
   InfiniteData,
   QueryClient,
@@ -8,6 +9,7 @@ import { useSelectedTab } from '../store/useTimelineStore';
 import { FOLLOWING_TAB } from '../constants/menuName';
 import { TimelineFeed, TimelineFeedDtoResponse } from '../types/api';
 import { OPTIMISTIC_TYPES } from '../constants/api';
+import { useTweetStore } from '@/features/tweets/store/tweetStore';
 
 function updateTweetInInfiniteData(
   data: InfiniteData<TimelineFeedDtoResponse, number> | undefined,
@@ -23,23 +25,28 @@ function updateTweetInInfiniteData(
       data: {
         ...page.data,
         posts: page.data.posts.map((tweet) =>
-          tweet.postId === tweetId ? chooseUpdateTweet(type, tweet) : tweet
+          tweet.postId === tweetId ? useUpdateTweet(type, tweet) : tweet
         ),
       },
     })),
   };
 }
 
-function chooseUpdateTweet(type: string, tweet: TimelineFeed): TimelineFeed {
+function useUpdateTweet(type: string, tweet: TimelineFeed): TimelineFeed {
+  const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
   switch (type) {
     case OPTIMISTIC_TYPES.LIKE:
-      return {
+      console.log(tweet);
+      const isLiked = tweet.isLikedByMe;
+      const countLikes = tweet.likesCount;
+      const updatedTweet = {
         ...tweet,
-        likesCount: tweet.isLikedByMe
-          ? tweet.likesCount - 1
-          : tweet.likesCount + 1,
-        isLikedByMe: !tweet.isLikedByMe,
+        likesCount: isLiked ? countLikes - 1 : countLikes + 1,
+        isLikedByMe: !isLiked,
       };
+      console.log(updatedTweet);
+      setCurrentTweet(updatedTweet);
+      return updatedTweet;
 
     case OPTIMISTIC_TYPES.REPOST:
       return {
@@ -86,7 +93,6 @@ export function useOptimisticTweet() {
       queryKey,
       (old) => updateTweetInInfiniteData(old, tweetId, type)
     );
-
     return { previousFeed, queryKey };
   };
 
