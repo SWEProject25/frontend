@@ -76,32 +76,60 @@ export const useAddTweet = () => {
       //   isQuote: false,
       //   originalPostData: undefined,
       // };
-      // queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
-      //   TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
-      //   (old) => {
-      //     console.log('Old data:', old);
-      //     if (!old) return old;
+      //       queryClient.batch(() => {
+      //         queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
+      //           TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
+      //           (old) => {
+      //             console.log('Old data:', old);
+      //             if (!old) return old;
 
-      //     const updated = {
-      //       ...old,
-      //       pages: old.pages.map((page, ind) => {
-      //         if (ind === 0) {
-      //           return {
-      //             ...page,
-      //             data: {
-      //               ...page.data,
-      //               posts: [newTweet, ...page.data.posts],
-      //             },
-      //           };
-      //         }
-      //         return page;
-      //       }),
-      //     };
+      //             const updated = {
+      //               ...old,
+      //               pages: old.pages.map((page, ind) => {
+      //                 if (ind === 0) {
+      //                   return {
+      //                     ...page,
+      //                     data: {
+      //                       ...page.data,
+      //                       posts: [newTweet, ...page.data.posts],
+      //                     },
+      //                   };
+      //                 }
+      //                 return page;
+      //               }),
+      //             };
 
-      //     console.log('Updated data:', updated);
-      //     return updated;
-      //   }
-      // );
+      //             console.log('Updated data:', updated);
+      //             return updated;
+      //           }
+      //         );
+      //         queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
+      //           TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
+      //           (old) => {
+      //             console.log('Old data:', old);
+      //             if (!old) return old;
+
+      //             const updated = {
+      //               ...old,
+      //               pages: old.pages.map((page, ind) => {
+      //                 if (ind === 0) {
+      //                   return {
+      //                     ...page,
+      //                     data: {
+      //                       ...page.data,
+      //                       posts: [newTweet, ...page.data.posts],
+      //                     },
+      //                   };
+      //                 }
+      //                 return page;
+      //               }),
+      //             };
+
+      //             console.log('Updated data:', updated);
+      //             return updated;
+      //           }
+      //         );
+      //       });
     },
     networkMode: 'always',
     onMutate: () => {
