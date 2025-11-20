@@ -94,9 +94,9 @@ export const useToggleRepostTweet = (
 };
 
 export const useGetRepliesByTweetId = (
-  tweetId: number,
-  isRepost: number,
-  isQuote: number
+  tweetId: number
+  // isRepost: number,
+  // isQuote: number
 ) => {
   return useInfiniteQuery<
     ReplyResponseDto,
