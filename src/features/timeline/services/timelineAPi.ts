@@ -43,7 +43,6 @@ async function handleResponse<T>(response: Response): Promise<T> {
     throw new ApiError(errorMessage, statusCode);
     // console.log(errorMessage, statusCode);
   }
-
   return response.json();
 }
 
@@ -77,6 +76,7 @@ export const timelineApi = {
         credentials: 'include',
       }
     );
+
     return handleResponse<TimelineFeedDtoResponse>(response);
   },
 };

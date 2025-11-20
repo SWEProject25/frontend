@@ -55,55 +55,53 @@ export const useAddTweet = () => {
       clearMedia();
       toasterMessage('Your post was sent.');
       console.log(data);
-      const newTweet: TimelineFeed = {
-        isRepost: false,
-        isQuote: false,
-        originalPostData: undefined,
-        userId: data.data.user_id,
-        username: data.data.User.username,
-        verified: false,
-        name: user?.name ?? '',
-        avatar: user?.profileImageUrl ?? '',
-        postId: data.data.id,
-        date: data.data.created_at,
-        likesCount: data.data._count.likes,
-        retweetsCount: data.data._count.repostedBy,
-        commentsCount: data.data._count.Replies,
-        isLikedByMe: false,
-        isFollowedByMe: false,
-        isRepostedByMe: false,
-        text: data.data.content,
-        media: data.data.media.map((med) => ({
-          type: med.type.toLowerCase() === 'image' ? 'IMAGE' : 'VIDEO',
-          url: med.media_url,
-        })),
-      };
-      queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
-        TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
-        (old) => {
-          console.log('Old data:', old);
-          if (!old) return old;
 
-          const updated = {
-            ...old,
-            pages: old.pages.map((page, ind) => {
-              if (ind === 0) {
-                return {
-                  ...page,
-                  data: {
-                    ...page.data,
-                    posts: [newTweet, ...page.data.posts],
-                  },
-                };
-              }
-              return page;
-            }),
-          };
+      // const newTweet: TimelineFeed = {
+      //   userId: 40,
+      //   username: 'albaz.mo867',
+      //   verified: true,
+      //   name: 'Yousef Adel',
+      //   avatar: null,
+      //   postId: 50,
+      //   date: '2025-11-20T22:4:59.850Z',
+      //   likesCount: 3,
+      //   retweetsCount: 2,
+      //   commentsCount: 47,
+      //   isLikedByMe: false,
+      //   isFollowedByMe: true,
+      //   isRepostedByMe: false,
+      //   text: 'test new add2',
+      //   media: [],
+      //   isRepost: true,
+      //   isQuote: false,
+      //   originalPostData: undefined,
+      // };
+      // queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
+      //   TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
+      //   (old) => {
+      //     console.log('Old data:', old);
+      //     if (!old) return old;
 
-          console.log('Updated data:', updated);
-          return updated;
-        }
-      );
+      //     const updated = {
+      //       ...old,
+      //       pages: old.pages.map((page, ind) => {
+      //         if (ind === 0) {
+      //           return {
+      //             ...page,
+      //             data: {
+      //               ...page.data,
+      //               posts: [newTweet, ...page.data.posts],
+      //             },
+      //           };
+      //         }
+      //         return page;
+      //       }),
+      //     };
+
+      //     console.log('Updated data:', updated);
+      //     return updated;
+      //   }
+      // );
     },
     networkMode: 'always',
     onMutate: () => {

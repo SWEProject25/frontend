@@ -27,12 +27,12 @@ export const useTweetStore = create<TweetStore>()(
       clearTweet: () => {
         set({ currentTweet: null, error: null, isLoading: false });
       },
-    }),
-    {
-      name: 'tweet-storage',
-      partialize: (state) => ({
-        currentTweet: state.currentTweet,
-      }),
-    }
+    })
+    // {
+    //   name: 'tweet-storage',
+    //   partialize: (state: any) => ({
+    //     currentTweet: state.currentTweet,
+    //   }),
+    // }
   )
 );

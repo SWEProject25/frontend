@@ -10,62 +10,92 @@ import { FOLLOWING_TAB } from '../constants/menuName';
 import { TimelineFeed, TimelineFeedDtoResponse } from '../types/api';
 import { OPTIMISTIC_TYPES } from '../constants/api';
 import { useTweetStore } from '@/features/tweets/store/tweetStore';
+// import { C } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
 
 function updateTweetInInfiniteData(
   data: InfiniteData<TimelineFeedDtoResponse, number> | undefined,
   tweetId: number,
+  isRepost: boolean,
+  isQuote: boolean,
   type: string
-): InfiniteData<TimelineFeedDtoResponse, number> | undefined {
+):
+  | {
+      newFeed: InfiniteData<TimelineFeedDtoResponse, number>;
+      newTweet: TimelineFeed;
+      oldTweet: TimelineFeed;
+    }
+  | undefined {
   if (!data) return data;
-
+  const oldTweets = data.pages.flatMap((page) =>
+    page.data.posts.filter(
+      (post) =>
+        post.postId === tweetId &&
+        post.isRepost === isRepost &&
+        post.isQuote === isQuote
+    )
+  );
+  console.log(oldTweets);
+  const oldTweet = oldTweets[0];
+  const newTweet = updateTweet(type, oldTweet);
   return {
-    ...data,
-    pages: data.pages.map((page) => ({
-      ...page,
-      data: {
-        ...page.data,
-        posts: page.data.posts.map((tweet) =>
-          tweet.postId === tweetId ? useUpdateTweet(type, tweet) : tweet
-        ),
-      },
-    })),
+    newFeed: {
+      ...data,
+      pages: data.pages.map((page) => ({
+        ...page,
+        data: {
+          ...page.data,
+          posts: page.data.posts.map((tweet) =>
+            tweet.postId === tweetId &&
+            tweet.isRepost === isRepost &&
+            tweet.isQuote === isQuote
+              ? newTweet
+              : tweet
+          ),
+        },
+      })),
+    },
+    newTweet: newTweet,
+    oldTweet: oldTweet,
   };
 }
 
-function useUpdateTweet(type: string, tweet: TimelineFeed): TimelineFeed {
-  const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
+function updateTweet(type: string, tweet: TimelineFeed): TimelineFeed {
+  // const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
+  let updatedTweet = tweet;
   switch (type) {
     case OPTIMISTIC_TYPES.LIKE:
       console.log(tweet);
       const isLiked = tweet.isLikedByMe;
       const countLikes = tweet.likesCount;
-      const updatedTweet = {
+      updatedTweet = {
         ...tweet,
         likesCount: isLiked ? countLikes - 1 : countLikes + 1,
         isLikedByMe: !isLiked,
       };
-      console.log(updatedTweet);
-      setCurrentTweet(updatedTweet);
+      // console.log(updatedTweet);
+      // setCurrentTweet(updatedTweet);
       return updatedTweet;
 
     case OPTIMISTIC_TYPES.REPOST:
-      return {
+      const isReposted = tweet.isRepostedByMe;
+      const retweetsCount = tweet.retweetsCount;
+      updatedTweet = {
         ...tweet,
-        retweetsCount: tweet.isRepostedByMe
-          ? tweet.retweetsCount - 1
-          : tweet.retweetsCount + 1,
-        isRepostedByMe: !tweet.isRepostedByMe,
+        retweetsCount: isReposted ? retweetsCount - 1 : retweetsCount + 1,
+        isRepostedByMe: !isReposted,
       };
+      // console.log(updatedTweet);
+      // setCurrentTweet(updatedTweet);
+
+      return updatedTweet;
     case OPTIMISTIC_TYPES.REPLY:
-      return {
-        ...tweet,
-        commentsCount: tweet.commentsCount - 1,
-      };
+      const commentsCount = tweet.commentsCount;
+      updatedTweet = { ...tweet, commentsCount: commentsCount };
+      return updatedTweet;
     case OPTIMISTIC_TYPES.FOLLOW:
-      return {
-        ...tweet,
-        isFollowedByMe: !tweet.isFollowedByMe,
-      };
+      const isFollowed = tweet.isFollowedByMe;
+      updatedTweet = { ...tweet, isFollowedByMe: !isFollowed };
+      return updatedTweet;
     default:
       return tweet;
   }
@@ -82,18 +112,34 @@ export function useOptimisticTweet() {
   const queryClient = useQueryClient();
   const queryKey = useTimelineQueryKey();
 
-  const onMutate = async (tweetId: number, type: string) => {
-    await queryClient.cancelQueries({ queryKey: queryKey as any });
+  const onMutate = async (
+    tweetId: number,
+    isRepost: boolean,
+    isQuote: boolean,
+    type: string
+  ) => {
+    await queryClient.cancelQueries({ queryKey: queryKey });
     const previousFeed =
       queryClient.getQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
         queryKey
       );
-
+    console.log(previousFeed);
+    const timelineFeed = updateTweetInInfiniteData(
+      previousFeed,
+      tweetId,
+      isRepost,
+      isQuote,
+      type
+    );
     queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
       queryKey,
-      (old) => updateTweetInInfiniteData(old, tweetId, type)
+      timelineFeed?.newFeed
     );
-    return { previousFeed, queryKey };
+    console.log(timelineFeed?.newFeed);
+    const newTweet = timelineFeed?.newTweet;
+    const oldTweet = timelineFeed?.oldTweet;
+
+    return { previousFeed, queryKey, newTweet, oldTweet };
   };
 
   return { onMutate };
@@ -107,8 +153,11 @@ export function handleErrorOptimisticTweet(
       | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING
       | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU
       | undefined;
+    newTweet: TimelineFeed | undefined;
+    oldTweet: TimelineFeed | undefined;
   }
 ) {
+  console.log('failure');
   if (context?.previousFeed && context.queryKey) {
     queryClient.setQueryData(context.queryKey, context.previousFeed);
   }

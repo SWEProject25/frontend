@@ -32,6 +32,8 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
 
   const actionsStats = {
     postId: data.postId,
+    isRepost: data.isRepost,
+    isQuote: data.isQuote,
     likesCount: data.likesCount,
     retweetsCount: data.retweetsCount,
     commentsCount: data.commentsCount,
