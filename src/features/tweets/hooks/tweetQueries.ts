@@ -38,7 +38,8 @@ export const useTweetById = (tweetId: number) => {
 export const useToggleLikeTweet = (
   tweetId: number,
   isRepost: boolean,
-  isQuote: boolean
+  isQuote: boolean,
+  userId: number
 ) => {
   const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
   const queryClient = useQueryClient();
@@ -46,7 +47,13 @@ export const useToggleLikeTweet = (
   return useMutation({
     mutationFn: () => tweetApi.toggleLikeTweet(tweetId),
     onMutate: () => {
-      return onMutate(tweetId, isRepost, isQuote, OPTIMISTIC_TYPES.LIKE);
+      return onMutate(
+        tweetId,
+        isRepost,
+        isQuote,
+        userId,
+        OPTIMISTIC_TYPES.LIKE
+      );
     },
     onError: (error, variables, onMutateResult) => {
       if (onMutateResult?.previousFeed) {
@@ -68,17 +75,17 @@ export const useToggleLikeTweet = (
 export const useToggleRepostTweet = (
   tweetId: number,
   isRepost: boolean,
-  isQuote: boolean
+  isQuote: boolean,
+  userId: number
 ) => {
   const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
-  const currentFullTweet = useTweetStore((store) => store.currentTweet);
   const queryClient = useQueryClient();
   const { onMutate } = useOptimisticTweet();
 
   return useMutation({
     mutationFn: () => tweetApi.toggleRepostTweet(tweetId),
     onMutate: () =>
-      onMutate(tweetId, isRepost, isQuote, OPTIMISTIC_TYPES.REPOST),
+      onMutate(tweetId, isRepost, isQuote, userId, OPTIMISTIC_TYPES.REPOST),
     onError: (error, variables, onMutateResult) => {
       if (onMutateResult?.oldTweet) setCurrentTweet(onMutateResult.oldTweet);
       if (onMutateResult?.previousFeed)
@@ -93,11 +100,7 @@ export const useToggleRepostTweet = (
   });
 };
 
-export const useGetRepliesByTweetId = (
-  tweetId: number
-  // isRepost: number,
-  // isQuote: number
-) => {
+export const useGetRepliesByTweetId = (tweetId: number) => {
   return useInfiniteQuery<
     ReplyResponseDto,
     Error,

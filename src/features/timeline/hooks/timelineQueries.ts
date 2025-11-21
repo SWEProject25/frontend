@@ -76,60 +76,83 @@ export const useAddTweet = () => {
       //   isQuote: false,
       //   originalPostData: undefined,
       // };
-      //       queryClient.batch(() => {
-      //         queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
-      //           TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
-      //           (old) => {
-      //             console.log('Old data:', old);
-      //             if (!old) return old;
 
-      //             const updated = {
-      //               ...old,
-      //               pages: old.pages.map((page, ind) => {
-      //                 if (ind === 0) {
-      //                   return {
-      //                     ...page,
-      //                     data: {
-      //                       ...page.data,
-      //                       posts: [newTweet, ...page.data.posts],
-      //                     },
-      //                   };
-      //                 }
-      //                 return page;
-      //               }),
-      //             };
+      // const newTweet2: TimelineFeed = {
+      //   isRepost: false,
+      //   isQuote: false,
+      //   originalPostData: undefined,
+      //   userId: data.data.user_id,
+      //   username: data.data.User.username,
+      //   verified: true,
+      //   name: user?.name ?? 'Test',
+      //   avatar: user?.profileImageUrl ?? null,
+      //   postId: data.data.id,
+      //   date: data.data.created_at,
+      //   likesCount: data.data._count.likes,
+      //   retweetsCount: data.data._count.repostedBy,
+      //   commentsCount: data.data._count.Replies,
+      //   isLikedByMe: false,
+      //   isFollowedByMe: false,
+      //   isRepostedByMe: false,
+      //   text: data.data.content,
+      //   media: data.data.media.map((med) => ({
+      //     type: med.type.toLowerCase() === 'image' ? 'IMAGE' : 'VIDEO',
+      //     url: med.media_url,
+      //   })),
+      // };
 
-      //             console.log('Updated data:', updated);
-      //             return updated;
-      //           }
-      //         );
-      //         queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
-      //           TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
-      //           (old) => {
-      //             console.log('Old data:', old);
-      //             if (!old) return old;
+      // queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
+      //   TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
+      //   (old) => {
+      //     console.log('Old data:', old);
+      //     if (!old) return old;
 
-      //             const updated = {
-      //               ...old,
-      //               pages: old.pages.map((page, ind) => {
-      //                 if (ind === 0) {
-      //                   return {
-      //                     ...page,
-      //                     data: {
-      //                       ...page.data,
-      //                       posts: [newTweet, ...page.data.posts],
-      //                     },
-      //                   };
-      //                 }
-      //                 return page;
-      //               }),
-      //             };
+      //     const updated = {
+      //       ...old,
+      //       pages: old.pages.map((page, ind) => {
+      //         if (ind === 0) {
+      //           return {
+      //             ...page,
+      //             data: {
+      //               ...page.data,
+      //               posts: [newTweet, ...page.data.posts],
+      //             },
+      //           };
+      //         }
+      //         return page;
+      //       }),
+      //     };
 
-      //             console.log('Updated data:', updated);
-      //             return updated;
-      //           }
-      //         );
-      //       });
+      //     console.log('Updated data:', updated);
+      //     return updated;
+      //   }
+      // );
+      // queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
+      //   TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
+      //   (old) => {
+      //     console.log('Old data:', old);
+      //     if (!old) return old;
+
+      //     const updated = {
+      //       ...old,
+      //       pages: old.pages.map((page, ind) => {
+      //         if (ind === 0) {
+      //           return {
+      //             ...page,
+      //             data: {
+      //               ...page.data,
+      //               posts: [newTweet, ...page.data.posts],
+      //             },
+      //           };
+      //         }
+      //         return page;
+      //       }),
+      //     };
+
+      //     console.log('Updated data:', updated);
+      //     return updated;
+      //   }
+      // );
     },
     networkMode: 'always',
     onMutate: () => {

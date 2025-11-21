@@ -17,6 +17,7 @@ function updateTweetInInfiniteData(
   tweetId: number,
   isRepost: boolean,
   isQuote: boolean,
+  userId: number,
   type: string
 ):
   | {
@@ -31,7 +32,8 @@ function updateTweetInInfiniteData(
       (post) =>
         post.postId === tweetId &&
         post.isRepost === isRepost &&
-        post.isQuote === isQuote
+        post.isQuote === isQuote &&
+        post.userId === userId
     )
   );
   console.log(oldTweets);
@@ -47,7 +49,8 @@ function updateTweetInInfiniteData(
           posts: page.data.posts.map((tweet) =>
             tweet.postId === tweetId &&
             tweet.isRepost === isRepost &&
-            tweet.isQuote === isQuote
+            tweet.isQuote === isQuote &&
+            tweet.userId === userId
               ? newTweet
               : tweet
           ),
@@ -116,6 +119,7 @@ export function useOptimisticTweet() {
     tweetId: number,
     isRepost: boolean,
     isQuote: boolean,
+    userId: number,
     type: string
   ) => {
     await queryClient.cancelQueries({ queryKey: queryKey });
@@ -129,6 +133,7 @@ export function useOptimisticTweet() {
       tweetId,
       isRepost,
       isQuote,
+      userId,
       type
     );
     queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
