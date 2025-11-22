@@ -7,7 +7,10 @@ interface DescriptionProps {
 const Description = ({ bio }: DescriptionProps) => {
   if (!bio) return null;
   return (
-    <span className="font-inter text-sm sm:text-base text-color-text-active">
+    <span
+      className="font-inter text-sm sm:text-base text-color-text-active"
+      data-testid="profile-bio"
+    >
       {bio}
     </span>
   );

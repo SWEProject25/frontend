@@ -14,14 +14,15 @@ const TabView = () => {
   const profile = useProfileStore((state) => state.currentProfile);
   // console.log(profile?.User.id);
   return (
-    <div className="w-full mt-4">
+    <div className="w-full mt-4" data-testid="profile-tab-view">
       <Tabs
+        data-testid="profile-tabs"
         tabs={tabs}
         selectedValue={selectedTab}
         onClick={selectTab}
         height="h-[53px]"
       />
-      {profile?.User && <Tweets />}
+      {/* {profile?.User && <Tweets />} */}
     </div>
   );
 };

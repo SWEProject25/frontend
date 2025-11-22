@@ -26,10 +26,17 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
     birthDate: profileData.birth_date,
   };
   return (
-    <div className="flex flex-col w-full mx-auto relative">
-      <Cover coverImage={profileData.banner_image_url || ''} />
+    <div
+      className="flex flex-col w-full mx-auto relative"
+      data-testid="profile-container"
+    >
+      <Cover
+        coverImage={profileData.banner_image_url || ''}
+        data-testid="profile-cover"
+      />
       <div className="absolute left-3 sm:left-4 top-[76px] sm:top-[134px] z-10">
         <Avatar
+          data-testid="profile-avatar"
           avatarImage={profileData.profile_image_url}
           name={profileData.name}
           className="border-2 sm:border-4 hover:brightness-75 cursor-pointer"
@@ -39,7 +46,10 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
       </div>
       <ActionsPanel isOwnProfile={isMine} userData={userData} />
       <UserInfo name={profileData.name} username={profileData.User.username} />
-      <div className="flex flex-col items-start px-4 gap-3 w-full">
+      <div
+        className="flex flex-col items-start px-4 gap-3 w-full"
+        data-testid="profile-details"
+      >
         <Description bio={profileData.bio} />
         <UserDetails
           joinDate={profileData.created_at}

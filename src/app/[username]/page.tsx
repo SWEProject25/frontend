@@ -60,7 +60,7 @@ const UserPage = ({ params }: UserPageProps) => {
   // Loading state
   if (isLoading) {
     return (
-      <main className="flex flex-col">
+      <main className="flex flex-col" data-testid="profile-page-loading">
         <div className="flex flex-row justify-between items-center px-4">
           <Breadcrumb
             title={`${username}'s Profile`}
@@ -79,7 +79,7 @@ const UserPage = ({ params }: UserPageProps) => {
   // Error state
   if (error || !profileData) {
     return (
-      <main className="flex flex-col">
+      <main className="flex flex-col" data-testid="profile-page-error">
         <div className="flex flex-row justify-between items-center px-4">
           <Breadcrumb
             title={`${username}'s Profile`}
@@ -89,7 +89,10 @@ const UserPage = ({ params }: UserPageProps) => {
           />
         </div>
         <div className="flex justify-center items-center h-64">
-          <div className="text-text-secondary">
+          <div
+            className="text-text-secondary"
+            data-testid="profile-error-message"
+          >
             {error?.message || 'Profile not found'}
           </div>
         </div>
@@ -100,15 +103,24 @@ const UserPage = ({ params }: UserPageProps) => {
   const profile = profileData.data;
 
   return (
-    <main className="flex flex-col">
-      <div className="flex flex-row justify-between items-center px-4 sticky top-0 bg-background/90 z-10">
+    <main className="flex flex-col" data-testid="profile-page">
+      <div
+        className="flex flex-row justify-between items-center px-4 sticky top-0 bg-background/90 z-10"
+        data-testid="profile-header"
+      >
         <Breadcrumb
+          data-testid="profile-breadcrumb"
           title={`${profile.name}'s Profile`}
           subtitle={`@${profile.User.username}`}
           onBack={handleBack}
           showArrow={true}
         />
-        <Button variant="ghost" size="md" shape="circle">
+        <Button
+          data-testid="profile-search-button"
+          variant="ghost"
+          size="md"
+          shape="circle"
+        >
           <SearchIcon className="w-5 h-6 text-text-primary" />
         </Button>
       </div>

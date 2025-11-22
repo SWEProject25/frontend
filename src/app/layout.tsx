@@ -28,16 +28,16 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className={` bg-black text-white overflow-x-hidden`}>
         <div className="flex justify-center min-h-screen w-full">
-          <MSWProvider>
-            <Providers>
-              <>
-                {children}
-                {gifModal}
-                {scheduleModal}
-              </>
-            </Providers>
-            {/* <Providers>{modal}</Providers> */}
-          </MSWProvider>
+          {/* <MSWProvider> */}
+          <Providers>
+            <>
+              {children}
+              {gifModal}
+              {scheduleModal}
+            </>
+          </Providers>
+          {/* <Providers>{modal}</Providers> */}
+          {/* </MSWProvider> */}
         </div>
       </body>
     </html>

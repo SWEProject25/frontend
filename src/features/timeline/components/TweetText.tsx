@@ -69,17 +69,20 @@ export default function TweetText({
   }
 
   return (
-    <div className="relative flex flex-1 max-w-[25rem] md:max-w-[32rem]  py-3 h-fit min-w-0 pl-2">
+    <div
+      data-testid="tweet-text-container"
+      className="relative flex flex-1 max-w-[25rem] md:max-w-[32rem]  py-3 h-fit min-w-0 pl-2"
+    >
       <div className="relative flex-1 min-w-0 min-h-7 whitespace-pre-wrap break-words overflow-wrap-anywhere">
         <span
-          data-testid="first-span-text-normal"
+          data-testid="tweet-text-display"
           ref={spanRef1}
           className="  text-text-inactive text-xl transition-[height] duration-100 ease-in-out"
         >
           {spanText1}
         </span>
         <span
-          data-testid="second-span-text-red"
+          data-testid="tweet-text-overflow"
           className=" bg-[rgb(138,13,32)] text-xl transition-[height] duration-100 ease-in-out"
         >
           {spanText2}
@@ -89,7 +92,7 @@ export default function TweetText({
       <div
         contentEditable="plaintext-only"
         onInput={handleInput}
-        data-testid="maindev-text"
+        data-testid="tweet-text-input"
         ref={divRef}
         spellCheck={true}
         aria-label="Tweet text input overlay"
