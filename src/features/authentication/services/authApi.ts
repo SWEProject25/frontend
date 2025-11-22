@@ -95,9 +95,13 @@ export const authApi = {
 
     const data = await handleResponse<RegisterResponseDto>(response);
 
+    // Merge user data with onboardingStatus from response
     const user = data?.data?.user;
     if (user) {
-      cachedUser = user;
+      cachedUser = {
+        ...user,
+        onboardingStatus: data.data.onboardingStatus,
+      };
       cachedAt = Date.now();
     }
 
@@ -119,9 +123,13 @@ export const authApi = {
 
     const data = await handleResponse<LoginResponseDto>(response);
 
+    // Merge user data with onboardingStatus from response
     const user = data?.data?.user;
     if (user) {
-      cachedUser = user;
+      cachedUser = {
+        ...user,
+        onboardingStatus: data.data.onboardingStatus,
+      };
       cachedAt = Date.now();
     }
 
@@ -301,8 +309,13 @@ export const authApi = {
     let user: UserResponse | undefined;
 
     if (result.status === 'success') {
-      user = result.data.user;
+      // Merge user data with onboardingStatus from response
+      user = {
+        ...result.data.user,
+        onboardingStatus: result.data.onboardingStatus,
+      };
     }
+
     if (user) {
       cachedUser = user;
       cachedAt = Date.now();
@@ -342,10 +355,20 @@ export const authApi = {
       if (!allowedOrigins.includes(event.origin)) return;
 
       const payload = event.data;
-      const { user } = payload.data;
+      const { user, onboardingStatus } = payload.data;
 
       if (user) {
-        callback(user as UserResponse);
+        // Merge user with onboardingStatus if available
+        const userWithOnboarding: UserResponse = {
+          ...user,
+          onboardingStatus: onboardingStatus || user.onboardingStatus,
+        };
+
+        // Cache the merged user
+        cachedUser = userWithOnboarding;
+        cachedAt = Date.now();
+
+        callback(userWithOnboarding);
         window.removeEventListener('message', handleMessage);
       }
     }

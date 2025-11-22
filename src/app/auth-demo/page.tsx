@@ -75,17 +75,17 @@ function AuthDemoContent() {
         {showSuccessMessage && (
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 relative">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <CheckIcon className="h-5 w-5 text-green-400" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium">
+                {/* <p className="text-sm font-medium">
                   {searchParams?.get('login') === 'success'
                     ? `🎉 Login successful! Welcome back, ${auth.user?.name || auth.user?.email}!`
                     : searchParams?.get('register') === 'success'
                       ? `🎉 Registration successful! Welcome, ${auth.user?.name || auth.user?.email}!`
                       : '🎉 Success!'}
-                </p>
+                </p> */}
               </div>
               <div className="ml-auto pl-3">
                 <button

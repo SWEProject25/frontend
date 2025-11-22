@@ -6,13 +6,23 @@ export interface CreateUserDto {
   birthDate: string; // Format: YYYY-MM-DD
 }
 
+export interface OnboardingStatus {
+  hasCompeletedFollowing: boolean;
+  hasCompeletedInterests: boolean;
+  hasCompletedBirthDate: boolean;
+}
+
 export interface UserResponse {
   id: number;
   username: string;
   role: string;
   email: string;
-  name: string;
-  profileImageUrl?: string | null;
+  profile: {
+    name: string;
+    profileImageUrl: string | null;
+    birthDate: string | null; // ISO date string
+  };
+  onboardingStatus?: OnboardingStatus;
 }
 
 export interface RegisterResponseDto {
@@ -20,6 +30,7 @@ export interface RegisterResponseDto {
   message: string;
   data: {
     user: UserResponse;
+    onboardingStatus: OnboardingStatus;
   };
 }
 
@@ -33,12 +44,14 @@ export interface LoginResponseDto {
   message: string;
   data: {
     user: UserResponse;
+    onboardingStatus: OnboardingStatus;
   };
 }
 export interface MeResponse {
   status: string;
   data: {
     user: UserResponse;
+    onboardingStatus: OnboardingStatus;
   };
 }
 
