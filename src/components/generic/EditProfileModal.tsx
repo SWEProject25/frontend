@@ -161,13 +161,14 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       size="xl"
       customLayout={false}
       overlayColor="bg-modal-overlay"
+      data-testid="edit-profile-modal"
     >
       <EditProfileHeader
         onClose={onCloseModal}
         onSave={handleSave}
         isUpdating={isUpdating}
       />
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full" data-testid="edit-profile-content">
         <EditProfileCover
           coverImage={bannerPreview}
           onFileSelect={handleBannerImageChange}

@@ -12,13 +12,17 @@ const EditProfileAvatar: React.FC<EditProfileAvatarProps> = ({
   onFileSelect,
 }) => (
   <Avatar
+    data-testid="edit-profile-avatar"
     avatarImage={avatarImage ?? null}
     className="-top-[66px] left-3 border-2"
     position="absolute"
     customPosition={true}
   >
     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-      <UploadImage onFileSelect={onFileSelect} />
+      <UploadImage
+        data-testid="edit-profile-avatar-upload"
+        onFileSelect={onFileSelect}
+      />
     </div>
   </Avatar>
 );

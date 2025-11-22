@@ -15,9 +15,14 @@ const EditProfileCover: React.FC<EditProfileCoverProps> = ({
   showClearButton,
   onClear,
 }) => (
-  <Cover coverImage={coverImage} className="mt-4">
+  <Cover
+    data-testid="edit-profile-cover"
+    coverImage={coverImage}
+    className="mt-4"
+  >
     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
       <UploadImage
+        data-testid="edit-profile-cover-upload"
         onFileSelect={onFileSelect}
         showClearButton={showClearButton}
         onClear={onClear}

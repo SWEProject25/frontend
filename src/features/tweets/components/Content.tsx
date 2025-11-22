@@ -13,16 +13,22 @@ type TweetContent = {
 
 export default function Content({ content }: { content: TweetContent }) {
   return (
-    <div className="w-full">
+    <div className="w-full" data-testid="tweet-content">
       {content.text && (
-        <p className="text-gray-200 text-left">{content.text}</p>
+        <p className="text-gray-200 text-left" data-testid="tweet-text">
+          {content.text}
+        </p>
       )}
       {content.media && content.media.length > 0 && (
-        <div className="mt-3 grid grid-cols-1 gap-3 w-full">
+        <div
+          className="mt-3 grid grid-cols-1 gap-3 w-full"
+          data-testid="tweet-media"
+        >
           {content.media.map((item, idx) =>
             item.type.toLocaleLowerCase() === 'image' ? (
               <div
                 key={idx}
+                data-testid={`tweet-image-${idx}`}
                 className="rounded-xl overflow-auto relative h-70 w-full"
               >
                 <Image
@@ -35,6 +41,7 @@ export default function Content({ content }: { content: TweetContent }) {
             ) : item.type.toLocaleLowerCase() === 'video' ? (
               <div
                 key={idx}
+                data-testid={`tweet-video-${idx}`}
                 className="rounded-xl overflow-auto relative w-full"
               >
                 <video

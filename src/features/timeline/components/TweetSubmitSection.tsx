@@ -50,7 +50,8 @@ export default function TweetSubmitSection() {
       if (med.type === LOCAL_MEDIA) tweetFormData.append('media', med.data);
     });
     const seclectdReply = options[selectedReplyOption - 1].Name;
-    tweetFormData.append(TweetFormDataKeys.CONTENT, tweetText);
+    if (tweetText.trim().length !== 0)
+      tweetFormData.append(TweetFormDataKeys.CONTENT, tweetText);
     tweetFormData.append(TweetFormDataKeys.TYPE, 'POST');
     tweetFormData.append(TweetFormDataKeys.VISIBILITY, seclectdReply);
     mutate.mutate(tweetFormData);

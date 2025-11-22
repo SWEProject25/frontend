@@ -59,6 +59,9 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
 
   const actionsStats = {
     postId: data.postId,
+    isRepost: data.isRepost,
+    isQuote: data.isQuote,
+    userId: data.userId,
     likesCount: data.likesCount,
     retweetsCount: data.retweetsCount,
     commentsCount: data.commentsCount,

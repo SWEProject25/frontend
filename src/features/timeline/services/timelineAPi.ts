@@ -1,6 +1,6 @@
 import { API_CONFIG } from '@/constants/api';
 import { TIMELINE_ENDPOINTS } from '../constants/api';
-import { AddTweetResponse, TimelineFeedDtoResponse } from '../types/api';
+import { TimelineFeedDtoResponse, AddTweetResponse } from '../types/api';
 
 class ApiError extends Error {
   constructor(
@@ -43,7 +43,6 @@ async function handleResponse<T>(response: Response): Promise<T> {
     throw new ApiError(errorMessage, statusCode);
     // console.log(errorMessage, statusCode);
   }
-
   return response.json();
 }
 
@@ -77,6 +76,7 @@ export const timelineApi = {
         credentials: 'include',
       }
     );
+
     return handleResponse<TimelineFeedDtoResponse>(response);
   },
 };

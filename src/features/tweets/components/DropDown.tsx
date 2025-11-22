@@ -28,7 +28,7 @@ type DropProps = {
 export default function DropDown({ children, items, onOpened }: DropProps) {
   const [isOpened, setIsOpened] = useState(false);
   return (
-    <div className="relative">
+    <div className="relative" data-testid="tweet-dropdown">
       {/* 🔹 Backdrop to block clicks only inside tweet, not whole page */}
       {isOpened && (
         <div
@@ -61,6 +61,7 @@ export default function DropDown({ children, items, onOpened }: DropProps) {
         {/* Position the dropdown menu at top right of tweet */}
         <div className="w-full">
           <DropdownMenu
+            data-testid="tweet-dropdown-menu"
             aria-label="Static Actions"
             variant="faded"
             className="rounded-xl border border-gray-800 bg-black shadow-lg shadow-white/20 p-0 "
@@ -74,6 +75,7 @@ export default function DropDown({ children, items, onOpened }: DropProps) {
               return (
                 <DropdownItem
                   key={item.key}
+                  data-testid={`tweet-dropdown-item-${item.key}`}
                   color={item.color}
                   startContent={item.icon}
                   className={

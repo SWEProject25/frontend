@@ -8,7 +8,10 @@ function Timing({ time, full = false }: { time: string; full?: boolean }) {
   const shownDate = formatDateRelative(date);
 
   return (
-    <div className="text-gray-400 text-sm relative hover:cursor-pointer group">
+    <div
+      className="text-gray-400 text-sm relative hover:cursor-pointer group"
+      data-testid="tweet-timing"
+    >
       <span className="hover:underline">{full ? formatted : shownDate}</span>
       <Label label={formatted} />
     </div>
