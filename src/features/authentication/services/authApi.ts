@@ -277,8 +277,13 @@ export const authApi = {
     let user: UserResponse | undefined;
 
     if (result.status === 'success') {
-      user = result.data.user;
+      // Merge user data with onboardingStatus from response
+      user = {
+        ...result.data.user,
+        onboardingStatus: result.data.onboardingStatus,
+      };
     }
+
     if (user) {
       cachedUser = user;
       cachedAt = Date.now();

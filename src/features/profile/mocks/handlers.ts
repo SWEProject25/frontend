@@ -75,8 +75,15 @@ export const profileHandlers = [
         );
       }
 
+      // Map birth_date to birthDate for the mock data
+      const updateData: any = { ...body };
+      if (body.birth_date) {
+        updateData.birthDate = body.birth_date;
+        delete updateData.birth_date;
+      }
+
       Object.assign(mockCurrentUserProfile, {
-        ...body,
+        ...updateData,
         updatedAt: new Date().toISOString(),
       });
 
