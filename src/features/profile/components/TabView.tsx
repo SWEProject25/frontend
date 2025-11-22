@@ -1,13 +1,18 @@
 'use client';
 import Tabs from '@/components/generic/Tabs';
 import { tabs } from '../constants/tabs';
-import { useActions, useSelectedTab } from '../store/profileStore';
+import {
+  useActions,
+  useProfileStore,
+  useSelectedTab,
+} from '../store/profileStore';
 import Tweets from './Tweets';
 
 const TabView = () => {
   const selectedTab = useSelectedTab();
   const { selectTab } = useActions();
-
+  const profile = useProfileStore((state) => state.currentProfile);
+  console.log(profile?.User.id);
   return (
     <div className="w-full mt-4">
       <Tabs

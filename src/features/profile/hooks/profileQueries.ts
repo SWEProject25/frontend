@@ -22,6 +22,7 @@ import {
   POSTS_TAB,
   REPLIES_TAB,
 } from '../constants/tabs';
+import { mockState } from '../mocks/mockState';
 
 // Query keys
 export const PROFILE_QUERY_KEYS = {
@@ -368,6 +369,8 @@ export const useProfileFeed = () => {
   const profile = useProfileStore((state) => state.currentProfile);
   const myProfile = useAuthStore((state) => state.user);
   const user = profile?.User.id === myProfile?.id ? 'me' : profile?.User.id;
+  console.log(profile?.User.id);
+  mockState.user = profile;
 
   let queryKey,
     queryEndPoint:
@@ -377,16 +380,16 @@ export const useProfileFeed = () => {
       | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_MEDIA>;
   if (profile?.User.id && user) {
     if (selectedTab === POSTS_TAB) {
-      queryKey = PROFILE_QUERY_KEYS.profilePosts(profile?.User.id);
+      queryKey = PROFILE_QUERY_KEYS.profilePosts(profile.User.id);
       queryEndPoint = PROFILE_ENDPOINTS.PROFILE_POSTS(user);
     } else if (selectedTab === REPLIES_TAB) {
-      queryKey = PROFILE_QUERY_KEYS.profileReplies(profile?.User.id);
+      queryKey = PROFILE_QUERY_KEYS.profileReplies(profile.User.id);
       queryEndPoint = PROFILE_ENDPOINTS.PROFILE_REPLIES(user);
     } else if (selectedTab === LIKES_TAB) {
-      queryKey = PROFILE_QUERY_KEYS.profileLikes(profile?.User.id);
+      queryKey = PROFILE_QUERY_KEYS.profileLikes(profile.User.id);
       queryEndPoint = PROFILE_ENDPOINTS.PROFILE_LIKES(user);
     } else {
-      queryKey = PROFILE_QUERY_KEYS.profileMedia(profile?.User.id);
+      queryKey = PROFILE_QUERY_KEYS.profileMedia(profile.User.id);
       queryEndPoint = PROFILE_ENDPOINTS.PROFILE_MEDIA(user);
     }
   } else {
