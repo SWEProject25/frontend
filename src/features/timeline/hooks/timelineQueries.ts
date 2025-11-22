@@ -5,7 +5,11 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { timelineApi } from '../services/timelineAPi';
-import { TimelineFeed, TimelineFeedDtoResponse } from '../types/api';
+import {
+  AddTweetResponse,
+  TimelineFeed,
+  TimelineFeedDtoResponse,
+} from '../types/api';
 import { useActions } from '../store/useAddTweetStore';
 
 import toasterMessage from '@/components/ui/home/ToasterMessage';
@@ -25,7 +29,7 @@ export const useAddTweet = () => {
   const { clearMedia } = useMediaActions();
   const user = useAuth().user;
   console.log('inside useAddTweet');
-  return useMutation<TimelineFeed, Error, FormData>({
+  return useMutation<AddTweetResponse, Error, FormData>({
     mutationFn: async (tweetData) => {
       try {
         const response = await timelineApi.addTweet(tweetData);
@@ -51,51 +55,10 @@ export const useAddTweet = () => {
       clearMedia();
       toasterMessage('Your post was sent.');
       console.log(data);
-      const newTweet = { ...data, originalPostData: undefined };
-      // const newTweet: TimelineFeed = {
-      //   userId: 40,
-      //   username: 'albaz.mo867',
-      //   verified: true,
-      //   name: 'Yousef Adel',
-      //   avatar: null,
-      //   postId: 50,
-      //   date: '2025-11-20T22:4:59.850Z',
-      //   likesCount: 3,
-      //   retweetsCount: 2,
-      //   commentsCount: 47,
-      //   isLikedByMe: false,
-      //   isFollowedByMe: true,
-      //   isRepostedByMe: false,
-      //   text: 'test new add2',
-      //   media: [],
-      //   isRepost: true,
-      //   isQuote: false,
-      //   originalPostData: undefined,
-      // };
-
-      // const newTweet2: TimelineFeed = {
-      //   isRepost: false,
-      //   isQuote: false,
-      //   originalPostData: undefined,
-      //   userId: data.data.user_id,
-      //   username: data.data.User.username,
-      //   verified: true,
-      //   name: user?.name ?? 'Test',
-      //   avatar: user?.profileImageUrl ?? null,
-      //   postId: data.data.id,
-      //   date: data.data.created_at,
-      //   likesCount: data.data._count.likes,
-      //   retweetsCount: data.data._count.repostedBy,
-      //   commentsCount: data.data._count.Replies,
-      //   isLikedByMe: false,
-      //   isFollowedByMe: false,
-      //   isRepostedByMe: false,
-      //   text: data.data.content,
-      //   media: data.data.media.map((med) => ({
-      //     type: med.type.toLowerCase() === 'image' ? 'IMAGE' : 'VIDEO',
-      //     url: med.media_url,
-      //   })),
-      // };
+      const newTweet: TimelineFeed = {
+        ...data.data,
+        originalPostData: undefined,
+      };
 
       queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
         TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
