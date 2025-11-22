@@ -77,7 +77,10 @@ export const useUpdateMyProfile = () => {
         if (currentUser) {
           useAuthStore.getState().setUser({
             ...currentUser,
-            profileImageUrl: profileImageUrl,
+            profile: {
+              ...currentUser.profile,
+              profileImageUrl: profileImageUrl,
+            },
           });
         }
 
@@ -86,7 +89,10 @@ export const useUpdateMyProfile = () => {
           if (!oldUser) return oldUser;
           return {
             ...oldUser,
-            profileImageUrl: profileImageUrl,
+            profile: {
+              ...oldUser.profile,
+              profileImageUrl: profileImageUrl,
+            },
           };
         });
       }
@@ -128,7 +134,10 @@ export const useUploadProfileImage = () => {
       if (currentUser) {
         useAuthStore.getState().setUser({
           ...currentUser,
-          profileImageUrl: profileImageUrl,
+          profile: {
+            ...currentUser.profile,
+            profileImageUrl: profileImageUrl,
+          },
         });
       }
 
@@ -137,7 +146,10 @@ export const useUploadProfileImage = () => {
         if (!oldUser) return oldUser;
         return {
           ...oldUser,
-          profileImageUrl: profileImageUrl,
+          profile: {
+            ...oldUser.profile,
+            profileImageUrl: profileImageUrl,
+          },
         };
       });
 
@@ -206,7 +218,10 @@ export const useRemoveProfileImage = () => {
       if (currentUser) {
         useAuthStore.getState().setUser({
           ...currentUser,
-          profileImageUrl: null,
+          profile: {
+            ...currentUser.profile,
+            profileImageUrl: null,
+          },
         });
       }
 
@@ -215,7 +230,10 @@ export const useRemoveProfileImage = () => {
         if (!oldUser) return oldUser;
         return {
           ...oldUser,
-          profileImageUrl: null,
+          profile: {
+            ...oldUser.profile,
+            profileImageUrl: null,
+          },
         };
       });
 

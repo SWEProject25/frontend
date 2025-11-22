@@ -5,9 +5,10 @@ import { useInteractions } from '@/hooks/useInteractions';
 interface FollowBtnProps {
   userId: number;
   isFollowed?: boolean;
+  onFollowChange?: (userId: number, isFollowed: boolean) => void;
 }
 
-function FollowBtn({ userId, isFollowed }: FollowBtnProps) {
+function FollowBtn({ userId, isFollowed, onFollowChange }: FollowBtnProps) {
   const [followed, setFollowed] = useState<boolean>(isFollowed || false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [followClicked, setFollowClicked] = useState<boolean>(false);
@@ -22,6 +23,7 @@ function FollowBtn({ userId, isFollowed }: FollowBtnProps) {
   const handleFollow = async () => {
     try {
       await followUser(userId);
+      onFollowChange?.(userId, true);
     } catch {
       // Revert state on error
       setFollowed(false);
@@ -32,6 +34,7 @@ function FollowBtn({ userId, isFollowed }: FollowBtnProps) {
   const handleUnfollow = async () => {
     try {
       await unfollowUser(userId);
+      onFollowChange?.(userId, false);
     } catch {
       // Revert state on error
       setFollowed(true);
@@ -46,10 +49,12 @@ function FollowBtn({ userId, isFollowed }: FollowBtnProps) {
 
     if (!followed) {
       setFollowClicked(true);
+      setFollowClicked(true);
       setFollowed(true);
       await handleFollow();
     } else {
       setFollowed(false);
+      setFollowClicked(false);
       setFollowClicked(false);
       await handleUnfollow();
     }
@@ -59,10 +64,8 @@ function FollowBtn({ userId, isFollowed }: FollowBtnProps) {
     <button
       className={`px-5 py-2 rounded-full font-semibold text-sm transition-colors cursor-pointer ${
         followed
-          ? followClicked
-            ? 'bg-background text-background hover:bg-muted'
-            : 'bg-background text-foreground border border-border hover:bg-block/20 hover:text-block hover:border-block'
-          : 'bg-foreground text-background hover:bg-muted'
+          ? 'bg-background text-foreground border border-border hover:bg-error/10 hover:text-error hover:border-error'
+          : 'bg-foreground text-background hover:bg-foreground/90'
       }`}
       onClick={handleClick}
       onMouseEnter={() => {
@@ -70,16 +73,9 @@ function FollowBtn({ userId, isFollowed }: FollowBtnProps) {
       }}
       onMouseLeave={() => {
         setIsHovered(false);
-        setFollowClicked(false);
       }}
     >
-      {followed
-        ? isHovered
-          ? followClicked
-            ? 'Following'
-            : 'Unfollow'
-          : 'Following'
-        : 'Follow'}
+      {followed ? (isHovered ? 'Unfollow' : 'Following') : 'Follow'}
     </button>
   );
 }
