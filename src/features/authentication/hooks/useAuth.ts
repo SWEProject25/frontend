@@ -12,13 +12,28 @@ export const authKeys = {
 // Login Mutation
 export const useLoginMutation = () => {
   const setUser = useAuthStore((state) => state.setUser);
+  const setLoading = useAuthStore((state) => state.setLoading);
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: authApi.login,
+    onMutate: () => {
+      // Set loading state when mutation starts
+      setLoading(true);
+    },
     onSuccess: (data) => {
-      setUser(data.data.user);
-      queryClient.setQueryData(authKeys.user(), data.data.user);
+      // Merge user data with onboardingStatus from response
+      const userWithOnboarding = {
+        ...data.data.user,
+        onboardingStatus: data.data.onboardingStatus,
+      };
+      setUser(userWithOnboarding);
+      queryClient.setQueryData(authKeys.user(), userWithOnboarding);
+      // Keep loading true - will be cleared by navigation or after delay
+    },
+    onError: () => {
+      // Clear loading on error
+      setLoading(false);
     },
   });
 };
@@ -26,13 +41,28 @@ export const useLoginMutation = () => {
 // Register Mutation
 export const useRegisterMutation = () => {
   const setUser = useAuthStore((state) => state.setUser);
+  const setLoading = useAuthStore((state) => state.setLoading);
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: authApi.register,
+    onMutate: () => {
+      // Set loading state when mutation starts
+      setLoading(true);
+    },
     onSuccess: (data) => {
-      setUser(data.data.user);
-      queryClient.setQueryData(authKeys.user(), data.data.user);
+      // Merge user data with onboardingStatus from response
+      const userWithOnboarding = {
+        ...data.data.user,
+        onboardingStatus: data.data.onboardingStatus,
+      };
+      setUser(userWithOnboarding);
+      queryClient.setQueryData(authKeys.user(), userWithOnboarding);
+      // Keep loading true - will be cleared by navigation or after delay
+    },
+    onError: () => {
+      // Clear loading on error
+      setLoading(false);
     },
   });
 };

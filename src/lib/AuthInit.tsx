@@ -14,8 +14,11 @@ export default function AuthInit({
   const pathname = usePathname();
   const [targetPath, setTargetPath] = useState<string | null>(null);
   const resolvedRef = useRef(false);
+  const setLoading = useAuthStore((state) => state.setLoading);
+
   useEffect(() => {
     let mounted = true;
+    setLoading(true); // Set loading at the start
 
     (async () => {
       try {
@@ -48,13 +51,17 @@ export default function AuthInit({
             setTargetPath('/');
           }
         }
+      } finally {
+        if (mounted) {
+          setLoading(false); // Clear loading after data is fetched
+        }
       }
     })();
 
     return () => {
       mounted = false;
     };
-  }, [pathname, router, onReady]);
+  }, [pathname, router, onReady, setLoading]);
 
   // Wait for the actual pathname to equal the targetPath (or fallback after timeout)
   useEffect(() => {

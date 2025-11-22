@@ -80,6 +80,7 @@ export function useAuthHandlers() {
         oAuthLogin(providerId, () => {
           setSuccess(true);
           localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
+          // Navigation will happen, keep loading state until page changes
           setTimeout(
             () => router.push(AUTH_CLIENT_CONFIG.SUCCESS_REDIRECT),
             300
@@ -119,6 +120,7 @@ export function useAuthHandlers() {
             await login(loginData);
             setSuccess(true);
             // Redirect after a short delay to show success state
+            // Loading state will remain true during navigation to prevent modals
             localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
 
             setTimeout(
@@ -137,6 +139,7 @@ export function useAuthHandlers() {
 
             await login(fallbackLoginData);
             setSuccess(true);
+            // Loading state will remain true during navigation to prevent modals
             localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
 
             setTimeout(
@@ -215,6 +218,7 @@ export function useAuthHandlers() {
             setSuccess(true);
 
             // Redirect to configured success page after registration
+            // Loading state will remain true during navigation to prevent modals
             localStorage.removeItem(AUTH_MODAL_STORAGE_KEY);
 
             setTimeout(() => {

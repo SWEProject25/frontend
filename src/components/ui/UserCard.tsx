@@ -10,11 +10,13 @@ export interface UserCardProps {
   handle: string;
   verified?: boolean;
   avatarUrl?: string;
+  bio?: string;
   isFollowed?: boolean;
   isBlocked?: boolean;
   isMuted?: boolean;
   actionType?: 'follow' | 'block' | 'mute';
   className?: string;
+  onFollowChange?: (userId: number, isFollowed: boolean) => void;
 }
 
 export default function UserCard({
@@ -23,22 +25,26 @@ export default function UserCard({
   handle,
   verified = false,
   avatarUrl,
+  bio,
   isFollowed = false,
   isBlocked = false,
   isMuted = false,
   actionType = 'follow',
   className = '',
+  onFollowChange,
 }: UserCardProps) {
   return (
-    <div className={`flex items-center justify-between w-full ${className}`}>
-      <div className="flex items-center gap-3 flex-1 min-w-0">
+    <div
+      className={`flex items-start justify-between w-full gap-3 ${className}`}
+    >
+      <div className="flex items-start gap-3 flex-1 min-w-0">
         {/* Avatar */}
         <Avatar
           avatarImage={avatarUrl ?? null}
           name={name}
           size="xs"
           position="relative"
-          className="border-0 hover:brightness-75 cursor-pointer"
+          className="border-0 hover:brightness-75 cursor-pointer flex-shrink-0"
         />
 
         {/* User Info */}
@@ -57,17 +63,26 @@ export default function UserCard({
             )}
           </p>
           <p className="text-text-secondary text-sm truncate">{handle}</p>
+          {bio && (
+            <p className="text-text-secondary text-sm mt-1 line-clamp-2">
+              {bio}
+            </p>
+          )}
         </div>
       </div>
 
       {/* Action Button */}
-      <div className="ml-3 flex-shrink-0">
+      <div className="ml-3 flex-shrink-0 self-start">
         {actionType === 'block' ? (
           <BlockBtn userId={userId} isBlocked={isBlocked} />
         ) : actionType === 'mute' ? (
           <MuteBtn userId={userId} isMuted={isMuted} />
         ) : (
-          <FollowBtn userId={userId} isFollowed={isFollowed} />
+          <FollowBtn
+            userId={userId}
+            isFollowed={isFollowed}
+            onFollowChange={onFollowChange}
+          />
         )}
       </div>
     </div>
