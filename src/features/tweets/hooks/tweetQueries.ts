@@ -8,12 +8,7 @@ import {
 } from '@tanstack/react-query';
 import { tweetApi } from '../services/tweetApi';
 import { ReplyResponseDto, TweetResponseDto } from '../types/api';
-import { TWEET_CONSTANTS } from '../constants/api';
-import {
-  handleErrorOptimisticTweet,
-  useOptimisticTweet,
-} from '@/features/timeline/optimistics/Tweets';
-import { useTweetStore } from '../store/tweetStore';
+import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
 import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
 // Query keys
 export const TWEET_QUERY_KEYS = {
@@ -41,29 +36,26 @@ export const useToggleLikeTweet = (
   isQuote: boolean,
   userId: number
 ) => {
-  const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
   const queryClient = useQueryClient();
-  const { onMutate } = useOptimisticTweet();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
   return useMutation({
     mutationFn: () => tweetApi.toggleLikeTweet(tweetId),
     onMutate: () => {
       return onMutate(
+        OPTIMISTIC_TYPES.LIKE,
         tweetId,
         isRepost,
         isQuote,
-        userId,
-        OPTIMISTIC_TYPES.LIKE
+        userId
       );
     },
     onError: (error, variables, onMutateResult) => {
       if (onMutateResult?.previousFeed) {
-        handleErrorOptimisticTweet(queryClient, onMutateResult);
+        handleErrorOptimisticTweet(onMutateResult);
       }
-      if (onMutateResult?.oldTweet) setCurrentTweet(onMutateResult.oldTweet);
     },
 
-    onSuccess: (data, variables, onMutateResult) => {
-      if (onMutateResult?.newTweet) setCurrentTweet(onMutateResult.newTweet);
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.toggleLikeTweet(tweetId),
       });
@@ -78,21 +70,18 @@ export const useToggleRepostTweet = (
   isQuote: boolean,
   userId: number
 ) => {
-  const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
   const queryClient = useQueryClient();
-  const { onMutate } = useOptimisticTweet();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
   return useMutation({
     mutationFn: () => tweetApi.toggleRepostTweet(tweetId),
     onMutate: () =>
-      onMutate(tweetId, isRepost, isQuote, userId, OPTIMISTIC_TYPES.REPOST),
+      onMutate(OPTIMISTIC_TYPES.REPOST, tweetId, isRepost, isQuote, userId),
     onError: (error, variables, onMutateResult) => {
-      if (onMutateResult?.oldTweet) setCurrentTweet(onMutateResult.oldTweet);
       if (onMutateResult?.previousFeed)
-        handleErrorOptimisticTweet(queryClient, onMutateResult);
+        handleErrorOptimisticTweet(onMutateResult);
     },
-    onSuccess: (data, variables, onMutateResult) => {
-      if (onMutateResult?.newTweet) setCurrentTweet(onMutateResult.newTweet);
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.toggleRepostTweet(tweetId),
       });
