@@ -66,13 +66,7 @@ Mutation hook to save user's selected interests.
 
 Query hook to fetch suggested users to follow (only when enabled).
 
-### `useFollowUser()`
-
-Mutation hook to follow a user.
-
-### `useUnfollowUser()`
-
-Mutation hook to unfollow a user.
+> **Note:** For follow/unfollow functionality, use the centralized hooks from `@/hooks/interactions/useFollow` instead of duplicating the logic. This ensures consistency across the entire application.
 
 ## Usage
 

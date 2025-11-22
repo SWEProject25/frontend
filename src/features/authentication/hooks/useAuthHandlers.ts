@@ -202,7 +202,7 @@ export function useAuthHandlers() {
           }
 
           case 'password': {
-            console.log(data);
+            // console.log(data);
             const signupData: CreateUserDto = {
               name: data.name,
               email: normalizeEmail(data.email),

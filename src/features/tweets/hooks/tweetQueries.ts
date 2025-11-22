@@ -39,6 +39,7 @@ export const useTweetById = (tweetId: number) => {
 // Hook: Toggle like tweet
 export const useToggleLikeTweet = (tweetId: number) => {
   const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
+  const currentFullTweet = useTweetStore((store) => store.currentTweet);
   const queryClient = useQueryClient();
   const { onMutate } = useOptimisticTweet();
   return useMutation({
@@ -55,16 +56,32 @@ export const useToggleLikeTweet = (tweetId: number) => {
       });
 
       if (onMutateResult) {
-        const newTweets = onMutateResult.previousFeed?.pages.filter((page) =>
-          page.data.posts.filter((tweet) => tweet.postId === tweetId)
-        );
-        if (newTweets) {
-          const newTweet = newTweets[0].data.posts[0];
-          const isLiked = newTweet.isLikedByMe;
-          const countLikes = newTweet.likesCount;
-          newTweet.likesCount = isLiked ? countLikes - 1 : countLikes + 1;
-          newTweet.isLikedByMe = !isLiked;
-          setCurrentTweet(newTweet);
+        // console.log('on mutate', onMutateResult);
+        const newTweets = onMutateResult.previousFeed?.pages
+          .flatMap((page) => page.data.posts)
+          .filter((tweet) => tweet.postId === tweetId);
+
+        console.log('new tweets', newTweets);
+        if (newTweets && newTweets.length > 0) {
+          const originalTweet = newTweets[0];
+          // console.log('newTweet', originalTweet);
+
+          const isLiked = originalTweet.isLikedByMe;
+          const countLikes = originalTweet.likesCount;
+
+          // ✅ Create a new object instead of mutating
+          const updatedTweet = {
+            ...originalTweet,
+            likesCount: isLiked ? countLikes - 1 : countLikes + 1,
+            isLikedByMe: !isLiked,
+          };
+
+          // console.log('updated tweet', updatedTweet.postId);
+          // console.log('currentFullTweet', currentFullTweet);
+          if (updatedTweet.postId === currentFullTweet?.postId) {
+            // console.log('setting current tweet', updatedTweet);
+            setCurrentTweet(updatedTweet);
+          }
         }
       }
     },
@@ -73,6 +90,8 @@ export const useToggleLikeTweet = (tweetId: number) => {
 
 // Hook: Toggle repost tweet
 export const useToggleRepostTweet = (tweetId: number) => {
+  const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
+  const currentFullTweet = useTweetStore((store) => store.currentTweet);
   const queryClient = useQueryClient();
   const { onMutate } = useOptimisticTweet();
 
@@ -83,10 +102,33 @@ export const useToggleRepostTweet = (tweetId: number) => {
       if (onMutateResult)
         handleErrorOptimisticTweet(queryClient, onMutateResult);
     },
-    onSuccess: () => {
+    onSuccess: (data, variables, onMutateResult) => {
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.toggleRepostTweet(tweetId),
       });
+
+      if (onMutateResult) {
+        const newTweets = onMutateResult.previousFeed?.pages
+          .flatMap((page) => page.data.posts)
+          .filter((tweet) => tweet.postId === tweetId);
+
+        if (newTweets && newTweets.length > 0) {
+          const originalTweet = newTweets[0];
+          const isReposted = originalTweet.isRepostedByMe;
+          const countReposts = originalTweet.retweetsCount;
+
+          // ✅ Create a new object instead of mutating
+          const updatedTweet = {
+            ...originalTweet,
+            retweetsCount: isReposted ? countReposts - 1 : countReposts + 1,
+            isRepostedByMe: !isReposted,
+          };
+
+          if (updatedTweet.postId === currentFullTweet?.postId) {
+            setCurrentTweet(updatedTweet);
+          }
+        }
+      }
     },
   });
 };

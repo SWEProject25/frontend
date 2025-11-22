@@ -39,7 +39,15 @@ export default function DateOfBirthModal({
     }
   };
 
-  const isValid = dateOfBirth !== undefined;
+  // Check that all three fields (month, day, year) are filled
+  const isValid =
+    dateOfBirth !== undefined &&
+    dateOfBirth.month !== undefined &&
+    dateOfBirth.month !== '' &&
+    dateOfBirth.day !== undefined &&
+    dateOfBirth.day !== '' &&
+    dateOfBirth.year !== undefined &&
+    dateOfBirth.year !== '';
 
   return (
     <XModal

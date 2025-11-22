@@ -12,7 +12,7 @@ const EditProfileAvatar: React.FC<EditProfileAvatarProps> = ({
   onFileSelect,
 }) => (
   <Avatar
-    avatarImage={avatarImage}
+    avatarImage={avatarImage ?? null}
     className="-top-[66px] left-3 border-2"
     position="absolute"
     customPosition={true}

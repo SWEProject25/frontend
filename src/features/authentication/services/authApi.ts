@@ -11,6 +11,12 @@ import {
   ResendOTPResponseDto,
   VerifyRecaptchaDto,
   VerifyRecaptchaResponseDto,
+  VerifyPasswordDto,
+  VerifyPasswordResponseDto,
+  UpdateEmailDto,
+  UpdateEmailResponseDto,
+  UpdateUsernameDto,
+  UpdateUsernameResponseDto,
   UserResponse,
   MeResponse,
 } from '../types/api';
@@ -197,6 +203,24 @@ export const authApi = {
     return handleResponse<ResendOTPResponseDto>(response);
   },
 
+  async verifyPassword(
+    passwordData: VerifyPasswordDto
+  ): Promise<VerifyPasswordResponseDto> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.VERIFY_PASSWORD}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Important for HTTPOnly cookies
+        body: JSON.stringify(passwordData),
+      }
+    );
+
+    return handleResponse<VerifyPasswordResponseDto>(response);
+  },
+
   async forgotPassword(payload: {
     email: string;
     type?: string;
@@ -331,5 +355,51 @@ export const authApi = {
       }
     }
     window.addEventListener('message', handleMessage);
+  },
+
+  async updateEmail(
+    emailData: UpdateEmailDto
+  ): Promise<UpdateEmailResponseDto> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.UPDATE_EMAIL}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(emailData),
+      }
+    );
+
+    const data = await handleResponse<UpdateEmailResponseDto>(response);
+
+    cachedUser = null;
+    cachedAt = 0;
+
+    return data;
+  },
+
+  async updateUsername(
+    usernameData: UpdateUsernameDto
+  ): Promise<UpdateUsernameResponseDto> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.UPDATE_USERNAME}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(usernameData),
+      }
+    );
+
+    const data = await handleResponse<UpdateUsernameResponseDto>(response);
+
+    cachedUser = null;
+    cachedAt = 0;
+
+    return data;
   },
 };

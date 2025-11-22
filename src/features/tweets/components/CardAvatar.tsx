@@ -17,7 +17,7 @@ export default function CardAvatar({
       <div className="relative">
         <Link href={`/${username}`} onClick={(e) => e.stopPropagation()}>
           <Avatar
-            avatarImage={avatar ?? undefined}
+            avatarImage={avatar ?? null}
             name={name}
             size="sm"
             position="relative"

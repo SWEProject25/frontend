@@ -28,15 +28,15 @@ export default function ProfileMenu() {
         <div className="flex items-center justify-between hover:bg-gray-900 rounded-full p-3 mb-3 cursor-pointer transition-colors w-full">
           <div className="flex items-center gap-3">
             <Avatar
-              avatarImage={user.profileImageUrl ?? undefined}
-              name={user.name}
+              avatarImage={user.profile?.profileImageUrl ?? null}
+              name={user.profile?.name ?? user.username}
               size="sm"
               position="relative"
               className="border-0"
             />
             <div className="hidden xl:block">
               <p className="text-white font-semibold text-sm leading-tight">
-                {user.name}
+                {user.profile?.name ?? user.username}
               </p>
               <p className="text-gray-400 text-sm">@{user.username}</p>
             </div>

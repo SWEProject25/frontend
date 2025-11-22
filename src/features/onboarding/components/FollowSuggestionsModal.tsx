@@ -4,11 +4,7 @@ import React, { useState } from 'react';
 import XModal from '@/components/ui/hoc/XModal';
 import { AuthButton } from '@/components/ui/AuthButton';
 import UserCard from '@/components/ui/UserCard';
-import {
-  useFollowUser,
-  useUnfollowUser,
-  useSuggestedUsers,
-} from '../hooks/useOnboarding';
+import { useSuggestedUsers } from '../hooks/useOnboarding';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 
 interface FollowSuggestionsModalProps {
@@ -40,48 +36,8 @@ export default function FollowSuggestionsModal({
     isOpen // Only fetch when modal is open
   );
 
-  const followUser = useFollowUser();
-  const unfollowUser = useUnfollowUser();
-
-  const handleFollowToggle = async (userId: number) => {
-    const isCurrentlyFollowed = followedUsers.has(userId);
-
-    // Optimistically update UI
-    setFollowedUsers((prev) => {
-      const newSet = new Set(prev);
-      if (isCurrentlyFollowed) {
-        newSet.delete(userId);
-      } else {
-        newSet.add(userId);
-      }
-      return newSet;
-    });
-
-    try {
-      if (isCurrentlyFollowed) {
-        // Unfollow the user
-        await unfollowUser.mutateAsync({ userId });
-      } else {
-        // Follow the user
-        await followUser.mutateAsync({ userId });
-      }
-    } catch (error) {
-      console.error('Failed to toggle follow status:', error);
-      // Revert optimistic update on error
-      setFollowedUsers((prev) => {
-        const newSet = new Set(prev);
-        if (isCurrentlyFollowed) {
-          newSet.add(userId);
-        } else {
-          newSet.delete(userId);
-        }
-        return newSet;
-      });
-    }
-  };
-
   const handleNext = () => {
-    if (followedUsers.size > 0 && user) {
+    if (user && followedUsers.size > 0) {
       // Mark following step as complete
       setUser({
         ...user,
@@ -98,9 +54,20 @@ export default function FollowSuggestionsModal({
     }
   };
 
+  const handleFollowChange = (userId: number, isFollowed: boolean) => {
+    setFollowedUsers((prev) => {
+      const newSet = new Set(prev);
+      if (isFollowed) {
+        newSet.add(userId);
+      } else {
+        newSet.delete(userId);
+      }
+      return newSet;
+    });
+  };
+
   const suggestedUsers = suggestedUsersData?.data?.users || [];
   const totalAvailable = suggestedUsersData?.total || 0;
-  const hasFollowedAtLeastOne = followedUsers.size > 0;
 
   return (
     <XModal
@@ -151,25 +118,28 @@ export default function FollowSuggestionsModal({
             </div>
           ) : suggestedUsers.length > 0 ? (
             <div className="space-y-2 pb-4">
-              {suggestedUsers.map((user) => {
-                const isFollowing = followedUsers.has(user.id);
+              {suggestedUsers.map((suggestedUser) => {
+                const isFollowing = followedUsers.has(suggestedUser.id);
+
                 return (
                   <div
-                    key={user.id}
-                    className="transition-colors hover:bg-muted/30 rounded-lg -mx-2 px-2 py-2"
+                    key={suggestedUser.id}
+                    className="py-2 px-2 transition-colors hover:bg-muted/20 rounded-lg"
                   >
                     <UserCard
-                      name={user.profile.name}
-                      handle={`@${user.username}`}
-                      verified={user.isVerified}
-                      avatarUrl={user.profile.profileImageUrl || undefined}
-                      bio={user.profile.bio || undefined}
-                      action={{
-                        label: isFollowing ? 'Following' : 'Follow',
-                        onClick: () => handleFollowToggle(user.id),
-                        variant: isFollowing ? 'outline' : 'secondary',
-                        loading: false,
-                      }}
+                      name={
+                        suggestedUser.profile?.name ?? suggestedUser.username
+                      }
+                      userId={suggestedUser.id}
+                      handle={`@${suggestedUser.username}`}
+                      verified={suggestedUser.isVerified}
+                      avatarUrl={
+                        suggestedUser.profile?.profileImageUrl || undefined
+                      }
+                      bio={suggestedUser.profile?.bio || undefined}
+                      isFollowed={isFollowing}
+                      actionType="follow"
+                      onFollowChange={handleFollowChange}
                     />
                   </div>
                 );
@@ -188,25 +158,12 @@ export default function FollowSuggestionsModal({
             type="button"
             variant="primary"
             size="lg"
-            loading={followUser.isPending || unfollowUser.isPending}
-            disabled={
-              !hasFollowedAtLeastOne ||
-              followUser.isPending ||
-              unfollowUser.isPending
-            }
             className="w-full"
             onClick={handleNext}
+            disabled={followedUsers.size === 0}
           >
             Next
           </AuthButton>
-
-          {(followUser.isError || unfollowUser.isError) && (
-            <p className="text-error text-sm mt-4 text-center">
-              {followUser.error?.message ||
-                unfollowUser.error?.message ||
-                'Failed to update follow status'}
-            </p>
-          )}
         </div>
       </div>
     </XModal>

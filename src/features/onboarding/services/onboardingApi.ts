@@ -3,10 +3,6 @@ import {
   UpdateDateOfBirthResponseDto,
   UpdateInterestsDto,
   UpdateInterestsResponseDto,
-  FollowUserDto,
-  FollowUserResponseDto,
-  UnfollowUserDto,
-  UnfollowUserResponseDto,
   GetSuggestedUsersDto,
   GetSuggestedUsersResponseDto,
   GetInterestsResponseDto,
@@ -86,34 +82,6 @@ export const onboardingApi = {
       }
     );
     return handleResponse<UpdateInterestsResponseDto>(response);
-  },
-
-  // Follow a user
-  followUser: async (data: FollowUserDto): Promise<FollowUserResponseDto> => {
-    const response = await fetch(
-      `${ONBOARDING_API_CONFIG.BASE_URL}${ONBOARDING_ENDPOINTS.FOLLOW_USER(data.userId)}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      }
-    );
-    return handleResponse<FollowUserResponseDto>(response);
-  },
-
-  // Unfollow a user
-  unfollowUser: async (
-    data: UnfollowUserDto
-  ): Promise<UnfollowUserResponseDto> => {
-    const response = await fetch(
-      `${ONBOARDING_API_CONFIG.BASE_URL}${ONBOARDING_ENDPOINTS.UNFOLLOW_USER(data.userId)}`,
-      {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      }
-    );
-    return handleResponse<UnfollowUserResponseDto>(response);
   },
 
   // Get suggested users to follow

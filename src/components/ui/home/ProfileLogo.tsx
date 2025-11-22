@@ -13,8 +13,8 @@ export default function ProfileLogo() {
       <Link href={`./${user.username}`}>
         <div className="cursor-pointer transition-opacity duration-200 hover:opacity-75">
           <Avatar
-            avatarImage={user.profileImageUrl ?? undefined}
-            name={user.name}
+            avatarImage={user.profile?.profileImageUrl ?? null}
+            name={user.profile?.name ?? user.username}
             size="sm"
             position="relative"
             className="border-0"

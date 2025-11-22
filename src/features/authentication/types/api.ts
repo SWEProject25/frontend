@@ -91,3 +91,33 @@ export interface VerifyRecaptchaResponseDto {
   status: string;
   message: string;
 }
+
+export interface VerifyPasswordDto {
+  password: string;
+}
+
+export interface VerifyPasswordResponseDto {
+  status: string;
+  message: string;
+  data: {
+    isValid: boolean;
+  };
+}
+
+export interface UpdateEmailDto {
+  email: string;
+}
+
+export interface UpdateEmailResponseDto {
+  status: string;
+  message: string;
+}
+
+export interface UpdateUsernameDto {
+  username: string;
+}
+
+export interface UpdateUsernameResponseDto {
+  status: string;
+  message: string;
+}

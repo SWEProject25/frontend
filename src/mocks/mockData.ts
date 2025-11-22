@@ -18,6 +18,7 @@ export const mockCurrentUserProfile: UserProfile = {
   is_deactivated: false,
   created_at: '2024-11-01T00:00:00.000Z',
   updated_at: '2025-01-24T12:00:00.000Z',
+  is_followed_by_me: false,
   User: {
     id: 1,
     username: 'ahmedfathy',
@@ -25,6 +26,8 @@ export const mockCurrentUserProfile: UserProfile = {
     role: 'USER',
     created_at: '2024-11-01T00:00:00.000Z',
   },
+  followers_count: 1250,
+  following_count: 450,
 };
 
 export const mockUserProfile1: UserProfile = {
@@ -40,6 +43,7 @@ export const mockUserProfile1: UserProfile = {
   is_deactivated: false,
   created_at: '2025-01-01T00:00:00.000Z',
   updated_at: '2025-01-15T10:30:00.000Z',
+  is_followed_by_me: false,
   User: {
     id: 2,
     username: 'john_doe',
@@ -47,11 +51,13 @@ export const mockUserProfile1: UserProfile = {
     role: 'USER',
     created_at: '2025-01-01T00:00:00.000Z',
   },
+  followers_count: 890,
+  following_count: 320,
 };
 
 export const mockUserProfile2: UserProfile = {
-  id: 2,
-  user_id: 2,
+  id: 3,
+  user_id: 3,
   name: 'Jane Smith',
   birth_date: '1992-05-15T00:00:00.000Z',
   profile_image_url: 'https://i.pravatar.cc/150?img=5',
@@ -62,18 +68,21 @@ export const mockUserProfile2: UserProfile = {
   is_deactivated: false,
   created_at: '2025-01-05T00:00:00.000Z',
   updated_at: '2025-01-20T14:20:00.000Z',
+  is_followed_by_me: false,
   User: {
-    id: 2,
+    id: 3,
     username: 'jane_smith',
     email: 'jane@example.com',
     role: 'USER',
     created_at: '2025-01-05T00:00:00.000Z',
   },
+  followers_count: 2100,
+  following_count: 680,
 };
 
 export const mockUserProfile3: UserProfile = {
-  id: 3,
-  user_id: 3,
+  id: 4,
+  user_id: 4,
   name: 'Mike Johnson',
   birth_date: '1988-11-20T00:00:00.000Z',
   profile_image_url: 'https://i.pravatar.cc/150?img=33',
@@ -84,18 +93,21 @@ export const mockUserProfile3: UserProfile = {
   is_deactivated: false,
   created_at: '2024-12-15T00:00:00.000Z',
   updated_at: '2025-01-18T09:45:00.000Z',
+  is_followed_by_me: false,
   User: {
-    id: 3,
+    id: 4,
     username: 'mike_johnson',
     email: 'mike@example.com',
     role: 'USER',
     created_at: '2024-12-15T00:00:00.000Z',
   },
+  followers_count: 567,
+  following_count: 234,
 };
 
 export const mockUserProfile4: UserProfile = {
-  id: 4,
-  user_id: 4,
+  id: 5,
+  user_id: 5,
   name: 'Sarah Williams',
   birth_date: '1995-03-08T00:00:00.000Z',
   profile_image_url: 'https://i.pravatar.cc/150?img=9',
@@ -106,18 +118,21 @@ export const mockUserProfile4: UserProfile = {
   is_deactivated: false,
   created_at: '2025-01-10T00:00:00.000Z',
   updated_at: '2025-01-22T16:15:00.000Z',
+  is_followed_by_me: false,
   User: {
-    id: 4,
+    id: 5,
     username: 'sarah_williams',
     email: 'sarah@example.com',
     role: 'USER',
     created_at: '2025-01-10T00:00:00.000Z',
   },
+  followers_count: 1543,
+  following_count: 890,
 };
 
 export const mockUserProfile5: UserProfile = {
-  id: 5,
-  user_id: 5,
+  id: 6,
+  user_id: 6,
   name: 'David Chen',
   birth_date: '1991-07-25T00:00:00.000Z',
   profile_image_url: 'https://i.pravatar.cc/150?img=68',
@@ -128,53 +143,66 @@ export const mockUserProfile5: UserProfile = {
   is_deactivated: false,
   created_at: '2024-12-20T00:00:00.000Z',
   updated_at: '2025-01-19T11:30:00.000Z',
+  is_followed_by_me: false,
   User: {
-    id: 5,
+    id: 6,
     username: 'david_chen',
     email: 'david@example.com',
     role: 'USER',
     created_at: '2024-12-20T00:00:00.000Z',
   },
+  followers_count: 3421,
+  following_count: 1234,
 };
 
 export const mockUserProfileDeactivated: UserProfile = {
-  id: 6,
-  user_id: 6,
+  id: 7,
+  user_id: 7,
   name: 'Deleted User',
   birth_date: '1985-01-01T00:00:00.000Z',
+  profile_image_url: null,
+  banner_image_url: null,
   bio: null,
   location: null,
   website: null,
   is_deactivated: true,
   created_at: '2024-11-01T00:00:00.000Z',
   updated_at: '2025-01-10T00:00:00.000Z',
+  is_followed_by_me: false,
   User: {
-    id: 6,
+    id: 7,
     username: 'deleted_user',
     email: 'deleted@example.com',
     role: 'USER',
     created_at: '2024-11-01T00:00:00.000Z',
   },
+  followers_count: 0,
+  following_count: 0,
 };
 
 export const mockUserProfileMinimal: UserProfile = {
-  id: 7,
-  user_id: 7,
+  id: 8,
+  user_id: 8,
   name: 'Alex Brown',
   birth_date: '1993-09-12T00:00:00.000Z',
+  profile_image_url: null,
+  banner_image_url: null,
   bio: null,
   location: null,
   website: null,
   is_deactivated: false,
   created_at: '2025-01-23T00:00:00.000Z',
   updated_at: '2025-01-23T00:00:00.000Z',
+  is_followed_by_me: false,
   User: {
-    id: 7,
+    id: 8,
     username: 'alex_brown',
     email: 'alex@example.com',
     role: 'USER',
     created_at: '2025-01-23T00:00:00.000Z',
   },
+  followers_count: 42,
+  following_count: 15,
 };
 
 export const mockUserProfiles: UserProfile[] = [

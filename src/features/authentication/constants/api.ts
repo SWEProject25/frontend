@@ -12,6 +12,7 @@ export const AUTH_ENDPOINTS = {
   VERIFICATION_OTP: `/api/${AUTH_API_CONFIG.VERSION}/auth/verification-otp`,
   VERIFY_OTP: `/api/${AUTH_API_CONFIG.VERSION}/auth/verify-otp`,
   RESEND_OTP: `/api/${AUTH_API_CONFIG.VERSION}/auth/resend-otp`,
+  VERIFY_PASSWORD: `/api/${AUTH_API_CONFIG.VERSION}/auth/verifyPassword`,
   TEST: `/api/${AUTH_API_CONFIG.VERSION}/auth/test`,
   ME: `/api/${AUTH_API_CONFIG.VERSION}/auth/me`,
   CHECK_EMAIL: `/api/${AUTH_API_CONFIG.VERSION}/auth/check-email`,
@@ -20,6 +21,8 @@ export const AUTH_ENDPOINTS = {
   RESET_PASSWORD: `/api/${AUTH_API_CONFIG.VERSION}/auth/resetPassword`,
   GOOGLE_OAUTH_LOGIN: `/api/v1.0/auth/google/login`,
   GITHUB_OAUTH_LOGIN: `/api/v1.0/auth/github/login`,
+  UPDATE_EMAIL: `/api/${AUTH_API_CONFIG.VERSION}/auth/update-email`,
+  UPDATE_USERNAME: `/api/${AUTH_API_CONFIG.VERSION}/auth/update-username`,
 } as const;
 
 // Authentication Constants

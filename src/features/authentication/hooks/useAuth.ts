@@ -86,6 +86,13 @@ export const useLogoutMutation = () => {
   });
 };
 
+// Verify Password Mutation
+export const useVerifyPasswordMutation = () => {
+  return useMutation({
+    mutationFn: authApi.verifyPassword,
+  });
+};
+
 // Forgot Password Mutation
 export const useForgotPasswordMutation = () => {
   return useMutation({
@@ -121,6 +128,42 @@ export const useResendOTPMutation = () => {
   });
 };
 
+// Update Email Mutation
+export const useUpdateEmailMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: authApi.updateEmail,
+    onSuccess: () => {
+      // Invalidate auth user and profile queries to refetch updated data
+      queryClient.invalidateQueries({
+        queryKey: authKeys.user(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
+    },
+  });
+};
+
+// Update Username Mutation
+export const useUpdateUsernameMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: authApi.updateUsername,
+    onSuccess: () => {
+      // Invalidate auth user and profile queries to refetch updated data
+      queryClient.invalidateQueries({
+        queryKey: authKeys.user(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
+    },
+  });
+};
+
 // OAuth Login Handler (not a mutation due to popup window mechanism)
 export const useOAuthLogin = () => {
   const setUser = useAuthStore((state) => state.setUser);
@@ -146,15 +189,24 @@ export const useAuth = () => {
   const setUser = useAuthStore((state) => state.setUser);
   const clearUser = useAuthStore((state) => state.clearUser);
   const setLoading = useAuthStore((state) => state.setLoading);
+  const setPasswordVerified = useAuthStore(
+    (state) => state.setPasswordVerified
+  );
+  const checkPasswordVerification = useAuthStore(
+    (state) => state.checkPasswordVerification
+  );
 
   const loginMutation = useLoginMutation();
   const registerMutation = useRegisterMutation();
   const logoutMutation = useLogoutMutation();
+  const verifyPasswordMutation = useVerifyPasswordMutation();
   const forgotPasswordMutation = useForgotPasswordMutation();
   const resetPasswordMutation = useResetPasswordMutation();
   const sendOTPMutation = useSendOTPMutation();
   const verifyOTPMutation = useVerifyOTPMutation();
   const resendOTPMutation = useResendOTPMutation();
+  const updateEmailMutation = useUpdateEmailMutation();
+  const updateUsernameMutation = useUpdateUsernameMutation();
   const oAuthLogin = useOAuthLogin();
 
   return {
@@ -166,23 +218,31 @@ export const useAuth = () => {
     setUser,
     clearUser,
     setLoading,
+    setPasswordVerified,
+    checkPasswordVerification,
     login: loginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
+    verifyPassword: verifyPasswordMutation.mutateAsync,
     forgotPassword: forgotPasswordMutation.mutateAsync,
     resetPassword: resetPasswordMutation.mutateAsync,
     sendOTP: sendOTPMutation.mutateAsync,
     verifyOTP: verifyOTPMutation.mutateAsync,
     resendOTP: resendOTPMutation.mutateAsync,
+    updateEmail: updateEmailMutation.mutateAsync,
+    updateUsername: updateUsernameMutation.mutateAsync,
     oAuthLogin,
     // Mutation loading states
     isLoginLoading: loginMutation.isPending,
     isRegisterLoading: registerMutation.isPending,
     isLogoutLoading: logoutMutation.isPending,
+    isVerifyPasswordLoading: verifyPasswordMutation.isPending,
     isForgotPasswordLoading: forgotPasswordMutation.isPending,
     isResetPasswordLoading: resetPasswordMutation.isPending,
     isSendOTPLoading: sendOTPMutation.isPending,
     isVerifyOTPLoading: verifyOTPMutation.isPending,
     isResendOTPLoading: resendOTPMutation.isPending,
+    isUpdateEmailLoading: updateEmailMutation.isPending,
+    isUpdateUsernameLoading: updateUsernameMutation.isPending,
   };
 };

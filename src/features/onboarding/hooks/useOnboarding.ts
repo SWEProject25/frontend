@@ -3,12 +3,8 @@ import { onboardingApi } from '../services/onboardingApi';
 import {
   UpdateDateOfBirthDto,
   UpdateInterestsDto,
-  FollowUserDto,
-  UnfollowUserDto,
   UpdateDateOfBirthResponseDto,
   UpdateInterestsResponseDto,
-  FollowUserResponseDto,
-  UnfollowUserResponseDto,
   GetSuggestedUsersDto,
   GetSuggestedUsersResponseDto,
   GetInterestsResponseDto,
@@ -86,27 +82,6 @@ export const useUpdateInterests = () => {
           },
         });
       }
-    },
-  });
-};
-
-// Hook: Follow user
-export const useFollowUser = () => {
-  return useMutation<FollowUserResponseDto, Error, FollowUserDto>({
-    mutationFn: onboardingApi.followUser,
-    onSuccess: () => {
-      // Just follow the user
-      // Don't mark onboarding as complete here - that happens when user clicks "Next"
-    },
-  });
-};
-
-// Hook: Unfollow user
-export const useUnfollowUser = () => {
-  return useMutation<UnfollowUserResponseDto, Error, UnfollowUserDto>({
-    mutationFn: onboardingApi.unfollowUser,
-    onSuccess: () => {
-      // Just unfollow the user
     },
   });
 };
