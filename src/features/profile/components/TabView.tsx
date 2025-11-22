@@ -12,7 +12,7 @@ const TabView = () => {
   const selectedTab = useSelectedTab();
   const { selectTab } = useActions();
   const profile = useProfileStore((state) => state.currentProfile);
-  console.log(profile?.User.id);
+  // console.log(profile?.User.id);
   return (
     <div className="w-full mt-4">
       <Tabs
@@ -21,7 +21,7 @@ const TabView = () => {
         onClick={selectTab}
         height="h-[53px]"
       />
-      {/* <Tweets /> */}
+      {profile?.User && <Tweets />}
     </div>
   );
 };
