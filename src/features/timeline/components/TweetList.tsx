@@ -34,14 +34,18 @@ export default function TweetList() {
 
   const hasInitialData = pages ? pages[0].data.posts.length > 0 : false;
   return isError ? (
-    <div>Error {error.message}</div>
+    <div data-testid="tweet-list-error">Error {error.message}</div>
   ) : isLoading ? (
-    <div className="flex justify-center items-center h-64 mx-4">
+    <div
+      className="flex justify-center items-center h-64 mx-4"
+      data-testid="tweet-list-loading"
+    >
       <Loader />
     </div>
   ) : (
     <>
       <InfiniteScroll
+        data-testid="tweet-list"
         isLoadingInitial={isLoading}
         isLoadingMore={isFetchingNextPage}
         loadMore={() => hasNextPage && fetchNextPage()}

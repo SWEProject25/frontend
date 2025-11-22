@@ -46,6 +46,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
   const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
   return (
     <div
+      data-testid={`tweet-${data.postId}`}
       onClick={() => {
         setCurrentTweet(data);
         router.push(`/home/${data.postId}`);
@@ -55,13 +56,19 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
       <div className="flex w-full gap-2">
         <TweetAvatar data={user} onHoverCard={setHovered} />
         <div className="flex flex-col items-center flex-1">
-          <div className="flex items-center justify-between w-full">
+          <div
+            className="flex items-center justify-between w-full"
+            data-testid="tweet-header"
+          >
             <div className="flex items-center gap-1">
               <UserInfo data={user} onHoverCard={setHovered} />
               <span className="text-gray-500">.</span>
               <Timing time={data.date} />
             </div>
-            <div className="ml-2 flex items-center space-x-2 text-gray-500">
+            <div
+              className="ml-2 flex items-center space-x-2 text-gray-500"
+              data-testid="tweet-actions-header"
+            >
               <Action
                 icon={<GrokIcon />} // smaller icon
                 label="Explain this post"

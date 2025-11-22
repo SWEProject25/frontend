@@ -46,10 +46,11 @@ export default function UserInfo({
   const nameCardShow = cardShow && (showNameCard || cardNameHover);
   const usernameCardShow = cardShow && (showUsernameCard || cardUsernameHover);
   return (
-    <div className={containerClass}>
+    <div className={containerClass} data-testid="tweet-user-info">
       <div className="relative">
         <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span
+            data-testid="tweet-user-name"
             className={nameRowClass}
             onMouseEnter={() => setTimeout(() => setShowNameCard(true), delay)}
             onMouseLeave={() => setTimeout(() => setShowNameCard(false), delay)}
@@ -88,6 +89,7 @@ export default function UserInfo({
       <div className="relative">
         <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span
+            data-testid="tweet-user-username"
             className={usernameClass}
             onMouseEnter={() =>
               setTimeout(() => setShowUsernameCard(true), 400)

@@ -27,8 +27,9 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
   birth,
   setBirth,
 }) => (
-  <div className="mt-20 space-y-6 mx-2">
+  <div className="mt-20 space-y-6 mx-2" data-testid="edit-profile-form">
     <InputField
+      data-testid="edit-profile-name-input"
       label="Name"
       value={name}
       onChange={(e) => setName(e.target.value)}
@@ -36,6 +37,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       showCharCount
     />
     <InputField
+      data-testid="edit-profile-bio-input"
       label="Bio"
       type="textarea"
       value={bio}
@@ -44,6 +46,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       showCharCount
     />
     <InputField
+      data-testid="edit-profile-location-input"
       label="Location"
       value={location}
       onChange={(e) => setLocation(e.target.value)}
@@ -51,17 +54,19 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       showCharCount
     />
     <InputField
+      data-testid="edit-profile-website-input"
       label="Website"
       value={website}
       onChange={(e) => setWebsite(e.target.value)}
       maxLength={100}
       showCharCount
     />
-    <div className="w-full">
+    <div className="w-full" data-testid="edit-profile-birthdate">
       <label className="text-sm text-text-active  font-bold block mb-2 ml-2">
         Date of birth
       </label>
       <DatePicker
+        data-testid="edit-profile-birthdate-picker"
         value={birth}
         onChange={setBirth}
         idPrefix="edit-birth"

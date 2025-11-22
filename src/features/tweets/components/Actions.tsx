@@ -78,7 +78,7 @@ export default function Actions({
     toggleRepostTweet.mutate();
   }
   return (
-    <div className="w-full my-.5">
+    <div className="w-full my-.5" data-testid="tweet-actions">
       <div className="flex justify-between items-center w-full mt-3 text-gray-500 text-sm">
         <Action
           icon={ACTIONS_META[0].icon}

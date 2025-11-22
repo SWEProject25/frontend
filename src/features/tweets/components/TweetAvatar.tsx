@@ -28,7 +28,7 @@ export default function TweetAvatar({
   const delay = 400;
 
   return (
-    <div className="flex-shrink-0">
+    <div className="flex-shrink-0" data-testid="tweet-avatar">
       <div className="relative">
         <Link
           href={`/${data.username}`}
@@ -39,6 +39,7 @@ export default function TweetAvatar({
           }
         >
           <Avatar
+            data-testid="tweet-avatar-image"
             avatarImage={data.avatar ?? null}
             name={data.name}
             size="sm"

@@ -13,10 +13,14 @@ const EditProfileHeader: React.FC<EditProfileHeaderProps> = ({
   onSave,
   isUpdating,
 }) => (
-  <div className="sticky top-0 z-40 backdrop-blur-sm bg-black/80">
+  <div
+    className="sticky top-0 z-40 backdrop-blur-sm bg-black/80"
+    data-testid="edit-profile-header"
+  >
     <div className="flex justify-between gap-2 px-1 py-2">
       <div>
         <Button
+          data-testid="edit-profile-close-button"
           variant="ghost"
           size="sm"
           shape="circle"
@@ -29,6 +33,7 @@ const EditProfileHeader: React.FC<EditProfileHeaderProps> = ({
         <span className="text-xl font-bold ml-3">Edit profile</span>
       </div>
       <Button
+        data-testid="edit-profile-save-button"
         variant="social"
         size="sm"
         shape="rounded"

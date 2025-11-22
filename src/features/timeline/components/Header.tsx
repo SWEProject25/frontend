@@ -14,8 +14,12 @@ export default function Header() {
 
   //left-[calc(50%-300px)]
   return (
-    <header className="z-10 flex sticky top-0 w-full bg-black/50 backdrop-blur-md">
+    <header
+      data-testid="timeline-header"
+      className="z-10 flex sticky top-0 w-full bg-black/50 backdrop-blur-md"
+    >
       <Tabs
+        data-testid="timeline-tabs"
         height="h-[53px]"
         selectedValue={selectedTab}
         tabs={tabs}
