@@ -7,6 +7,9 @@ import {
   searchMockProfiles,
 } from '../../../mocks/mockData';
 import type { UpdateProfileDto } from '../types/api';
+import { API_CONFIG } from '@/constants/api';
+import { profilePosts } from './data';
+import { mockState } from './mockState';
 
 /**
  * MSW Request Handlers for Profile API
@@ -210,10 +213,104 @@ export const profileHandlers = [
   }),
 ];
 
+export const profileFeedHandlers = [
+  http.get(
+    `${API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.PROFILE_POSTS('me')}`,
+    ({ request }) => {
+      const url = new URL(request.url);
+      const page = Number(url.searchParams.get('page')) ?? 1;
+      const limit = Number(url.searchParams.get('limit')) ?? 10;
+      console.log(mockState.user);
+      return HttpResponse.json(
+        {
+          status: 'success',
+          message: 'Posts retrieved successfully',
+          data: {
+            posts: profilePosts(mockState.user).slice(
+              (page - 1) * limit,
+              page * limit
+            ),
+          },
+        },
+        { status: 200 }
+      );
+    }
+  ),
+  http.get(
+    `${API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.PROFILE_REPLIES('me')}`,
+    ({ request }) => {
+      const url = new URL(request.url);
+      const page = Number(url.searchParams.get('page')) ?? 1;
+      const limit = Number(url.searchParams.get('limit')) ?? 10;
+      console.log(mockState.user);
+      return HttpResponse.json(
+        {
+          status: 'success',
+          message: 'Posts retrieved successfully',
+          data: {
+            posts: profilePosts(mockState.user).slice(
+              (page - 1) * limit,
+              page * limit
+            ),
+          },
+        },
+        { status: 200 }
+      );
+    }
+  ),
+
+  http.get(
+    `${API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.PROFILE_POSTS(':id')}`,
+    ({ request }) => {
+      const url = new URL(request.url);
+      const page = Number(url.searchParams.get('page')) ?? 1;
+      const limit = Number(url.searchParams.get('limit')) ?? 10;
+      console.log(mockState.user);
+      return HttpResponse.json(
+        {
+          status: 'success',
+          message: 'Posts retrieved successfully',
+          data: {
+            posts: profilePosts(mockState.user).slice(
+              (page - 1) * limit,
+              page * limit
+            ),
+          },
+        },
+        { status: 200 }
+      );
+    }
+  ),
+
+  http.get(
+    `${API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.PROFILE_REPLIES(':id')}`,
+    ({ request }) => {
+      const url = new URL(request.url);
+      const page = Number(url.searchParams.get('page')) ?? 1;
+      const limit = Number(url.searchParams.get('limit')) ?? 10;
+      console.log(mockState.user);
+      return HttpResponse.json(
+        {
+          status: 'success',
+          message: 'Posts retrieved successfully',
+          data: {
+            posts: profilePosts(mockState.user).slice(
+              (page - 1) * limit,
+              page * limit
+            ),
+          },
+        },
+        { status: 200 }
+      );
+    }
+  ),
+];
+
 /**
  * Error scenario handlers for testing
  * Use these to test error handling in your components
  */
+
 export const profileErrorHandlers = [
   // Always returns 401 Unauthorized
   http.get(buildUrl(PROFILE_ENDPOINTS.GET_MY_PROFILE), () => {

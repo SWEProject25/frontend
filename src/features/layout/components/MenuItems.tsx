@@ -77,7 +77,10 @@ export default function MenuItems() {
   ];
 
   return (
-    <nav className="flex flex-col mt-1 gap-4 min-[1400px]:items-start items-center">
+    <nav
+      data-testid="sidebar-menu"
+      className="flex flex-col mt-1 gap-4 min-[1400px]:items-start items-center"
+    >
       {menuItems.map((item, index) => {
         const isActive = pathname === item.href;
         return (
@@ -85,6 +88,7 @@ export default function MenuItems() {
             key={index}
             href={item.href}
             aria-label={item.label}
+            data-testid={`sidebar-menu-${item.label.toLowerCase()}`}
             className={`flex items-center justify-center xl:justify-start gap-5 px-3 py-3 rounded-full hover:bg-gray-900 cursor-pointer transition-colors ${
               item.hideOnShortScreen ? 'max-[699px]:hidden' : ''
             }`}

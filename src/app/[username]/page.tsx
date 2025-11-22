@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { SearchIcon } from '@/components/ui/icons';
 import ProfileContainer from '@/features/profile/components/ProfileContainer';
@@ -10,6 +10,7 @@ import { useProfileByUsername } from '@/features/profile/hooks';
 import { useMyProfile } from '@/features/profile/hooks';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import Loader from '@/components/generic/Loader';
+import { useProfileStore } from '@/features/profile';
 
 interface UserPageProps {
   params: Promise<{
@@ -21,6 +22,7 @@ const UserPage = ({ params }: UserPageProps) => {
   const { username } = use(params);
 
   const currentUser = useAuthStore((s) => s.user);
+  const { setCurrentProfile } = useProfileStore();
 
   const useMy = Boolean(currentUser && currentUser.username === username);
 
@@ -30,6 +32,22 @@ const UserPage = ({ params }: UserPageProps) => {
     isLoading: isLoadingByUsername,
     error: errorByUsername,
   } = useProfileByUsername(username, !useMy);
+
+  useEffect(() => {
+    setCurrentProfile(
+      useMy
+        ? myProfileQuery.data?.data || null
+        : profileDataByUsername?.data || null
+    );
+    return () => {
+      setCurrentProfile(null);
+    };
+  }, [
+    useMy,
+    myProfileQuery.data?.data,
+    profileDataByUsername?.data,
+    setCurrentProfile,
+  ]);
 
   const profileData = useMy ? myProfileQuery.data : profileDataByUsername;
   const isLoading = useMy ? myProfileQuery.isLoading : isLoadingByUsername;
@@ -42,7 +60,7 @@ const UserPage = ({ params }: UserPageProps) => {
   // Loading state
   if (isLoading) {
     return (
-      <main className="flex flex-col">
+      <main className="flex flex-col" data-testid="profile-page-loading">
         <div className="flex flex-row justify-between items-center px-4">
           <Breadcrumb
             title={`${username}'s Profile`}
@@ -61,7 +79,7 @@ const UserPage = ({ params }: UserPageProps) => {
   // Error state
   if (error || !profileData) {
     return (
-      <main className="flex flex-col">
+      <main className="flex flex-col" data-testid="profile-page-error">
         <div className="flex flex-row justify-between items-center px-4">
           <Breadcrumb
             title={`${username}'s Profile`}
@@ -71,7 +89,10 @@ const UserPage = ({ params }: UserPageProps) => {
           />
         </div>
         <div className="flex justify-center items-center h-64">
-          <div className="text-text-secondary">
+          <div
+            className="text-text-secondary"
+            data-testid="profile-error-message"
+          >
             {error?.message || 'Profile not found'}
           </div>
         </div>
@@ -82,15 +103,24 @@ const UserPage = ({ params }: UserPageProps) => {
   const profile = profileData.data;
 
   return (
-    <main className="flex flex-col">
-      <div className="flex flex-row justify-between items-center px-4 sticky top-0 bg-background/90 z-10">
+    <main className="flex flex-col" data-testid="profile-page">
+      <div
+        className="flex flex-row justify-between items-center px-4 sticky top-0 bg-background/90 z-10"
+        data-testid="profile-header"
+      >
         <Breadcrumb
+          data-testid="profile-breadcrumb"
           title={`${profile.name}'s Profile`}
           subtitle={`@${profile.User.username}`}
           onBack={handleBack}
           showArrow={true}
         />
-        <Button variant="ghost" size="md" shape="circle">
+        <Button
+          data-testid="profile-search-button"
+          variant="ghost"
+          size="md"
+          shape="circle"
+        >
           <SearchIcon className="w-5 h-6 text-text-primary" />
         </Button>
       </div>

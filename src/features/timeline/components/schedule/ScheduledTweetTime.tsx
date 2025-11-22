@@ -13,7 +13,10 @@ export default function ScheduledTweetTime() {
   const day = scheduledTime || currDate.toDateString();
   const time = scheduledTime || timearr[0].slice(0, 5) + ' ' + timearr[1];
   return (
-    <div className="text-sm h-5 mt-1 text-text-inactive  flex items-center ">
+    <div
+      data-testid="scheduled-tweet-time"
+      className="text-sm h-5 mt-1 text-text-inactive  flex items-center "
+    >
       <Icon
         width="w-6"
         height="h-6"

@@ -21,10 +21,16 @@ export default function TweetReplySettings() {
 
   if (!selectedReplyOption) return null;
   return (
-    <div className="select-text w-full max-h-9 pb-3 flex flex-1 items-stretch   border-b-1 border-border ">
+    <div
+      data-testid="tweet-reply-settings"
+      className="select-text w-full max-h-9 pb-3 flex flex-1 items-stretch   border-b-1 border-border "
+    >
       <XMenu>
         <XMenu.Button name={REPLY_MENU} panelHeight={PANEL_HEIGHT}>
-          <div className=" h-6 flex items-center justify-center cursor-pointer hover:bg-icon-hover hover:rounded-full text-primary text-sm font-bold pr-3 ">
+          <div
+            data-testid="tweet-reply-settings-button"
+            className=" h-6 flex items-center justify-center cursor-pointer hover:bg-icon-hover hover:rounded-full text-primary text-sm font-bold pr-3 "
+          >
             <Icon
               viewBox={options[selectedReplyOption - 1].viewBox}
               height="h-7"
@@ -45,7 +51,10 @@ export default function TweetReplySettings() {
           name="ReplyMenu"
           preventScroll={false}
         >
-          <div className="flex  flex-col pt-4 pb-2">
+          <div
+            className="flex  flex-col pt-4 pb-2"
+            data-testid="reply-menu-list"
+          >
             <div className="px-4 pb-3">
               <h3 className="text-sm font-bold text-text-active">
                 Who can reply?
@@ -62,7 +71,7 @@ export default function TweetReplySettings() {
                 return (
                   <li key={opt.value}>
                     <button
-                      data-testid={`${opt.value}`}
+                      data-testid={`reply-option-${opt.value.toLowerCase().replace(/\s+/g, '-')}`}
                       type="button"
                       onClick={() => {
                         updateReplyOption(opt.id);

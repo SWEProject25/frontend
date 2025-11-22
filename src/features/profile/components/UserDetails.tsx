@@ -21,9 +21,15 @@ const UserDetails = ({ joinDate, location, website }: UserDetailsProps) => {
     : null;
 
   return (
-    <div className="flex flex-row items-center gap-2 sm:gap-3 flex-wrap">
+    <div
+      className="flex flex-row items-center gap-2 sm:gap-3 flex-wrap"
+      data-testid="profile-user-details"
+    >
       {location && (
-        <div className="flex flex-row items-center gap-1">
+        <div
+          className="flex flex-row items-center gap-1"
+          data-testid="profile-location"
+        >
           <LocationIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-placeholder" />
           <span className="font-inter text-sm sm:text-base text-text-placeholder">
             {location}
@@ -31,9 +37,13 @@ const UserDetails = ({ joinDate, location, website }: UserDetailsProps) => {
         </div>
       )}
       {externalUrl && (
-        <div className="flex flex-row items-center gap-1">
+        <div
+          className="flex flex-row items-center gap-1"
+          data-testid="profile-website"
+        >
           <LinkIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-placeholder" />
           <Link
+            data-testid="profile-website-link"
             href={externalUrl}
             target="_blank"
             rel="noopener noreferrer"
@@ -43,7 +53,10 @@ const UserDetails = ({ joinDate, location, website }: UserDetailsProps) => {
           </Link>
         </div>
       )}
-      <div className="flex flex-row items-center gap-1">
+      <div
+        className="flex flex-row items-center gap-1"
+        data-testid="profile-join-date"
+      >
         <JoinDateIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-placeholder" />
         <span className="font-inter text-sm sm:text-base text-text-placeholder">
           Joined {formattedDate}

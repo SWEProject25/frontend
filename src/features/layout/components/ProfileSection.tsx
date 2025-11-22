@@ -3,5 +3,9 @@ import React from 'react';
 import ProfileMenu from './ProfileMenu';
 
 export default function ProfileSection() {
-  return <ProfileMenu />;
+  return (
+    <div data-testid="sidebar-profile-section">
+      <ProfileMenu />
+    </div>
+  );
 }

@@ -1,0 +1,319 @@
+import { ProfileFeed, UserProfile } from '../types/api';
+
+export function profilePost1(user: UserProfile | null): ProfileFeed | null {
+  if (!user) return null;
+  return {
+    userId: user?.user_id,
+    username: user.User.username,
+    verified: true,
+    name: user.name,
+    avatar: user.profile_image_url,
+    postId: 5,
+    date: '2025-11-20T18:00:00.000Z',
+    likesCount: 2,
+    retweetsCount: 1,
+    commentsCount: 0,
+    isLikedByMe: true,
+    isFollowedByMe: false,
+    isRepostedByMe: true,
+    text: 'Captured the most beautiful sunset in Dubai today! 🌅 #photography #travel',
+    media: [
+      {
+        url: 'https://picsum.photos/800/600?random=1',
+        type: 'IMAGE',
+      },
+      {
+        url: 'https://picsum.photos/800/600?random=2',
+        type: 'IMAGE',
+      },
+    ],
+    isRepost: false,
+    isQuote: false,
+  };
+}
+export function profilePost2(user: UserProfile | null): ProfileFeed | null {
+  if (!user) return null;
+  return {
+    userId: user.user_id,
+    username: user.User.username,
+    verified: true,
+    name: user.name,
+    avatar: user.profile_image_url,
+    postId: 20,
+    date: '2025-11-21T22:05:48.261Z',
+    likesCount: 1,
+    retweetsCount: 1,
+    commentsCount: 0,
+    isLikedByMe: true,
+    isFollowedByMe: false,
+    isRepostedByMe: true,
+    text: 'hdbdhdhd',
+    media: [],
+    isRepost: false,
+    isQuote: false,
+  };
+}
+export function profilePost3(user: UserProfile | null): ProfileFeed | null {
+  if (!user) return null;
+  return {
+    userId: user.user_id,
+    username: user.User.username,
+    verified: true,
+    name: user.name,
+    avatar: user.profile_image_url,
+    postId: 14,
+    date: '2025-11-20T17:00:00.000Z',
+    likesCount: 0,
+    retweetsCount: 0,
+    commentsCount: 0,
+    isLikedByMe: false,
+    isFollowedByMe: false,
+    isRepostedByMe: false,
+    text: 'Just minted my new NFT collection! Check it out 🎨 #art #nft #crypto',
+    media: [
+      {
+        url: 'https://picsum.photos/800/800?random=3',
+        type: 'IMAGE',
+      },
+    ],
+    isRepost: false,
+    isQuote: false,
+  };
+}
+export function profilePost4(user: UserProfile | null): ProfileFeed | null {
+  if (!user) return null;
+  return {
+    userId: user.user_id,
+    username: user.User.username,
+    verified: true,
+    name: user.name,
+    avatar: user.profile_image_url,
+    postId: 12,
+    date: '2025-11-20T21:00:00.000Z',
+    likesCount: 0,
+    retweetsCount: 0,
+    commentsCount: 0,
+    isLikedByMe: false,
+    isFollowedByMe: false,
+    isRepostedByMe: false,
+    text: 'Manchester United won! What a match! ⚽🔴 #football #MUFC',
+    media: [],
+    isRepost: false,
+    isQuote: false,
+  };
+}
+export function profilePost5(user: UserProfile | null): ProfileFeed | null {
+  if (!user) return null;
+  return {
+    userId: user.user_id,
+    username: user.User.username,
+    verified: true,
+    name: user.name,
+    avatar: user.profile_image_url,
+    postId: 8,
+    date: '2025-11-20T20:00:00.000Z',
+    likesCount: 1,
+    retweetsCount: 0,
+    commentsCount: 0,
+    isLikedByMe: false,
+    isFollowedByMe: false,
+    isRepostedByMe: false,
+    text: 'The cake is a lie, but this detective work is not 🍰🕵️',
+    media: [],
+    isRepost: false,
+    isQuote: false,
+  };
+}
+export function profilePost6(user: UserProfile | null): ProfileFeed | null {
+  if (!user) return null;
+  return {
+    userId: user.user_id,
+    username: user.User.username,
+    verified: true,
+    name: user.name,
+    avatar: user.profile_image_url,
+    postId: 1,
+    date: '2025-11-21T17:21:38.333Z',
+    likesCount: 6,
+    retweetsCount: 2,
+    commentsCount: 4,
+    isLikedByMe: false,
+    isFollowedByMe: false,
+    isRepostedByMe: false,
+    text: '',
+    media: [],
+    isRepost: true,
+    isQuote: false,
+    originalPostData: {
+      userId: 41,
+      username: 'mohamed-sameh-albaz',
+      verified: true,
+      name: 'Mohamed Sameh Albaz',
+      avatar: null,
+      postId: 1,
+      date: '2025-11-20T10:00:00.000Z',
+      likesCount: 6,
+      retweetsCount: 2,
+      commentsCount: 4,
+      isLikedByMe: false,
+      isFollowedByMe: false,
+      isRepostedByMe: false,
+      text: 'Just deployed my new social media platform! 🚀 Excited to see everyone using it. #webdev #typescript #nodejs',
+      media: [],
+    },
+  };
+}
+export function profilePost7(user: UserProfile | null): ProfileFeed | null {
+  if (!user) return null;
+  return {
+    userId: user.user_id,
+    username: user.User.username,
+    verified: true,
+    name: user.name,
+    avatar: user.profile_image_url,
+    postId: 1,
+    date: '2025-11-21T17:21:37.926Z',
+    likesCount: 6,
+    retweetsCount: 2,
+    commentsCount: 4,
+    isLikedByMe: false,
+    isFollowedByMe: false,
+    isRepostedByMe: false,
+    text: '',
+    media: [],
+    isRepost: true,
+    isQuote: false,
+    originalPostData: {
+      userId: 41,
+      username: 'mohamed-sameh-albaz',
+      verified: true,
+      name: 'Mohamed Sameh Albaz',
+      avatar: null,
+      postId: 1,
+      date: '2025-11-20T10:00:00.000Z',
+      likesCount: 6,
+      retweetsCount: 2,
+      commentsCount: 4,
+      isLikedByMe: false,
+      isFollowedByMe: false,
+      isRepostedByMe: false,
+      text: 'Just deployed my new social media platform! 🚀 Excited to see everyone using it. #webdev #typescript #nodejs',
+      media: [],
+    },
+  };
+}
+export function profilePost8(user: UserProfile | null): ProfileFeed | null {
+  if (!user) return null;
+  return {
+    userId: user.user_id,
+    username: user.User.username,
+    verified: true,
+    name: user.name,
+    avatar: user.profile_image_url,
+    postId: 4,
+    date: '2025-11-21T20:14:22.387Z',
+    likesCount: 3,
+    retweetsCount: 2,
+    commentsCount: 0,
+    isLikedByMe: false,
+    isFollowedByMe: false,
+    isRepostedByMe: false,
+    text: '',
+    media: [],
+    isRepost: true,
+    isQuote: false,
+    originalPostData: {
+      userId: 18,
+      username: 'gpt.ch8701',
+      verified: true,
+      name: 'GPT Chat',
+      avatar: null,
+      postId: 4,
+      date: '2025-11-20T09:00:00.000Z',
+      likesCount: 3,
+      retweetsCount: 2,
+      commentsCount: 0,
+      isLikedByMe: false,
+      isFollowedByMe: false,
+      isRepostedByMe: false,
+      text: 'AI is evolving faster than ever. The future is here! 🤖 #ai #machinelearning #technology',
+      media: [],
+    },
+  };
+}
+export function profilePost9(user: UserProfile | null): ProfileFeed | null {
+  if (!user) return null;
+  return {
+    userId: user.user_id,
+    username: user.User.username,
+    verified: true,
+    name: user.name,
+    avatar: user.profile_image_url,
+    postId: 4,
+    date: '2025-11-21T17:21:38.539Z',
+    likesCount: 3,
+    retweetsCount: 2,
+    commentsCount: 0,
+    isLikedByMe: false,
+    isFollowedByMe: false,
+    isRepostedByMe: false,
+    text: '',
+    media: [],
+    isRepost: true,
+    isQuote: false,
+    originalPostData: {
+      userId: 18,
+      username: 'gpt.ch8701',
+      verified: true,
+      name: 'GPT Chat',
+      avatar: null,
+      postId: 4,
+      date: '2025-11-20T09:00:00.000Z',
+      likesCount: 3,
+      retweetsCount: 2,
+      commentsCount: 0,
+      isLikedByMe: false,
+      isFollowedByMe: false,
+      isRepostedByMe: false,
+      text: 'AI is evolving faster than ever. The future is here! 🤖 #ai #machinelearning #technology',
+      media: [],
+    },
+  };
+}
+
+export function profilePost10(user: UserProfile | null): ProfileFeed | null {
+  if (!user) return null;
+  return {
+    userId: user.user_id,
+    username: user.User.username,
+    verified: true,
+    name: user.name,
+    avatar: user.profile_image_url,
+    postId: 13,
+    date: '2025-11-20T19:00:00.000Z',
+    likesCount: 0,
+    retweetsCount: 0,
+    commentsCount: 0,
+    isLikedByMe: false,
+    isFollowedByMe: false,
+    isRepostedByMe: false,
+    text: 'Streaming live in 10 minutes! Come watch some Warframe action 🎮 #gaming #twitch',
+    media: [],
+    isRepost: false,
+    isQuote: false,
+  };
+}
+export function profilePosts(user: UserProfile | null): (ProfileFeed | null)[] {
+  return [
+    profilePost1(user),
+    profilePost2(user),
+    profilePost3(user),
+    profilePost4(user),
+    profilePost5(user),
+    profilePost6(user),
+    profilePost7(user),
+    profilePost8(user),
+    profilePost9(user),
+    profilePost10(user),
+  ];
+}

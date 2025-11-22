@@ -9,10 +9,11 @@ export default function ProfileLogo() {
   if (!user) return null;
 
   return (
-    <div className="flex-none w-fit mr-2 pt-3">
-      <Link href={`./${user.username}`}>
+    <div className="flex-none w-fit mr-2 pt-3" data-testid="profile-logo">
+      <Link href={`./${user.username}`} data-testid="profile-logo-link">
         <div className="cursor-pointer transition-opacity duration-200 hover:opacity-75">
           <Avatar
+            data-testid="profile-logo-avatar"
             avatarImage={user.profile?.profileImageUrl ?? null}
             name={user.profile?.name ?? user.username}
             size="sm"

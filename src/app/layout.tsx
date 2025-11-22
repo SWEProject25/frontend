@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 // import './globals.css';
 import { Providers } from '@/lib/providers';
-// import { MSWProvider } from '@/mocks/MSWProvider';
+import { MSWProvider } from '@/mocks/MSWProvider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -37,7 +37,6 @@ export default function RootLayout({
             </>
           </Providers>
           {/* <Providers>{modal}</Providers> */}
-
           {/* </MSWProvider> */}
         </div>
       </body>

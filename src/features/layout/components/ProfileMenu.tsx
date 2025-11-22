@@ -25,16 +25,20 @@ export default function ProfileMenu() {
   return (
     <XMenu>
       <XMenu.Button name="ProfileMenu" panelHeight={PANEL_HEIGHT}>
-        <div className="flex items-center justify-between hover:bg-gray-900 rounded-full p-3 mb-3 cursor-pointer transition-colors w-full">
+        <div
+          data-testid="sidebar-profile-menu-button"
+          className="flex items-center justify-between hover:bg-gray-900 rounded-full p-3 mb-3 cursor-pointer transition-colors w-full"
+        >
           <div className="flex items-center gap-3">
             <Avatar
+              data-testid="sidebar-profile-avatar"
               avatarImage={user.profile?.profileImageUrl ?? null}
               name={user.profile?.name ?? user.username}
               size="sm"
               position="relative"
               className="border-0"
             />
-            <div className="hidden xl:block">
+            <div className="hidden xl:block" data-testid="sidebar-profile-info">
               <p className="text-white font-semibold text-sm leading-tight">
                 {user.profile?.name ?? user.username}
               </p>
@@ -50,10 +54,13 @@ export default function ProfileMenu() {
         name="ProfileMenu"
         preventScroll={false}
       >
-        <ul className="flex flex-col align-center justify-center h-full">
+        <ul
+          data-testid="sidebar-profile-menu-list"
+          className="flex flex-col align-center justify-center h-full"
+        >
           <li className="flex-1">
             <button
-              data-testid="logout-button"
+              data-testid="sidebar-logout-button"
               type="button"
               onClick={handleLogout}
               className="align-center justify-start px-2 h-full cursor-pointer w-full flex items-center gap-3 outline-none rounded-2xl hover:bg-white/10 focus:bg-white/10 transition-colors"
