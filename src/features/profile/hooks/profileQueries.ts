@@ -40,7 +40,7 @@ export const PROFILE_QUERY_KEYS = {
 
 // Hook: Get current user's profile
 export const useMyProfile = () => {
-  const { setCurrentProfile, setLoading, setError } = useProfileStore();
+  const { setLoading, setError } = useProfileStore();
 
   return useQuery<ProfileResponseDto, Error>({
     queryKey: PROFILE_QUERY_KEYS.myProfile,
@@ -48,7 +48,6 @@ export const useMyProfile = () => {
       setLoading(true);
       try {
         const response = await profileApi.getMyProfile();
-        setCurrentProfile(response.data);
         setError(null);
         return response;
       } catch (error) {
@@ -295,7 +294,7 @@ export const useRemoveBannerImage = () => {
 
 // Hook: Get profile by user ID
 export const useProfileByUserId = (userId: number, enabled: boolean = true) => {
-  const { setCurrentProfile, setLoading, setError } = useProfileStore();
+  const { setLoading, setError } = useProfileStore();
 
   return useQuery<ProfileResponseDto, Error>({
     queryKey: PROFILE_QUERY_KEYS.profileByUserId(userId),
@@ -303,7 +302,6 @@ export const useProfileByUserId = (userId: number, enabled: boolean = true) => {
       setLoading(true);
       try {
         const response = await profileApi.getProfileByUserId(userId);
-        setCurrentProfile(response.data);
         setError(null);
         return response;
       } catch (error) {
@@ -334,7 +332,6 @@ export const useProfileByUsername = (
       setLoading(true);
       try {
         const response = await profileApi.getProfileByUsername(username);
-        setCurrentProfile(response.data);
         setError(null);
         return response;
       } catch (error) {

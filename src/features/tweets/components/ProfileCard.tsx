@@ -6,6 +6,8 @@ import CardUserInfo from './CardUserInfo';
 import FollowBtn from '@/components/generic/buttons/FollowBtn';
 import { useProfileByUserId } from '@/features/profile/hooks';
 import Loader from '@/components/generic/Loader';
+import { useProfileStore } from '@/features/profile';
+import { useEffect } from 'react';
 
 interface ProfileCardProps {
   userId: number;
@@ -13,6 +15,15 @@ interface ProfileCardProps {
 
 export default function ProfileCard({ userId }: ProfileCardProps) {
   const { data: profileData, isLoading, error } = useProfileByUserId(userId);
+  const { setCurrentProfile } = useProfileStore();
+  useEffect(() => {
+    if (profileData?.data) {
+      setCurrentProfile(profileData.data);
+    }
+    return () => {
+      setCurrentProfile(null);
+    };
+  }, [profileData, setCurrentProfile]);
 
   if (isLoading) {
     return (

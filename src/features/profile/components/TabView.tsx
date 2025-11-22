@@ -21,7 +21,7 @@ const TabView = () => {
         onClick={selectTab}
         height="h-[53px]"
       />
-      <Tweets />
+      {/* <Tweets /> */}
     </div>
   );
 };

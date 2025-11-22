@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { SearchIcon } from '@/components/ui/icons';
 import ProfileContainer from '@/features/profile/components/ProfileContainer';
@@ -10,6 +10,7 @@ import { useProfileByUsername } from '@/features/profile/hooks';
 import { useMyProfile } from '@/features/profile/hooks';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import Loader from '@/components/generic/Loader';
+import { useProfileStore } from '@/features/profile';
 
 interface UserPageProps {
   params: Promise<{
@@ -21,6 +22,7 @@ const UserPage = ({ params }: UserPageProps) => {
   const { username } = use(params);
 
   const currentUser = useAuthStore((s) => s.user);
+  const { setCurrentProfile } = useProfileStore();
 
   const useMy = Boolean(currentUser && currentUser.username === username);
 
@@ -30,6 +32,22 @@ const UserPage = ({ params }: UserPageProps) => {
     isLoading: isLoadingByUsername,
     error: errorByUsername,
   } = useProfileByUsername(username, !useMy);
+
+  useEffect(() => {
+    setCurrentProfile(
+      useMy
+        ? myProfileQuery.data?.data || null
+        : profileDataByUsername?.data || null
+    );
+    return () => {
+      setCurrentProfile(null);
+    };
+  }, [
+    useMy,
+    myProfileQuery.data?.data,
+    profileDataByUsername?.data,
+    setCurrentProfile,
+  ]);
 
   const profileData = useMy ? myProfileQuery.data : profileDataByUsername;
   const isLoading = useMy ? myProfileQuery.isLoading : isLoadingByUsername;
