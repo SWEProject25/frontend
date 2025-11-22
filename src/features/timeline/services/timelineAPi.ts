@@ -1,6 +1,6 @@
 import { API_CONFIG } from '@/constants/api';
 import { TIMELINE_ENDPOINTS } from '../constants/api';
-import { AddTweetResponse, TimelineFeedDtoResponse } from '../types/api';
+import { TimelineFeedDtoResponse, TimelineFeed } from '../types/api';
 
 class ApiError extends Error {
   constructor(
@@ -47,7 +47,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 export const timelineApi = {
-  async addTweet(tweetData: FormData): Promise<AddTweetResponse> {
+  async addTweet(tweetData: FormData): Promise<TimelineFeed> {
     const response = await fetch(
       `${API_CONFIG.BASE_URL}${TIMELINE_ENDPOINTS.ADD_TWEET}`,
       {
@@ -56,7 +56,7 @@ export const timelineApi = {
         credentials: 'include',
       }
     );
-    return handleResponse<AddTweetResponse>(response);
+    return handleResponse<TimelineFeed>(response);
   },
   async getTimelineFeed(
     pageNumber = 1,

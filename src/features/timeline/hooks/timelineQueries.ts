@@ -5,11 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { timelineApi } from '../services/timelineAPi';
-import {
-  AddTweetResponse,
-  TimelineFeed,
-  TimelineFeedDtoResponse,
-} from '../types/api';
+import { TimelineFeed, TimelineFeedDtoResponse } from '../types/api';
 import { useActions } from '../store/useAddTweetStore';
 
 import toasterMessage from '@/components/ui/home/ToasterMessage';
@@ -29,7 +25,7 @@ export const useAddTweet = () => {
   const { clearMedia } = useMediaActions();
   const user = useAuth().user;
   console.log('inside useAddTweet');
-  return useMutation<AddTweetResponse, Error, FormData>({
+  return useMutation<TimelineFeed, Error, FormData>({
     mutationFn: async (tweetData) => {
       try {
         const response = await timelineApi.addTweet(tweetData);
@@ -55,7 +51,7 @@ export const useAddTweet = () => {
       clearMedia();
       toasterMessage('Your post was sent.');
       console.log(data);
-
+      const newTweet = { ...data, originalPostData: undefined };
       // const newTweet: TimelineFeed = {
       //   userId: 40,
       //   username: 'albaz.mo867',
@@ -101,58 +97,58 @@ export const useAddTweet = () => {
       //   })),
       // };
 
-      // queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
-      //   TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
-      //   (old) => {
-      //     console.log('Old data:', old);
-      //     if (!old) return old;
+      queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
+        TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
+        (old) => {
+          console.log('Old data:', old);
+          if (!old) return old;
 
-      //     const updated = {
-      //       ...old,
-      //       pages: old.pages.map((page, ind) => {
-      //         if (ind === 0) {
-      //           return {
-      //             ...page,
-      //             data: {
-      //               ...page.data,
-      //               posts: [newTweet, ...page.data.posts],
-      //             },
-      //           };
-      //         }
-      //         return page;
-      //       }),
-      //     };
+          const updated = {
+            ...old,
+            pages: old.pages.map((page, ind) => {
+              if (ind === 0) {
+                return {
+                  ...page,
+                  data: {
+                    ...page.data,
+                    posts: [newTweet, ...page.data.posts],
+                  },
+                };
+              }
+              return page;
+            }),
+          };
 
-      //     console.log('Updated data:', updated);
-      //     return updated;
-      //   }
-      // );
-      // queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
-      //   TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
-      //   (old) => {
-      //     console.log('Old data:', old);
-      //     if (!old) return old;
+          console.log('Updated data:', updated);
+          return updated;
+        }
+      );
+      queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
+        TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
+        (old) => {
+          console.log('Old data:', old);
+          if (!old) return old;
 
-      //     const updated = {
-      //       ...old,
-      //       pages: old.pages.map((page, ind) => {
-      //         if (ind === 0) {
-      //           return {
-      //             ...page,
-      //             data: {
-      //               ...page.data,
-      //               posts: [newTweet, ...page.data.posts],
-      //             },
-      //           };
-      //         }
-      //         return page;
-      //       }),
-      //     };
+          const updated = {
+            ...old,
+            pages: old.pages.map((page, ind) => {
+              if (ind === 0) {
+                return {
+                  ...page,
+                  data: {
+                    ...page.data,
+                    posts: [newTweet, ...page.data.posts],
+                  },
+                };
+              }
+              return page;
+            }),
+          };
 
-      //     console.log('Updated data:', updated);
-      //     return updated;
-      //   }
-      // );
+          console.log('Updated data:', updated);
+          return updated;
+        }
+      );
     },
     networkMode: 'always',
     onMutate: () => {
