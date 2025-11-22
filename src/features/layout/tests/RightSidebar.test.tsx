@@ -1,21 +1,21 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/test/test-utils';
-import RightSidebar from '../RightSidebar';
+import RightSidebar from '../components/RightSidebar';
 
 // Mock child components
-vi.mock('../SearchBar', () => ({
+vi.mock('../components/SearchBar', () => ({
   default: () => <div data-testid="search-bar">Search Bar</div>,
 }));
 
-vi.mock('../WhatIsHappening', () => ({
+vi.mock('../components/WhatIsHappening', () => ({
   default: () => <div data-testid="what-is-happening">What Is Happening</div>,
 }));
 
-vi.mock('../WhoToFollow', () => ({
+vi.mock('../components/WhoToFollow', () => ({
   default: () => <div data-testid="who-to-follow">Who To Follow</div>,
 }));
 
-vi.mock('../Footer', () => ({
+vi.mock('../components/Footer', () => ({
   default: () => <div data-testid="footer">Footer</div>,
 }));
 

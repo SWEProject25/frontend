@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@/test/test-utils';
-import PostButton from '../PostButton';
+import PostButton from '../components/PostButton';
 
 describe('PostButton', () => {
   it('should render a button element', () => {

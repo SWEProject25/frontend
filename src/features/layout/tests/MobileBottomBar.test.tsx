@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@/test/test-utils';
-import MobileBottomBar from '../MobileBottomBar';
+import MobileBottomBar from '../components/MobileBottomBar';
 
 describe('MobileBottomBar', () => {
   it('should render mobile navigation bar', () => {

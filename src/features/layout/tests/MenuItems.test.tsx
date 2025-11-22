@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@/test/test-utils';
-import MenuItems from '../MenuItems';
+import MenuItems from '../components/MenuItems';
 
 describe('MenuItems', () => {
   it('should render all menu items', () => {

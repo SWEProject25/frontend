@@ -46,7 +46,8 @@ describe('Profile API with MSW', () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.data.userId).toBe(2);
+    expect(data.data.User.id).toBe(2);
+    expect(data.data.user_id).toBe(2);
   });
 
   it('should search profiles', async () => {
