@@ -4,6 +4,7 @@ import { MoreIcon, MessagesIcon } from '@/components/ui/icons';
 import EditProfileModal from '../../../components/generic/EditProfileModal';
 import FollowBtn from '@/components/generic/buttons/FollowBtn';
 import { useProfile } from '../hooks';
+import { useRouter } from 'next/navigation';
 
 interface ActionsPanelProps {
   isOwnProfile: boolean;
@@ -26,9 +27,14 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { handleSaveProfile, isUpdating } = useProfile();
+  const router = useRouter();
 
   const handleEditProfileClick = () => {
     setIsModalOpen(true);
+  };
+
+  const handleMessagesClick = () => {
+    router.push(`/messages?userId=${userData.userId}`);
   };
 
   return (
@@ -57,7 +63,7 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
             variant="outline"
             size="md"
             shape="circle"
-            onClick={() => console.log('Messages clicked')}
+            onClick={handleMessagesClick}
           >
             <MessagesIcon className="w-5 h-5 text-text-primary" />
           </Button>
