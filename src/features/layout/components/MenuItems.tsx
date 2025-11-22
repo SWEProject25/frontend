@@ -95,7 +95,7 @@ export default function MenuItems() {
           >
             <item.icon
               strokeWidth={isActive ? 3 : 2}
-              className="w-7 h-7 text-text-active flex-shrink-0"
+              className="w-7 h-7 text-text-active shrink-0"
             />
             <span
               className={`hidden min-[1400px]:block text-[20px] ${isActive ? 'font-bold' : ''} text-text-active/95`}

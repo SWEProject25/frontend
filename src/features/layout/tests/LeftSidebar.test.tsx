@@ -1,17 +1,17 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/test/test-utils';
-import LeftSidebar from '../LeftSidebar';
+import LeftSidebar from '../components/LeftSidebar';
 
 // Mock child components
-vi.mock('../MenuItems', () => ({
+vi.mock('../components/MenuItems', () => ({
   default: () => <div data-testid="menu-items">Menu Items</div>,
 }));
 
-vi.mock('../ProfileSection', () => ({
+vi.mock('../components/ProfileSection', () => ({
   default: () => <div data-testid="profile-section">Profile Section</div>,
 }));
 
-vi.mock('../PostButton', () => ({
+vi.mock('../components/PostButton', () => ({
   default: () => <button data-testid="post-button">Post</button>,
 }));
 

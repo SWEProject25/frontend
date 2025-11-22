@@ -1,20 +1,20 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/test/test-utils';
-import LayoutWrapper from '../LayoutWrapper';
+import LayoutWrapper from '../components/LayoutWrapper';
 
-vi.mock('../LeftSidebar', () => ({
+vi.mock('../components/LeftSidebar', () => ({
   default: () => <div data-testid="left-sidebar">Left Sidebar</div>,
 }));
 
-vi.mock('../RightSidebar', () => ({
+vi.mock('../components/RightSidebar', () => ({
   default: () => <div data-testid="right-sidebar">Right Sidebar</div>,
 }));
 
-vi.mock('../MobileBottomBar', () => ({
+vi.mock('../components/MobileBottomBar', () => ({
   default: () => <div data-testid="mobile-bottom-bar">Mobile Bottom Bar</div>,
 }));
 
-vi.mock('../EmptySpace', () => ({
+vi.mock('../components/EmptySpace', () => ({
   default: () => <div data-testid="empty-space">Empty Space</div>,
 }));
 
