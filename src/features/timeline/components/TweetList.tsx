@@ -23,7 +23,11 @@ export default function TweetList() {
   const renderTweets = pages?.map((group, i) => (
     <React.Fragment key={i}>
       {group.data.posts.map((tweet, ind) => (
-        <Tweet data={tweet} key={ind} />
+        <Tweet
+          data-testid={`${tweet.userId}${tweet.postId}${tweet.date}`}
+          data={tweet}
+          key={ind}
+        />
       ))}
     </React.Fragment>
   ));

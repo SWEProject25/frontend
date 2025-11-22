@@ -5,36 +5,34 @@ import { TweetStore } from '../types/store';
 
 export const useTweetStore = create<TweetStore>()(
   devtools(
-    persist(
-      (set) => ({
-        // State
-        currentTweet: null,
-        isLoading: false,
-        error: null,
+    (set) => ({
+      // State
+      currentTweet: null,
+      isLoading: false,
+      error: null,
 
-        // Actions
-        setCurrentTweet: (tweet: TimelineFeed | null) => {
-          set({ currentTweet: tweet, error: null });
-        },
+      // Actions
+      setCurrentTweet: (tweet: TimelineFeed | null) => {
+        set({ currentTweet: tweet, error: null });
+      },
 
-        setLoading: (loading: boolean) => {
-          set({ isLoading: loading });
-        },
+      setLoading: (loading: boolean) => {
+        set({ isLoading: loading });
+      },
 
-        setError: (error: string | null) => {
-          set({ error });
-        },
+      setError: (error: string | null) => {
+        set({ error });
+      },
 
-        clearTweet: () => {
-          set({ currentTweet: null, error: null, isLoading: false });
-        },
-      }),
-      {
-        name: 'tweet-storage',
-        partialize: (state) => ({
-          currentTweet: state.currentTweet,
-        }),
-      }
-    )
+      clearTweet: () => {
+        set({ currentTweet: null, error: null, isLoading: false });
+      },
+    })
+    // {
+    //   name: 'tweet-storage',
+    //   partialize: (state: any) => ({
+    //     currentTweet: state.currentTweet,
+    //   }),
+    // }
   )
 );
