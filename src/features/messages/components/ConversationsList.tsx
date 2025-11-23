@@ -59,6 +59,7 @@ export default function ConversationsList({
                 timestamp={display.timestamp}
                 isSelected={Number(selectedConversation) === conversation.id}
                 isTyping={display.isTyping}
+                unseenCount={display.unseenCount}
                 onClick={() => onSelectConversation(String(conversation.id))}
               />
             );

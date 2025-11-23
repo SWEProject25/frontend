@@ -22,6 +22,7 @@ export function useChatWindow(conversationId?: string) {
     (s) => s.setMessagesForConversation
   );
   const deleteMessageFromStore = useMessageStore((s) => s.deleteMessage);
+  const markAllMessagesAsSeen = useMessageStore((s) => s.markAllMessagesAsSeen);
 
   const user = useAuthStore((s) => s.user);
   const currentUserId = (user as any)?.id ?? null;
@@ -99,66 +100,104 @@ export function useChatWindow(conversationId?: string) {
   useEffect(() => {
     if (!conversationId) return;
 
+    const numId = Number(conversationId);
+    let cancelled = false; // Flag to prevent race conditions
+
+    // Set active conversation immediately (no async needed)
+    setActiveConversation(numId);
+
+    // Fetch fresh messages every time we enter a conversation
+    // This ensures we get the correct isSeen and updatedAt values from backend
     const loadMessages = async () => {
+      console.log('🚀 Starting loadMessages for conversation:', numId);
       setLoading(true);
       setError(null);
 
       try {
-        const numId = Number(conversationId);
-        setActiveConversation(numId);
-
-        // Join the conversation via socket FIRST
+        // Step 1: Join the conversation (fire and continue, don't wait)
+        // This tells backend we're viewing it, so it can mark messages as seen
         joinConversation(numId, (resp) => {
-          if (resp?.status !== 'success') {
-            console.error('Failed to join conversation:', resp);
-            return;
-          }
-
-          console.log('✅ Successfully joined conversation:', numId);
-
-          // NOW mark messages as seen (must be done AFTER joining the room)
-          if (currentUserId) {
-            console.log('👁️ Marking messages as seen for conversation:', numId);
-            markSeen(numId, currentUserId, (seenResp) => {
-              if (seenResp?.status === 'success') {
-                console.log('✅ Messages marked as seen successfully');
-              } else {
-                console.warn('⚠️ Failed to mark messages as seen:', seenResp);
-              }
-            });
+          if (resp?.status === 'success') {
+            console.log('✅ Successfully joined conversation:', numId);
+          } else {
+            console.warn('⚠️ Join conversation response:', resp);
           }
         });
 
-        // Try to fetch existing messages
+        // Step 2: Small delay to let backend process (but don't block on callback)
+        await new Promise((resolve) => setTimeout(resolve, 150));
+
+        if (cancelled) {
+          console.log('🚫 Load cancelled, skipping fetch');
+          return;
+        }
+
+        // Step 3: Now fetch messages - they should have correct isSeen status
         try {
-          console.log(
-            '📥 Attempting to fetch messages for conversation:',
-            numId
-          );
+          console.log('📥 Fetching messages with updated seen status:', numId);
           const response = await fetchMessages(numId);
           console.log('✅ Messages fetched successfully:', response);
+
+          if (cancelled) {
+            console.log('🚫 Load cancelled, not updating store');
+            return;
+          }
 
           // Backend returns: { messages: [...], metadata: {...} }
           if (response?.messages) {
             setMessagesForConversation(numId, response.messages);
             console.log('📊 Metadata:', response.metadata);
+            console.log(
+              '👁️ Messages should now have isSeen: true for received messages'
+            );
+
+            // If there are any unseen messages from the other user, mark them as seen
+            const unseenMessages = response.messages.filter(
+              (msg: any) => !msg.isSeen && msg.senderId !== currentUserId
+            );
+
+            if (unseenMessages.length > 0 && currentUserId) {
+              console.log(
+                `📬 Found ${unseenMessages.length} unseen messages, marking as seen...`
+              );
+              markSeen(numId, currentUserId, (resp) => {
+                if (resp?.status === 'success') {
+                  console.log('✅ Unseen messages marked as seen on load');
+                }
+              });
+            }
+          } else {
+            console.log('ℹ️ No messages in response, setting empty array');
+            setMessagesForConversation(numId, []);
           }
         } catch (fetchError: any) {
+          if (cancelled) return;
           console.warn('⚠️ Could not fetch messages:', fetchError.message);
-          console.log(
-            '💡 This is expected if backend GET /messages endpoint is not ready yet'
-          );
+          console.log('Setting empty message array due to fetch error');
           setMessagesForConversation(numId, []);
         }
       } catch (err) {
+        if (cancelled) return;
         console.error('❌ Error loading conversation:', err);
         setError('Failed to load conversation');
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          console.log('✅ Finished loading messages, setting loading=false');
+          setLoading(false);
+        }
       }
     };
 
     loadMessages();
+
+    // Cleanup function to prevent race conditions
+    return () => {
+      console.log(
+        '🧹 Cleaning up loadMessages effect for conversation:',
+        numId
+      );
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId]);
 

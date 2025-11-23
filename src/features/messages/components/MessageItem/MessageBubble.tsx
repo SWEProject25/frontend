@@ -30,8 +30,12 @@ export default function MessageBubble({
   onSaveEdit,
   onCancelEdit,
 }: MessageBubbleProps) {
+  // Only show (edited) if updatedAt exists and is meaningfully after createdAt
+  // Check if they are different dates AND more than 1 second apart
+  // This handles both immediate edits and avoids false positives from backend timestamps
   const isEdited =
     message.updatedAt &&
+    message.updatedAt !== message.createdAt &&
     new Date(message.updatedAt).getTime() -
       new Date(message.createdAt).getTime() >
       1000;

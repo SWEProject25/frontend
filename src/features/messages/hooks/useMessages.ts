@@ -7,6 +7,7 @@ import { createMessage as createMessageAPI } from '../api/messages';
 
 export const useMessages = (onError?: (err: any) => void) => {
   const addMessage = useMessageStore((s) => s.addMessage);
+  const addConversation = useMessageStore((s) => s.addConversation);
   const updateMessage = useMessageStore((s) => s.updateMessage);
   const activeConversationId = useMessageStore((s) => s.activeConversationId);
   const setUserTyping = useMessageStore((s) => s.setUserTyping);
@@ -61,34 +62,69 @@ export const useMessages = (onError?: (err: any) => void) => {
       onError?.(err);
     };
 
-    const handleMessageCreated = (msg: any) => {
+    const handleMessageCreated = async (msg: any) => {
       console.log('📨 New message received via WebSocket:', msg);
-      addMessage(msg);
 
-      // If we're currently viewing this conversation and it's not our message, mark it as seen immediately
+      // Check if conversation exists in our list
+      const conversations = useMessageStore.getState().conversations;
+      const conversationExists = conversations.some((conv) => {
+        const convId = conv.conversationId || conv.id;
+        return convId === msg.conversationId;
+      });
+
+      // If conversation doesn't exist, fetch it first
+      if (!conversationExists) {
+        console.log(
+          '🆕 Conversation not in list, fetching before adding message...'
+        );
+        try {
+          const { fetchConversationById } = await import('../api/messages');
+          const conversation = await fetchConversationById(msg.conversationId);
+          console.log('✅ Fetched conversation:', conversation);
+          addConversation(conversation);
+        } catch (error) {
+          console.error('❌ Failed to fetch conversation:', error);
+        }
+      }
+
+      // Check if we should mark this message as seen immediately
       const currentUserId = getCurrentUserId();
-      if (
+      const shouldMarkAsSeen =
         activeConversationId === msg.conversationId &&
         currentUserId &&
-        msg.senderId !== currentUserId
-      ) {
+        msg.senderId !== currentUserId;
+
+      // Add the message with correct isSeen status
+      if (shouldMarkAsSeen) {
         console.log(
-          '👁️ Auto-marking new message as seen (already viewing conversation)'
+          '�️ Received message while viewing conversation - marking as seen immediately'
         );
-        // Use setTimeout to ensure message is added to store first
+        const seenMessage = { ...msg, isSeen: true };
+        addMessage(seenMessage);
+
+        // Emit to backend to broadcast to other user (so they see blue checkmark)
         setTimeout(() => {
           const socket = getSocket();
+          console.log(
+            '📤 Emitting MARK_SEEN to backend for conversation:',
+            msg.conversationId
+          );
           socket.emit(
             MESSAGES_SOCKET_EVENTS.MARK_SEEN,
             { conversationId: msg.conversationId, userId: currentUserId },
             (resp: any) => {
               if (resp?.status === 'success') {
-                console.log('✅ New message marked as seen automatically');
-                markAllMessagesAsSeen(msg.conversationId);
+                console.log('✅ Backend confirmed: messages marked as seen');
+                // Backend will broadcast messagesSeen event to sender
+              } else {
+                console.warn('⚠️ Backend failed to mark as seen:', resp);
               }
             }
           );
-        }, 100);
+        }, 50);
+      } else {
+        // Add message as unseen (we're not viewing this conversation)
+        addMessage(msg);
       }
     };
 
@@ -145,11 +181,120 @@ export const useMessages = (onError?: (err: any) => void) => {
       }
     };
 
+    const handleConversationCreated = (conversation: any) => {
+      console.log('🆕 New conversation created:', conversation);
+      // Add normalized id if not present
+      const normalizedConversation = {
+        ...conversation,
+        id: conversation.conversationId || conversation.id,
+      };
+      addConversation(normalizedConversation);
+      console.log('✅ Conversation added to list');
+    };
+
+    const handleNewMessageNotification = async (message: any) => {
+      console.log('🔔 New message notification received:', message);
+      // This event is for messages in conversations we're not currently viewing
+      // Backend sends the message object directly, not wrapped
+      if (message?.conversationId) {
+        console.log('📬 New message in conversation:', message.conversationId);
+
+        // Check if this conversation exists in our list
+        const conversations = useMessageStore.getState().conversations;
+        const conversationExists = conversations.some((conv) => {
+          const convId = conv.conversationId || conv.id;
+          return convId === message.conversationId;
+        });
+
+        // If conversation doesn't exist, fetch it first
+        if (!conversationExists) {
+          console.log('🆕 Conversation not in list, fetching...');
+          try {
+            const { fetchConversationById } = await import('../api/messages');
+            const conversation = await fetchConversationById(
+              message.conversationId
+            );
+            console.log('✅ Fetched conversation:', conversation);
+            addConversation(conversation);
+          } catch (error) {
+            console.error('❌ Failed to fetch conversation:', error);
+          }
+        }
+
+        // IMPORTANT: Don't add the message to the messages array
+        // Only update the conversation's lastMessage for the preview
+        // When user enters the conversation, we'll fetch all messages fresh
+        console.log('📥 Updating conversation lastMessage from notification');
+        const state = useMessageStore.getState();
+        const updatedConversations = state.conversations.map((conv) => {
+          const convId = conv.conversationId || conv.id;
+          if (convId === message.conversationId) {
+            return { ...conv, lastMessage: message };
+          }
+          return conv;
+        });
+
+        // Sort and update
+        const sortConversationsByRecent = (convs: any[]) => {
+          return [...convs].sort((a, b) => {
+            const aTime = a.lastMessage?.createdAt
+              ? new Date(a.lastMessage.createdAt).getTime()
+              : new Date(a.createdAt).getTime();
+            const bTime = b.lastMessage?.createdAt
+              ? new Date(b.lastMessage.createdAt).getTime()
+              : new Date(b.createdAt).getTime();
+            return bTime - aTime;
+          });
+        };
+
+        useMessageStore.setState({
+          conversations: sortConversationsByRecent(updatedConversations),
+        });
+      }
+    };
+
+    const handleEditMessageNotification = (message: any) => {
+      console.log('✏️ Edit message notification received:', message);
+      // This event is for edited messages in conversations we're not currently viewing
+      // Only update the conversation lastMessage if this is the last message
+      // Don't update messages array - we'll fetch fresh when entering conversation
+      if (message?.id && message?.conversationId) {
+        console.log(
+          '📝 Updating edited message in conversation preview if it is lastMessage'
+        );
+        const state = useMessageStore.getState();
+        const updatedConversations = state.conversations.map((conv) => {
+          const convId = conv.conversationId || conv.id;
+          if (
+            convId === message.conversationId &&
+            conv.lastMessage?.id === message.id
+          ) {
+            return { ...conv, lastMessage: message };
+          }
+          return conv;
+        });
+
+        useMessageStore.setState({ conversations: updatedConversations });
+      }
+    };
+
     // Register event listeners
     socket.on(MESSAGES_SOCKET_EVENTS.CONNECT, handleConnect);
     socket.on(MESSAGES_SOCKET_EVENTS.DISCONNECT, handleDisconnect);
+    socket.on(
+      MESSAGES_SOCKET_EVENTS.CONVERSATION_CREATED,
+      handleConversationCreated
+    );
     socket.on(MESSAGES_SOCKET_EVENTS.MESSAGE_CREATED, handleMessageCreated);
     socket.on(MESSAGES_SOCKET_EVENTS.MESSAGE_UPDATED, handleMessageUpdated);
+    socket.on(
+      MESSAGES_SOCKET_EVENTS.NEW_MESSAGE_NOTIFICATION,
+      handleNewMessageNotification
+    );
+    socket.on(
+      MESSAGES_SOCKET_EVENTS.EDIT_MESSAGE_NOTIFICATION,
+      handleEditMessageNotification
+    );
     socket.on(MESSAGES_SOCKET_EVENTS.MESSAGES_SEEN, handleMessagesSeen);
     socket.on(MESSAGES_SOCKET_EVENTS.USER_TYPING, handleUserTyping);
     socket.on(
@@ -163,8 +308,20 @@ export const useMessages = (onError?: (err: any) => void) => {
     return () => {
       socket.off(MESSAGES_SOCKET_EVENTS.CONNECT, handleConnect);
       socket.off(MESSAGES_SOCKET_EVENTS.DISCONNECT, handleDisconnect);
+      socket.off(
+        MESSAGES_SOCKET_EVENTS.CONVERSATION_CREATED,
+        handleConversationCreated
+      );
       socket.off(MESSAGES_SOCKET_EVENTS.MESSAGE_CREATED, handleMessageCreated);
       socket.off(MESSAGES_SOCKET_EVENTS.MESSAGE_UPDATED, handleMessageUpdated);
+      socket.off(
+        MESSAGES_SOCKET_EVENTS.NEW_MESSAGE_NOTIFICATION,
+        handleNewMessageNotification
+      );
+      socket.off(
+        MESSAGES_SOCKET_EVENTS.EDIT_MESSAGE_NOTIFICATION,
+        handleEditMessageNotification
+      );
       socket.off(MESSAGES_SOCKET_EVENTS.MESSAGES_SEEN, handleMessagesSeen);
       socket.off(MESSAGES_SOCKET_EVENTS.USER_TYPING, handleUserTyping);
       socket.off(
@@ -178,6 +335,7 @@ export const useMessages = (onError?: (err: any) => void) => {
   }, [
     activeConversationId,
     addMessage,
+    addConversation,
     updateMessage,
     setUserTyping,
     removeUserTyping,

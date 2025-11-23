@@ -1,6 +1,4 @@
 import Avatar from '@/components/generic/Avatar';
-import { Info } from 'lucide-react';
-import TypingIndicator from './TypingIndicator';
 
 interface ChatHeaderProps {
   name: string;
@@ -15,14 +13,13 @@ export default function ChatHeader({
   username,
   avatar,
   isVerified,
-  isTyping,
 }: ChatHeaderProps) {
   return (
     <div className="shrink-0 bg-black/80 backdrop-blur-sm z-10 border-b border-gray-800">
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
           <Avatar
-            avatarImage={avatar}
+            avatarImage={avatar || null}
             name={name}
             size="sm"
             position="relative"
@@ -42,10 +39,8 @@ export default function ChatHeader({
               )}
             </div>
             <span className="text-sm text-gray-500">@{username}</span>
-            {isTyping && <TypingIndicator />}
           </div>
         </div>
-        <Info className="w-5 h-5 text-gray-400 cursor-pointer hover:text-white transition-colors" />
       </div>
     </div>
   );

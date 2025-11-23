@@ -83,6 +83,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
         onDeleteMessage={handleDeleteMessage}
         onEditMessage={handleEditMessage}
         isMyMessage={isMyMessage}
+        isTyping={isTyping}
       />
 
       <ChatInput

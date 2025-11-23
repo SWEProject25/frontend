@@ -36,6 +36,7 @@ type State = {
   activeConversationId: number | null;
   typingUsers: Record<number, number[]>; // conversationId -> array of userIds typing
   setConversations: (c: Conversation[]) => void;
+  addConversation: (c: Conversation) => void;
   addMessage: (m: Message) => void;
   setActiveConversation: (id: number | null) => void;
   setMessagesForConversation: (id: number, msgs: Message[]) => void;
@@ -47,40 +48,163 @@ type State = {
   markAllMessagesAsSeen: (conversationId: number) => void;
 };
 
+// Helper function to sort conversations by most recent message
+const sortConversationsByRecent = (
+  conversations: Conversation[]
+): Conversation[] => {
+  return [...conversations].sort((a, b) => {
+    const aTime = a.lastMessage?.createdAt
+      ? new Date(a.lastMessage.createdAt).getTime()
+      : new Date(a.createdAt).getTime();
+    const bTime = b.lastMessage?.createdAt
+      ? new Date(b.lastMessage.createdAt).getTime()
+      : new Date(b.createdAt).getTime();
+    return bTime - aTime; // Most recent first
+  });
+};
+
 export const useMessageStore = create<State>((set) => ({
   conversations: [],
   messages: {},
   activeConversationId: null,
   typingUsers: {},
   setConversations: (c) => set({ conversations: c }),
+  addConversation: (newConv) =>
+    set((s) => {
+      // Check if conversation already exists
+      const exists = s.conversations.some((conv) => {
+        const convId = conv.conversationId || conv.id;
+        const newConvId = newConv.conversationId || newConv.id;
+        return convId === newConvId;
+      });
+
+      if (exists) {
+        console.log('⚠️ Conversation already exists, skipping add');
+        return s;
+      }
+
+      // Add the new conversation and sort
+      const updatedConversations = [...s.conversations, newConv];
+      const sortedConversations =
+        sortConversationsByRecent(updatedConversations);
+
+      return { conversations: sortedConversations };
+    }),
   addMessage: (m) =>
     set((s) => {
       const arr = s.messages[m.conversationId] ?? [];
-      return { messages: { ...s.messages, [m.conversationId]: [...arr, m] } };
+      const updatedMessages = [...arr, m];
+
+      // Update the conversation's lastMessage
+      const updatedConversations = s.conversations.map((conv) => {
+        const convId = conv.conversationId || conv.id;
+        if (convId === m.conversationId) {
+          return {
+            ...conv,
+            lastMessage: m,
+          };
+        }
+        return conv;
+      });
+
+      // Sort conversations by most recent message
+      const sortedConversations =
+        sortConversationsByRecent(updatedConversations);
+
+      return {
+        messages: { ...s.messages, [m.conversationId]: updatedMessages },
+        conversations: sortedConversations,
+      };
     }),
   setActiveConversation: (id) => set({ activeConversationId: id }),
   setMessagesForConversation: (id, msgs) =>
-    set((s) => ({ messages: { ...s.messages, [id]: msgs } })),
+    set((s) => {
+      // Use fresh messages from backend - they are the source of truth
+      // Backend handles isSeen and updatedAt correctly
+
+      // Update the conversation's lastMessage when loading messages
+      const lastMessage = msgs.length > 0 ? msgs[msgs.length - 1] : undefined;
+      const updatedConversations = s.conversations.map((conv) => {
+        const convId = conv.conversationId || conv.id;
+        if (convId === id) {
+          return {
+            ...conv,
+            lastMessage,
+          };
+        }
+        return conv;
+      });
+
+      return {
+        messages: { ...s.messages, [id]: msgs },
+        conversations: updatedConversations,
+      };
+    }),
   updateMessage: (m) =>
     set((s) => {
       const arr = s.messages[m.conversationId] ?? [];
+      const updatedMessages = arr.map((i) =>
+        i.id === m.id ? { ...i, ...m } : i
+      );
+
+      // Update the conversation's lastMessage if this message is the last one
+      const updatedConversations = s.conversations.map((conv) => {
+        const convId = conv.conversationId || conv.id;
+        if (convId === m.conversationId && conv.lastMessage?.id === m.id) {
+          return {
+            ...conv,
+            lastMessage: { ...conv.lastMessage, ...m },
+          };
+        }
+        return conv;
+      });
+
+      // Sort conversations by most recent message (in case timestamp changed)
+      const sortedConversations =
+        sortConversationsByRecent(updatedConversations);
+
       return {
         messages: {
           ...s.messages,
-          [m.conversationId]: arr.map((i) =>
-            i.id === m.id ? { ...i, ...m } : i
-          ),
+          [m.conversationId]: updatedMessages,
         },
+        conversations: sortedConversations,
       };
     }),
   deleteMessage: (conversationId, messageId) =>
     set((s) => {
       const arr = s.messages[conversationId] ?? [];
+      const updatedMessages = arr.filter((m) => m.id !== messageId);
+
+      // Update the conversation's lastMessage if the deleted message was the last one
+      const updatedConversations = s.conversations.map((conv) => {
+        const convId = conv.conversationId || conv.id;
+        if (convId === conversationId) {
+          // If the deleted message was the last message, update to the new last message
+          if (conv.lastMessage?.id === messageId) {
+            const newLastMessage =
+              updatedMessages.length > 0
+                ? updatedMessages[updatedMessages.length - 1]
+                : undefined;
+            return {
+              ...conv,
+              lastMessage: newLastMessage,
+            };
+          }
+        }
+        return conv;
+      });
+
+      // Sort conversations by most recent message
+      const sortedConversations =
+        sortConversationsByRecent(updatedConversations);
+
       return {
         messages: {
           ...s.messages,
-          [conversationId]: arr.filter((m) => m.id !== messageId),
+          [conversationId]: updatedMessages,
         },
+        conversations: sortedConversations,
       };
     }),
   setUserTyping: (conversationId, userId) =>

@@ -58,6 +58,7 @@ export const MESSAGES_SOCKET_EVENTS = {
   // Server → Client (Listen)
   CONNECT: 'connect',
   DISCONNECT: 'disconnect',
+  CONVERSATION_CREATED: 'conversationCreated',
   MESSAGE_CREATED: 'messageCreated',
   MESSAGE_UPDATED: 'messageUpdated',
   MESSAGE_DELETED: 'messageDeleted',
@@ -73,7 +74,7 @@ export const MESSAGES_SOCKET_EVENTS = {
 export const MESSAGES_CONSTANTS = {
   DEFAULT_PAGE: 1,
   DEFAULT_LIMIT: 20,
-  TYPING_TIMEOUT: 3000, // 3 seconds
+  TYPING_TIMEOUT: 700, // 0.7 seconds
   MAX_MESSAGE_LENGTH: 1000,
   RECONNECTION_DELAY: 1000,
 } as const;
