@@ -62,14 +62,18 @@ export default function UsernamePage() {
     !username || username === user?.username || isUpdateUsernameLoading;
 
   return (
-    <div className="border-r border-border min-h-screen">
+    <div
+      className="border-r border-border min-h-screen"
+      data-testid="username-page"
+    >
       <Breadcrumb
         title="Change username"
         onBack={handleBack}
         showArrow={true}
+        data-testid="username-breadcrumb"
       />
-      <div className="px-4 py-6">
-        <div className="mb-4">
+      <div className="px-4 py-6" data-testid="username-content">
+        <div className="mb-4" data-testid="username-description">
           <p className="text-sm text-text-secondary mb-4">
             Your username is how others find and mention you on the platform.
             Choose wisely!
@@ -88,21 +92,26 @@ export default function UsernamePage() {
           maxLength={50}
           showCharCount
           error={error && !success ? error : undefined}
+          data-testid="username-input"
         />
 
         {success && (
-          <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+          <div
+            className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg"
+            data-testid="username-success-message"
+          >
             <p className="text-sm text-green-500">{success}</p>
           </div>
         )}
 
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex justify-end" data-testid="username-actions">
           <Button
             variant="primary"
             size="md"
             disabled={isDisabled}
             loading={isUpdateUsernameLoading}
             onClick={handleSave}
+            data-testid="username-save-button"
           >
             Save
           </Button>

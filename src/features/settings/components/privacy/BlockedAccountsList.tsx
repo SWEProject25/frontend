@@ -9,11 +9,20 @@ export default function BlockedAccountsList() {
 
   if (blockedUsers.length === 0) {
     return (
-      <div className="px-4 py-12 text-center">
-        <p className="text-text-inactive text-base mb-2">
+      <div
+        className="px-4 py-12 text-center"
+        data-testid="blocked-accounts-empty"
+      >
+        <p
+          className="text-text-inactive text-base mb-2"
+          data-testid="blocked-accounts-empty-title"
+        >
           You aren&apos;t blocking anyone
         </p>
-        <p className="text-text-secondary text-sm">
+        <p
+          className="text-text-secondary text-sm"
+          data-testid="blocked-accounts-empty-description"
+        >
           When you block someone, you&apos;ll see them here.
         </p>
       </div>
@@ -21,9 +30,13 @@ export default function BlockedAccountsList() {
   }
 
   return (
-    <nav className="flex flex-col">
+    <nav className="flex flex-col" data-testid="blocked-accounts-list">
       {blockedUsers.map((user) => (
-        <ListItem key={user.id} href={`/profile/${user.handle.slice(1)}`}>
+        <ListItem
+          key={user.id}
+          href={`/profile/${user.handle.slice(1)}`}
+          data-testid={`blocked-account-item-${user.id}`}
+        >
           <UserCard
             name={user.name}
             userId={user.id}
@@ -32,6 +45,7 @@ export default function BlockedAccountsList() {
             avatarUrl={user.avatarUrl}
             isBlocked={true}
             actionType="block"
+            data-testid={`blocked-account-card-${user.id}`}
           />
         </ListItem>
       ))}

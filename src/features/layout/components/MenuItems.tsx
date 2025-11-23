@@ -77,7 +77,10 @@ export default function MenuItems() {
   ];
 
   return (
-    <nav className="flex flex-col mt-1 gap-4 min-[1400px]:items-start items-center">
+    <nav
+      data-testid="sidebar-menu"
+      className="flex flex-col mt-1 gap-4 min-[1400px]:items-start items-center"
+    >
       {menuItems.map((item, index) => {
         const isActive = pathname === item.href;
         return (
@@ -85,13 +88,14 @@ export default function MenuItems() {
             key={index}
             href={item.href}
             aria-label={item.label}
-            className={`flex items-center justify-center xl:justify-start gap-5 px-3 py-3 rounded-full hover:bg-gray-900 cursor-pointer transition-colors ${
+            data-testid={`sidebar-menu-${item.label.toLowerCase()}`}
+            className={`flex items-center justify-center min-[1400px]:justify-start gap-5 px-3 py-3 rounded-full hover:bg-gray-900 cursor-pointer transition-colors ${
               item.hideOnShortScreen ? 'max-[699px]:hidden' : ''
             }`}
           >
             <item.icon
               strokeWidth={isActive ? 3 : 2}
-              className="w-7 h-7 text-text-active flex-shrink-0"
+              className="w-7 h-7 text-text-active shrink-0"
             />
             <span
               className={`hidden min-[1400px]:block text-[20px] ${isActive ? 'font-bold' : ''} text-text-active/95`}

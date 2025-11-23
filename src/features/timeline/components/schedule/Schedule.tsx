@@ -28,7 +28,7 @@ export default function Schedule() {
   };
   return (
     <Icon
-      data-testid={`handleOpenSchedule`}
+      data-testid="tweet-option-schedule"
       onClick={handleOpenSchedule}
       title="Schedule"
       disabled={disable}

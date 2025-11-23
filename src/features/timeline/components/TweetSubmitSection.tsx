@@ -50,17 +50,21 @@ export default function TweetSubmitSection() {
       if (med.type === LOCAL_MEDIA) tweetFormData.append('media', med.data);
     });
     const seclectdReply = options[selectedReplyOption - 1].Name;
-    tweetFormData.append(TweetFormDataKeys.CONTENT, tweetText);
+    if (tweetText.trim().length !== 0)
+      tweetFormData.append(TweetFormDataKeys.CONTENT, tweetText);
     tweetFormData.append(TweetFormDataKeys.TYPE, 'POST');
     tweetFormData.append(TweetFormDataKeys.VISIBILITY, seclectdReply);
     mutate.mutate(tweetFormData);
   }
 
   return (
-    <div className="flex  flex-row-reverse  items-center mt-2  ">
+    <div
+      data-testid="tweet-submit-section"
+      className="flex  flex-row-reverse  items-center mt-2  "
+    >
       <div className="ml-3 flex flex-1">
         <Button
-          data-testid={`submit`}
+          data-testid="tweet-post-button"
           height="h-9"
           width="w-16"
           disabled={!enableAddTweet}
@@ -75,6 +79,7 @@ export default function TweetSubmitSection() {
           <div className="flex items-center hover:cursor-pointer pl-3 border-l-2 border-border h-10">
             <div className="rounded-full flex text-primary items-center justify-center border-border border-2 w-7 h-7  ">
               <Icon
+                data-testid="tweet-add-thread"
                 width="w-6"
                 height="h-6"
                 title="Add"

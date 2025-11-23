@@ -28,7 +28,10 @@ export default function Poll() {
   );
   if (!isOpen) return null;
   return (
-    <div className="w-[513px] rounded-lg bg-background border border-border mb-1 pt-4">
+    <div
+      data-testid="poll-container"
+      className="w-[513px] rounded-lg bg-background border border-border mb-1 pt-4"
+    >
       <div className="space-y-3">
         <div className="space-y-3">
           {inputs.map(
@@ -47,6 +50,7 @@ export default function Poll() {
                   </div>
                   {buttonInputIndex === inp.id && buttonInputIndex != 4 && (
                     <button
+                      data-testid={`poll-add-choice-${inp.id + 1}`}
                       onClick={() => setButtonInputIndex(inp.id + 1)}
                       className="flex justify-center w-8 h-8 rounded-full hover:bg-icon-hover ml-3 text-primary text-2xl text-center hover:cursor-pointer"
                     >
@@ -60,7 +64,7 @@ export default function Poll() {
 
         <div className="pt-3 px-4 border-t border-border">
           <div className="text-lg text-amber-50 mb-3">Poll length</div>
-          <div className="flex gap-4 ">
+          <div className="flex gap-4 " data-testid="poll-time-options">
             {timeInputs.map((inp) => (
               <div key={inp.id} className=" flex flex-1">
                 <TimeOptions
@@ -76,6 +80,7 @@ export default function Poll() {
         </div>
 
         <button
+          data-testid="poll-remove-button"
           onClick={() => {
             onClose();
           }}

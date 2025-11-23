@@ -24,7 +24,14 @@ function Action({
 }) {
   // All hints gray, text white
   return (
-    <div className="flex flex-col items-center group relative">
+    <div
+      className="flex flex-col items-center group relative"
+      data-testid={
+        label
+          ? `tweet-action-${label.toLowerCase().replace(/\s+/g, '-')}`
+          : 'tweet-action'
+      }
+    >
       <div
         className="relative flex items-center cursor-pointer transition-colors gap-x-1"
         onClick={(e) => {
@@ -59,6 +66,7 @@ function Action({
         </button>
         {count !== undefined && (
           <span
+            data-testid={`${label ? label.toLowerCase().replace(/\s+/g, '-') + '-' : ''}count`}
             className={`text-xs transition-colors ${ACTION_COLOR_MAP[color]} ${isColored !== undefined ? (isColored === true ? ACTION_ACTIVE_MAP[color] : '') : ''}`}
           >
             {count}

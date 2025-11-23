@@ -3,8 +3,10 @@ import {
   UpdateProfileDto,
   ProfileSearchResponseDto,
   SearchProfilesParams,
+  ProfileFeedDtoResponse,
 } from '../types/api';
 import { PROFILE_API_CONFIG, PROFILE_ENDPOINTS } from '../constants/api';
+import { API_CONFIG } from '@/constants/api';
 
 class ApiError extends Error {
   constructor(
@@ -208,5 +210,26 @@ export const profileApi = {
     );
 
     return handleResponse<ProfileSearchResponseDto>(response);
+  },
+  async getProfileFeed(
+    pageNumber = 1,
+    queryEndPoint:
+      | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_POSTS>
+      | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_REPLIES>
+      | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_LIKES>,
+    limit = 10
+  ): Promise<ProfileFeedDtoResponse> {
+    const response = await fetch(
+      `${API_CONFIG.BASE_URL}${queryEndPoint}?` +
+        new URLSearchParams({ page: `${pageNumber}`, limit: `${limit}` }),
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    return handleResponse<ProfileFeedDtoResponse>(response);
   },
 };

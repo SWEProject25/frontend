@@ -9,6 +9,9 @@ import {
 } from '@/features/tweets/hooks/tweetQueries';
 type stats = {
   postId: number;
+  isRepost: boolean;
+  isQuote: boolean;
+  userId: number;
   likesCount: number;
   retweetsCount: number;
   commentsCount: number;
@@ -28,8 +31,18 @@ export default function Actions({
   const [retweeted, setRetweeted] = useState(stats.isRepostedByMe);
   const [likeAddr, setLikeAddr] = useState(0);
   const [retweetAddr, setRetweetAddr] = useState(0);
-  const toggleLikeTweet = useToggleLikeTweet(stats.postId);
-  const toggleRepostTweet = useToggleRepostTweet(stats.postId);
+  const toggleLikeTweet = useToggleLikeTweet(
+    stats.postId,
+    stats.isRepost,
+    stats.isQuote,
+    stats.userId
+  );
+  const toggleRepostTweet = useToggleRepostTweet(
+    stats.postId,
+    stats.isRepost,
+    stats.isQuote,
+    stats.userId
+  );
   function handleLike() {
     // if (stats.isLikedByMe) {
     //   if (liked) {
@@ -65,7 +78,7 @@ export default function Actions({
     toggleRepostTweet.mutate();
   }
   return (
-    <div className="w-full my-.5">
+    <div className="w-full my-.5" data-testid="tweet-actions">
       <div className="flex justify-between items-center w-full mt-3 text-gray-500 text-sm">
         <Action
           icon={ACTIONS_META[0].icon}

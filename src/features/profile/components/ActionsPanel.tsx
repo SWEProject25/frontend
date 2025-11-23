@@ -90,9 +90,13 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
   };
 
   return (
-    <div className="flex flex-row justify-end items-start p-3 gap-3 w-full h-[60px]">
+    <div
+      className="flex flex-row justify-end items-start p-3 gap-3 w-full h-[60px]"
+      data-testid="profile-actions-panel"
+    >
       {isOwnProfile ? (
         <Button
+          data-testid="profile-edit-button"
           variant="outline"
           size="md"
           shape="rounded"
@@ -104,6 +108,7 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
       ) : (
         <>
           <Button
+            data-testid="profile-more-button"
             variant="outline"
             size="md"
             shape="circle"
@@ -112,6 +117,7 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
             <MoreIcon className="w-5 h-5 text-text-primary" />
           </Button>
           <Button
+            data-testid="profile-message-button"
             variant="outline"
             size="md"
             shape="circle"
@@ -125,12 +131,14 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
             )}
           </Button>
           <FollowBtn
+            data-testid="profile-follow-button"
             userId={userData.userId}
             isFollowed={userData.isFollowed}
           />
         </>
       )}
       <EditProfileModal
+        data-testid="edit-profile-modal"
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         initialData={userData}

@@ -49,22 +49,29 @@ export default function SettingsDetail({
 
   if (!selectedOption) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div
+        className="flex items-center justify-center h-screen"
+        data-testid="settings-detail-empty"
+      >
         <p className="text-text-inactive">Select a setting to view options</p>
       </div>
     );
   }
 
   return (
-    <div className="border-r border-border min-h-screen">
+    <div
+      className="border-r border-border min-h-screen"
+      data-testid="settings-detail"
+    >
       <div className="">
         <Breadcrumb
           title={selectedOption.label}
           subtitle="@ahmedfathy0-0"
           description={selectedOption.description}
           onBack={handleBack}
+          data-testid="settings-detail-breadcrumb"
         />
-        <nav className="flex flex-col">
+        <nav className="flex flex-col" data-testid="settings-detail-nav">
           {selectedOption.subOptions.map((subOption) => {
             const isActive = pathname === subOption.path;
 
@@ -73,12 +80,14 @@ export default function SettingsDetail({
                 key={subOption.id}
                 href={subOption.path}
                 isActive={isActive}
+                data-testid={`settings-detail-item-${subOption.id}`}
               >
                 <OptionItem
                   label={subOption.label}
                   description={subOption.description}
                   icon={getIconForSubOption(subOption.id)}
                   showArrow={true}
+                  data-testid={`settings-detail-option-${subOption.id}`}
                 />
               </ListItem>
             );

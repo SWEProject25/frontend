@@ -65,3 +65,37 @@ export interface SearchProfilesParams {
   page?: number;
   limit?: number;
 }
+
+export interface Media {
+  url: string;
+  type: 'IMAGE' | 'VIDEO';
+}
+export interface ProfileTweet {
+  userId: number;
+  username: string;
+  verified: boolean;
+  name: string;
+  avatar: string | null;
+  postId: number;
+  date: string;
+  likesCount: number;
+  retweetsCount: number;
+  commentsCount: number;
+  isLikedByMe: boolean;
+  isFollowedByMe: boolean;
+  isRepostedByMe: boolean;
+  text: string;
+  media: Media[];
+}
+export interface ProfileFeed extends ProfileTweet {
+  isRepost: boolean;
+  isQuote: boolean;
+  originalPostData?: ProfileTweet;
+}
+export interface ProfileFeedDtoResponse {
+  status: string;
+  message: string;
+  data: {
+    posts: ProfileFeed[];
+  };
+}

@@ -56,30 +56,38 @@ export const useAddTweet = () => {
       toasterMessage('Your post was sent.');
       console.log(data);
       const newTweet: TimelineFeed = {
-        isRepost: false,
-        isQuote: false,
+        ...data.data,
         originalPostData: undefined,
-        userId: data.data.user_id,
-        username: data.data.User.username,
-        verified: false,
-        name: user?.profile?.name ?? user?.username ?? '',
-        avatar: user?.profile?.profileImageUrl ?? '',
-        postId: data.data.id,
-        date: data.data.created_at,
-        likesCount: data.data._count.likes,
-        retweetsCount: data.data._count.repostedBy,
-        commentsCount: data.data._count.Replies,
-        isLikedByMe: false,
-        isFollowedByMe: false,
-        isRepostedByMe: false,
-        text: data.data.content,
-        media: data.data.media.map((med) => ({
-          type: med.type.toLowerCase() === 'image' ? 'IMAGE' : 'VIDEO',
-          url: med.media_url,
-        })),
       };
+
       queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
         TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
+        (old) => {
+          console.log('Old data:', old);
+          if (!old) return old;
+
+          const updated = {
+            ...old,
+            pages: old.pages.map((page, ind) => {
+              if (ind === 0) {
+                return {
+                  ...page,
+                  data: {
+                    ...page.data,
+                    posts: [newTweet, ...page.data.posts],
+                  },
+                };
+              }
+              return page;
+            }),
+          };
+
+          console.log('Updated data:', updated);
+          return updated;
+        }
+      );
+      queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
+        TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
         (old) => {
           console.log('Old data:', old);
           if (!old) return old;

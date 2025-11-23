@@ -67,6 +67,7 @@ export default function AddTweet() {
     <div
       id="Add tweet"
       ref={ref}
+      data-testid="add-tweet-container"
       className=" relative flex flex-col items-start w-full border-b-1 border-border "
     >
       {/* {error && (
@@ -77,20 +78,32 @@ export default function AddTweet() {
           </span>
         </div>
       )} */}
-      {isSending && <div className="h-0.5 min-w-3/12 bg-primary "></div>}
+      {isSending && (
+        <div
+          data-testid="tweet-sending-progress"
+          className="h-0.5 min-w-3/12 bg-primary "
+        ></div>
+      )}
 
       {/* Overlay when sending */}
       {isSending && (
-        <div className="absolute inset-0 bg-black/30  z-10 cursor-default" />
+        <div
+          data-testid="tweet-sending-overlay"
+          className="absolute inset-0 bg-black/30  z-10 cursor-default"
+        />
       )}
-      <div className=" relative flex  items-start w-full justify-center  border-b-1 border-border px-4">
-        <div className="pt-1">
+      <div
+        data-testid="add-tweet-content"
+        className=" relative flex  items-start w-full justify-center  border-b-1 border-border px-4"
+      >
+        <div className="pt-1" data-testid="tweet-profile-logo">
           <ProfileLogo />
         </div>
         <div className="flex flex-1 flex-col gap-1 ">
           <div className="flex flex-col pt-1 pb-1 max-h-[calc(100vh-9rem)] overflow-y-auto">
             {scheduledTime && (
               <button
+                data-testid="scheduled-tweet-time-button"
                 onClick={open}
                 aria-label="Scheduled Tweet Time"
                 className="cursor-pointer hover:underline hover:underline-offset-1 hover:decoration-text-inactive"

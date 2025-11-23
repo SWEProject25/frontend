@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import { UserProfile } from '../types/api';
 import { ProfileStore } from '../types/store';
+import { POSTS_TAB } from '../constants/tabs';
 
 export const useProfileStore = create<ProfileStore>()(
   devtools(
@@ -11,7 +12,7 @@ export const useProfileStore = create<ProfileStore>()(
         currentProfile: null,
         isLoading: false,
         error: null,
-
+        selectedTab: POSTS_TAB,
         // Actions
         setCurrentProfile: (profile: UserProfile | null) => {
           set({ currentProfile: profile, error: null });
@@ -28,6 +29,11 @@ export const useProfileStore = create<ProfileStore>()(
         clearProfile: () => {
           set({ currentProfile: null, error: null, isLoading: false });
         },
+        actions: {
+          selectTab: (tab) => {
+            set({ selectedTab: tab });
+          },
+        },
       }),
       {
         name: 'profile-storage',
@@ -38,3 +44,6 @@ export const useProfileStore = create<ProfileStore>()(
     )
   )
 );
+export const useSelectedTab = () =>
+  useProfileStore((state) => state.selectedTab);
+export const useActions = () => useProfileStore((state) => state.actions);

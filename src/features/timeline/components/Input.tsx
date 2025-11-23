@@ -31,7 +31,7 @@ export default function Input({
     <div className="w-full max-w-[435px]">
       <div className="relative">
         <input
-          data-testid={`inut-${id}`}
+          data-testid={`poll-choice-input-${id}`}
           ref={ref}
           required={required}
           id={label}

@@ -60,10 +60,20 @@ export default function PasswordConfirm({
   };
 
   return (
-    <div className="px-4 py-6">
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
-        <p className="text-sm text-text-inactive mb-6">{description}</p>
+    <div className="px-4 py-6" data-testid="password-confirm">
+      <div className="mb-4" data-testid="password-confirm-header">
+        <h3
+          className="text-lg font-semibold text-white mb-2"
+          data-testid="password-confirm-title"
+        >
+          {title}
+        </h3>
+        <p
+          className="text-sm text-text-inactive mb-6"
+          data-testid="password-confirm-description"
+        >
+          {description}
+        </p>
       </div>
       <InputField
         label="Password"
@@ -72,14 +82,19 @@ export default function PasswordConfirm({
         onChange={handlePasswordChange}
         error={error}
         showPasswordToggle
+        data-testid="password-confirm-input"
       />
-      <div className="mt-6 flex justify-end">
+      <div
+        className="mt-6 flex justify-end"
+        data-testid="password-confirm-actions"
+      >
         <Button
           variant="primary"
           size="md"
           disabled={!password}
           loading={isVerifyPasswordLoading}
           onClick={handleConfirmPassword}
+          data-testid="password-confirm-button"
         >
           Confirm
         </Button>

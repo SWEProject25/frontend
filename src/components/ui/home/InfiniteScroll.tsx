@@ -68,7 +68,7 @@ export default function InfiniteScroll({
               <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
                 You&apos;ve reached the end
               </p>
-              <div className="mt-2 h-1 w-24 bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent rounded-full"></div>
+              <div className="mt-2 h-1 w-24 bg-linear-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent rounded-full"></div>
             </div>
           )}
         {!hasInitialData && (

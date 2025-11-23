@@ -1,5 +1,8 @@
 import { setupWorker } from 'msw/browser';
-import { profileHandlers } from '@/features/profile/mocks/handlers';
+import {
+  profileFeedHandlers,
+  profileHandlers,
+} from '@/features/profile/mocks/handlers';
 
 /**
  * MSW Browser Worker for development
@@ -8,7 +11,8 @@ import { profileHandlers } from '@/features/profile/mocks/handlers';
  * Combines handlers from all features
  */
 export const handlers = [
-  ...profileHandlers,
+  // ...profileHandlers,
+  ...profileFeedHandlers,
   // Add handlers from other features here
   // ...authHandlers,
   // ...tweetHandlers,

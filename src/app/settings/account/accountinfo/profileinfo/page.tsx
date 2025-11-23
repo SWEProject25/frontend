@@ -143,27 +143,43 @@ export default function ProfileInfoPage() {
 
   if (isLoading) {
     return (
-      <div className="border-r border-border min-h-screen">
+      <div
+        className="border-r border-border min-h-screen"
+        data-testid="profile-info-page-loading"
+      >
         <Breadcrumb
           title="Profile information"
           onBack={handleBack}
           showArrow={true}
+          data-testid="profile-info-breadcrumb"
         />
         <div className="flex justify-center items-center h-64">
-          <div className="text-text-secondary">Loading...</div>
+          <div
+            className="text-text-secondary"
+            data-testid="profile-info-loading-text"
+          >
+            Loading...
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="border-r border-border min-h-screen">
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur">
+    <div
+      className="border-r border-border min-h-screen"
+      data-testid="profile-info-page"
+    >
+      <div
+        className="sticky top-0 z-10 bg-background/95 backdrop-blur"
+        data-testid="profile-info-header"
+      >
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <Breadcrumb
             title="Profile information"
             onBack={handleBack}
             showArrow={true}
+            data-testid="profile-info-breadcrumb"
           />
           <Button
             variant="primary"
@@ -171,23 +187,29 @@ export default function ProfileInfoPage() {
             onClick={handleSave}
             loading={isUpdating}
             disabled={isUpdating}
+            data-testid="profile-info-save-button"
           >
             Save
           </Button>
         </div>
       </div>
 
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full" data-testid="profile-info-content">
         <EditProfileCover
           coverImage={bannerPreview}
           onFileSelect={handleBannerImageChange}
           showClearButton={!!bannerPreview}
           onClear={() => handleBannerImageChange(null)}
+          data-testid="profile-info-cover"
         />
-        <div className="relative pb-4">
+        <div
+          className="relative pb-4"
+          data-testid="profile-info-form-container"
+        >
           <EditProfileAvatar
             avatarImage={profilePreview}
             onFileSelect={handleProfileImageChange}
+            data-testid="profile-info-avatar"
           />
           <EditProfileForm
             name={name}
@@ -200,17 +222,24 @@ export default function ProfileInfoPage() {
             setWebsite={setWebsite}
             birth={birth}
             setBirth={(v) => setBirth(v ?? {})}
+            data-testid="profile-info-form"
           />
         </div>
 
         {success && (
-          <div className="mx-4 mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+          <div
+            className="mx-4 mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg"
+            data-testid="profile-info-success-message"
+          >
             <p className="text-sm text-green-500">{success}</p>
           </div>
         )}
 
         {error && !success && (
-          <div className="mx-4 mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+          <div
+            className="mx-4 mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg"
+            data-testid="profile-info-error-message"
+          >
             <p className="text-sm text-red-500">{error}</p>
           </div>
         )}

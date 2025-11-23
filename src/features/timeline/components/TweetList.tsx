@@ -23,21 +23,29 @@ export default function TweetList() {
   const renderTweets = pages?.map((group, i) => (
     <React.Fragment key={i}>
       {group.data.posts.map((tweet, ind) => (
-        <Tweet data={tweet} key={ind} />
+        <Tweet
+          data-testid={`${tweet.userId}${tweet.postId}${tweet.date}`}
+          data={tweet}
+          key={ind}
+        />
       ))}
     </React.Fragment>
   ));
 
   const hasInitialData = pages ? pages[0].data.posts.length > 0 : false;
   return isError ? (
-    <div>Error {error.message}</div>
+    <div data-testid="tweet-list-error">Error {error.message}</div>
   ) : isLoading ? (
-    <div className="flex justify-center items-center h-64 mx-4">
+    <div
+      className="flex justify-center items-center h-64 mx-4"
+      data-testid="tweet-list-loading"
+    >
       <Loader />
     </div>
   ) : (
     <>
       <InfiniteScroll
+        data-testid="tweet-list"
         isLoadingInitial={isLoading}
         isLoadingMore={isFetchingNextPage}
         loadMore={() => hasNextPage && fetchNextPage()}

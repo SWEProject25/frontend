@@ -1,5 +1,6 @@
 import { setupServer } from 'msw/node';
 import { profileHandlers } from '@/features/profile/mocks/handlers';
+import { authHandlers } from '@/features/authentication/mocks/handlers';
 
 /**
  * MSW Server for Node.js (tests)
@@ -8,9 +9,9 @@ import { profileHandlers } from '@/features/profile/mocks/handlers';
  * Combines handlers from all features
  */
 export const handlers = [
+  ...authHandlers,
   ...profileHandlers,
   // Add handlers from other features here
-  // ...authHandlers,
   // ...tweetHandlers,
   // etc.
 ];
