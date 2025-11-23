@@ -89,7 +89,7 @@ export default function MenuItems() {
             href={item.href}
             aria-label={item.label}
             data-testid={`sidebar-menu-${item.label.toLowerCase()}`}
-            className={`flex items-center justify-center xl:justify-start gap-5 px-3 py-3 rounded-full hover:bg-gray-900 cursor-pointer transition-colors ${
+            className={`flex items-center justify-center min-[1400px]:justify-start gap-5 px-3 py-3 rounded-full hover:bg-gray-900 cursor-pointer transition-colors ${
               item.hideOnShortScreen ? 'max-[699px]:hidden' : ''
             }`}
           >
