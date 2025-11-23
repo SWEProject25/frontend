@@ -5,9 +5,9 @@ export const API_CONFIG = {
 
 export const FOLLOW_API_ENDPOINTS = {
   GET_FOLLOWERS: (userId: number) =>
-    `/api/${API_CONFIG.VERSION}/follows/${userId}/followers`,
+    `/api/${API_CONFIG.VERSION}/users/${userId}/followers`,
   GET_FOLLOWING: (userId: number) =>
-    `/api/${API_CONFIG.VERSION}/follows/${userId}/following`,
+    `/api/${API_CONFIG.VERSION}/users/${userId}/following`,
   FOLLOW_USER: (userId: number) =>
     `/api/${API_CONFIG.VERSION}/users/${userId}/follow`,
   UNFOLLOW_USER: (userId: number) =>

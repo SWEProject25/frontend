@@ -5,102 +5,30 @@ import { SearchIcon } from '@/components/ui/icons';
 import ProfileContainer from '@/features/profile/components/ProfileContainer';
 import Button from '@/components/ui/Button';
 import TabView from '@/features/profile/components/TabView';
-import { use } from 'react';
-import { useProfileByUsername } from '@/features/profile/hooks';
-import { useMyProfile } from '@/features/profile/hooks';
-import { useAuthStore } from '@/features/authentication/store/authStore';
-import Loader from '@/components/generic/Loader';
 import { useProfileStore } from '@/features/profile';
+import { useProfileContext } from './ProfileProvider';
+import { useAuthStore } from '@/features/authentication/store/authStore';
 
-interface UserPageProps {
-  params: Promise<{
-    username: string;
-  }>;
-}
-
-const UserPage = ({ params }: UserPageProps) => {
-  const { username } = use(params);
-
-  const currentUser = useAuthStore((s) => s.user);
+const UserPage = () => {
+  const { profile, username } = useProfileContext();
   const { setCurrentProfile } = useProfileStore();
-
-  const useMy = Boolean(currentUser && currentUser.username === username);
-
-  const myProfileQuery = useMyProfile();
-  const {
-    data: profileDataByUsername,
-    isLoading: isLoadingByUsername,
-    error: errorByUsername,
-  } = useProfileByUsername(username, !useMy);
+  const currentUser = useAuthStore((s) => s.user);
+  const isMine = Boolean(currentUser && currentUser.username === username);
 
   useEffect(() => {
-    setCurrentProfile(
-      useMy
-        ? myProfileQuery.data?.data || null
-        : profileDataByUsername?.data || null
-    );
+    setCurrentProfile(profile);
     return () => {
       setCurrentProfile(null);
     };
-  }, [
-    useMy,
-    myProfileQuery.data?.data,
-    profileDataByUsername?.data,
-    setCurrentProfile,
-  ]);
-
-  const profileData = useMy ? myProfileQuery.data : profileDataByUsername;
-  const isLoading = useMy ? myProfileQuery.isLoading : isLoadingByUsername;
-  const error = useMy ? myProfileQuery.error : errorByUsername;
+  }, [profile, setCurrentProfile]);
 
   const handleBack = () => {
     window.history.back();
   };
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <main className="flex flex-col" data-testid="profile-page-loading">
-        <div className="flex flex-row justify-between items-center px-4">
-          <Breadcrumb
-            title={`${username}'s Profile`}
-            subtitle="Loading..."
-            onBack={handleBack}
-            showArrow={true}
-          />
-        </div>
-        <div className="flex justify-center items-center h-64 mx-4">
-          <Loader />
-        </div>
-      </main>
-    );
+  if (!profile) {
+    return null;
   }
-
-  // Error state
-  if (error || !profileData) {
-    return (
-      <main className="flex flex-col" data-testid="profile-page-error">
-        <div className="flex flex-row justify-between items-center px-4">
-          <Breadcrumb
-            title={`${username}'s Profile`}
-            subtitle="Not Found"
-            onBack={handleBack}
-            showArrow={true}
-          />
-        </div>
-        <div className="flex justify-center items-center h-64">
-          <div
-            className="text-text-secondary"
-            data-testid="profile-error-message"
-          >
-            {error?.message || 'Profile not found'}
-          </div>
-        </div>
-      </main>
-    );
-  }
-
-  const profile = profileData.data;
 
   return (
     <main className="flex flex-col" data-testid="profile-page">
@@ -125,7 +53,7 @@ const UserPage = ({ params }: UserPageProps) => {
         </Button>
       </div>
       <div className="flex flex-col">
-        <ProfileContainer profileData={profile} isMine={useMy} />
+        <ProfileContainer profileData={profile} isMine={isMine} />
         <TabView />
       </div>
     </main>

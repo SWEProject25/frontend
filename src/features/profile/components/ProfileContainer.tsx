@@ -59,6 +59,7 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
         <FollowStats
           followingCount={profileData.following_count}
           followersCount={profileData.followers_count}
+          username={profileData.User.username}
         />
       </div>
     </div>

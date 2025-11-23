@@ -1,4 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useInfiniteQuery,
+  InfiniteData,
+} from '@tanstack/react-query';
 import { followApi } from '@/services/userInteractionsApi';
 import {
   FollowResponseDto,
@@ -8,12 +14,6 @@ import {
 } from '@/types/userInteractions';
 import { INTERACTION_QUERY_KEYS } from './queryKeys';
 
-// ==================== MUTATION HOOKS ====================
-
-/**
- * Hook to follow a user
- * Invalidates followers, following lists, and user profile on success
- */
 export const useFollowUser = () => {
   const queryClient = useQueryClient();
 
@@ -28,7 +28,7 @@ export const useFollowUser = () => {
         throw new Error(errorMessage);
       }
     },
-    onSuccess: (_, userId) => {
+    onSuccess: () => {
       // Invalidate followers and following lists
       queryClient.invalidateQueries({
         queryKey: ['interactions', 'followers'],
@@ -43,10 +43,6 @@ export const useFollowUser = () => {
   });
 };
 
-/**
- * Hook to unfollow a user
- * Invalidates followers, following lists, and user profile on success
- */
 export const useUnfollowUser = () => {
   const queryClient = useQueryClient();
 
@@ -61,7 +57,7 @@ export const useUnfollowUser = () => {
         throw new Error(errorMessage);
       }
     },
-    onSuccess: (_, userId) => {
+    onSuccess: () => {
       // Invalidate followers and following lists
       queryClient.invalidateQueries({
         queryKey: ['interactions', 'followers'],
@@ -77,14 +73,6 @@ export const useUnfollowUser = () => {
   });
 };
 
-// ==================== QUERY HOOKS ====================
-
-/**
- * Hook to fetch a user's followers
- * @param userId - The user ID to fetch followers for
- * @param params - Pagination parameters (page, limit)
- * @param enabled - Whether the query should be enabled
- */
 export const useGetFollowers = (
   userId: number,
   params?: PaginationParams,
@@ -108,12 +96,6 @@ export const useGetFollowers = (
   });
 };
 
-/**
- * Hook to fetch users that a user is following
- * @param userId - The user ID to fetch following for
- * @param params - Pagination parameters (page, limit)
- * @param enabled - Whether the query should be enabled
- */
 export const useGetFollowing = (
   userId: number,
   params?: PaginationParams,
@@ -137,12 +119,6 @@ export const useGetFollowing = (
   });
 };
 
-// ==================== COMPOSITE HOOKS ====================
-
-/**
- * Hook that provides all follow-related functionality
- * Includes follow/unfollow mutations and their loading/error states
- */
 export const useFollow = () => {
   const followMutation = useFollowUser();
   const unfollowMutation = useUnfollowUser();
@@ -215,12 +191,6 @@ export const useFollow = () => {
   };
 };
 
-/**
- * Hook to fetch followers list
- * @param userId - The user ID to fetch followers for
- * @param params - Pagination parameters
- * @param enabled - Whether the query should be enabled
- */
 export const useFollowers = (
   userId: number,
   params?: PaginationParams,
@@ -229,16 +199,55 @@ export const useFollowers = (
   return useGetFollowers(userId, params, enabled);
 };
 
-/**
- * Hook to fetch following list
- * @param userId - The user ID to fetch following for
- * @param params - Pagination parameters
- * @param enabled - Whether the query should be enabled
- */
 export const useFollowing = (
   userId: number,
   params?: PaginationParams,
   enabled: boolean = true
 ) => {
   return useGetFollowing(userId, params, enabled);
+};
+
+// Infinite query hooks for followers/following lists
+export const useInfiniteFollowers = (userId: number, limit: number = 20) => {
+  return useInfiniteQuery<
+    FollowersListResponseDto,
+    Error,
+    InfiniteData<FollowersListResponseDto, number>,
+    any,
+    number
+  >({
+    queryKey: ['interactions', 'followers', 'infinite', userId, limit],
+    queryFn: ({ pageParam }) =>
+      followApi.getFollowers(userId, { page: pageParam, limit }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const { page, totalPages } = lastPage.metadata;
+      return page < totalPages ? page + 1 : undefined;
+    },
+    enabled: userId > 0,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+  });
+};
+
+export const useInfiniteFollowing = (userId: number, limit: number = 20) => {
+  return useInfiniteQuery<
+    FollowingListResponseDto,
+    Error,
+    InfiniteData<FollowingListResponseDto, number>,
+    any,
+    number
+  >({
+    queryKey: ['interactions', 'following', 'infinite', userId, limit],
+    queryFn: ({ pageParam }) =>
+      followApi.getFollowing(userId, { page: pageParam, limit }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const { page, totalPages } = lastPage.metadata;
+      return page < totalPages ? page + 1 : undefined;
+    },
+    enabled: userId > 0,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+  });
 };
