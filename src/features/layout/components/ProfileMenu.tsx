@@ -38,14 +38,17 @@ export default function ProfileMenu() {
               position="relative"
               className="border-0"
             />
-            <div className="hidden xl:block" data-testid="sidebar-profile-info">
+            <div
+              className="hidden min-[1400px]:block"
+              data-testid="sidebar-profile-info"
+            >
               <p className="text-white font-semibold text-sm leading-tight">
                 {user.profile?.name ?? user.username}
               </p>
               <p className="text-gray-400 text-sm">@{user.username}</p>
             </div>
           </div>
-          <MoreHorizontal className="text-white hidden xl:block" />
+          <MoreHorizontal className="text-white hidden min-[1400px]:block" />
         </div>
       </XMenu.Button>
       <XMenu.List
