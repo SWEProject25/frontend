@@ -19,7 +19,6 @@ interface ChatMessageListProps {
   conversationUsername: string;
   conversationAvatar: string;
   onDeleteMessage: (messageId: number) => void;
-  onEditMessage: (messageId: number, newText: string) => void;
   isMyMessage: (senderId: number) => boolean;
   isTyping?: boolean;
 }
@@ -30,7 +29,6 @@ export default function ChatMessageList({
   conversationUsername,
   conversationAvatar,
   onDeleteMessage,
-  onEditMessage,
   isMyMessage,
   isTyping = false,
 }: ChatMessageListProps) {
@@ -59,7 +57,6 @@ export default function ChatMessageList({
               message={msg}
               isCurrentUser={isMine}
               onDelete={onDeleteMessage}
-              onEdit={onEditMessage}
             />
           );
         })

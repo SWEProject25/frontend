@@ -33,7 +33,6 @@ export function useChatWindow(conversationId?: string) {
     createMessage,
     joinConversation,
     sendTyping,
-    updateMessage,
     markSeen,
     setCurrentUserId,
   } = useMessages(
@@ -257,37 +256,6 @@ export function useChatWindow(conversationId?: string) {
     [conversationId, deleteMessageFromStore]
   );
 
-  const handleEditMessage = useCallback(
-    (messageId: number, newText: string) => {
-      if (!conversationId || !currentUserId) return;
-
-      if (newText.length > 1000) {
-        setError('Message is too long (max 1000 characters)');
-        setTimeout(() => setError(null), 3000);
-        return;
-      }
-
-      console.log(`✏️ Editing message ${messageId}`);
-      updateMessage(
-        {
-          id: messageId,
-          senderId: currentUserId,
-          text: newText,
-        },
-        (response) => {
-          if (response.status === 'success') {
-            console.log('✅ Message edited successfully');
-          } else {
-            console.error('❌ Failed to edit message:', response);
-            setError('Failed to edit message. Please try again.');
-            setTimeout(() => setError(null), 3000);
-          }
-        }
-      );
-    },
-    [conversationId, currentUserId, updateMessage]
-  );
-
   const isMyMessage = useCallback(
     (senderId: number) => {
       if (currentUserId !== null) return senderId === currentUserId;
@@ -316,7 +284,6 @@ export function useChatWindow(conversationId?: string) {
     handleKeyPress,
     handleTyping,
     handleDeleteMessage,
-    handleEditMessage,
     isMyMessage,
   };
 }

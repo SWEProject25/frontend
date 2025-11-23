@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/v1.0/:path*',
-        destination: 'https://api.hankers.myaddr.tools/api/v1.0/:path*',
+        destination: 'https://api.hankers.tech/api/v1.0/:path*',
       },
     ];
   },

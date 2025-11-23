@@ -40,7 +40,6 @@ type State = {
   addMessage: (m: Message) => void;
   setActiveConversation: (id: number | null) => void;
   setMessagesForConversation: (id: number, msgs: Message[]) => void;
-  updateMessage: (m: Message) => void;
   deleteMessage: (conversationId: number, messageId: number) => void;
   setUserTyping: (conversationId: number, userId: number) => void;
   removeUserTyping: (conversationId: number, userId: number) => void;
@@ -138,37 +137,6 @@ export const useMessageStore = create<State>((set) => ({
       return {
         messages: { ...s.messages, [id]: msgs },
         conversations: updatedConversations,
-      };
-    }),
-  updateMessage: (m) =>
-    set((s) => {
-      const arr = s.messages[m.conversationId] ?? [];
-      const updatedMessages = arr.map((i) =>
-        i.id === m.id ? { ...i, ...m } : i
-      );
-
-      // Update the conversation's lastMessage if this message is the last one
-      const updatedConversations = s.conversations.map((conv) => {
-        const convId = conv.conversationId || conv.id;
-        if (convId === m.conversationId && conv.lastMessage?.id === m.id) {
-          return {
-            ...conv,
-            lastMessage: { ...conv.lastMessage, ...m },
-          };
-        }
-        return conv;
-      });
-
-      // Sort conversations by most recent message (in case timestamp changed)
-      const sortedConversations =
-        sortConversationsByRecent(updatedConversations);
-
-      return {
-        messages: {
-          ...s.messages,
-          [m.conversationId]: updatedMessages,
-        },
-        conversations: sortedConversations,
       };
     }),
   deleteMessage: (conversationId, messageId) =>

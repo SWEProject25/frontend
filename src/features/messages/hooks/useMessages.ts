@@ -8,7 +8,6 @@ import { createMessage as createMessageAPI } from '../api/messages';
 export const useMessages = (onError?: (err: any) => void) => {
   const addMessage = useMessageStore((s) => s.addMessage);
   const addConversation = useMessageStore((s) => s.addConversation);
-  const updateMessage = useMessageStore((s) => s.updateMessage);
   const activeConversationId = useMessageStore((s) => s.activeConversationId);
   const setUserTyping = useMessageStore((s) => s.setUserTyping);
   const removeUserTyping = useMessageStore((s) => s.removeUserTyping);
@@ -16,6 +15,7 @@ export const useMessages = (onError?: (err: any) => void) => {
   const markAllMessagesAsSeen = useMessageStore((s) => s.markAllMessagesAsSeen);
   const typingTimeoutRef = useRef<number | null>(null);
   const currentUserIdRef = useRef<number | null>(null);
+  const lastErrorLogRef = useRef<number>(0);
 
   // Helper to get current user ID
   const getCurrentUserId = useCallback(() => {
@@ -38,7 +38,10 @@ export const useMessages = (onError?: (err: any) => void) => {
     };
 
     const handleDisconnect = (reason: string) => {
-      console.log('🔴 WebSocket Disconnected:', reason);
+      // Only log non-transport errors to reduce noise
+      if (reason !== 'transport error' && reason !== 'transport close') {
+        console.log('🔴 WebSocket Disconnected:', reason);
+      }
       if (reason === 'io server disconnect') {
         console.warn('⚠️ Server disconnected - you may have been logged out');
         socket.connect();
@@ -46,18 +49,26 @@ export const useMessages = (onError?: (err: any) => void) => {
     };
 
     const handleConnectError = (err: any) => {
-      console.error('❌ WebSocket connection error:', err.message);
-      console.log('💡 Tip: Make sure you are logged in');
+      // Only log once every 5 seconds to reduce spam
+      const now = Date.now();
+      if (now - lastErrorLogRef.current > 5000) {
+        console.error(
+          '❌ WebSocket connection failed. Please check your authentication.'
+        );
+        lastErrorLogRef.current = now;
+      }
       onError?.(err);
     };
 
     const handleError = (err: any) => {
-      console.error('❌ WebSocket error:', err);
+      // Only log significant errors
       if (
         err.message?.includes('unauthorized') ||
         err.message?.includes('401')
       ) {
-        console.error('🚫 Authentication error - you may need to log in again');
+        console.error('🚫 Authentication error - please log in again');
+      } else if (err.message && !err.message.includes('xhr')) {
+        console.error('❌ WebSocket error:', err.message);
       }
       onError?.(err);
     };
@@ -126,11 +137,6 @@ export const useMessages = (onError?: (err: any) => void) => {
         // Add message as unseen (we're not viewing this conversation)
         addMessage(msg);
       }
-    };
-
-    const handleMessageUpdated = (msg: any) => {
-      console.log('✏️ Message updated via WebSocket:', msg);
-      updateMessage(msg);
     };
 
     const handleMessagesSeen = (data: any) => {
@@ -253,31 +259,6 @@ export const useMessages = (onError?: (err: any) => void) => {
       }
     };
 
-    const handleEditMessageNotification = (message: any) => {
-      console.log('✏️ Edit message notification received:', message);
-      // This event is for edited messages in conversations we're not currently viewing
-      // Only update the conversation lastMessage if this is the last message
-      // Don't update messages array - we'll fetch fresh when entering conversation
-      if (message?.id && message?.conversationId) {
-        console.log(
-          '📝 Updating edited message in conversation preview if it is lastMessage'
-        );
-        const state = useMessageStore.getState();
-        const updatedConversations = state.conversations.map((conv) => {
-          const convId = conv.conversationId || conv.id;
-          if (
-            convId === message.conversationId &&
-            conv.lastMessage?.id === message.id
-          ) {
-            return { ...conv, lastMessage: message };
-          }
-          return conv;
-        });
-
-        useMessageStore.setState({ conversations: updatedConversations });
-      }
-    };
-
     // Register event listeners
     socket.on(MESSAGES_SOCKET_EVENTS.CONNECT, handleConnect);
     socket.on(MESSAGES_SOCKET_EVENTS.DISCONNECT, handleDisconnect);
@@ -286,14 +267,9 @@ export const useMessages = (onError?: (err: any) => void) => {
       handleConversationCreated
     );
     socket.on(MESSAGES_SOCKET_EVENTS.MESSAGE_CREATED, handleMessageCreated);
-    socket.on(MESSAGES_SOCKET_EVENTS.MESSAGE_UPDATED, handleMessageUpdated);
     socket.on(
       MESSAGES_SOCKET_EVENTS.NEW_MESSAGE_NOTIFICATION,
       handleNewMessageNotification
-    );
-    socket.on(
-      MESSAGES_SOCKET_EVENTS.EDIT_MESSAGE_NOTIFICATION,
-      handleEditMessageNotification
     );
     socket.on(MESSAGES_SOCKET_EVENTS.MESSAGES_SEEN, handleMessagesSeen);
     socket.on(MESSAGES_SOCKET_EVENTS.USER_TYPING, handleUserTyping);
@@ -313,14 +289,9 @@ export const useMessages = (onError?: (err: any) => void) => {
         handleConversationCreated
       );
       socket.off(MESSAGES_SOCKET_EVENTS.MESSAGE_CREATED, handleMessageCreated);
-      socket.off(MESSAGES_SOCKET_EVENTS.MESSAGE_UPDATED, handleMessageUpdated);
       socket.off(
         MESSAGES_SOCKET_EVENTS.NEW_MESSAGE_NOTIFICATION,
         handleNewMessageNotification
-      );
-      socket.off(
-        MESSAGES_SOCKET_EVENTS.EDIT_MESSAGE_NOTIFICATION,
-        handleEditMessageNotification
       );
       socket.off(MESSAGES_SOCKET_EVENTS.MESSAGES_SEEN, handleMessagesSeen);
       socket.off(MESSAGES_SOCKET_EVENTS.USER_TYPING, handleUserTyping);
@@ -336,7 +307,6 @@ export const useMessages = (onError?: (err: any) => void) => {
     activeConversationId,
     addMessage,
     addConversation,
-    updateMessage,
     setUserTyping,
     removeUserTyping,
     markMessagesAsSeen,
@@ -449,29 +419,6 @@ export const useMessages = (onError?: (err: any) => void) => {
     [markAllMessagesAsSeen]
   );
 
-  const updateMessageSocket = useCallback(
-    (
-      payload: { id: number; senderId: number; text: string },
-      cb?: (resp: any) => void
-    ) => {
-      const socket = getSocket();
-      console.log('✏️ Updating message via WebSocket:', payload);
-      socket.emit(
-        MESSAGES_SOCKET_EVENTS.UPDATE_MESSAGE,
-        payload,
-        (resp: any) => {
-          if (resp?.status === 'success') {
-            console.log('✅ Message updated successfully:', resp.data);
-          } else {
-            console.warn('⚠️ Failed to update message:', resp);
-          }
-          cb?.(resp);
-        }
-      );
-    },
-    []
-  );
-
   const sendTyping = useCallback(
     (conversationId: number, cb?: (resp: any) => void) => {
       const socket = getSocket();
@@ -523,7 +470,6 @@ export const useMessages = (onError?: (err: any) => void) => {
   return {
     joinConversation,
     createMessage,
-    updateMessage: updateMessageSocket,
     markSeen,
     sendTyping,
     sendStopTyping,
