@@ -74,10 +74,32 @@ export const useMessages = (onError?: (err: any) => void) => {
     };
 
     const handleMessageCreated = async (msg: any) => {
-      console.log('📨 New message received via WebSocket:', msg);
+      console.log('📨 MESSAGE_CREATED event received:', {
+        messageId: msg.id,
+        conversationId: msg.conversationId,
+        senderId: msg.senderId,
+        text: msg.text?.substring(0, 30),
+      });
+
+      // Check if this message already exists in the store
+      const state = useMessageStore.getState();
+      const existingMessages = state.messages[msg.conversationId] || [];
+      const messageAlreadyExists = existingMessages.some(
+        (m) => m.id === msg.id
+      );
+
+      if (messageAlreadyExists) {
+        console.log(
+          '⚠️ MESSAGE_CREATED: Message already exists, skipping duplicate:',
+          msg.id
+        );
+        return;
+      }
+
+      console.log('✅ MESSAGE_CREATED: Message is new, will add to store');
 
       // Check if conversation exists in our list
-      const conversations = useMessageStore.getState().conversations;
+      const conversations = state.conversations;
       const conversationExists = conversations.some((conv) => {
         const convId = conv.conversationId || conv.id;
         return convId === msg.conversationId;
@@ -108,7 +130,7 @@ export const useMessages = (onError?: (err: any) => void) => {
       // Add the message with correct isSeen status
       if (shouldMarkAsSeen) {
         console.log(
-          '�️ Received message while viewing conversation - marking as seen immediately'
+          '👁️ Received message while viewing conversation - marking as seen immediately'
         );
         const seenMessage = { ...msg, isSeen: true };
         addMessage(seenMessage);
@@ -199,14 +221,36 @@ export const useMessages = (onError?: (err: any) => void) => {
     };
 
     const handleNewMessageNotification = async (message: any) => {
-      console.log('🔔 New message notification received:', message);
+      console.log('🔔 NEW_MESSAGE_NOTIFICATION event received:', {
+        messageId: message?.id,
+        conversationId: message?.conversationId,
+        senderId: message?.senderId,
+        text: message?.text?.substring(0, 30),
+      });
       // This event is for messages in conversations we're not currently viewing
       // Backend sends the message object directly, not wrapped
       if (message?.conversationId) {
-        console.log('📬 New message in conversation:', message.conversationId);
+        // Check if this message was already added by handleMessageCreated
+        const state = useMessageStore.getState();
+        const existingMessages = state.messages[message.conversationId] || [];
+        const messageAlreadyExists = existingMessages.some(
+          (m) => m.id === message.id
+        );
+
+        if (messageAlreadyExists) {
+          console.log(
+            '⚠️ NEW_MESSAGE_NOTIFICATION: Message already exists (added by MESSAGE_CREATED), skipping duplicate:',
+            message.id
+          );
+          return;
+        }
+
+        console.log(
+          '✅ NEW_MESSAGE_NOTIFICATION: Message is new, will add to store'
+        );
 
         // Check if this conversation exists in our list
-        const conversations = useMessageStore.getState().conversations;
+        const conversations = state.conversations;
         const conversationExists = conversations.some((conv) => {
           const convId = conv.conversationId || conv.id;
           return convId === message.conversationId;
@@ -227,35 +271,17 @@ export const useMessages = (onError?: (err: any) => void) => {
           }
         }
 
-        // IMPORTANT: Don't add the message to the messages array
-        // Only update the conversation's lastMessage for the preview
-        // When user enters the conversation, we'll fetch all messages fresh
-        console.log('📥 Updating conversation lastMessage from notification');
-        const state = useMessageStore.getState();
-        const updatedConversations = state.conversations.map((conv) => {
-          const convId = conv.conversationId || conv.id;
-          if (convId === message.conversationId) {
-            return { ...conv, lastMessage: message };
-          }
-          return conv;
-        });
+        // Add the message to the messages array so unseen count works correctly
+        // This message should be marked as unseen since we're not viewing this conversation
+        console.log(
+          '📥 Adding notification message to messages array for unseen count'
+        );
+        const unseenMessage = { ...message, isSeen: false };
+        addMessage(unseenMessage);
 
-        // Sort and update
-        const sortConversationsByRecent = (convs: any[]) => {
-          return [...convs].sort((a, b) => {
-            const aTime = a.lastMessage?.createdAt
-              ? new Date(a.lastMessage.createdAt).getTime()
-              : new Date(a.createdAt).getTime();
-            const bTime = b.lastMessage?.createdAt
-              ? new Date(b.lastMessage.createdAt).getTime()
-              : new Date(b.createdAt).getTime();
-            return bTime - aTime;
-          });
-        };
-
-        useMessageStore.setState({
-          conversations: sortConversationsByRecent(updatedConversations),
-        });
+        // The addMessage function already updates the conversation's lastMessage
+        // and sorts conversations by most recent
+        console.log('✅ Message added - unseen count should now be correct');
       }
     };
 

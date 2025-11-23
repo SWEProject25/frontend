@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useMessageStore } from '../../store/useMessageStore';
 import { fetchConversations, createConversation } from '../../api/messages';
 import { useAuthStore } from '../../../authentication/store/authStore';
@@ -20,29 +20,34 @@ export function useConversationsList(
   const user = useAuthStore((s) => s.user);
   const currentUserId = (user as { id?: number })?.id ?? null;
 
-  // Helper to calculate unseen message count for a conversation
-  const getUnseenCount = useCallback(
-    (conversationId: number): number => {
+  // Helper to check if a conversation has any unseen messages
+  const hasUnseenMessages = useCallback(
+    (conversationId: number): boolean => {
       const messages = allMessages[conversationId] || [];
-      console.log(`📊 Unseen count for conversation ${conversationId}:`, {
+
+      // Check if there are any messages that are not seen and not sent by current user
+      const hasUnseen = messages.some(
+        (msg) => !msg.isSeen && msg.senderId !== currentUserId
+      );
+
+      console.log(`📊 Unseen check for conversation ${conversationId}:`, {
         totalMessages: messages.length,
         currentUserId,
-        messages: messages.map((m) => ({
-          id: m.id,
-          senderId: m.senderId,
-          isSeen: m.isSeen,
-          text: m.text?.substring(0, 20),
-        })),
+        hasUnseen,
       });
-      // Count messages that are not seen and not sent by current user
-      const unseenCount = messages.filter(
-        (msg) => !msg.isSeen && msg.senderId !== currentUserId
-      ).length;
-      console.log(`🔢 Unseen count result: ${unseenCount}`);
-      return unseenCount;
+
+      return hasUnseen;
     },
     [allMessages, currentUserId]
   );
+
+  // Calculate total number of conversations with unseen messages
+  const unseenConversationsCount = useMemo(() => {
+    return conversations.filter((conv) => {
+      const convId = conv.conversationId || conv.id;
+      return convId ? hasUnseenMessages(convId) : false;
+    }).length;
+  }, [conversations, hasUnseenMessages]);
 
   // Load conversations on mount - only if not already loaded
   useEffect(() => {
@@ -211,8 +216,8 @@ export function useConversationsList(
         ? formatTimestamp(lastMessageObj.createdAt as string)
         : '';
 
-      // Get unseen message count
-      const unseenCount = getUnseenCount(convId as number);
+      // Check if conversation has unseen messages (returns 1 if yes, 0 if no)
+      const unseenCount = hasUnseenMessages(convId as number) ? 1 : 0;
 
       return {
         displayName,
@@ -225,7 +230,7 @@ export function useConversationsList(
         unseenCount,
       };
     },
-    [typingUsers, formatTimestamp, currentUserId, getUnseenCount]
+    [typingUsers, formatTimestamp, currentUserId, hasUnseenMessages]
   );
 
   return {
@@ -236,6 +241,7 @@ export function useConversationsList(
     showNewConvoModal,
     newUserId,
     creatingConvo,
+    unseenConversationsCount,
 
     // Setters
     setShowNewConvoModal,
