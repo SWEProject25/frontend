@@ -12,29 +12,35 @@ export interface FollowResponseDto {
 export interface FollowerDto {
   id: number;
   username: string;
-  name: string;
-  profile_image_url?: string;
-  bio?: string;
+  displayName: string;
+  profileImageUrl?: string | null;
+  bio?: string | null;
   verified?: boolean;
+  followedAt: string;
+  is_followed_by_me: boolean;
 }
 
 export interface FollowersListResponseDto {
-  success: boolean;
-  data: {
-    followers: FollowerDto[];
-    total: number;
+  status: string;
+  message: string;
+  data: FollowerDto[];
+  metadata: {
+    totalItems: number;
     page: number;
     limit: number;
+    totalPages: number;
   };
 }
 
 export interface FollowingListResponseDto {
-  success: boolean;
-  data: {
-    following: FollowerDto[];
-    total: number;
+  status: string;
+  message: string;
+  data: FollowerDto[];
+  metadata: {
+    totalItems: number;
     page: number;
     limit: number;
+    totalPages: number;
   };
 }
 
