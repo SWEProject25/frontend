@@ -23,36 +23,42 @@ function updateTweetInInfiniteData(
     }
   | undefined {
   if (!data) return data;
-  const oldTweet = data.pages.flatMap((page) =>
-    page.data.posts.filter(
-      (post) =>
+  let postIndex = 0;
+  const pageIndex = data.pages.findIndex((page) =>
+    page.data.posts.find((post, indx) => {
+      if (
         post.postId === tweetId &&
         post.isRepost === isRepost &&
         post.isQuote === isQuote &&
         post.userId === userId
-    )
-  )[0];
-  const newTweet = updateTweet(type, oldTweet);
+      ) {
+        postIndex = indx;
+        return true;
+      } else return false;
+    })
+  );
+  const old = data.pages[pageIndex].data.posts[postIndex];
+  const newTweet = updateTweet(type, old);
   return {
     newFeed: {
       ...data,
-      pages: data.pages.map((page) => ({
-        ...page,
-        data: {
-          ...page.data,
-          posts: page.data.posts.map((tweet) =>
-            tweet.postId === tweetId &&
-            tweet.isRepost === isRepost &&
-            tweet.isQuote === isQuote &&
-            tweet.userId === userId
-              ? newTweet
-              : tweet
-          ),
-        },
-      })),
+      pages: data.pages.map((page, PIndx) => {
+        if (PIndx !== pageIndex) return page;
+        else
+          return {
+            ...page,
+            data: {
+              ...page.data,
+              posts: page.data.posts.map((tweet, tweetIndex) => {
+                if (tweetIndex !== postIndex) return tweet;
+                else return newTweet;
+              }),
+            },
+          };
+      }),
     },
     newTweet: newTweet,
-    oldTweet: oldTweet,
+    oldTweet: old,
   };
 }
 
