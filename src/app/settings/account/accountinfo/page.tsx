@@ -33,23 +33,32 @@ export default function AccountInfoPage() {
   };
 
   return (
-    <div className="border-r border-border min-h-screen">
+    <div
+      className="border-r border-border min-h-screen"
+      data-testid="account-info-page"
+    >
       <Breadcrumb
         title="Account information"
         subtitle={userData.username}
         onBack={handleBack}
         showArrow={true}
+        data-testid="account-info-breadcrumb"
       />
       {showPasswordConfirm ? (
         <PasswordConfirm onConfirm={handlePasswordConfirmed} />
       ) : (
-        <nav className="flex flex-col">
+        <nav className="flex flex-col" data-testid="account-info-nav">
           {accountInfoItems.map((item) => (
-            <ListItem key={item.id} href={item.path}>
+            <ListItem
+              key={item.id}
+              href={item.path}
+              data-testid={`account-info-item-${item.id}`}
+            >
               <OptionItem
                 label={item.label}
                 description={item.value}
                 showArrow={true}
+                data-testid={`account-info-option-${item.id}`}
               />
             </ListItem>
           ))}

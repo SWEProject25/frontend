@@ -8,6 +8,7 @@ interface UploadImageProps {
   previewUrl?: string;
   showClearButton?: boolean;
   onClear?: () => void;
+  'data-testid'?: string;
 }
 
 const UploadImage: React.FC<UploadImageProps> = ({
@@ -15,6 +16,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
   onFileSelect,
   showClearButton = false,
   onClear,
+  'data-testid': dataTestId,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -34,13 +36,26 @@ const UploadImage: React.FC<UploadImageProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="flex flex-row items-center gap-2">
+    <div
+      className="flex flex-col items-center gap-2"
+      data-testid={dataTestId || 'upload-image-container'}
+    >
+      <div
+        className="flex flex-row items-center gap-2"
+        data-testid={
+          dataTestId ? `${dataTestId}-buttons` : 'upload-image-buttons'
+        }
+      >
         <Button
           variant="overlay"
           size="md"
           shape="circle"
           onClick={handleButtonClick}
+          data-testid={
+            dataTestId
+              ? `${dataTestId}-upload-button`
+              : 'upload-image-upload-button'
+          }
         >
           <CameraIcon className="w-5 h-5 text-white" />
         </Button>
@@ -51,6 +66,11 @@ const UploadImage: React.FC<UploadImageProps> = ({
             shape="circle"
             onClick={onClear}
             aria-label="Clear image"
+            data-testid={
+              dataTestId
+                ? `${dataTestId}-clear-button`
+                : 'upload-image-clear-button'
+            }
           >
             <CloseIcon className="w-5 h-5 text-white" />
           </Button>
@@ -62,9 +82,18 @@ const UploadImage: React.FC<UploadImageProps> = ({
         accept="image/*"
         className="hidden"
         onChange={handleFileChange}
-        data-testid="upload-image-input"
+        data-testid={dataTestId ? `${dataTestId}-input` : 'upload-image-input'}
       />
-      {label && <p className="text-sm text-text-active">{label}</p>}
+      {label && (
+        <p
+          className="text-sm text-text-active"
+          data-testid={
+            dataTestId ? `${dataTestId}-label` : 'upload-image-label'
+          }
+        >
+          {label}
+        </p>
+      )}
     </div>
   );
 };

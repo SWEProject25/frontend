@@ -57,10 +57,18 @@ export default function EmailPage() {
   const isDisabled = !email || email === user?.email || isUpdateEmailLoading;
 
   return (
-    <div className="border-r border-border min-h-screen">
-      <Breadcrumb title="Change email" onBack={handleBack} showArrow={true} />
-      <div className="px-4 py-6">
-        <div className="mb-4">
+    <div
+      className="border-r border-border min-h-screen"
+      data-testid="email-page"
+    >
+      <Breadcrumb
+        title="Change email"
+        onBack={handleBack}
+        showArrow={true}
+        data-testid="email-breadcrumb"
+      />
+      <div className="px-4 py-6" data-testid="email-content">
+        <div className="mb-4" data-testid="email-description">
           <p className="text-sm text-text-secondary mb-4">
             Update your email address. You&apos;ll use this email to sign in to
             your account.
@@ -80,21 +88,26 @@ export default function EmailPage() {
           showCharCount
           error={error && !success ? error : undefined}
           placeholder="your.email@example.com"
+          data-testid="email-input"
         />
 
         {success && (
-          <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+          <div
+            className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg"
+            data-testid="email-success-message"
+          >
             <p className="text-sm text-green-500">{success}</p>
           </div>
         )}
 
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex justify-end" data-testid="email-actions">
           <Button
             variant="primary"
             size="md"
             disabled={isDisabled}
             loading={isUpdateEmailLoading}
             onClick={handleSave}
+            data-testid="email-save-button"
           >
             Save
           </Button>

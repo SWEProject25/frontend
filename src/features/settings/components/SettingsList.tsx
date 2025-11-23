@@ -33,26 +33,31 @@ export default function SettingsList({ options }: SettingsListProps) {
   }, [options, searchQuery]);
 
   return (
-    <div className="border-r border-border min-h-screen">
+    <div
+      className="border-r border-border min-h-screen"
+      data-testid="settings-list"
+    >
       <div className="">
         <Breadcrumb
           title="Settings"
           subtitle="@ahmedfathy0-0"
           onBack={handleBack}
           showSubtitleOnMobile={false}
+          data-testid="settings-breadcrumb"
         />
 
         {/* Search Input */}
-        <div className="px-2 mb-2">
+        <div className="px-2 mb-2" data-testid="settings-search-container">
           <SearchInput
             placeholder="Search Settings"
             value={searchQuery}
             onChange={setSearchQuery}
+            data-testid="settings-search-input"
           />
         </div>
 
         {/* Settings List */}
-        <nav className="flex flex-col">
+        <nav className="flex flex-col" data-testid="settings-nav">
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option) => {
               const isActive = pathname
@@ -64,13 +69,21 @@ export default function SettingsList({ options }: SettingsListProps) {
                   key={option.id}
                   href={option.path || '#'}
                   isActive={isActive}
+                  data-testid={`settings-list-item-${option.id}`}
                 >
-                  <OptionItem label={option.label} showArrow={true} />
+                  <OptionItem
+                    label={option.label}
+                    showArrow={true}
+                    data-testid={`settings-option-${option.id}`}
+                  />
                 </ListItem>
               );
             })
           ) : (
-            <div className="px-4 py-8 text-center text-text-inactive">
+            <div
+              className="px-4 py-8 text-center text-text-inactive"
+              data-testid="settings-no-results"
+            >
               No settings found matching &quot;{searchQuery}&quot;
             </div>
           )}

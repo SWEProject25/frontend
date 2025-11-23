@@ -6,6 +6,7 @@ interface ListItemProps {
   isActive?: boolean;
   children: React.ReactNode;
   className?: string;
+  'data-testid'?: string;
 }
 
 export default function ListItem({
@@ -13,6 +14,7 @@ export default function ListItem({
   isActive = false,
   children,
   className = '',
+  'data-testid': dataTestId,
 }: ListItemProps) {
   return (
     <Link
@@ -20,7 +22,7 @@ export default function ListItem({
       className={`
         flex items-center justify-between
         relative cursor-pointer
-        py-3 px-4 min-h-[48px]
+        py-3 px-4 min-h-12
         transition-[background-color,box-shadow] duration-200
         outline-none
         ${isActive ? 'bg-muted border-r-4 border-r-primary' : ''}
@@ -30,6 +32,7 @@ export default function ListItem({
       style={{
         WebkitTapHighlightColor: 'rgba(0,0,0,0)',
       }}
+      data-testid={dataTestId}
     >
       {children}
     </Link>

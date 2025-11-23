@@ -11,8 +11,16 @@ export default function MutedAccountsPage() {
   };
 
   return (
-    <div className="border-r border-border min-h-screen">
-      <Breadcrumb title="Muted accounts" onBack={handleBack} showArrow={true} />
+    <div
+      className="border-r border-border min-h-screen"
+      data-testid="muted-accounts-page"
+    >
+      <Breadcrumb
+        title="Muted accounts"
+        onBack={handleBack}
+        showArrow={true}
+        data-testid="muted-accounts-breadcrumb"
+      />
 
       <MutedAccountsList />
     </div>
