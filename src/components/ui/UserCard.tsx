@@ -31,7 +31,7 @@ export default function UserCard({
   isFollowed = false,
   isBlocked = false,
   isMuted = false,
-  actionType = 'follow',
+  actionType,
   className = '',
   onFollowChange,
   linkTo,
@@ -85,19 +85,21 @@ export default function UserCard({
       )}
 
       {/* Action Button */}
-      <div className="ml-3 shrink-0 self-start">
-        {actionType === 'block' ? (
-          <BlockBtn userId={userId} isBlocked={isBlocked} />
-        ) : actionType === 'mute' ? (
-          <MuteBtn userId={userId} isMuted={isMuted} />
-        ) : (
-          <FollowBtn
-            userId={userId}
-            isFollowed={isFollowed}
-            onFollowChange={onFollowChange}
-          />
-        )}
-      </div>
+      {actionType && (
+        <div className="ml-3 shrink-0 self-start">
+          {actionType === 'block' ? (
+            <BlockBtn userId={userId} isBlocked={isBlocked} />
+          ) : actionType === 'mute' ? (
+            <MuteBtn userId={userId} isMuted={isMuted} />
+          ) : (
+            <FollowBtn
+              userId={userId}
+              isFollowed={isFollowed}
+              onFollowChange={onFollowChange}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }
