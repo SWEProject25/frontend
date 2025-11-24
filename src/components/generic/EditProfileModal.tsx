@@ -92,7 +92,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       const v = value?.trim();
       const init = initial?.trim() ?? '';
       if (v === init) return undefined;
-      return value;
+      return v; // Return trimmed value instead of original
     };
 
     onSave({

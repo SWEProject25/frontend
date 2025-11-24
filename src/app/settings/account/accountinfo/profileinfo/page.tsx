@@ -99,7 +99,7 @@ export default function ProfileInfoPage() {
       const v = value?.trim();
       const init = initial?.trim() ?? '';
       if (v === init) return undefined;
-      return value;
+      return v;
     };
 
     const birthDateValue = (() => {

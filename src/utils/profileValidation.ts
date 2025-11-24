@@ -62,14 +62,15 @@ export const validateDisplayName = (name: string): ValidationResult => {
  * - If provided, cannot be only spaces
  * - Cannot contain emojis
  * - Max 30 characters
+ * - Automatically trims leading/trailing spaces
  */
 export const validateLocation = (location: string): ValidationResult => {
-  const trimmed = location.trim();
-
   // Empty is valid (optional field)
-  if (!location || trimmed.length === 0) {
+  if (!location) {
     return { isValid: true };
   }
+
+  const trimmed = location.trim();
 
   // Check if only spaces (original has content but trimmed is empty)
   if (location.length > 0 && trimmed.length === 0) {
@@ -110,16 +111,17 @@ export const validateLocation = (location: string): ValidationResult => {
  * - Must have proper domain format
  * - Cannot have spaces within the URL
  * - Max 100 characters
+ * - Automatically trims leading/trailing spaces
  */
 export const validateWebsite = (website: string): ValidationResult => {
-  const trimmed = website.trim();
-
   // Empty is valid (optional field)
-  if (!website || trimmed.length === 0) {
+  if (!website) {
     return { isValid: true };
   }
 
-  // Check if only spaces
+  const trimmed = website.trim();
+
+  // Check if only spaces (original has content but trimmed is empty)
   if (website.length > 0 && trimmed.length === 0) {
     return {
       isValid: false,
