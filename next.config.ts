@@ -1,4 +1,3 @@
-import { MEDIA_TYPES } from '@/features/media/constants/mediaTypes';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
@@ -38,6 +37,15 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'stsimpleappiee20o.blob.core.windows.net',
         pathname: '/media/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/a/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.googleusercontent.com',
       },
     ],
   },

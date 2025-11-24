@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { getColorFromLetter } from '@/constants/colors';
 
 interface AvatarProps {
@@ -59,20 +60,29 @@ const Avatar = ({
       style={positionStyle}
     >
       <div
-        className="w-full h-full rounded-full relative flex items-center justify-center"
+        className="w-full h-full rounded-full relative flex items-center justify-center overflow-hidden"
         style={{
-          backgroundImage: avatarImage ? `url(${avatarImage})` : 'none',
           backgroundColor: initial ? initial.color : '#333639',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
         }}
       >
-        {initial && (
-          <span
-            className={`${fontSizes[size]} font-bold text-white select-none`}
-          >
-            {initial.letter}
-          </span>
+        {avatarImage ? (
+          <Image
+            src={avatarImage}
+            alt={name || 'Avatar'}
+            fill
+            className="object-cover"
+            unoptimized
+            crossOrigin="anonymous"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          initial && (
+            <span
+              className={`${fontSizes[size]} font-bold text-white select-none`}
+            >
+              {initial.letter}
+            </span>
+          )
         )}
         {children}
       </div>

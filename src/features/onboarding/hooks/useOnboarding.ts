@@ -10,6 +10,7 @@ import {
   GetInterestsResponseDto,
 } from '../types/api';
 import { useAuthStore } from '@/features/authentication/store/authStore';
+import { authApi } from '@/features/authentication/services/authApi';
 
 // Query keys
 export const ONBOARDING_QUERY_KEYS = {
@@ -55,6 +56,8 @@ export const useUpdateDateOfBirth = () => {
             },
           });
         }
+        // Clear the cached user to force fresh fetch on next getCurrentUser call
+        authApi.clearUserCache();
       },
     }
   );
@@ -82,6 +85,8 @@ export const useUpdateInterests = () => {
           },
         });
       }
+      // Clear the cached user to force fresh fetch on next getCurrentUser call
+      authApi.clearUserCache();
     },
   });
 };
