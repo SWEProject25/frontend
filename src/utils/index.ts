@@ -186,3 +186,6 @@ export const parseFormattedDate = (
     return 'Invalid date';
   }
 };
+
+// Export profile validation utilities
+export * from './profileValidation';

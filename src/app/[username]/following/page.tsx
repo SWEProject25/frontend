@@ -46,8 +46,11 @@ export default function FollowingPage({ params }: FollowingPageProps) {
 
   if (isLoadingProfile) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader />
+      <div
+        className="flex items-center justify-center min-h-screen"
+        data-testid="following-page-loading"
+      >
+        <Loader data-testid="following-page-loader" />
       </div>
     );
   }
@@ -60,6 +63,7 @@ export default function FollowingPage({ params }: FollowingPageProps) {
         subtitle={`@${username}`}
         onBack={handleBack}
         showArrow={true}
+        data-testid="following-breadcrumb"
       />
 
       {/* Tabs */}
@@ -68,10 +72,11 @@ export default function FollowingPage({ params }: FollowingPageProps) {
         selectedValue="following"
         onClick={handleTabClick}
         height="h-[53px]"
+        data-testid="following-tabs"
       />
 
       {/* Following List */}
-      <FollowList query={followingQuery} />
+      <FollowList query={followingQuery} data-testid="following-list" />
     </div>
   );
 }

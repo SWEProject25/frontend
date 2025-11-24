@@ -11,6 +11,7 @@ interface TabsProps {
   selectedValue: string | number;
   onClick: (value: string) => void;
   height: string;
+  'data-testid'?: string;
 }
 
 export default function Tabs({
@@ -18,9 +19,13 @@ export default function Tabs({
   selectedValue,
   onClick,
   height,
+  'data-testid': testId,
 }: TabsProps) {
   return (
-    <div className={`flex w-full border-b border-border ${height}`}>
+    <div
+      className={`flex w-full border-b border-border ${height}`}
+      data-testid={testId}
+    >
       {tabs.map((tab, index) => (
         <Tab
           key={tab.value}
@@ -28,6 +33,7 @@ export default function Tabs({
           id={index}
           selected={tab.value === selectedValue}
           onClick={() => onClick(tab.value)}
+          data-testid={testId ? `${testId}-tab-${tab.value}` : undefined}
         />
       ))}
     </div>

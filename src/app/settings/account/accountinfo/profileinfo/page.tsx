@@ -9,6 +9,7 @@ import {
   isoStringToDatePickerValue,
   getBirthDateOrNull,
   datePickerValueToISOString,
+  validateProfileForm,
 } from '@/utils';
 import { DatePickerValue } from '@/components/ui/DatePicker';
 import EditProfileAvatar from '@/components/generic/components/EditProfileAvatar';
@@ -37,6 +38,9 @@ export default function ProfileInfoPage() {
   const [birth, setBirth] = useState<DatePickerValue>({});
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
 
   // Initialize form with profile data
   useEffect(() => {
@@ -64,6 +68,21 @@ export default function ProfileInfoPage() {
     // Clear previous messages
     setSuccess('');
     setError('');
+    setValidationErrors({});
+
+    // Validate form before saving
+    const validation = validateProfileForm({
+      name,
+      bio,
+      location,
+      website,
+    });
+
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      setError('Please fix the validation errors below');
+      return;
+    }
 
     const computeImagePayload = (
       file: File | null,
@@ -80,7 +99,7 @@ export default function ProfileInfoPage() {
       const v = value?.trim();
       const init = initial?.trim() ?? '';
       if (v === init) return undefined;
-      return value;
+      return v;
     };
 
     const birthDateValue = (() => {
@@ -222,6 +241,7 @@ export default function ProfileInfoPage() {
             setWebsite={setWebsite}
             birth={birth}
             setBirth={(v) => setBirth(v ?? {})}
+            errors={validationErrors}
             data-testid="profile-info-form"
           />
         </div>
