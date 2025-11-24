@@ -3,6 +3,20 @@ import { render, screen, waitFor } from '@/test/test-utils';
 import userEvent from '@testing-library/user-event';
 import ActionsPanel from '../ActionsPanel';
 
+// Mock Next.js router
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+  usePathname: () => '/test-path',
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 // Mock the dependencies
 vi.mock('../hooks', () => ({
   useProfile: () => ({
