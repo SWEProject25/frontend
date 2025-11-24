@@ -306,6 +306,8 @@ export const authApi = {
 
     const result = await handleResponse<MeResponse>(response);
 
+    console.log('📡 /me endpoint response:', JSON.stringify(result, null, 2));
+
     let user: UserResponse | undefined;
 
     if (result.status === 'success') {
@@ -315,6 +317,8 @@ export const authApi = {
         onboardingStatus: result.data.onboardingStatus,
       };
     }
+
+    console.log('📡 Normalized /me user:', JSON.stringify(user, null, 2));
 
     if (user) {
       cachedUser = user;
@@ -355,15 +359,37 @@ export const authApi = {
       if (!allowedOrigins.includes(event.origin)) return;
 
       const payload = event.data;
-      const { user, onboardingStatus } = payload.data;
+      console.log('oAuthData', JSON.stringify(payload.data));
 
-      if (user) {
-        // Merge user with onboardingStatus if available
+      // Handle nested user structure from OAuth response
+      const userData = payload.data?.user?.user || payload.data?.user;
+      const onboardingStatus =
+        payload.data?.user?.onboarding || payload.data?.onboarding;
+
+      if (userData) {
+        // Normalize the user response structure
         const userWithOnboarding: UserResponse = {
-          ...user,
-          onboardingStatus: onboardingStatus || user.onboardingStatus,
+          id: userData.id,
+          username: userData.username,
+          email: userData.email,
+          role: userData.role,
+          profile: {
+            name: userData.profile?.name || userData.name || '',
+            profileImageUrl:
+              userData.profile?.profileImageUrl ||
+              userData.profile?.profile_image_url ||
+              null,
+            birthDate:
+              userData.profile?.birthDate ||
+              userData.profile?.birth_date ||
+              null,
+          },
+          onboardingStatus: onboardingStatus || userData.onboardingStatus,
         };
-
+        console.log(
+          '🔐 OAuth normalized user:',
+          JSON.stringify(userWithOnboarding, null, 2)
+        );
         // Cache the merged user
         cachedUser = userWithOnboarding;
         cachedAt = Date.now();
@@ -419,5 +445,10 @@ export const authApi = {
     cachedAt = 0;
 
     return data;
+  },
+
+  clearUserCache(): void {
+    cachedUser = null;
+    cachedAt = 0;
   },
 };
