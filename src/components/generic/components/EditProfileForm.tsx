@@ -13,6 +13,7 @@ interface EditProfileFormProps {
   setWebsite: (v: string) => void;
   birth: DatePickerValue | undefined;
   setBirth: (v: DatePickerValue | undefined) => void;
+  errors?: Record<string, string>;
 }
 
 const EditProfileForm: React.FC<EditProfileFormProps> = ({
@@ -26,6 +27,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
   setWebsite,
   birth,
   setBirth,
+  errors = {},
 }) => (
   <div className="mt-20 space-y-6 mx-2" data-testid="edit-profile-form">
     <InputField
@@ -33,8 +35,9 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       label="Name"
       value={name}
       onChange={(e) => setName(e.target.value)}
-      maxLength={50}
+      maxLength={30}
       showCharCount
+      error={errors.name}
     />
     <InputField
       data-testid="edit-profile-bio-input"
@@ -44,6 +47,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       onChange={(e) => setBio(e.target.value)}
       maxLength={160}
       showCharCount
+      error={errors.bio}
     />
     <InputField
       data-testid="edit-profile-location-input"
@@ -52,6 +56,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       onChange={(e) => setLocation(e.target.value)}
       maxLength={30}
       showCharCount
+      error={errors.location}
     />
     <InputField
       data-testid="edit-profile-website-input"
@@ -60,6 +65,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       onChange={(e) => setWebsite(e.target.value)}
       maxLength={100}
       showCharCount
+      error={errors.website}
     />
     <div className="w-full" data-testid="edit-profile-birthdate">
       <label className="text-sm text-text-active  font-bold block mb-2 ml-2">

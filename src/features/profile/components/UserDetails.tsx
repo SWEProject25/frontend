@@ -20,6 +20,13 @@ const UserDetails = ({ joinDate, location, website }: UserDetailsProps) => {
       : `https://${normalizedWebsite}`
     : null;
 
+  // Truncate display text if longer than 20 characters
+  const displayWebsite = normalizedWebsite
+    ? normalizedWebsite.length > 20
+      ? `${normalizedWebsite.substring(0, 20)}...`
+      : normalizedWebsite
+    : null;
+
   return (
     <div
       className="flex flex-row items-center gap-2 sm:gap-3 flex-wrap"
@@ -48,8 +55,9 @@ const UserDetails = ({ joinDate, location, website }: UserDetailsProps) => {
             target="_blank"
             rel="noopener noreferrer"
             className="font-inter text-sm sm:text-base text-primary hover:underline"
+            title={normalizedWebsite || undefined}
           >
-            {normalizedWebsite}
+            {displayWebsite}
           </Link>
         </div>
       )}
