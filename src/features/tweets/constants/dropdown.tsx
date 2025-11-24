@@ -1,56 +1,69 @@
-import { TbSpeakerphone } from 'react-icons/tb';
-import { IoStatsChart } from 'react-icons/io5';
-import { TiVolumeMute } from 'react-icons/ti';
-import { FaUserPlus, FaListUl, FaBan, FaCode, FaFlag } from 'react-icons/fa';
-import { HiOutlineEmojiSad } from 'react-icons/hi';
+import {
+  NotInterstedIcon,
+  FollowIcon,
+  UnfollowIcon,
+  AddtoList,
+  MuteIcon,
+  BlockIcon,
+  EngagementsIcon,
+  EmbedIcon,
+  ReportIcon,
+  RequestCommunityIcon,
+} from '@/components/ui/icons/DropDownIcons';
 
 /**
- * Tweet dropdown menu items
+ * Tweet dropdown menu items generator
  */
-export const TWEET_DROPDOWN_ITEMS = [
+export const getTweetDropdownItems = ({
+  username = '@user',
+  isFollowed = false,
+}: {
+  username?: string;
+  isFollowed?: boolean;
+} = {}) => [
   {
     key: 'not_interested',
     label: 'Not interested in this post',
-    icon: <HiOutlineEmojiSad />,
+    icon: <NotInterstedIcon />,
   },
   {
     key: 'follow',
-    label: 'Follow @max_misk',
-    icon: <FaUserPlus />,
+    label: isFollowed ? `Unfollow ${username}` : `Follow ${username}`,
+    icon: isFollowed ? <UnfollowIcon /> : <FollowIcon />,
   },
   {
     key: 'lists',
     label: 'Add/remove from Lists',
-    icon: <FaListUl />,
+    icon: <AddtoList />,
   },
   {
     key: 'mute',
     label: 'Mute',
-    icon: <TiVolumeMute />,
+    icon: <MuteIcon />,
   },
   {
     key: 'block',
-    label: 'Block @max_misk',
-    icon: <FaBan />,
+    label: `Block ${username}`,
+    icon: <BlockIcon />,
   },
   {
     key: 'engagement',
     label: 'View post engagements',
-    icon: <IoStatsChart />,
+    icon: <EngagementsIcon />,
   },
   {
     key: 'embed',
     label: 'Embed post',
-    icon: <FaCode />,
+    icon: <EmbedIcon />,
   },
   {
     key: 'report',
     label: 'Report post',
-    icon: <FaFlag />,
+    icon: <ReportIcon />,
   },
   {
     key: 'community_note',
     label: 'Request Community Note',
-    icon: <TbSpeakerphone />,
+    icon: <RequestCommunityIcon />,
   },
 ];

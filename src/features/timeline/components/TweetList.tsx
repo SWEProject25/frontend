@@ -4,8 +4,10 @@ import { useTimelineFeed } from '../hooks/timelineQueries';
 import React from 'react';
 import Tweet from '@/features/tweets/components/Tweet';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
+import { useTweetStore } from '@/features/tweets/store/tweetStore';
 // import InfiniteScrollContainer from '@/components/generic/InfiniteScrollContainer';
 import Loader from '@/components/generic/Loader';
+import { TimelineFeedDtoResponse } from '../types/api';
 
 export default function TweetList() {
   const {
@@ -18,8 +20,17 @@ export default function TweetList() {
     hasNextPage,
   } = useTimelineFeed();
   console.log(data);
-
+  const setStoreTimeLine = useTweetStore((store) => store.setTimeLineFeed);
   const pages = data?.pages.flat();
+
+  // Store the first group of tweets in the store when data changes
+  React.useEffect(() => {
+    if (pages && pages.length > 0) {
+      // Type: TimelineFeedDtoResponse
+      setStoreTimeLine(pages[0] as TimelineFeedDtoResponse);
+    }
+  }, [pages, setStoreTimeLine]);
+
   const renderTweets = pages?.map((group, i) => (
     <React.Fragment key={i}>
       {group.data.posts.map((tweet, ind) => (

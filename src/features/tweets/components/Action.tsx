@@ -4,7 +4,9 @@ import {
   ACTION_GLOW_MAP,
   ACTION_ACTIVE_MAP,
 } from '../constants';
-
+{
+  /*before:z-[1]*/
+}
 function Action({
   icon,
   count,
@@ -53,7 +55,7 @@ function Action({
             before:rounded-full
             before:opacity-0
             group-hover:before:opacity-100
-            before:z-[1]
+            before:z-1               
             ${ACTION_GLOW_MAP[color]}
             transition-all
           `}

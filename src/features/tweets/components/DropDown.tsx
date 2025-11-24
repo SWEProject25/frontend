@@ -80,7 +80,7 @@ export default function DropDown({ children, items, onOpened }: DropProps) {
                   startContent={item.icon}
                   className={
                     borderRadius +
-                    'hover:bg-white/10 hover:backdrop-blur-sm transition-all duration-200 py-2.5'
+                    'hover:bg-white/10 hover:backdrop-blur-sm transition-all duration-200 py-2.5 font-bold'
                   }
                 >
                   {item.label}

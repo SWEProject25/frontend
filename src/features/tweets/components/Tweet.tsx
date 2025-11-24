@@ -12,9 +12,14 @@ import { TimelineFeed } from '@/features/timeline/types/api';
 import { useTweetStore } from '../store/tweetStore';
 import { DropIcon } from '@/components/ui/icons/UIIcons';
 import { GrokIcon } from '@/components/ui/icons/BrandIcons';
-import { TWEET_DROPDOWN_ITEMS } from '../constants';
+import { getTweetDropdownItems } from '../constants';
 
 export default function Tweet({ data }: { data: TimelineFeed }) {
+  const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
+    username: data.username,
+    isFollowed: data.isFollowedByMe,
+  });
+  if (data.name === 'Mohamed Sameh Albaz') console.log(data.isFollowedByMe);
   const [Hovered, setHovered] = useState(false);
   const router = useRouter();
   const user = {
