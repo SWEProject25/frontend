@@ -32,14 +32,16 @@ export default function FollowList({ query }: FollowListProps) {
         loadMore={fetchNextPage}
         hasMoreData={hasNextPage ?? false}
         hasInitialData={hasInitialData}
+        data-testid="follow-list-infinite-scroll"
       >
-        <div className="divide-y divide-border">
+        <div className="divide-y divide-border" data-testid="follow-list-items">
           {users.map((user) => {
             const isCurrentUser = currentUser?.username === user.username;
             return (
               <div
                 key={user.id}
                 className="p-4 hover:bg-muted transition-colors"
+                data-testid={`follow-list-item-${user.id}`}
               >
                 <UserCard
                   name={user.displayName}
@@ -50,6 +52,7 @@ export default function FollowList({ query }: FollowListProps) {
                   isFollowed={user.is_followed_by_me}
                   actionType={isCurrentUser ? undefined : 'follow'}
                   linkTo={`/${user.username}`}
+                  data-testid={`follow-list-user-card-${user.id}`}
                 />
               </div>
             );

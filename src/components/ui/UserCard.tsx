@@ -19,6 +19,7 @@ export interface UserCardProps {
   className?: string;
   onFollowChange?: (userId: number, isFollowed: boolean) => void;
   linkTo?: string; // Optional link to user profile
+  'data-testid'?: string;
 }
 
 export default function UserCard({
@@ -35,6 +36,7 @@ export default function UserCard({
   className = '',
   onFollowChange,
   linkTo,
+  'data-testid': testId,
 }: UserCardProps) {
   const userInfoContent = (
     <>
@@ -73,9 +75,14 @@ export default function UserCard({
   return (
     <div
       className={`flex items-start justify-between w-full gap-3 ${className}`}
+      data-testid={testId}
     >
       {linkTo ? (
-        <Link href={linkTo} className="flex items-start gap-3 flex-1 min-w-0">
+        <Link
+          href={linkTo}
+          className="flex items-start gap-3 flex-1 min-w-0"
+          data-testid={testId ? `${testId}-link` : undefined}
+        >
           {userInfoContent}
         </Link>
       ) : (
