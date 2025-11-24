@@ -39,9 +39,9 @@ export default function FollowList({ query }: FollowListProps) {
                 handle={`@${user.username}`}
                 verified={user.verified}
                 avatarUrl={user.profileImageUrl ?? undefined}
-                bio={user.bio ?? undefined}
                 isFollowed={user.is_followed_by_me ?? true}
                 actionType="follow"
+                linkTo={`/${user.username}`}
               />
             </div>
           ))}
