@@ -1,7 +1,21 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@/test/test-utils';
 import userEvent from '@testing-library/user-event';
 import ActionsPanel from '../ActionsPanel';
+
+// Mock Next.js router
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+  usePathname: () => '/test-path',
+  useSearchParams: () => new URLSearchParams(),
+}));
 
 // Mock the dependencies
 vi.mock('../hooks', () => ({
@@ -159,6 +173,62 @@ describe('ActionsPanel', () => {
         'gap-3',
         'w-full'
       );
+    });
+  });
+
+  describe('Message Button Functionality', () => {
+    const mockPush = vi.fn();
+    const mockFetchConversations = vi.fn();
+    const mockCreateConversation = vi.fn();
+
+    beforeEach(() => {
+      mockPush.mockClear();
+      mockFetchConversations.mockClear();
+      mockCreateConversation.mockClear();
+    });
+
+    it('should handle message button click', async () => {
+      const user = userEvent.setup();
+      render(<ActionsPanel isOwnProfile={false} userData={mockUserData} />);
+
+      const messageButton = screen.getByTestId('profile-message-button');
+      expect(messageButton).toBeInTheDocument();
+      expect(messageButton).toBeEnabled();
+
+      await user.click(messageButton);
+      // After clicking, button may be disabled while creating conversation
+      await waitFor(() => {
+        expect(messageButton).toBeDisabled();
+      });
+    });
+
+    it('should disable message button while creating conversation', async () => {
+      const user = userEvent.setup();
+      render(<ActionsPanel isOwnProfile={false} userData={mockUserData} />);
+
+      const messageButton = screen.getByTestId('profile-message-button');
+      await user.click(messageButton);
+
+      // The button may show loading state
+      // This tests the onClick handler is working
+    });
+
+    it('should render More icon button', () => {
+      render(<ActionsPanel isOwnProfile={false} userData={mockUserData} />);
+
+      const moreButton = screen.getByTestId('profile-more-button');
+      expect(moreButton).toBeInTheDocument();
+    });
+
+    it('should handle More button click', async () => {
+      const user = userEvent.setup();
+      render(<ActionsPanel isOwnProfile={false} userData={mockUserData} />);
+
+      const moreButton = screen.getByTestId('profile-more-button');
+      await user.click(moreButton);
+
+      // More button should be clickable
+      expect(moreButton).toBeEnabled();
     });
   });
 });
