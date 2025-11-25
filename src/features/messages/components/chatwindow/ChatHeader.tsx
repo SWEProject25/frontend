@@ -1,6 +1,5 @@
+import { useRouter } from 'next/navigation';
 import Avatar from '@/components/generic/Avatar';
-import { Info } from 'lucide-react';
-import TypingIndicator from './TypingIndicator';
 
 interface ChatHeaderProps {
   name: string;
@@ -15,20 +14,34 @@ export default function ChatHeader({
   username,
   avatar,
   isVerified,
-  isTyping,
 }: ChatHeaderProps) {
+  const router = useRouter();
+
+  const handleProfileClick = () => {
+    router.push(`/${username}`);
+  };
+
   return (
     <div className="shrink-0 bg-black/80 backdrop-blur-sm z-10 border-b border-gray-800">
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
-          <Avatar
-            avatarImage={avatar}
-            name={name}
-            size="sm"
-            position="relative"
-            className="shrink-0"
-          />
-          <div>
+          <button
+            onClick={handleProfileClick}
+            className="shrink-0 hover:opacity-80 transition-opacity"
+            aria-label={`View ${name}'s profile`}
+          >
+            <Avatar
+              avatarImage={avatar || null}
+              name={name}
+              size="sm"
+              position="relative"
+              className="shrink-0"
+            />
+          </button>
+          <button
+            onClick={handleProfileClick}
+            className="text-left hover:opacity-80 transition-opacity"
+          >
             <div className="flex items-center gap-1">
               <h3 className="font-bold text-white">{name}</h3>
               {isVerified && (
@@ -42,10 +55,8 @@ export default function ChatHeader({
               )}
             </div>
             <span className="text-sm text-gray-500">@{username}</span>
-            {isTyping && <TypingIndicator />}
-          </div>
+          </button>
         </div>
-        <Info className="w-5 h-5 text-gray-400 cursor-pointer hover:text-white transition-colors" />
       </div>
     </div>
   );

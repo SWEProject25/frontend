@@ -11,6 +11,7 @@ interface InfiniteScrollProps {
   hasInitialData: boolean;
   loader?: React.ReactNode;
   threshold?: number;
+  'data-testid'?: string;
 }
 
 export default function InfiniteScroll({
@@ -22,6 +23,7 @@ export default function InfiniteScroll({
   hasInitialData,
   loader,
   threshold = 100,
+  'data-testid': testId,
 }: InfiniteScrollProps) {
   const observerElement = useRef<HTMLDivElement | null>(null);
   useEffect(
@@ -52,11 +54,14 @@ export default function InfiniteScroll({
     [isLoadingMore, isLoadingInitial, loadMore, hasMoreData, threshold]
   );
   return (
-    <>
+    <div data-testid={testId}>
       <>{children}</>
       <div ref={observerElement}>
         {isLoadingMore && !isLoadingInitial && (
-          <div className="flex justify-center items-center py-4">
+          <div
+            className="flex justify-center items-center py-4"
+            data-testid={testId ? `${testId}-loading-more` : undefined}
+          >
             {loader || <Loader />}
           </div>
         )}
@@ -64,7 +69,10 @@ export default function InfiniteScroll({
           !isLoadingMore &&
           !isLoadingInitial &&
           hasInitialData && (
-            <div className="flex flex-col items-center justify-center py-8 px-4">
+            <div
+              className="flex flex-col items-center justify-center py-8 px-4"
+              data-testid={testId ? `${testId}-end-message` : undefined}
+            >
               <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
                 You&apos;ve reached the end
               </p>
@@ -72,7 +80,10 @@ export default function InfiniteScroll({
             </div>
           )}
         {!hasInitialData && (
-          <div className="flex flex-col items-center justify-center py-12 px-4">
+          <div
+            className="flex flex-col items-center justify-center py-12 px-4"
+            data-testid={testId ? `${testId}-no-data` : undefined}
+          >
             <p className="text-gray-600 dark:text-gray-300 text-lg font-semibold mb-2">
               No data available
             </p>
@@ -87,6 +98,6 @@ export default function InfiniteScroll({
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

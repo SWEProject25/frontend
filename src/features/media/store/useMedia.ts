@@ -17,8 +17,8 @@ const useMedia = create<MediaState>()(
     media: [],
     addMedia: (newMedia) =>
       set((state) => {
-        const mediaWithIndx: mediaType[] = newMedia.map((med) => ({
-          id: `${med.lastModified}${new Date().getTime()}`,
+        const mediaWithIndx: mediaType[] = newMedia.map((med, ind) => ({
+          id: `${med.lastModified}${new Date().getTime()}${med.name}${ind}`,
           type: 'localMedia',
           data: med,
         }));

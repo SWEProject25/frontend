@@ -21,6 +21,7 @@ export default function ConversationsList({
     showNewConvoModal,
     newUserId,
     creatingConvo,
+    unseenConversationsCount,
     setShowNewConvoModal,
     setNewUserId,
     handleCreateConversation,
@@ -29,7 +30,9 @@ export default function ConversationsList({
 
   return (
     <div className="w-full h-full flex flex-col bg-black">
-      <ConversationsHeader onNewMessage={() => setShowNewConvoModal(true)} />
+      <ConversationsHeader
+        unseenConversationsCount={unseenConversationsCount}
+      />
 
       {/* Conversations List */}
       <div className="flex-1 overflow-y-auto">
@@ -59,6 +62,7 @@ export default function ConversationsList({
                 timestamp={display.timestamp}
                 isSelected={Number(selectedConversation) === conversation.id}
                 isTyping={display.isTyping}
+                unseenCount={display.unseenCount}
                 onClick={() => onSelectConversation(String(conversation.id))}
               />
             );

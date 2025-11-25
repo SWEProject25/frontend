@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useMessageStore } from '../../store/useMessageStore';
 import { fetchConversations, createConversation } from '../../api/messages';
 import { useAuthStore } from '../../../authentication/store/authStore';
@@ -11,68 +11,58 @@ export function useConversationsList(
   const [showNewConvoModal, setShowNewConvoModal] = useState(false);
   const [newUserId, setNewUserId] = useState('');
   const [creatingConvo, setCreatingConvo] = useState(false);
-  const [lastMessageIds, setLastMessageIds] = useState<Record<number, number>>(
-    {}
-  );
 
   const conversations = useMessageStore((s) => s.conversations);
-  const allMessages = useMessageStore((s) => s.messages);
   const typingUsers = useMessageStore((s) => s.typingUsers);
+  const allMessages = useMessageStore((s) => s.messages);
   const setConversations = useMessageStore((s) => s.setConversations);
 
   const user = useAuthStore((s) => s.user);
   const currentUserId = (user as { id?: number })?.id ?? null;
 
-  // Update conversations with last message when messages change
-  useEffect(() => {
-    if (conversations.length === 0) return;
+  // Helper to check if a conversation has any unseen messages
+  const hasUnseenMessages = useCallback(
+    (conversationId: number): boolean => {
+      const messages = allMessages[conversationId] || [];
 
-    const currentLastMessageIds: Record<number, number> = {};
-    let hasChanges = false;
+      // Check if there are any messages that are not seen and not sent by current user
+      const hasUnseen = messages.some(
+        (msg) => !msg.isSeen && msg.senderId !== currentUserId
+      );
 
-    const updatedConversations = conversations.map((conv) => {
-      const convId = conv.conversationId || conv.id;
-      const messages = allMessages[convId!] || [];
-      const lastMessage =
-        messages.length > 0 ? messages[messages.length - 1] : undefined;
-
-      if (lastMessage) {
-        currentLastMessageIds[convId!] = lastMessage.id;
-        if (lastMessageIds[convId!] !== lastMessage.id) {
-          hasChanges = true;
-        }
-      }
-
-      return {
-        ...conv,
-        lastMessage,
-      };
-    });
-
-    if (hasChanges) {
-      setLastMessageIds(currentLastMessageIds);
-      // Sort by most recent message
-      const sorted = updatedConversations.sort((a, b) => {
-        const aTime = a.lastMessage?.createdAt
-          ? new Date(a.lastMessage.createdAt).getTime()
-          : 0;
-        const bTime = b.lastMessage?.createdAt
-          ? new Date(b.lastMessage.createdAt).getTime()
-          : 0;
-        return bTime - aTime;
+      console.log(`📊 Unseen check for conversation ${conversationId}:`, {
+        totalMessages: messages.length,
+        currentUserId,
+        hasUnseen,
       });
-      setConversations(sorted);
-    }
-  }, [allMessages, conversations, lastMessageIds, setConversations]);
 
-  // Load conversations on mount
+      return hasUnseen;
+    },
+    [allMessages, currentUserId]
+  );
+
+  // Calculate total number of conversations with unseen messages
+  const unseenConversationsCount = useMemo(() => {
+    return conversations.filter((conv) => {
+      const convId = conv.conversationId || conv.id;
+      return convId ? hasUnseenMessages(convId) : false;
+    }).length;
+  }, [conversations, hasUnseenMessages]);
+
+  // Load conversations on mount - only if not already loaded
   useEffect(() => {
+    // Skip if conversations are already loaded
+    if (conversations.length > 0) {
+      console.log('✅ Using cached conversations, skipping fetch');
+      return;
+    }
+
     const loadConversations = async () => {
       setLoading(true);
       setError(null);
       try {
         const conversations = await fetchConversations();
-        console.log('📥 Raw conversations from backend:', conversations);
+        console.log('📥 Fetching conversations from backend:', conversations);
 
         if (Array.isArray(conversations)) {
           const normalizedConversations = conversations.map(
@@ -95,7 +85,7 @@ export function useConversationsList(
     };
 
     loadConversations();
-  }, [setConversations]);
+  }, [setConversations, conversations.length]);
 
   const handleCreateConversation = useCallback(async () => {
     const userId = parseInt(newUserId);
@@ -170,6 +160,7 @@ export function useConversationsList(
       isTyping: boolean;
       lastMessageText: string;
       timestamp: string;
+      unseenCount: number;
     } => {
       console.log('🔍 Processing conversation for display:', conversation);
 
@@ -225,6 +216,9 @@ export function useConversationsList(
         ? formatTimestamp(lastMessageObj.createdAt as string)
         : '';
 
+      // Check if conversation has unseen messages (returns 1 if yes, 0 if no)
+      const unseenCount = hasUnseenMessages(convId as number) ? 1 : 0;
+
       return {
         displayName,
         displayUsername,
@@ -233,9 +227,10 @@ export function useConversationsList(
         isTyping,
         lastMessageText,
         timestamp,
+        unseenCount,
       };
     },
-    [typingUsers, formatTimestamp, currentUserId]
+    [typingUsers, formatTimestamp, currentUserId, hasUnseenMessages]
   );
 
   return {
@@ -246,6 +241,7 @@ export function useConversationsList(
     showNewConvoModal,
     newUserId,
     creatingConvo,
+    unseenConversationsCount,
 
     // Setters
     setShowNewConvoModal,

@@ -1,16 +1,11 @@
-import { Edit2, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 interface MessageMenuProps {
   show: boolean;
-  onEdit: () => void;
   onDelete: () => void;
 }
 
-export default function MessageMenu({
-  show,
-  onEdit,
-  onDelete,
-}: MessageMenuProps) {
+export default function MessageMenu({ show, onDelete }: MessageMenuProps) {
   if (!show) return null;
 
   return (
@@ -23,25 +18,12 @@ export default function MessageMenu({
       "
     >
       <button
-        onClick={onEdit}
-        className="
-          w-full px-4 py-2 text-left text-sm
-          text-blue-400 hover:bg-gray-800
-          flex items-center gap-2
-          border-b border-gray-700
-          transition-colors
-        "
-      >
-        <Edit2 className="w-4 h-4" />
-        Edit message
-      </button>
-      <button
         onClick={onDelete}
         className="
           w-full px-4 py-2 text-left text-sm
           text-red-400 hover:bg-gray-800
           flex items-center gap-2
-          rounded-b-lg transition-colors
+          rounded-lg transition-colors
         "
       >
         <Trash2 className="w-4 h-4" />

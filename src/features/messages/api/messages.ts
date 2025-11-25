@@ -25,6 +25,33 @@ export const fetchConversations = async (page?: number, limit?: number) => {
   return response;
 };
 
+export const fetchConversationById = async (conversationId: number) => {
+  const url = MESSAGES_ENDPOINTS.GET_CONVERSATION_BY_ID(conversationId);
+
+  const res = await fetch(url, {
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) {
+      throw new Error('Authentication token is missing or invalid');
+    }
+    if (res.status === 404) {
+      throw new Error('Conversation not found');
+    }
+    throw new Error('Failed to fetch conversation');
+  }
+
+  const response = await res.json();
+
+  // Backend returns: { status: 'success', data: {...} }
+  if (response.status === 'success' && response.data) {
+    return response.data;
+  }
+
+  return response;
+};
+
 export const fetchMessages = async (
   conversationId: number,
   lastMessageId?: number,

@@ -18,27 +18,17 @@ interface MessageItemProps {
   message: Message;
   isCurrentUser: boolean;
   onDelete: (messageId: number) => void;
-  onEdit: (messageId: number, newText: string) => void;
 }
 
 export default function MessageItem({
   message,
   isCurrentUser,
   onDelete,
-  onEdit,
 }: MessageItemProps) {
-  const {
-    showMenu,
-    isEditing,
-    editText,
-    setEditText,
-    handleDelete,
-    handleEdit,
-    handleSaveEdit,
-    handleCancelEdit,
-    toggleMenu,
-    closeMenu,
-  } = useMessageItem(message, onDelete, onEdit);
+  const { showMenu, handleDelete, toggleMenu, closeMenu } = useMessageItem(
+    message,
+    onDelete
+  );
 
   return (
     <div
@@ -46,15 +36,7 @@ export default function MessageItem({
       onMouseLeave={closeMenu}
     >
       <div className="relative max-w-[70%]">
-        <MessageBubble
-          message={message}
-          isCurrentUser={isCurrentUser}
-          isEditing={isEditing}
-          editText={editText}
-          onEditTextChange={setEditText}
-          onSaveEdit={handleSaveEdit}
-          onCancelEdit={handleCancelEdit}
-        />
+        <MessageBubble message={message} isCurrentUser={isCurrentUser} />
 
         {/* More button - shows on hover */}
         {isCurrentUser && (
@@ -73,11 +55,7 @@ export default function MessageItem({
           </button>
         )}
 
-        <MessageMenu
-          show={showMenu}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+        <MessageMenu show={showMenu} onDelete={handleDelete} />
       </div>
     </div>
   );

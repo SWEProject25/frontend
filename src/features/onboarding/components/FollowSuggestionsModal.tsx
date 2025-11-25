@@ -6,6 +6,7 @@ import { AuthButton } from '@/components/ui/AuthButton';
 import UserCard from '@/components/ui/UserCard';
 import { useSuggestedUsers } from '../hooks/useOnboarding';
 import { useAuthStore } from '@/features/authentication/store/authStore';
+import { authApi } from '@/features/authentication/services/authApi';
 
 interface FollowSuggestionsModalProps {
   isOpen: boolean;
@@ -50,6 +51,8 @@ export default function FollowSuggestionsModal({
           hasCompeletedFollowing: true,
         },
       });
+      // Clear the cached user to force fresh fetch on next getCurrentUser call
+      authApi.clearUserCache();
       onComplete();
     }
   };
@@ -83,7 +86,7 @@ export default function FollowSuggestionsModal({
       <div className="flex flex-col h-full max-h-[700px]">
         {/* Header */}
         <div className="px-8 pt-5 pb-8">
-          <h2 className="text-[31px] font-bold text-foreground mb-2 leading-[36px]">
+          <h2 className="text-[31px] font-bold text-foreground mb-2 leading-9">
             Don&apos;t miss out
           </h2>
           <p className="text-text-inactive text-[15px] leading-5">

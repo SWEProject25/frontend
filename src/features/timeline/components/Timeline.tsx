@@ -13,7 +13,7 @@ export default function Timeline() {
         data-testid="timeline-content"
       >
         <AddTweet />
-        <ShowTweets />
+        {/* <ShowTweets /> */}
         {/* <TweetFeed /> */}
         <TweetList />
         {/* <Tweets /> */}

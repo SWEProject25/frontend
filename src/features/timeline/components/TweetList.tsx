@@ -63,7 +63,9 @@ export default function TweetList() {
         hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
         hasInitialData={hasInitialData}
       >
-        <div className="flex flex-col w-full">{renderTweets} </div>
+        <div className="flex flex-col w-full" data-testid="render-tweet-list">
+          {renderTweets}{' '}
+        </div>
         {/* <ul className="w-full">{renderTweets} </ul> */}
       </InfiniteScroll>
     </>
