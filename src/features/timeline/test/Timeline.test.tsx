@@ -52,9 +52,9 @@ describe('render Timeline Header ', () => {
   it('render Tabs in header', () => {
     const { getByTestId, getAllByTestId } = render(<Header />);
     const timelineTab = getByTestId('timeline-header');
-    const tabs = getAllByTestId(/tab/);
-    const tab1 = getByTestId('following-tab');
-    const tab2 = getByTestId('for-you-tab');
+    const tabs = getAllByTestId(/timeline-tabs-tab/);
+    const tab1 = getByTestId('timeline-tabs-tab-Following');
+    const tab2 = getByTestId('timeline-tabs-tab-ForYou');
     expect(timelineTab).toBeInTheDocument();
     expect(tab1).toBeInTheDocument();
     expect(tab2).toBeInTheDocument();
@@ -62,8 +62,8 @@ describe('render Timeline Header ', () => {
   });
   it('selcect tab in header', () => {
     const { getByTestId } = render(<Header />);
-    const tab1 = getByTestId('following-tab');
-    const tab2 = getByTestId('for-you-tab');
+    const tab1 = getByTestId('timeline-tabs-tab-Following');
+    const tab2 = getByTestId('timeline-tabs-tab-ForYou');
 
     fireEvent.click(tab2);
     const { result: resultForU } = renderHook(() => useSelectedTab());
@@ -78,7 +78,7 @@ describe('render Timeline Header ', () => {
     global.fetch = jest.fn();
     const { getByTestId } = render(<Header />);
     customRender(<TweetList />);
-    const tab2 = getByTestId('for-you-tab');
+    const tab2 = getByTestId('timeline-tabs-tab-ForYou');
     console.log(global.fetch);
     expect(global.fetch).toHaveBeenCalledWith(
       API_CONFIG.BASE_URL +
