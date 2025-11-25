@@ -8,6 +8,7 @@ interface BreadcrumbProps {
   onBack?: () => void;
   showArrow?: boolean;
   showSubtitleOnMobile?: boolean;
+  'data-testid'?: string;
 }
 
 export default function Breadcrumb({
@@ -17,21 +18,26 @@ export default function Breadcrumb({
   onBack,
   showArrow,
   showSubtitleOnMobile = false,
+  'data-testid': testId,
 }: BreadcrumbProps) {
   return (
-    <div className="sm:p-4 p-2 w-full">
+    <div className="sm:p-4 p-2 w-full" data-testid={testId}>
       <div className="flex items-center gap-4">
         {onBack && (
           <button
             onClick={onBack}
             className={`${showArrow && showArrow == true ? '' : 'lg:hidden'} hover:bg-muted rounded-full transition-colors cursor-pointer`}
             aria-label="Go back"
+            data-testid={testId ? `${testId}-back-button` : undefined}
           >
             <ArrowLeftIcon className="w-5 h-5 text-text-active" />
           </button>
         )}
         <div className="flex flex-col gap-0">
-          <h1 className="xs:text-[15px] text-[12px] mt-2 xs:mt-0 font-bold text-text-active">
+          <h1
+            className="xs:text-[15px] text-[12px] mt-2 xs:mt-0 font-bold text-text-active"
+            data-testid={testId ? `${testId}-title` : undefined}
+          >
             {title}
           </h1>
           {subtitle && (
@@ -39,6 +45,7 @@ export default function Breadcrumb({
               className={`text-[12px] text-text-secondary ${
                 showSubtitleOnMobile ? '' : 'xs:hidden'
               }`}
+              data-testid={testId ? `${testId}-subtitle` : undefined}
             >
               {subtitle}
             </p>

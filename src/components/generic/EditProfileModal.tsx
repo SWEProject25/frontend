@@ -5,6 +5,7 @@ import {
   isoStringToDatePickerValue,
   getBirthDateOrNull,
   datePickerValueToISOString,
+  validateProfileForm,
 } from '@/utils';
 import { DatePickerValue } from '@/components/ui/DatePicker';
 import EditProfileHeader from './components/EditProfileHeader';
@@ -58,8 +59,24 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [birth, setBirth] = useState<DatePickerValue>(() => {
     return isoStringToDatePickerValue(initialData.birthDate) ?? {};
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSave = () => {
+    // Validate form before saving
+    const validation = validateProfileForm({
+      name,
+      bio,
+      location,
+      website,
+    });
+
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+      return;
+    }
+
+    // Clear errors if validation passes
+    setErrors({});
     const computeImagePayload = (
       file: File | null,
       preview: string | undefined,
@@ -75,7 +92,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       const v = value?.trim();
       const init = initial?.trim() ?? '';
       if (v === init) return undefined;
-      return value;
+      return v; // Return trimmed value instead of original
     };
 
     onSave({
@@ -133,6 +150,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     setProfilePreview(initialData.profileImage ?? undefined);
     setBannerPreview(initialData.bannerImage ?? undefined);
     setBirth(isoStringToDatePickerValue(initialData.birthDate) ?? {});
+    setErrors({});
   };
 
   const onCloseModal = () => {
@@ -151,6 +169,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       setProfilePreview(initialData.profileImage ?? undefined);
       setBannerPreview(initialData.bannerImage ?? undefined);
       setBirth(isoStringToDatePickerValue(initialData.birthDate) ?? {});
+      setErrors({});
     }
   }, [isOpen, initialData]);
 
@@ -191,6 +210,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             setWebsite={setWebsite}
             birth={birth}
             setBirth={(v) => setBirth(v ?? {})}
+            errors={errors}
           />
         </div>
       </div>

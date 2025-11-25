@@ -23,7 +23,6 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
     handleKeyPress,
     handleTyping,
     handleDeleteMessage,
-    handleEditMessage,
     isMyMessage,
   } = useChatWindow(conversationId);
 
@@ -81,8 +80,8 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
         conversationUsername={conversationDetails.username}
         conversationAvatar={conversationDetails.avatar}
         onDeleteMessage={handleDeleteMessage}
-        onEditMessage={handleEditMessage}
         isMyMessage={isMyMessage}
+        isTyping={isTyping}
       />
 
       <ChatInput

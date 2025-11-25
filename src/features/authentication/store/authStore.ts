@@ -15,6 +15,10 @@ export const useAuthStore = create<AuthStore>()(
 
     // Actions
     setUser: (user: UserResponse) => {
+      console.log(
+        '🔵 Auth Store - Setting user:',
+        JSON.stringify(user, null, 2)
+      );
       set({ user, isAuthenticated: true });
     },
 
