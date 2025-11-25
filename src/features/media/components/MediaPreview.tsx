@@ -16,6 +16,7 @@ export default function MediaPreview() {
   return (
     <div>
       <div
+        data-testid="media-preview"
         className={`${media.length == 1 ? 'w-full' : ' grid grid-cols-2 gap-1 max-h-[250px]'} max-w-[514px] mx-auto rounded-2xl overflow-hidden`}
       >
         <div className="relative">

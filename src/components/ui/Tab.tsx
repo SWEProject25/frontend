@@ -8,7 +8,7 @@ interface TabOptions {
 export default function Tab({ text, id, selected, onClick }: TabOptions) {
   return (
     <div
-      data-testid="tab"
+      data-testid={`${text.toLowerCase().replace(/\s+/g, '-')}-tab`}
       onClick={() => onClick(id)}
       className="flex flex-1 flex-col h-full items-center justify-center px-4 relative hover:cursor-pointer hover:bg-white/12"
     >
