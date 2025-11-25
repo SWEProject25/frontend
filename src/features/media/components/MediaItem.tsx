@@ -33,7 +33,7 @@ export default function MediaItem({
           alt={media.type === LOCAL_MEDIA ? media.data.name : media.data.title}
         />
       ) : (
-        <Video video={media.data} />
+        <Video id={media.id} video={media.data} />
       )}
       <div className="absolute top-0 left-2 right-2 flex justify-between ">
         <button className="px-4 py-1.5 bg-media-button cursor-pointer hover:bg-media-button-hover text-white text-sm font-semibold rounded-full">

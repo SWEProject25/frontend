@@ -15,7 +15,7 @@ export default function Tab({
 }: TabOptions) {
   return (
     <div
-      data-testid={testId || 'tab'}
+      data-testid={testId || `${text.toLowerCase().replace(/\s+/g, '-')}-tab`}
       onClick={() => onClick(id)}
       className="flex flex-1 flex-col h-full items-center justify-center px-4 relative hover:cursor-pointer hover:bg-white/12"
     >
