@@ -27,10 +27,11 @@ import {
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
 } from '../constants/tweetConstants';
+import { vi, beforeAll } from 'vitest';
 
 // npx jest pathToFoler
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
 }));
 beforeAll(() => {
   process.env.NEXT_PUBLIC_API_BASE_URL = 'localhost/500';
@@ -75,7 +76,7 @@ describe('render Timeline Header ', () => {
     expect(tabFollowing).toBe(FOLLOWING_TAB);
   });
   it('expecting calling api when select tab', async () => {
-    global.fetch = jest.fn();
+    global.fetch = vi.fn();
     const { getByTestId } = render(<Header />);
     customRender(<TweetList />);
     const tab2 = getByTestId('timeline-tabs-tab-ForYou');
@@ -179,7 +180,7 @@ describe('test add tweet component', () => {
 
 describe('send post', () => {
   it('test try to add empty tweet', () => {
-    global.fetch = jest.fn();
+    global.fetch = vi.fn();
     const { getByTestId } = render(<AddTweet />, { wrapper });
     const { result } = renderHook(() => useAddTweetStore(), { wrapper });
     console.log(result.current.isSending);
@@ -192,7 +193,7 @@ describe('send post', () => {
     );
   });
   beforeEach(() => {
-    (global.fetch as any) = jest.fn(() =>
+    (global.fetch as any) = vi.fn(() =>
       Promise.resolve({
         ok: true,
         status: 200,
@@ -204,7 +205,7 @@ describe('send post', () => {
           }),
       })
     );
-    global.URL.createObjectURL = jest.fn();
+    global.URL.createObjectURL = vi.fn();
   });
   it('try to send post with only media and clear media after post ( which is valid :) )', async () => {
     const { getByTestId, queryByTestId } = render(<AddTweet />, {
@@ -294,7 +295,7 @@ describe('send post', () => {
     expect(resultText.current.tweetText.length).toBe(0);
   });
   it('excced text length to send post', async () => {
-    (global.fetch as any) = jest.fn(() =>
+    (global.fetch as any) = vi.fn(() =>
       Promise.resolve({
         ok: false,
         status: 400,
