@@ -115,7 +115,7 @@ export function useOptimisticTweet() {
       queryClient.getQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
         queryKey
       );
-    console.log(previousFeed);
+    //console.log(previousFeed);
     const timelineFeed = updateTweetInInfiniteData(
       previousFeed,
       tweetId,
@@ -128,7 +128,7 @@ export function useOptimisticTweet() {
       queryKey,
       timelineFeed?.newFeed
     );
-    console.log(timelineFeed?.newFeed);
+    //console.log(timelineFeed?.newFeed);
     const newTweet = timelineFeed?.newTweet ?? null;
     const oldTweet = timelineFeed?.oldTweet ?? null;
     setCurrentTweet(newTweet);

@@ -9,6 +9,8 @@ import {
   EmbedIcon,
   ReportIcon,
   RequestCommunityIcon,
+  CopyLinkIcon,
+  SendViaMsgICon,
 } from '@/components/ui/icons/DropDownIcons';
 
 /**
@@ -65,5 +67,18 @@ export const getTweetDropdownItems = ({
     key: 'community_note',
     label: 'Request Community Note',
     icon: <RequestCommunityIcon />,
+  },
+];
+
+export const getShareDropdownItems = () => [
+  {
+    key: 'copy_link',
+    label: 'copy link',
+    icon: <CopyLinkIcon />,
+  },
+  {
+    key: 'send_via_message',
+    label: 'Send via Direct Message',
+    icon: <SendViaMsgICon />,
   },
 ];

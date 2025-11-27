@@ -19,7 +19,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     username: data.username,
     isFollowed: data.isFollowedByMe,
   });
-  if (data.name === 'Mohamed Sameh Albaz') console.log(data.isFollowedByMe);
+  // if (data.name === 'Mohamed Sameh Albaz') console.log(data.isFollowedByMe);
   const [Hovered, setHovered] = useState(false);
   const router = useRouter();
   const user = {
@@ -47,7 +47,9 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     isFollowedByMe: data.isFollowedByMe,
     isRepostedByMe: data.isRepostedByMe,
   };
-
+  function onSelect(key: string) {
+    console.log('Selected item key:', key);
+  }
   const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
   return (
     <div
@@ -79,7 +81,11 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
                 label="Explain this post"
                 color="blue"
               />
-              <DropDown items={TWEET_DROPDOWN_ITEMS} onOpened={setHovered}>
+              <DropDown
+                items={TWEET_DROPDOWN_ITEMS}
+                onOpened={setHovered}
+                onSelect={onSelect}
+              >
                 <Action
                   icon={<DropIcon />} // smaller icon
                   label="more"
@@ -90,7 +96,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
             </div>
           </div>
           <Content content={content} />
-          <Actions stats={actionsStats} />
+          <Actions stats={actionsStats} onOpened={setHovered} />
         </div>
       </div>
     </div>

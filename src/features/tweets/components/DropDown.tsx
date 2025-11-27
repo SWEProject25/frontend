@@ -23,9 +23,16 @@ type DropProps = {
       | 'danger';
   }[];
   onOpened?: (opened: boolean) => void;
+  onSelect?: (key: string) => void; // Added prop
 };
 
-export default function DropDown({ children, items, onOpened }: DropProps) {
+export default function DropDown({
+  children,
+  items,
+  onOpened,
+  onSelect,
+}: DropProps) {
+  // console.log('DropDown rendered');
   const [isOpened, setIsOpened] = useState(false);
   return (
     <div className="relative" data-testid="tweet-dropdown">
@@ -82,6 +89,10 @@ export default function DropDown({ children, items, onOpened }: DropProps) {
                     borderRadius +
                     'hover:bg-white/10 hover:backdrop-blur-sm transition-all duration-200 py-2.5 font-bold'
                   }
+                  onClick={() => {
+                    if (onSelect) onSelect(item.key);
+                    setIsOpened(false);
+                  }}
                 >
                   {item.label}
                 </DropdownItem>
