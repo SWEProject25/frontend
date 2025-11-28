@@ -35,8 +35,8 @@ export const useToggleLikeTweet = (
   isRepost: boolean,
   isQuote: boolean,
   userId: number,
-  type: string,
-  parentId?: number
+  parentId?: number,
+  type: string = 'POST'
 ) => {
   const queryClient = useQueryClient();
   const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
@@ -72,8 +72,8 @@ export const useToggleRepostTweet = (
   isRepost: boolean,
   isQuote: boolean,
   userId: number,
-  type: string,
-  parentId?: number
+  parentId?: number,
+  type: string = 'POST'
 ) => {
   const queryClient = useQueryClient();
   const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();

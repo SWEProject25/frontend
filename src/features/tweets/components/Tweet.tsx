@@ -36,7 +36,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     isQuote: data.isQuote,
     userId: data.userId,
     likesCount: data.likesCount,
-    type: data?.type ?? 'POST',
+    type: data?.type,
     parentId: data?.parentId,
     retweetsCount: data.retweetsCount,
     commentsCount: data.commentsCount,
@@ -76,12 +76,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
                 label="Explain this post"
                 color="blue"
               />
-              <DropDown
-                items={TWEET_DROPDOWN_ITEMS}
-                onOpened={setHovered}
-                temp={data.isFollowedByMe}
-                userName={data.username}
-              >
+              <DropDown items={TWEET_DROPDOWN_ITEMS} onOpened={setHovered}>
                 <Action
                   icon={<DropIcon />} // smaller icon
                   label="more"

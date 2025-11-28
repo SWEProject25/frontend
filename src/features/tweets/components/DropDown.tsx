@@ -23,17 +23,9 @@ type DropProps = {
       | 'danger';
   }[];
   onOpened?: (opened: boolean) => void;
-  temp: boolean;
-  userName: string;
 };
 
-export default function DropDown({
-  temp,
-  children,
-  items,
-  onOpened,
-  userName,
-}: DropProps) {
+export default function DropDown({ children, items, onOpened }: DropProps) {
   const [isOpened, setIsOpened] = useState(false);
   return (
     <div className="relative" data-testid="tweet-dropdown">
@@ -91,11 +83,7 @@ export default function DropDown({
                     'hover:bg-white/10 hover:backdrop-blur-sm transition-all duration-200 py-2.5'
                   }
                 >
-                  {index === 1
-                    ? temp
-                      ? `unFollow @${userName}`
-                      : `follow @${userName}`
-                    : item.label}
+                  {item.label}
                 </DropdownItem>
               );
             })}
