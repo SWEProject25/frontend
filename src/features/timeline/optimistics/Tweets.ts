@@ -3,60 +3,58 @@ import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { TIMELINE_QUERY_KEYS } from '../hooks/timelineQueries';
 import { useSelectedTab } from '../store/useTimelineStore';
 import { FOLLOWING_TAB } from '../constants/menuName';
-import { TimelineFeed, TimelineFeedDtoResponse } from '../types/api';
+import {
+  TimelineFeed,
+  TimelineFeedDtoResponse,
+  TimelineTweet,
+} from '../types/api';
 import { OPTIMISTIC_TYPES } from '../constants/api';
 import { useTweetStore } from '@/features/tweets/store/tweetStore';
+import { TWEET_QUERY_KEYS } from '@/features/tweets/hooks/tweetQueries';
+import { ReplyDto } from '@/features/tweets/types';
+import { tweet } from '../mocks/data';
+import Timeline from '../components/Timeline';
 // import { C } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
 
 function updateTweetInInfiniteData(
-  data: InfiniteData<TimelineFeedDtoResponse, number> | undefined,
-  tweetId: number,
-  isRepost: boolean,
-  isQuote: boolean,
-  userId: number,
-  type: string
-):
-  | {
-      newFeed: InfiniteData<TimelineFeedDtoResponse, number>;
-      newTweet: TimelineFeed;
-      oldTweet: TimelineFeed;
-    }
-  | undefined {
-  if (!data) return data;
-  const oldTweet = data.pages.flatMap((page) =>
-    page.data.posts.filter(
-      (post) =>
-        post.postId === tweetId &&
-        post.isRepost === isRepost &&
-        post.isQuote === isQuote &&
-        post.userId === userId
-    )
-  )[0];
-  const newTweet = updateTweet(type, oldTweet);
+  data: InfiniteData<TimelineFeedDtoResponse, number>,
+  newTweets: TimelineFeed[],
+  pages: number[]
+): InfiniteData<TimelineFeedDtoResponse, number> {
+  let tweetIndx = 0;
+  const maxIndx = newTweets.length - 1;
   return {
-    newFeed: {
-      ...data,
-      pages: data.pages.map((page) => ({
-        ...page,
-        data: {
-          ...page.data,
-          posts: page.data.posts.map((tweet) =>
-            tweet.postId === tweetId &&
-            tweet.isRepost === isRepost &&
-            tweet.isQuote === isQuote &&
-            tweet.userId === userId
-              ? newTweet
-              : tweet
-          ),
-        },
-      })),
-    },
-    newTweet: newTweet,
-    oldTweet: oldTweet,
+    ...data,
+    pages: data.pages.map((page, pageIndx) => {
+      if (pages.includes(pageIndx) && tweetIndx <= maxIndx) {
+        return {
+          ...page,
+          data: {
+            ...page.data,
+            posts: page.data.posts.map((tweet) => {
+              if (
+                tweetIndx <= maxIndx &&
+                tweet.postId === newTweets[tweetIndx].postId &&
+                tweet.isRepost === newTweets[tweetIndx].isRepost &&
+                tweet.userId === newTweets[tweetIndx].userId
+              ) {
+                return newTweets[tweetIndx++];
+              } else return tweet;
+            }),
+          },
+        };
+      } else {
+        return page;
+      }
+    }),
   };
 }
 
-function updateTweet(type: string, tweet: TimelineFeed): TimelineFeed {
+function updateTweet(
+  type: string,
+  tweet: TimelineFeed,
+  userId: number
+): TimelineFeed {
   let updatedTweet = tweet;
   switch (type) {
     case OPTIMISTIC_TYPES.LIKE:
@@ -84,11 +82,43 @@ function updateTweet(type: string, tweet: TimelineFeed): TimelineFeed {
       return updatedTweet;
 
     case OPTIMISTIC_TYPES.FOLLOW:
-      updatedTweet = { ...tweet, isFollowedByMe: !tweet.isFollowedByMe };
+      let newTweet: TimelineFeed = tweet;
+      let originalPostData: TimelineTweet | undefined = tweet.originalPostData;
+      if (tweet.userId === userId)
+        newTweet = { ...newTweet, isFollowedByMe: !newTweet.isFollowedByMe };
+      if (originalPostData && originalPostData.userId === userId)
+        originalPostData = {
+          ...originalPostData,
+          isFollowedByMe: !originalPostData.isFollowedByMe,
+        };
+      updatedTweet = { ...newTweet, originalPostData: originalPostData };
       return updatedTweet;
 
     default:
       return tweet;
+  }
+}
+function handleOldTweets(
+  type: string,
+  userId: number,
+  feed: InfiniteData<TimelineFeedDtoResponse, number>,
+  tweetId?: number
+): TimelineFeed[] {
+  switch (type) {
+    case OPTIMISTIC_TYPES.LIKE:
+    case OPTIMISTIC_TYPES.REPOST:
+      return feed.pages.flatMap((page) =>
+        page.data.posts?.filter((post) => post.postId === tweetId)
+      );
+    case OPTIMISTIC_TYPES.FOLLOW:
+      return feed.pages.flatMap((page) =>
+        page.data.posts?.filter(
+          (post) =>
+            post.userId === userId || post.originalPostData?.userId === userId
+        )
+      );
+    default:
+      return [];
   }
 }
 
@@ -101,52 +131,173 @@ export function useTimelineQueryKey() {
 }
 export function useOptimisticTweet() {
   const queryClient = useQueryClient();
-  const queryKey = useTimelineQueryKey();
+  const currTabQueryKey = useTimelineQueryKey();
   const setCurrentTweet = useTweetStore((state) => state.setCurrentTweet);
+  const currentTweet = useTweetStore((state) => state.currentTweet);
   const onMutate = async (
     type: string,
-    tweetId: number,
-    isRepost: boolean,
-    isQuote: boolean,
-    userId: number
-  ) => {
-    await queryClient.cancelQueries({ queryKey: queryKey });
-    const previousFeed =
-      queryClient.getQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
-        queryKey
-      );
-    //console.log(previousFeed);
-    const timelineFeed = updateTweetInInfiniteData(
-      previousFeed,
-      tweetId,
-      isRepost,
-      isQuote,
-      userId,
-      type
-    );
-    queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
-      queryKey,
-      timelineFeed?.newFeed
-    );
-    //console.log(timelineFeed?.newFeed);
-    const newTweet = timelineFeed?.newTweet ?? null;
-    const oldTweet = timelineFeed?.oldTweet ?? null;
-    setCurrentTweet(newTweet);
+    userId: number,
+    tweetId?: number,
+    isRepost?: boolean,
+    postType: string = 'POST',
+    parentId: number = -1
+  ): Promise<{
+    previousFeeds: {
+      queryKey:
+        | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING
+        | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU
+        | ReturnType<typeof TWEET_QUERY_KEYS.getRepliesByTweetId>;
+      previousFeed:
+        | InfiniteData<TimelineFeedDtoResponse, number>
+        | InfiniteData<ReplyDto, number>
+        | undefined;
+    }[];
+    oldTweet: TimelineFeed | undefined;
+  }> => {
+    const tabsFeeds: {
+      queryKey:
+        | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING
+        | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU
+        | ReturnType<typeof TWEET_QUERY_KEYS.getRepliesByTweetId>;
+      previousFeed:
+        | InfiniteData<TimelineFeedDtoResponse, number>
+        | InfiniteData<ReplyDto, number>
+        | undefined;
+    }[] = [];
+    let oldTweet: TimelineFeed | undefined;
 
-    return { previousFeed, queryKey, oldTweet };
+    const currentKey =
+      postType.toLowerCase() === 'reply'
+        ? TWEET_QUERY_KEYS.getRepliesByTweetId(parentId)
+        : currTabQueryKey;
+    const queryKeys: (
+      | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING
+      | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU
+      | ReturnType<typeof TWEET_QUERY_KEYS.getRepliesByTweetId>
+    )[] = [
+      TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
+      TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
+    ].filter((key) => key !== currentKey);
+    queryKeys.unshift(currentKey);
+    console.log(queryKeys);
+    // }
+    queryKeys.forEach(async (queryKey) => {
+      const result = await optimisticsTabs(
+        type,
+        userId,
+        queryKey,
+        tweetId,
+        isRepost
+      );
+      tabsFeeds.push({
+        queryKey: queryKey,
+        previousFeed: result.previousFeed,
+      });
+      if (result.oldTweet) oldTweet = result.oldTweet;
+    });
+    return { previousFeeds: tabsFeeds, oldTweet: oldTweet };
   };
-  function handleErrorOptimisticTweet(context: {
-    previousFeed: InfiniteData<TimelineFeedDtoResponse, number> | undefined;
+
+  const optimisticsTabs = async (
+    type: string,
+    userId: number,
     queryKey:
       | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING
       | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU
+      | ReturnType<typeof TWEET_QUERY_KEYS.getRepliesByTweetId>,
+    tweetId?: number,
+    isRepost?: boolean
+  ): Promise<{
+    previousFeed:
+      | InfiniteData<TimelineFeedDtoResponse, number>
+      | InfiniteData<ReplyDto, number>
       | undefined;
-    oldTweet: TimelineFeed | null;
-  }) {
-    if (context?.previousFeed && context.queryKey) {
-      queryClient.setQueryData(context.queryKey, context.previousFeed);
+    oldTweet: TimelineFeed | undefined;
+  }> => {
+    await queryClient.cancelQueries({ queryKey: queryKey });
+    const previousFeed = queryClient.getQueryData<
+      | InfiniteData<TimelineFeedDtoResponse, number>
+      | InfiniteData<ReplyDto, number>
+    >(queryKey);
+    let oldTweet: TimelineFeed | undefined;
+    if (previousFeed) {
+      const oldTweets: TimelineFeed[] = handleOldTweets(
+        type,
+        userId,
+        previousFeed,
+        tweetId
+      );
+      if (oldTweets) {
+        const pages: number[] = [];
+        oldTweets.forEach((_tweet, indx) => {
+          if (!pages.includes(indx)) pages.push(indx);
+        });
+        console.log(previousFeed);
+        const newTweets: TimelineFeed[] = [];
+        oldTweets.forEach((tweet) =>
+          newTweets.push(updateTweet(type, tweet, userId))
+        );
+        console.log(oldTweets, queryKey, previousFeed);
+
+        const timelineFeed = updateTweetInInfiniteData(
+          previousFeed,
+          newTweets,
+          pages
+        );
+        queryClient.setQueryData<
+          | InfiniteData<TimelineFeedDtoResponse, number>
+          | InfiniteData<ReplyDto, number>
+        >(queryKey, timelineFeed);
+        console.log(timelineFeed);
+        if (
+          tweetId !== undefined &&
+          isRepost !== undefined &&
+          currentTweet?.postId === tweetId
+        ) {
+          oldTweet = oldTweets.find(
+            (post) =>
+              post.postId === tweetId &&
+              post.userId === userId &&
+              post.isRepost === isRepost
+          );
+          if (oldTweet) {
+            const newTweet = updateTweet(type, oldTweet, userId);
+            console.log('old');
+            setCurrentTweet(newTweet);
+          } else {
+            console.log('old2');
+          }
+        }
+      }
     }
-    setCurrentTweet(context.oldTweet);
+    return { previousFeed, oldTweet };
+  };
+
+  function handleErrorOptimisticTweet(
+    context:
+      | {
+          previousFeeds: {
+            queryKey:
+              | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING
+              | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU
+              | ReturnType<typeof TWEET_QUERY_KEYS.getRepliesByTweetId>;
+            previousFeed:
+              | InfiniteData<TimelineFeedDtoResponse, number>
+              | undefined;
+          }[];
+          oldTweet: TimelineFeed | undefined;
+        }
+      | undefined
+  ) {
+    console.log(context, 'hi');
+    if (context) {
+      context.previousFeeds.forEach((feed) => {
+        if (feed.previousFeed && feed.queryKey) {
+          queryClient.setQueryData(feed.queryKey, feed.previousFeed);
+        }
+      });
+      if (context?.oldTweet) setCurrentTweet(context.oldTweet);
+    }
   }
   return { onMutate, handleErrorOptimisticTweet };
 }

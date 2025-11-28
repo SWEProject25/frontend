@@ -33,16 +33,17 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     isFetchingNextPage,
     hasNextPage,
   } = useGetRepliesByTweetId(data?.postId || 0);
+  console.log(repliesResponse);
   const pages = repliesResponse?.pages.flat();
   const renderReplys = pages?.map((group, i) => (
     <React.Fragment key={i}>
-      {group.data.map((reply, index) => (
+      {group.data.posts.map((reply, index) => (
         <Tweet key={index} data={reply} />
       ))}
     </React.Fragment>
   ));
 
-  const hasInitialData = pages ? pages[0].data.length > 0 : false;
+  const hasInitialData = pages ? pages[0].data.posts.length > 0 : false;
 
   if (!data) {
     return (
@@ -68,6 +69,9 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     isRepost: data.isRepost,
     isQuote: data.isQuote,
     userId: data.userId,
+    type: data?.type ?? 'POST',
+    parentId: data?.parentId,
+
     likesCount: data.likesCount,
     retweetsCount: data.retweetsCount,
     commentsCount: data.commentsCount,

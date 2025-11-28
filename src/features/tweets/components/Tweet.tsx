@@ -41,6 +41,8 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     isQuote: data.isQuote,
     userId: data.userId,
     likesCount: data.likesCount,
+    type: data?.type ?? 'POST',
+    parentId: data?.parentId,
     retweetsCount: data.retweetsCount,
     commentsCount: data.commentsCount,
     isLikedByMe: data.isLikedByMe,
