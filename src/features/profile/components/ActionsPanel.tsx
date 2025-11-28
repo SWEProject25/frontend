@@ -3,18 +3,24 @@ import Button from '@/components/ui/Button';
 import { MoreIcon, MessagesIcon } from '@/components/ui/icons';
 import EditProfileModal from '../../../components/generic/EditProfileModal';
 import FollowBtn from '@/components/generic/buttons/FollowBtn';
+import GenericDropdown from '@/components/generic/Dropdown';
 import { useProfile } from '../hooks';
 import { useRouter } from 'next/navigation';
 import { createConversation } from '@/features/messages/api/messages';
 import { fetchConversations } from '@/features/messages/api/messages';
+import { getProfileDropdownItems } from '../constants/dropdown';
+import { useInteractions } from '@/hooks/useInteractions';
 
 interface ActionsPanelProps {
   isOwnProfile: boolean;
   userData: {
     name: string;
+    username: string;
     userId: number;
     bio: string | null;
     isFollowed: boolean;
+    isMuted?: boolean;
+    isBlocked?: boolean;
     profileImage: string | null;
     bannerImage: string | null;
     location: string | null;
@@ -30,10 +36,36 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
   const { handleSaveProfile, isUpdating } = useProfile();
+  const { muteUser, unmuteUser, blockUser, unblockUser } = useInteractions();
   const router = useRouter();
 
   const handleEditProfileClick = () => {
     setIsModalOpen(true);
+  };
+
+  const handleDropdownAction = async (key: string) => {
+    switch (key) {
+      case 'mute':
+        if (userData.isMuted) {
+          await unmuteUser(userData.userId);
+        } else {
+          await muteUser(userData.userId);
+        }
+        break;
+      case 'block':
+        if (userData.isBlocked) {
+          await unblockUser(userData.userId);
+        } else {
+          await blockUser(userData.userId);
+        }
+        break;
+      case 'report':
+        console.log('Report user:', userData.userId);
+        // TODO: Implement report functionality
+        break;
+      default:
+        break;
+    }
   };
 
   const handleMessagesClick = async () => {
@@ -107,15 +139,27 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
         </Button>
       ) : (
         <>
-          <Button
-            data-testid="profile-more-button"
-            variant="outline"
-            size="md"
-            shape="circle"
-            onClick={() => console.log('More clicked')}
+          <GenericDropdown
+            testId="profile-more-dropdown"
+            items={getProfileDropdownItems(
+              userData.username,
+              userData.isMuted || false,
+              userData.isBlocked || false
+            ).map((item) => ({
+              ...item,
+              onClick: () => handleDropdownAction(item.key),
+            }))}
+            showBackdrop={true}
           >
-            <MoreIcon className="w-5 h-5 text-text-primary" />
-          </Button>
+            <Button
+              data-testid="profile-more-button"
+              variant="outline"
+              size="md"
+              shape="circle"
+            >
+              <MoreIcon className="w-5 h-5 text-text-primary" />
+            </Button>
+          </GenericDropdown>
           <Button
             data-testid="profile-message-button"
             variant="outline"

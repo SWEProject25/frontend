@@ -35,4 +35,4 @@ export {
 } from './UIIcons';
 
 // Brand Icons
-export { XLogo, GrokIcon } from './BrandIcons';
+export { XLogo, GrokIcon, VerifiedIcon } from './BrandIcons';
