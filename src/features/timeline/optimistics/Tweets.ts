@@ -18,36 +18,69 @@ import Timeline from '../components/Timeline';
 
 function updateTweetInInfiniteData(
   data: InfiniteData<TimelineFeedDtoResponse, number>,
-  newTweets: TimelineFeed[],
-  pages: number[]
-): InfiniteData<TimelineFeedDtoResponse, number> {
+  pages: number[],
+  Tweets: TimelineFeed[],
+  type: string
+):
+  | InfiniteData<TimelineFeedDtoResponse, number>
+  | InfiniteData<ReplyDto, number> {
   let tweetIndx = 0;
-  const maxIndx = newTweets.length - 1;
-  return {
-    ...data,
-    pages: data.pages.map((page, pageIndx) => {
-      if (pages.includes(pageIndx) && tweetIndx <= maxIndx) {
-        return {
-          ...page,
-          data: {
-            ...page.data,
-            posts: page.data.posts.map((tweet) => {
-              if (
-                tweetIndx <= maxIndx &&
-                tweet.postId === newTweets[tweetIndx].postId &&
-                tweet.isRepost === newTweets[tweetIndx].isRepost &&
-                tweet.userId === newTweets[tweetIndx].userId
-              ) {
-                return newTweets[tweetIndx++];
-              } else return tweet;
-            }),
-          },
-        };
-      } else {
-        return page;
-      }
-    }),
-  };
+  const maxIndx = Tweets.length - 1;
+  if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
+    return {
+      ...data,
+      pages: data.pages.map((page, pageIndx) => {
+        if (pages.includes(pageIndx) && tweetIndx <= maxIndx) {
+          return {
+            ...page,
+            data: {
+              ...page.data,
+              posts: page.data.posts.filter((tweet) => {
+                if (tweetIndx <= maxIndx) {
+                  if (
+                    tweet.postId === Tweets[tweetIndx].postId &&
+                    tweet.isRepost === Tweets[tweetIndx].isRepost &&
+                    tweet.userId === Tweets[tweetIndx].userId
+                  ) {
+                    tweetIndx++;
+                    return false;
+                  } else return true;
+                } else return true;
+              }),
+            },
+          };
+        } else {
+          return page;
+        }
+      }),
+    };
+  } else {
+    return {
+      ...data,
+      pages: data.pages.map((page, pageIndx) => {
+        if (pages.includes(pageIndx) && tweetIndx <= maxIndx) {
+          return {
+            ...page,
+            data: {
+              ...page.data,
+              posts: page.data.posts.map((tweet) => {
+                if (
+                  tweetIndx <= maxIndx &&
+                  tweet.postId === Tweets[tweetIndx].postId &&
+                  tweet.isRepost === Tweets[tweetIndx].isRepost &&
+                  tweet.userId === Tweets[tweetIndx].userId
+                ) {
+                  return Tweets[tweetIndx++];
+                } else return tweet;
+              }),
+            },
+          };
+        } else {
+          return page;
+        }
+      }),
+    };
+  }
 }
 
 function updateTweet(
@@ -111,6 +144,8 @@ function handleOldTweets(
         page.data.posts?.filter((post) => post.postId === tweetId)
       );
     case OPTIMISTIC_TYPES.FOLLOW:
+    case OPTIMISTIC_TYPES.BLOCK:
+    case OPTIMISTIC_TYPES.MUTE:
       return feed.pages.flatMap((page) =>
         page.data.posts?.filter(
           (post) =>
@@ -227,23 +262,38 @@ export function useOptimisticTweet() {
         previousFeed,
         tweetId
       );
+
       if (oldTweets) {
         const pages: number[] = [];
         oldTweets.forEach((_tweet, indx) => {
           if (!pages.includes(indx)) pages.push(indx);
         });
         console.log(previousFeed);
-        const newTweets: TimelineFeed[] = [];
-        oldTweets.forEach((tweet) =>
-          newTweets.push(updateTweet(type, tweet, userId))
-        );
-        console.log(oldTweets, queryKey, previousFeed);
+        let timelineFeed:
+          | InfiniteData<TimelineFeedDtoResponse, number>
+          | InfiniteData<ReplyDto, number>;
+        if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
+          console.log(oldTweets, queryKey, previousFeed);
+          timelineFeed = updateTweetInInfiniteData(
+            previousFeed,
+            pages,
+            oldTweets,
+            type
+          );
+          console.log(timelineFeed);
+        } else {
+          const newTweets: TimelineFeed[] = [];
+          oldTweets.forEach((tweet) =>
+            newTweets.push(updateTweet(type, tweet, userId))
+          );
+          timelineFeed = updateTweetInInfiniteData(
+            previousFeed,
+            pages,
+            newTweets,
+            type
+          );
+        }
 
-        const timelineFeed = updateTweetInInfiniteData(
-          previousFeed,
-          newTweets,
-          pages
-        );
         queryClient.setQueryData<
           | InfiniteData<TimelineFeedDtoResponse, number>
           | InfiniteData<ReplyDto, number>
