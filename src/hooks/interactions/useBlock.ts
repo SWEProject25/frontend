@@ -6,6 +6,8 @@ import {
   PaginationParams,
 } from '@/types/userInteractions';
 import { INTERACTION_QUERY_KEYS } from './queryKeys';
+import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
+import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
 
 // ==================== MUTATION HOOKS ====================
 
@@ -15,8 +17,14 @@ import { INTERACTION_QUERY_KEYS } from './queryKeys';
  */
 export const useBlockUser = () => {
   const queryClient = useQueryClient();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
-  return useMutation<BlockResponseDto, Error, number>({
+  return useMutation<
+    BlockResponseDto,
+    Error,
+    number,
+    Awaited<ReturnType<typeof onMutate>>
+  >({
     mutationFn: async (userId: number) => {
       try {
         const response = await blockApi.blockUser(userId);
@@ -26,6 +34,12 @@ export const useBlockUser = () => {
           error instanceof Error ? error.message : 'Failed to block user';
         throw new Error(errorMessage);
       }
+    },
+    onMutate: (userId: number) => {
+      return onMutate(OPTIMISTIC_TYPES.BLOCK, userId);
+    },
+    onError: (error, variables, context) => {
+      handleErrorOptimisticTweet(context);
     },
     onSuccess: (_, userId) => {
       // Invalidate blocked users list
@@ -44,6 +58,7 @@ export const useBlockUser = () => {
         queryKey: ['interactions', 'following'],
       });
     },
+    networkMode: 'always',
   });
 };
 
@@ -53,8 +68,14 @@ export const useBlockUser = () => {
  */
 export const useUnblockUser = () => {
   const queryClient = useQueryClient();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
-  return useMutation<BlockResponseDto, Error, number>({
+  return useMutation<
+    BlockResponseDto,
+    Error,
+    number,
+    Awaited<ReturnType<typeof onMutate>>
+  >({
     mutationFn: async (userId: number) => {
       try {
         const response = await blockApi.unblockUser(userId);
@@ -64,6 +85,12 @@ export const useUnblockUser = () => {
           error instanceof Error ? error.message : 'Failed to unblock user';
         throw new Error(errorMessage);
       }
+    },
+    onMutate: (userId: number) => {
+      return onMutate(OPTIMISTIC_TYPES.BLOCK, userId);
+    },
+    onError: (error, variables, context) => {
+      handleErrorOptimisticTweet(context);
     },
     onSuccess: (_, userId) => {
       // Invalidate blocked users list
@@ -75,6 +102,7 @@ export const useUnblockUser = () => {
         queryKey: ['profile', 'user', userId],
       });
     },
+    networkMode: 'always',
   });
 };
 

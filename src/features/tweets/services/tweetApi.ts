@@ -1,4 +1,4 @@
-import { ReplyResponseDto, TweetResponseDto } from '../types';
+import { ReplyDto, ReplyResponseDto, TweetResponseDto } from '../types';
 import {
   TWEET_API_CONFIG,
   TWEET_ENDPOINTS,
@@ -36,7 +36,10 @@ async function handleResponse<T>(response: Response): Promise<T> {
     throw new ApiError(errorMessage, statusCode);
   }
 
-  return response.json();
+  // return response.json();
+  const data = await response.json();
+  console.log(data);
+  return data;
 }
 
 export const tweetApi = {
@@ -85,7 +88,7 @@ export const tweetApi = {
   async getRepliesByTweetId(
     tweetId: number,
     page: number = TWEET_CONSTANTS.DEFAULT_PAGE
-  ): Promise<ReplyResponseDto> {
+  ): Promise<ReplyDto> {
     const response = await fetch(
       `${TWEET_API_CONFIG.BASE_URL}${TWEET_ENDPOINTS.GET_REPLIES_BY_TWEET_ID(tweetId)}?` +
         `${new URLSearchParams({ page: `${page}`, limit: `${TWEET_CONSTANTS.DEFAULT_LIMIT}` })}`,
@@ -97,7 +100,13 @@ export const tweetApi = {
         credentials: 'include',
       }
     );
-    return handleResponse<ReplyResponseDto>(response);
+    const data = await handleResponse<ReplyResponseDto>(response);
+    return {
+      ...data,
+      data: {
+        posts: data.data,
+      },
+    };
   },
 
   //   async getRepliesByTweetId(

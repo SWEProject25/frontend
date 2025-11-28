@@ -7,7 +7,7 @@ import {
   InfiniteData,
 } from '@tanstack/react-query';
 import { tweetApi } from '../services/tweetApi';
-import { ReplyResponseDto, TweetResponseDto } from '../types/api';
+import { ReplyDto, TweetResponseDto } from '../types/api';
 import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
 import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
 // Query keys
@@ -34,8 +34,11 @@ export const useToggleLikeTweet = (
   tweetId: number,
   isRepost: boolean,
   isQuote: boolean,
-  userId: number
+  userId: number,
+  type: string,
+  parentId?: number
 ) => {
+  //console.log('useToggleLikeTweet called with tweetId:', tweetId);
   const queryClient = useQueryClient();
   const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
   return useMutation({
@@ -43,16 +46,16 @@ export const useToggleLikeTweet = (
     onMutate: () => {
       return onMutate(
         OPTIMISTIC_TYPES.LIKE,
+        userId,
         tweetId,
         isRepost,
-        isQuote,
-        userId
+        type,
+        parentId
       );
     },
     onError: (error, variables, onMutateResult) => {
-      if (onMutateResult?.previousFeed) {
-        handleErrorOptimisticTweet(onMutateResult);
-      }
+      console.log('failure');
+      handleErrorOptimisticTweet(onMutateResult);
     },
 
     onSuccess: () => {
@@ -60,6 +63,7 @@ export const useToggleLikeTweet = (
         queryKey: TWEET_QUERY_KEYS.toggleLikeTweet(tweetId),
       });
     },
+    networkMode: 'always',
   });
 };
 
@@ -68,7 +72,9 @@ export const useToggleRepostTweet = (
   tweetId: number,
   isRepost: boolean,
   isQuote: boolean,
-  userId: number
+  userId: number,
+  type: string,
+  parentId?: number
 ) => {
   const queryClient = useQueryClient();
   const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
@@ -76,24 +82,31 @@ export const useToggleRepostTweet = (
   return useMutation({
     mutationFn: () => tweetApi.toggleRepostTweet(tweetId),
     onMutate: () =>
-      onMutate(OPTIMISTIC_TYPES.REPOST, tweetId, isRepost, isQuote, userId),
+      onMutate(
+        OPTIMISTIC_TYPES.REPOST,
+        userId,
+        tweetId,
+        isRepost,
+        type,
+        parentId
+      ),
     onError: (error, variables, onMutateResult) => {
-      if (onMutateResult?.previousFeed)
-        handleErrorOptimisticTweet(onMutateResult);
+      handleErrorOptimisticTweet(onMutateResult);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.toggleRepostTweet(tweetId),
       });
     },
+    networkMode: 'always',
   });
 };
 
 export const useGetRepliesByTweetId = (tweetId: number) => {
   return useInfiniteQuery<
-    ReplyResponseDto,
+    ReplyDto,
     Error,
-    InfiniteData<ReplyResponseDto, number>,
+    InfiniteData<ReplyDto, number>,
     any,
     number
   >({
@@ -102,8 +115,9 @@ export const useGetRepliesByTweetId = (tweetId: number) => {
       tweetApi.getRepliesByTweetId(tweetId, pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage, pages) =>
-      lastPage.data.length ? pages.length + 1 : undefined,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+      lastPage.data.posts.length ? pages.length + 1 : undefined,
+    // staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0,
     retry: 1,
   });
 };

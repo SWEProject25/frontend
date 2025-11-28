@@ -11,4 +11,6 @@ export const OPTIMISTIC_TYPES = {
   REPLY: 'reply',
   FOLLOW: 'follow',
   REPOST: 'repost',
+  BLOCK: 'block',
+  MUTE: 'mute',
 } as const;
