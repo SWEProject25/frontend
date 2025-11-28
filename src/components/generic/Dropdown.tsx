@@ -104,8 +104,7 @@ export default function GenericDropdown({
                   color={item.color}
                   startContent={item.icon}
                   className={`${borderRadius} hover:bg-white/10 hover:backdrop-blur-sm transition-all duration-200 py-2.5 ${item.className || ''}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
+                  onClick={() => {
                     handleItemClick(item);
                   }}
                 >

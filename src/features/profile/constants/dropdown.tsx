@@ -22,9 +22,4 @@ export const getProfileDropdownItems = (
     label: isBlocked ? `Unblock @${username}` : `Block @${username}`,
     color: 'danger',
   },
-  {
-    key: 'report',
-    label: `Report @${username}`,
-    color: 'danger',
-  },
 ];

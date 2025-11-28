@@ -3,6 +3,7 @@ import Button from '@/components/ui/Button';
 import { MoreIcon, MessagesIcon } from '@/components/ui/icons';
 import EditProfileModal from '../../../components/generic/EditProfileModal';
 import FollowBtn from '@/components/generic/buttons/FollowBtn';
+import BlockBtn from '@/components/generic/buttons/BlockBtn';
 import GenericDropdown from '@/components/generic/Dropdown';
 import { useProfile } from '../hooks';
 import { useRouter } from 'next/navigation';
@@ -21,6 +22,7 @@ interface ActionsPanelProps {
     isFollowed: boolean;
     isMuted?: boolean;
     isBlocked?: boolean;
+    isBeenBlocked?: boolean;
     profileImage: string | null;
     bannerImage: string | null;
     location: string | null;
@@ -59,10 +61,6 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
           await blockUser(userData.userId);
         }
         break;
-      case 'report':
-        console.log('Report user:', userData.userId);
-        // TODO: Implement report functionality
-        break;
       default:
         break;
     }
@@ -73,17 +71,13 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
 
     setIsCreatingConversation(true);
     try {
-      // First, check if a conversation already exists with this user
       const conversations = await fetchConversations();
 
       if (Array.isArray(conversations)) {
-        // Find existing conversation with this user
         const existingConversation = conversations.find((conv: any) => {
-          // Check if the conversation's user matches the target user
           if (conv.user?.id === userData.userId) {
             return true;
           }
-          // Also check user1Id and user2Id if available
           if (
             conv.user1Id === userData.userId ||
             conv.user2Id === userData.userId
@@ -94,7 +88,6 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
         });
 
         if (existingConversation) {
-          // Conversation exists, navigate to it
           const conversationId =
             existingConversation.conversationId || existingConversation.id;
           router.push(`/messages/${conversationId}`);
@@ -102,7 +95,6 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
         }
       }
 
-      // No existing conversation, create a new one
       const result = await createConversation(userData.userId);
       const conversationId =
         result?.data?.id ||
@@ -160,25 +152,42 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
               <MoreIcon className="w-5 h-5 text-text-primary" />
             </Button>
           </GenericDropdown>
-          <Button
-            data-testid="profile-message-button"
-            variant="outline"
-            size="md"
-            shape="circle"
-            onClick={handleMessagesClick}
-            disabled={isCreatingConversation}
-          >
-            {isCreatingConversation ? (
-              <div className="w-5 h-5 border-2 border-text-primary border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <MessagesIcon className="w-5 h-5 text-text-primary" />
-            )}
-          </Button>
-          <FollowBtn
-            data-testid="profile-follow-button"
-            userId={userData.userId}
-            isFollowed={userData.isFollowed}
-          />
+
+          {/* Show message button only if not been blocked and not blocking */}
+          {!userData.isBeenBlocked && !userData.isBlocked && (
+            <Button
+              data-testid="profile-message-button"
+              variant="outline"
+              size="md"
+              shape="circle"
+              onClick={handleMessagesClick}
+              disabled={isCreatingConversation}
+            >
+              {isCreatingConversation ? (
+                <div className="w-5 h-5 border-2 border-text-primary border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <MessagesIcon className="w-5 h-5 text-text-primary" />
+              )}
+            </Button>
+          )}
+
+          {/* Show Block button if isBlocked is true */}
+          {userData.isBlocked && (
+            <BlockBtn
+              data-testid="profile-block-button"
+              userId={userData.userId}
+              isBlocked={userData.isBlocked}
+            />
+          )}
+
+          {/* Show Follow button only if not been blocked and not blocking */}
+          {!userData.isBeenBlocked && !userData.isBlocked && (
+            <FollowBtn
+              data-testid="profile-follow-button"
+              userId={userData.userId}
+              isFollowed={userData.isFollowed}
+            />
+          )}
         </>
       )}
       <EditProfileModal
