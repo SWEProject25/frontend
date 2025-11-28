@@ -13,7 +13,7 @@ export default function CardAvatar({
   username?: string;
 }) {
   return (
-    <div className="flex-shrink-0">
+    <div className="shrink-0">
       <div className="relative">
         <Link href={`/${username}`} onClick={(e) => e.stopPropagation()}>
           <Avatar

@@ -7,6 +7,8 @@ import {
   useToggleLikeTweet,
   useToggleRepostTweet,
 } from '@/features/tweets/hooks/tweetQueries';
+import DropDown from './DropDown';
+import { getShareDropdownItems } from '../constants/dropdown';
 type stats = {
   postId: number;
   isRepost: boolean;
@@ -23,10 +25,13 @@ type stats = {
 export default function Actions({
   stats,
   full = false,
+  onOpened,
 }: {
   stats: stats;
   full?: boolean;
+  onOpened?: (opened: boolean) => void;
 }) {
+  const shareDropdownItems = getShareDropdownItems();
   const [liked, setLiked] = useState(stats.isLikedByMe);
   const [retweeted, setRetweeted] = useState(stats.isRepostedByMe);
   const [likeAddr, setLikeAddr] = useState(0);
@@ -77,6 +82,20 @@ export default function Actions({
     // setRetweeted(!stats.is);
     toggleRepostTweet.mutate();
   }
+  function onSelect(key: string) {
+    console.log('Selected item key:', key);
+    switch (key) {
+      case 'copy_link':
+        const link = `${window.location.origin}/home/${stats.postId}`;
+        navigator.clipboard.writeText(link);
+        break;
+      case 'send_via_message':
+        // Implement send via message functionality here
+        break;
+      default:
+        break;
+    }
+  }
   return (
     <div className="w-full my-.5" data-testid="tweet-actions">
       <div className="flex justify-between items-center w-full mt-3 text-gray-500 text-sm">
@@ -115,11 +134,18 @@ export default function Actions({
           onClick={handleLike}
           isColored={stats.isLikedByMe}
         />
-        <Action
-          icon={ACTIONS_META[3].icon}
-          label={ACTIONS_META[3].label}
-          color={ACTIONS_META[3].color}
-        />
+        <DropDown
+          items={shareDropdownItems}
+          onOpened={onOpened}
+          onSelect={onSelect}
+        >
+          <Action
+            icon={ACTIONS_META[3].icon}
+            label={ACTIONS_META[3].label}
+            color={ACTIONS_META[3].color}
+            stopPropagation={false}
+          />
+        </DropDown>
       </div>
     </div>
   );

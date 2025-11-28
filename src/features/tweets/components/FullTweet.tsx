@@ -12,12 +12,18 @@ import Header from './Header';
 import { TimelineFeed } from '@/features/timeline/types/api';
 import { GrokIcon } from '@/components/ui/icons/BrandIcons';
 import { DropIcon } from '@/components/ui/icons/UIIcons';
-import { TWEET_DROPDOWN_ITEMS } from '../constants';
+//import { TWEET_DROPDOWN_ITEMS } from '../constants';
+import { getTweetDropdownItems } from '../constants';
 import Loader from '@/components/generic/Loader';
 import { useGetRepliesByTweetId } from '../hooks/tweetQueries';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 
 function FullTweet({ data }: { data: TimelineFeed | null }) {
+  const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
+    username: data?.username || '',
+    isFollowed: data?.isFollowedByMe || false,
+  });
+
   const {
     data: repliesResponse,
     error,
@@ -72,7 +78,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
   return (
     <div>
       <Header />
-      <div className="mx-auto sm:max-w-[600px] p-4 text-white relative ">
+      <div className="mx-auto p-4 text-white relative ">
         <div className="flex items-start justify-between">
           <div className="flex space-x-3">
             <TweetAvatar data={user} />
