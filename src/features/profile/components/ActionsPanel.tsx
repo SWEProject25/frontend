@@ -3,18 +3,27 @@ import Button from '@/components/ui/Button';
 import { MoreIcon, MessagesIcon } from '@/components/ui/icons';
 import EditProfileModal from '../../../components/generic/EditProfileModal';
 import FollowBtn from '@/components/generic/buttons/FollowBtn';
+import BlockBtn from '@/components/generic/buttons/BlockBtn';
+import GenericDropdown from '@/components/generic/Dropdown';
+import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import { useProfile } from '../hooks';
 import { useRouter } from 'next/navigation';
 import { createConversation } from '@/features/messages/api/messages';
 import { fetchConversations } from '@/features/messages/api/messages';
+import { getProfileDropdownItems } from '../constants/dropdown';
+import { useInteractions } from '@/hooks/useInteractions';
 
 interface ActionsPanelProps {
   isOwnProfile: boolean;
   userData: {
     name: string;
+    username: string;
     userId: number;
     bio: string | null;
     isFollowed: boolean;
+    isMuted?: boolean;
+    isBlocked?: boolean;
+    isBeenBlocked?: boolean;
     profileImage: string | null;
     bannerImage: string | null;
     location: string | null;
@@ -29,11 +38,46 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
+  const [showBlockConfirmModal, setShowBlockConfirmModal] = useState(false);
+  const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
+    null
+  );
   const { handleSaveProfile, isUpdating } = useProfile();
+  const { muteUser, unmuteUser, blockUser, unblockUser, isBlockLoading } =
+    useInteractions();
   const router = useRouter();
 
   const handleEditProfileClick = () => {
     setIsModalOpen(true);
+  };
+
+  const handleDropdownAction = async (key: string) => {
+    switch (key) {
+      case 'mute':
+        if (userData.isMuted) {
+          await unmuteUser(userData.userId);
+        } else {
+          await muteUser(userData.userId);
+        }
+        break;
+      case 'block':
+        // Show confirmation modal for block/unblock
+        setBlockAction(userData.isBlocked ? 'unblock' : 'block');
+        setShowBlockConfirmModal(true);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleConfirmBlock = async () => {
+    if (blockAction === 'block') {
+      await blockUser(userData.userId);
+    } else if (blockAction === 'unblock') {
+      await unblockUser(userData.userId);
+    }
+    setShowBlockConfirmModal(false);
+    setBlockAction(null);
   };
 
   const handleMessagesClick = async () => {
@@ -41,17 +85,13 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
 
     setIsCreatingConversation(true);
     try {
-      // First, check if a conversation already exists with this user
       const conversations = await fetchConversations();
 
       if (Array.isArray(conversations)) {
-        // Find existing conversation with this user
         const existingConversation = conversations.find((conv: any) => {
-          // Check if the conversation's user matches the target user
           if (conv.user?.id === userData.userId) {
             return true;
           }
-          // Also check user1Id and user2Id if available
           if (
             conv.user1Id === userData.userId ||
             conv.user2Id === userData.userId
@@ -62,7 +102,6 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
         });
 
         if (existingConversation) {
-          // Conversation exists, navigate to it
           const conversationId =
             existingConversation.conversationId || existingConversation.id;
           router.push(`/messages/${conversationId}`);
@@ -70,7 +109,6 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
         }
       }
 
-      // No existing conversation, create a new one
       const result = await createConversation(userData.userId);
       const conversationId =
         result?.data?.id ||
@@ -107,34 +145,63 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
         </Button>
       ) : (
         <>
-          <Button
-            data-testid="profile-more-button"
-            variant="outline"
-            size="md"
-            shape="circle"
-            onClick={() => console.log('More clicked')}
+          <GenericDropdown
+            testId="profile-more-dropdown"
+            items={getProfileDropdownItems(
+              userData.username,
+              userData.isMuted || false,
+              userData.isBlocked || false
+            ).map((item) => ({
+              ...item,
+              onClick: () => handleDropdownAction(item.key),
+            }))}
+            showBackdrop={true}
           >
-            <MoreIcon className="w-5 h-5 text-text-primary" />
-          </Button>
-          <Button
-            data-testid="profile-message-button"
-            variant="outline"
-            size="md"
-            shape="circle"
-            onClick={handleMessagesClick}
-            disabled={isCreatingConversation}
-          >
-            {isCreatingConversation ? (
-              <div className="w-5 h-5 border-2 border-text-primary border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <MessagesIcon className="w-5 h-5 text-text-primary" />
-            )}
-          </Button>
-          <FollowBtn
-            data-testid="profile-follow-button"
-            userId={userData.userId}
-            isFollowed={userData.isFollowed}
-          />
+            <Button
+              data-testid="profile-more-button"
+              variant="outline"
+              size="md"
+              shape="circle"
+            >
+              <MoreIcon className="w-5 h-5 text-text-primary" />
+            </Button>
+          </GenericDropdown>
+
+          {/* Show message button only if not been blocked and not blocking */}
+          {!userData.isBeenBlocked && !userData.isBlocked && (
+            <Button
+              data-testid="profile-message-button"
+              variant="outline"
+              size="md"
+              shape="circle"
+              onClick={handleMessagesClick}
+              disabled={isCreatingConversation}
+            >
+              {isCreatingConversation ? (
+                <div className="w-5 h-5 border-2 border-text-primary border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <MessagesIcon className="w-5 h-5 text-text-primary" />
+              )}
+            </Button>
+          )}
+
+          {/* Show Block button if isBlocked is true */}
+          {userData.isBlocked && (
+            <BlockBtn
+              data-testid="profile-block-button"
+              userId={userData.userId}
+              isBlocked={userData.isBlocked}
+            />
+          )}
+
+          {/* Show Follow button only if not been blocked and not blocking */}
+          {!userData.isBeenBlocked && !userData.isBlocked && (
+            <FollowBtn
+              data-testid="profile-follow-button"
+              userId={userData.userId}
+              isFollowed={userData.isFollowed}
+            />
+          )}
         </>
       )}
       <EditProfileModal
@@ -144,6 +211,25 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
         initialData={userData}
         onSave={handleSaveProfile}
         isUpdating={isUpdating}
+      />
+
+      <ConfirmModal
+        isOpen={showBlockConfirmModal}
+        onClose={() => {
+          setShowBlockConfirmModal(false);
+          setBlockAction(null);
+        }}
+        onConfirm={handleConfirmBlock}
+        title={blockAction === 'block' ? 'Block user?' : 'Unblock user?'}
+        message={
+          blockAction === 'block'
+            ? 'They will not be able to follow you or view your posts, and you will not see posts or notifications from them.'
+            : 'They will be able to follow you and view your posts again.'
+        }
+        confirmText={blockAction === 'block' ? 'Block' : 'Unblock'}
+        cancelText="Cancel"
+        confirmButtonClass="bg-block hover:bg-block/90 text-white"
+        isLoading={isBlockLoading}
       />
     </div>
   );

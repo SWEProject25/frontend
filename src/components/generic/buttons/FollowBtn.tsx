@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useInteractions } from '@/hooks/useInteractions';
+import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 
 interface FollowBtnProps {
   userId: number;
@@ -11,7 +12,7 @@ interface FollowBtnProps {
 function FollowBtn({ userId, isFollowed, onFollowChange }: FollowBtnProps) {
   const [followed, setFollowed] = useState<boolean>(isFollowed || false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const [followClicked, setFollowClicked] = useState<boolean>(false);
+  const [showUnfollowModal, setShowUnfollowModal] = useState<boolean>(false);
 
   const { followUser, unfollowUser, isFollowLoading } = useInteractions();
 
@@ -27,12 +28,12 @@ function FollowBtn({ userId, isFollowed, onFollowChange }: FollowBtnProps) {
     } catch {
       // Revert state on error
       setFollowed(false);
-      setFollowClicked(false);
     }
   };
 
   const handleUnfollow = async () => {
     try {
+      setFollowed(false);
       await unfollowUser(userId);
       onFollowChange?.(userId, false);
     } catch {
@@ -48,35 +49,44 @@ function FollowBtn({ userId, isFollowed, onFollowChange }: FollowBtnProps) {
     if (isFollowLoading) return;
 
     if (!followed) {
-      setFollowClicked(true);
-      setFollowClicked(true);
       setFollowed(true);
       await handleFollow();
     } else {
-      setFollowed(false);
-      setFollowClicked(false);
-      setFollowClicked(false);
-      await handleUnfollow();
+      // Show confirmation modal before unfollowing
+      setShowUnfollowModal(true);
     }
   };
 
   return (
-    <button
-      className={`px-5 py-2 rounded-full font-semibold text-sm transition-colors cursor-pointer ${
-        followed
-          ? 'bg-background text-foreground border border-border hover:bg-error/10 hover:text-error hover:border-error'
-          : 'bg-foreground text-background hover:bg-foreground/90'
-      }`}
-      onClick={handleClick}
-      onMouseEnter={() => {
-        setIsHovered(true);
-      }}
-      onMouseLeave={() => {
-        setIsHovered(false);
-      }}
-    >
-      {followed ? (isHovered ? 'Unfollow' : 'Following') : 'Follow'}
-    </button>
+    <>
+      <button
+        className={`px-5 py-2 rounded-full font-semibold text-sm transition-colors cursor-pointer ${
+          followed
+            ? 'bg-background text-foreground border border-border hover:bg-error/10 hover:text-error hover:border-error'
+            : 'bg-foreground text-background hover:bg-foreground/90'
+        }`}
+        onClick={handleClick}
+        onMouseEnter={() => {
+          setIsHovered(true);
+        }}
+        onMouseLeave={() => {
+          setIsHovered(false);
+        }}
+      >
+        {followed ? (isHovered ? 'Unfollow' : 'Following') : 'Follow'}
+      </button>
+
+      <ConfirmModal
+        isOpen={showUnfollowModal}
+        onClose={() => setShowUnfollowModal(false)}
+        onConfirm={handleUnfollow}
+        title="Unfollow user?"
+        message="Their posts will no longer show up in your home timeline. You can still view their profile, unless their posts are protected."
+        confirmText="Unfollow"
+        cancelText="Cancel"
+        isLoading={isFollowLoading}
+      />
+    </>
   );
 }
 

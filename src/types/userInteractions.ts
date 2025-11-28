@@ -58,19 +58,21 @@ export interface BlockResponseDto {
 export interface BlockedUserDto {
   id: number;
   username: string;
-  name: string;
-  profile_image_url?: string;
-  bio?: string;
+  displayName: string;
+  profileImageUrl?: string | null;
+  bio?: string | null;
   blockedAt: string;
 }
 
 export interface BlockedUsersListResponseDto {
-  success: boolean;
-  data: {
-    blockedUsers: BlockedUserDto[];
-    total: number;
+  status: string;
+  message: string;
+  data: BlockedUserDto[];
+  metadata: {
+    totalItems: number;
     page: number;
     limit: number;
+    totalPages: number;
   };
 }
 
@@ -88,19 +90,21 @@ export interface MuteResponseDto {
 export interface MutedUserDto {
   id: number;
   username: string;
-  name: string;
-  profile_image_url?: string;
-  bio?: string;
+  displayName: string;
+  profileImageUrl?: string | null;
+  bio?: string | null;
   mutedAt: string;
 }
 
 export interface MutedUsersListResponseDto {
-  success: boolean;
-  data: {
-    mutedUsers: MutedUserDto[];
-    total: number;
+  status: string;
+  message: string;
+  data: MutedUserDto[];
+  metadata: {
+    totalItems: number;
     page: number;
     limit: number;
+    totalPages: number;
   };
 }
 

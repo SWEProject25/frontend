@@ -20,6 +20,7 @@ function MuteBtn({ userId, isMuted }: MuteBtnProps) {
 
   const handleMute = async () => {
     try {
+      setMuted(true);
       await muteUser(userId);
     } catch {
       // Revert state on error
@@ -29,6 +30,7 @@ function MuteBtn({ userId, isMuted }: MuteBtnProps) {
 
   const handleUnmute = async () => {
     try {
+      setMuted(false);
       await unmuteUser(userId);
     } catch {
       // Revert state on error
@@ -43,10 +45,8 @@ function MuteBtn({ userId, isMuted }: MuteBtnProps) {
     if (isMuteLoading) return;
 
     if (!muted) {
-      setMuted(true);
       await handleMute();
     } else {
-      setMuted(false);
       await handleUnmute();
     }
   };
@@ -56,8 +56,8 @@ function MuteBtn({ userId, isMuted }: MuteBtnProps) {
       type="button"
       className={`p-2 rounded-full font-semibold text-sm transition-colors cursor-pointer ${
         muted
-          ? 'bg-background text-block border-block border-1 hover:bg-block/10'
-          : 'bg-background text-primary hover:bg-primary/10 border-primary/40 border-1'
+          ? 'bg-background text-block border-block border hover:bg-block/10'
+          : 'bg-background text-primary hover:bg-primary/10 border-primary/40 border'
       }`}
       onClick={handleClick}
       aria-label={muted ? 'Unmute' : 'Mute'}
