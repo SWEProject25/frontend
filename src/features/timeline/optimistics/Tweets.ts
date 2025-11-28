@@ -12,53 +12,73 @@ import { OPTIMISTIC_TYPES } from '../constants/api';
 import { useTweetStore } from '@/features/tweets/store/tweetStore';
 import { TWEET_QUERY_KEYS } from '@/features/tweets/hooks/tweetQueries';
 import { ReplyDto } from '@/features/tweets/types';
+import { useRouter } from 'next/navigation';
 
 function updateTweetInInfiniteData(
   data: InfiniteData<TimelineFeedDtoResponse, number>,
-  newTweets: TimelineFeed[],
   pages: number[],
-  shouldRemove: boolean = false
-): InfiniteData<TimelineFeedDtoResponse, number> {
+  Tweets: TimelineFeed[],
+  type: string
+):
+  | InfiniteData<TimelineFeedDtoResponse, number>
+  | InfiniteData<ReplyDto, number> {
   let tweetIndx = 0;
-  const maxIndx = newTweets.length - 1;
-  return {
-    ...data,
-    pages: data.pages.map((page, pageIndx) => {
-      if (pages.includes(pageIndx) && tweetIndx <= maxIndx) {
-        return {
-          ...page,
-          data: {
-            ...page.data,
-            posts: shouldRemove
-              ? page.data.posts.filter((tweet) => {
-                  const shouldRemoveTweet =
-                    tweetIndx <= maxIndx &&
-                    tweet.postId === newTweets[tweetIndx].postId &&
-                    tweet.isRepost === newTweets[tweetIndx].isRepost &&
-                    tweet.userId === newTweets[tweetIndx].userId;
-                  if (shouldRemoveTweet) {
+  const maxIndx = Tweets.length - 1;
+  if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
+    return {
+      ...data,
+      pages: data.pages.map((page, pageIndx) => {
+        if (pages.includes(pageIndx) && tweetIndx <= maxIndx) {
+          return {
+            ...page,
+            data: {
+              ...page.data,
+              posts: page.data.posts.filter((tweet) => {
+                if (tweetIndx <= maxIndx) {
+                  if (
+                    tweet.postId === Tweets[tweetIndx].postId &&
+                    tweet.isRepost === Tweets[tweetIndx].isRepost &&
+                    tweet.userId === Tweets[tweetIndx].userId
+                  ) {
                     tweetIndx++;
                     return false;
-                  }
-                  return true;
-                })
-              : page.data.posts.map((tweet) => {
-                  if (
-                    tweetIndx <= maxIndx &&
-                    tweet.postId === newTweets[tweetIndx].postId &&
-                    tweet.isRepost === newTweets[tweetIndx].isRepost &&
-                    tweet.userId === newTweets[tweetIndx].userId
-                  ) {
-                    return newTweets[tweetIndx++];
-                  } else return tweet;
-                }),
-          },
-        };
-      } else {
-        return page;
-      }
-    }),
-  };
+                  } else return true;
+                } else return true;
+              }),
+            },
+          };
+        } else {
+          return page;
+        }
+      }),
+    };
+  } else {
+    return {
+      ...data,
+      pages: data.pages.map((page, pageIndx) => {
+        if (pages.includes(pageIndx) && tweetIndx <= maxIndx) {
+          return {
+            ...page,
+            data: {
+              ...page.data,
+              posts: page.data.posts.map((tweet) => {
+                if (
+                  tweetIndx <= maxIndx &&
+                  tweet.postId === Tweets[tweetIndx].postId &&
+                  tweet.isRepost === Tweets[tweetIndx].isRepost &&
+                  tweet.userId === Tweets[tweetIndx].userId
+                ) {
+                  return Tweets[tweetIndx++];
+                } else return tweet;
+              }),
+            },
+          };
+        } else {
+          return page;
+        }
+      }),
+    };
+  }
 }
 
 function updateTweet(
@@ -152,6 +172,7 @@ export function useOptimisticTweet() {
   const currTabQueryKey = useTimelineQueryKey();
   const setCurrentTweet = useTweetStore((state) => state.setCurrentTweet);
   const currentTweet = useTweetStore((state) => state.currentTweet);
+  const router = useRouter();
   const onMutate = async (
     type: string,
     userId: number,
@@ -245,61 +266,72 @@ export function useOptimisticTweet() {
         previousFeed,
         tweetId
       );
+
       if (oldTweets) {
         const pages: number[] = [];
         oldTweets.forEach((_tweet, indx) => {
           if (!pages.includes(indx)) pages.push(indx);
         });
         console.log(previousFeed);
-        const newTweets: TimelineFeed[] = [];
-        oldTweets.forEach((tweet) =>
-          newTweets.push(updateTweet(type, tweet, userId))
-        );
-        console.log(oldTweets, queryKey, previousFeed);
+        let timelineFeed:
+          | InfiniteData<TimelineFeedDtoResponse, number>
+          | InfiniteData<ReplyDto, number>;
+        if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
+          console.log(oldTweets, queryKey, previousFeed);
+          timelineFeed = updateTweetInInfiniteData(
+            previousFeed,
+            pages,
+            oldTweets,
+            type
+          );
+          console.log(timelineFeed);
+        } else {
+          const newTweets: TimelineFeed[] = [];
+          oldTweets.forEach((tweet) =>
+            newTweets.push(updateTweet(type, tweet, userId))
+          );
+          timelineFeed = updateTweetInInfiniteData(
+            previousFeed,
+            pages,
+            newTweets,
+            type
+          );
+        }
 
-        const shouldRemove =
-          type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE;
-
-        const timelineFeed = updateTweetInInfiniteData(
-          previousFeed,
-          newTweets,
-          pages,
-          shouldRemove
-        );
         queryClient.setQueryData<
           | InfiniteData<TimelineFeedDtoResponse, number>
           | InfiniteData<ReplyDto, number>
         >(queryKey, timelineFeed);
         console.log(timelineFeed);
 
-        if (shouldRemove && currentTweet) {
-          const isCurrentTweetFromBlockedUser =
-            currentTweet.userId === userId ||
-            currentTweet.originalPostData?.userId === userId;
-          if (isCurrentTweetFromBlockedUser) {
+        if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
+          if (
+            currentTweet &&
+            (currentTweet.userId === userId ||
+              currentTweet.originalPostData?.userId === userId)
+          ) {
+            router.push('/home');
             setCurrentTweet(null);
           }
-        }
-
-        if (
-          tweetId !== undefined &&
-          isRepost !== undefined &&
-          currentTweet?.postId === tweetId
-        ) {
-          oldTweet = oldTweets.find(
-            (post) =>
-              post.postId === tweetId &&
-              post.userId === userId &&
-              post.isRepost === isRepost
-          );
-          if (oldTweet) {
-            if (!shouldRemove) {
+        } else {
+          if (
+            tweetId !== undefined &&
+            isRepost !== undefined &&
+            currentTweet?.postId === tweetId
+          ) {
+            oldTweet = oldTweets.find(
+              (post) =>
+                post.postId === tweetId &&
+                post.userId === userId &&
+                post.isRepost === isRepost
+            );
+            if (oldTweet) {
               const newTweet = updateTweet(type, oldTweet, userId);
               console.log('old');
               setCurrentTweet(newTweet);
+            } else {
+              console.log('old2');
             }
-          } else {
-            console.log('old2');
           }
         }
       }
