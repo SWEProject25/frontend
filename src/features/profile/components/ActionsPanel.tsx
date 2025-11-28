@@ -5,6 +5,7 @@ import EditProfileModal from '../../../components/generic/EditProfileModal';
 import FollowBtn from '@/components/generic/buttons/FollowBtn';
 import BlockBtn from '@/components/generic/buttons/BlockBtn';
 import GenericDropdown from '@/components/generic/Dropdown';
+import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import { useProfile } from '../hooks';
 import { useRouter } from 'next/navigation';
 import { createConversation } from '@/features/messages/api/messages';
@@ -37,8 +38,13 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
+  const [showBlockConfirmModal, setShowBlockConfirmModal] = useState(false);
+  const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
+    null
+  );
   const { handleSaveProfile, isUpdating } = useProfile();
-  const { muteUser, unmuteUser, blockUser, unblockUser } = useInteractions();
+  const { muteUser, unmuteUser, blockUser, unblockUser, isBlockLoading } =
+    useInteractions();
   const router = useRouter();
 
   const handleEditProfileClick = () => {
@@ -55,15 +61,23 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
         }
         break;
       case 'block':
-        if (userData.isBlocked) {
-          await unblockUser(userData.userId);
-        } else {
-          await blockUser(userData.userId);
-        }
+        // Show confirmation modal for block/unblock
+        setBlockAction(userData.isBlocked ? 'unblock' : 'block');
+        setShowBlockConfirmModal(true);
         break;
       default:
         break;
     }
+  };
+
+  const handleConfirmBlock = async () => {
+    if (blockAction === 'block') {
+      await blockUser(userData.userId);
+    } else if (blockAction === 'unblock') {
+      await unblockUser(userData.userId);
+    }
+    setShowBlockConfirmModal(false);
+    setBlockAction(null);
   };
 
   const handleMessagesClick = async () => {
@@ -197,6 +211,25 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
         initialData={userData}
         onSave={handleSaveProfile}
         isUpdating={isUpdating}
+      />
+
+      <ConfirmModal
+        isOpen={showBlockConfirmModal}
+        onClose={() => {
+          setShowBlockConfirmModal(false);
+          setBlockAction(null);
+        }}
+        onConfirm={handleConfirmBlock}
+        title={blockAction === 'block' ? 'Block user?' : 'Unblock user?'}
+        message={
+          blockAction === 'block'
+            ? 'They will not be able to follow you or view your posts, and you will not see posts or notifications from them.'
+            : 'They will be able to follow you and view your posts again.'
+        }
+        confirmText={blockAction === 'block' ? 'Block' : 'Unblock'}
+        cancelText="Cancel"
+        confirmButtonClass="bg-block hover:bg-block/90 text-white"
+        isLoading={isBlockLoading}
       />
     </div>
   );

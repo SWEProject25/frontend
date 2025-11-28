@@ -46,12 +46,8 @@ function BlockBtn({ userId, isBlocked }: BlockBtnProps) {
 
     if (isBlockLoading) return;
 
-    if (!blocked) {
-      // Show confirmation modal before blocking
-      setShowBlockModal(true);
-    } else {
-      await handleUnblock();
-    }
+    // Show confirmation modal for both block and unblock
+    setShowBlockModal(true);
   };
 
   return (
@@ -76,10 +72,14 @@ function BlockBtn({ userId, isBlocked }: BlockBtnProps) {
       <ConfirmModal
         isOpen={showBlockModal}
         onClose={() => setShowBlockModal(false)}
-        onConfirm={handleBlock}
-        title="Block user?"
-        message="They will not be able to follow you or view your posts, and you will not see posts or notifications from them."
-        confirmText="Block"
+        onConfirm={blocked ? handleUnblock : handleBlock}
+        title={blocked ? 'Unblock user?' : 'Block user?'}
+        message={
+          blocked
+            ? 'They will be able to follow you and view your posts again.'
+            : 'They will not be able to follow you or view your posts, and you will not see posts or notifications from them.'
+        }
+        confirmText={blocked ? 'Unblock' : 'Block'}
         cancelText="Cancel"
         confirmButtonClass="bg-block hover:bg-block/90 text-white"
         isLoading={isBlockLoading}
