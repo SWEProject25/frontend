@@ -45,7 +45,7 @@ export const useToggleLikeTweet = (
     mutationFn: () => tweetApi.toggleLikeTweet(tweetId),
     onMutate: () => {
       return onMutate(
-        OPTIMISTIC_TYPES.FOLLOW,
+        OPTIMISTIC_TYPES.LIKE,
         userId,
         tweetId,
         isRepost,
