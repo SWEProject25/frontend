@@ -12,6 +12,8 @@ type stats = {
   isRepost: boolean;
   isQuote: boolean;
   userId: number;
+  type: string;
+  parentId?: number;
   likesCount: number;
   retweetsCount: number;
   commentsCount: number;
@@ -35,13 +37,17 @@ export default function Actions({
     stats.postId,
     stats.isRepost,
     stats.isQuote,
-    stats.userId
+    stats.userId,
+    stats.type,
+    stats.parentId
   );
   const toggleRepostTweet = useToggleRepostTweet(
     stats.postId,
     stats.isRepost,
     stats.isQuote,
-    stats.userId
+    stats.userId,
+    stats.type,
+    stats.parentId
   );
   function handleLike() {
     // if (stats.isLikedByMe) {

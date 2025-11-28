@@ -30,6 +30,8 @@ export interface TimelineTweet {
   isFollowedByMe: boolean;
   isRepostedByMe: boolean;
   text: string;
+  type?: string;
+  parentId?: number;
   media: Media[];
 }
 export interface TimelineFeed extends TimelineTweet {
