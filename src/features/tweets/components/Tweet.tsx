@@ -13,15 +13,31 @@ import { useTweetStore } from '../store/tweetStore';
 import { DropIcon } from '@/components/ui/icons/UIIcons';
 import { GrokIcon } from '@/components/ui/icons/BrandIcons';
 import { getTweetDropdownItems } from '../constants';
+import { useInteractions } from '@/hooks/useInteractions';
+import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 
 export default function Tweet({ data }: { data: TimelineFeed }) {
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
     username: data.username,
     isFollowed: data.isFollowedByMe,
   });
-  // if (data.name === 'Mohamed Sameh Albaz') console.log(data.isFollowedByMe);
+
   const [Hovered, setHovered] = useState(false);
+  const [showBlockModal, setShowBlockModal] = useState(false);
+  const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
+    null
+  );
+
   const router = useRouter();
+  const {
+    followUser,
+    unfollowUser,
+    muteUser,
+    blockUser,
+    unblockUser,
+    isBlockLoading,
+  } = useInteractions();
+
   const user = {
     id: data.userId,
     name: data.name,
@@ -49,9 +65,39 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     isFollowedByMe: data.isFollowedByMe,
     isRepostedByMe: data.isRepostedByMe,
   };
-  function onSelect(key: string) {
-    console.log('Selected item key:', key);
-  }
+
+  const handleDropdownAction = async (key: string) => {
+    switch (key) {
+      case 'follow':
+        if (data.isFollowedByMe) {
+          await unfollowUser(data.userId);
+        } else {
+          await followUser(data.userId);
+        }
+        break;
+      case 'mute':
+        await muteUser(data.userId);
+        break;
+      case 'block':
+        setBlockAction('block');
+        setShowBlockModal(true);
+        break;
+      default:
+        console.log('Selected item key:', key);
+        break;
+    }
+  };
+
+  const handleConfirmBlock = async () => {
+    if (blockAction === 'block') {
+      await blockUser(data.userId);
+    } else if (blockAction === 'unblock') {
+      await unblockUser(data.userId);
+    }
+    setShowBlockModal(false);
+    setBlockAction(null);
+  };
+
   const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
   return (
     <div
@@ -86,7 +132,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
               <DropDown
                 items={TWEET_DROPDOWN_ITEMS}
                 onOpened={setHovered}
-                onSelect={onSelect}
+                onSelect={handleDropdownAction}
               >
                 <Action
                   icon={<DropIcon />} // smaller icon
@@ -101,6 +147,25 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
           <Actions stats={actionsStats} onOpened={setHovered} />
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showBlockModal}
+        onClose={() => {
+          setShowBlockModal(false);
+          setBlockAction(null);
+        }}
+        onConfirm={handleConfirmBlock}
+        title={blockAction === 'block' ? 'Block user?' : 'Unblock user?'}
+        message={
+          blockAction === 'block'
+            ? `They will not be able to follow you or view your posts, and you will not see posts or notifications from @${data.username}.`
+            : `@${data.username} will be able to follow you and view your posts again.`
+        }
+        confirmText={blockAction === 'block' ? 'Block' : 'Unblock'}
+        cancelText="Cancel"
+        confirmButtonClass="bg-block hover:bg-block/90 text-white"
+        isLoading={isBlockLoading}
+      />
     </div>
   );
 }

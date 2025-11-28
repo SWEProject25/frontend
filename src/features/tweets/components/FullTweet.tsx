@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import Content from './Content';
 import Actions from './Actions';
 import UserInfo from './UserInfo';
@@ -12,13 +12,28 @@ import Header from './Header';
 import { TimelineFeed } from '@/features/timeline/types/api';
 import { GrokIcon } from '@/components/ui/icons/BrandIcons';
 import { DropIcon } from '@/components/ui/icons/UIIcons';
-//import { TWEET_DROPDOWN_ITEMS } from '../constants';
 import { getTweetDropdownItems } from '../constants';
+import { useInteractions } from '@/hooks/useInteractions';
+import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Loader from '@/components/generic/Loader';
 import { useGetRepliesByTweetId } from '../hooks/tweetQueries';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 
 function FullTweet({ data }: { data: TimelineFeed | null }) {
+  const [showBlockModal, setShowBlockModal] = useState(false);
+  const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
+    null
+  );
+
+  const {
+    followUser,
+    unfollowUser,
+    muteUser,
+    blockUser,
+    unblockUser,
+    isBlockLoading,
+  } = useInteractions();
+
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
     username: data?.username || '',
     isFollowed: data?.isFollowedByMe || false,
@@ -44,6 +59,43 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
   ));
 
   const hasInitialData = pages ? pages[0].data.posts.length > 0 : false;
+
+  const handleDropdownAction = async (key: string) => {
+    if (!data) return;
+
+    switch (key) {
+      case 'follow':
+        if (data.isFollowedByMe) {
+          await unfollowUser(data.userId);
+        } else {
+          await followUser(data.userId);
+        }
+        break;
+      case 'mute':
+        await muteUser(data.userId);
+        break;
+      case 'block':
+        // Show confirmation modal for block/unblock
+        setBlockAction('block');
+        setShowBlockModal(true);
+        break;
+      default:
+        console.log('Selected item key:', key);
+        break;
+    }
+  };
+
+  const handleConfirmBlock = async () => {
+    if (!data) return;
+
+    if (blockAction === 'block') {
+      await blockUser(data.userId);
+    } else if (blockAction === 'unblock') {
+      await unblockUser(data.userId);
+    }
+    setShowBlockModal(false);
+    setBlockAction(null);
+  };
 
   if (!data) {
     return (
@@ -94,7 +146,10 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
               label="Explain this post"
               color="blue"
             />
-            <DropDown items={TWEET_DROPDOWN_ITEMS}>
+            <DropDown
+              items={TWEET_DROPDOWN_ITEMS}
+              onSelect={handleDropdownAction}
+            >
               <Action
                 icon={<DropIcon />}
                 label="more"
@@ -134,6 +189,25 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
           </>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={showBlockModal}
+        onClose={() => {
+          setShowBlockModal(false);
+          setBlockAction(null);
+        }}
+        onConfirm={handleConfirmBlock}
+        title={blockAction === 'block' ? 'Block user?' : 'Unblock user?'}
+        message={
+          blockAction === 'block'
+            ? `They will not be able to follow you or view your posts, and you will not see posts or notifications from @${data.username}.`
+            : `@${data.username} will be able to follow you and view your posts again.`
+        }
+        confirmText={blockAction === 'block' ? 'Block' : 'Unblock'}
+        cancelText="Cancel"
+        confirmButtonClass="bg-block hover:bg-block/90 text-white"
+        isLoading={isBlockLoading}
+      />
     </div>
   );
 }

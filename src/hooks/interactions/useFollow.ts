@@ -13,11 +13,19 @@ import {
   PaginationParams,
 } from '@/types/userInteractions';
 import { INTERACTION_QUERY_KEYS } from './queryKeys';
+import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
+import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
 
 export const useFollowUser = () => {
   const queryClient = useQueryClient();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
-  return useMutation<FollowResponseDto, Error, number>({
+  return useMutation<
+    FollowResponseDto,
+    Error,
+    number,
+    Awaited<ReturnType<typeof onMutate>>
+  >({
     mutationFn: async (userId: number) => {
       try {
         const response = await followApi.followUser(userId);
@@ -27,6 +35,12 @@ export const useFollowUser = () => {
           error instanceof Error ? error.message : 'Failed to follow user';
         throw new Error(errorMessage);
       }
+    },
+    onMutate: (userId: number) => {
+      return onMutate(OPTIMISTIC_TYPES.FOLLOW, userId);
+    },
+    onError: (error, variables, context) => {
+      handleErrorOptimisticTweet(context);
     },
     onSuccess: () => {
       // Invalidate followers and following lists
@@ -40,13 +54,20 @@ export const useFollowUser = () => {
         queryKey: ['profile'],
       });
     },
+    networkMode: 'always',
   });
 };
 
 export const useUnfollowUser = () => {
   const queryClient = useQueryClient();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
-  return useMutation<FollowResponseDto, Error, number>({
+  return useMutation<
+    FollowResponseDto,
+    Error,
+    number,
+    Awaited<ReturnType<typeof onMutate>>
+  >({
     mutationFn: async (userId: number) => {
       try {
         const response = await followApi.unfollowUser(userId);
@@ -56,6 +77,12 @@ export const useUnfollowUser = () => {
           error instanceof Error ? error.message : 'Failed to unfollow user';
         throw new Error(errorMessage);
       }
+    },
+    onMutate: (userId: number) => {
+      return onMutate(OPTIMISTIC_TYPES.FOLLOW, userId);
+    },
+    onError: (error, variables, context) => {
+      handleErrorOptimisticTweet(context);
     },
     onSuccess: () => {
       // Invalidate followers and following lists
@@ -70,6 +97,7 @@ export const useUnfollowUser = () => {
         queryKey: ['profile'],
       });
     },
+    networkMode: 'always',
   });
 };
 
