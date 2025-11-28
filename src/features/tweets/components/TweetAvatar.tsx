@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import ProfileCard from './ProfileCard';
 import Avatar from '@/components/generic/Avatar';
@@ -23,29 +23,36 @@ export default function TweetAvatar({
 }) {
   const [showProfileCard, setShowProfileCard] = useState(false);
   const [cardHover, setCardHover] = useState(false);
+  const timer = useRef<NodeJS.Timeout | null>(null);
+  const delay = 700;
 
   const show = (cardShow ?? true) && (showProfileCard || cardHover);
-  const delay = 400;
 
   return (
-    <div className="flex-shrink-0" data-testid="tweet-avatar">
+    <div className="shrink-0" data-testid="tweet-avatar">
       <div className="relative">
-        <Link
-          href={`/${data.username}`}
-          onClick={(e) => e.stopPropagation()}
-          onMouseEnter={() => setTimeout(() => setShowProfileCard(true), delay)}
-          onMouseLeave={() =>
-            setTimeout(() => setShowProfileCard(false), delay)
-          }
-        >
-          <Avatar
-            data-testid="tweet-avatar-image"
-            avatarImage={data.avatar ?? null}
-            name={data.name}
-            size="sm"
-            position="relative"
-            className="border-0"
-          />
+        <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
+          <span
+            onMouseEnter={() => {
+              timer.current = setTimeout(() => setShowProfileCard(true), delay);
+            }}
+            onMouseLeave={() => {
+              if (timer.current) {
+                clearTimeout(timer.current);
+                timer.current = null;
+              }
+              setShowProfileCard(false);
+            }}
+          >
+            <Avatar
+              data-testid="tweet-avatar-image"
+              avatarImage={data.avatar ?? null}
+              name={data.name}
+              size="sm"
+              position="relative"
+              className="border-0"
+            />
+          </span>
         </Link>
         {show && (
           <div

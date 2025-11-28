@@ -1,4 +1,4 @@
-'use clinet';
+'use client';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { TIMELINE_QUERY_KEYS } from '../hooks/timelineQueries';
 import { useSelectedTab } from '../store/useTimelineStore';
@@ -12,9 +12,7 @@ import { OPTIMISTIC_TYPES } from '../constants/api';
 import { useTweetStore } from '@/features/tweets/store/tweetStore';
 import { TWEET_QUERY_KEYS } from '@/features/tweets/hooks/tweetQueries';
 import { ReplyDto } from '@/features/tweets/types';
-import { tweet } from '../mocks/data';
-import Timeline from '../components/Timeline';
-// import { C } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
+import { useRouter } from 'next/navigation';
 
 function updateTweetInInfiniteData(
   data: InfiniteData<TimelineFeedDtoResponse, number>,
@@ -127,6 +125,11 @@ function updateTweet(
       updatedTweet = { ...newTweet, originalPostData: originalPostData };
       return updatedTweet;
 
+    case OPTIMISTIC_TYPES.BLOCK:
+    case OPTIMISTIC_TYPES.MUTE:
+      // happens in updateTweetInInfiniteData with shouldRemove flag
+      return tweet;
+
     default:
       return tweet;
   }
@@ -169,6 +172,7 @@ export function useOptimisticTweet() {
   const currTabQueryKey = useTimelineQueryKey();
   const setCurrentTweet = useTweetStore((state) => state.setCurrentTweet);
   const currentTweet = useTweetStore((state) => state.currentTweet);
+  const router = useRouter();
   const onMutate = async (
     type: string,
     userId: number,
@@ -299,23 +303,35 @@ export function useOptimisticTweet() {
           | InfiniteData<ReplyDto, number>
         >(queryKey, timelineFeed);
         console.log(timelineFeed);
-        if (
-          tweetId !== undefined &&
-          isRepost !== undefined &&
-          currentTweet?.postId === tweetId
-        ) {
-          oldTweet = oldTweets.find(
-            (post) =>
-              post.postId === tweetId &&
-              post.userId === userId &&
-              post.isRepost === isRepost
-          );
-          if (oldTweet) {
-            const newTweet = updateTweet(type, oldTweet, userId);
-            console.log('old');
-            setCurrentTweet(newTweet);
-          } else {
-            console.log('old2');
+
+        if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
+          if (
+            currentTweet &&
+            (currentTweet.userId === userId ||
+              currentTweet.originalPostData?.userId === userId)
+          ) {
+            router.push('/home');
+            setCurrentTweet(null);
+          }
+        } else {
+          if (
+            tweetId !== undefined &&
+            isRepost !== undefined &&
+            currentTweet?.postId === tweetId
+          ) {
+            oldTweet = oldTweets.find(
+              (post) =>
+                post.postId === tweetId &&
+                post.userId === userId &&
+                post.isRepost === isRepost
+            );
+            if (oldTweet) {
+              const newTweet = updateTweet(type, oldTweet, userId);
+              console.log('old');
+              setCurrentTweet(newTweet);
+            } else {
+              console.log('old2');
+            }
           }
         }
       }

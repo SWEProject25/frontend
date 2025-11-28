@@ -11,6 +11,11 @@ export default defineConfig({
     exclude: ['node_modules', 'dist', '.idea', '.git', '.cache'],
     globals: true,
     css: true,
+    server: {
+      deps: {
+        inline: ['@testing-library/jest-dom'],
+      },
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'], // Add lcov for SonarQube

@@ -6,6 +6,8 @@ import {
   PaginationParams,
 } from '@/types/userInteractions';
 import { INTERACTION_QUERY_KEYS } from './queryKeys';
+import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
+import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
 
 // ==================== MUTATION HOOKS ====================
 
@@ -15,8 +17,14 @@ import { INTERACTION_QUERY_KEYS } from './queryKeys';
  */
 export const useMuteUser = () => {
   const queryClient = useQueryClient();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
-  return useMutation<MuteResponseDto, Error, number>({
+  return useMutation<
+    MuteResponseDto,
+    Error,
+    number,
+    Awaited<ReturnType<typeof onMutate>>
+  >({
     mutationFn: async (userId: number) => {
       try {
         const response = await muteApi.muteUser(userId);
@@ -27,6 +35,12 @@ export const useMuteUser = () => {
         throw new Error(errorMessage);
       }
     },
+    onMutate: (userId: number) => {
+      return onMutate(OPTIMISTIC_TYPES.MUTE, userId);
+    },
+    onError: (error, variables, context) => {
+      handleErrorOptimisticTweet(context);
+    },
     onSuccess: (_, userId) => {
       // Invalidate muted users list
       queryClient.invalidateQueries({
@@ -37,6 +51,7 @@ export const useMuteUser = () => {
         queryKey: ['profile', 'user', userId],
       });
     },
+    networkMode: 'always',
   });
 };
 
@@ -46,8 +61,14 @@ export const useMuteUser = () => {
  */
 export const useUnmuteUser = () => {
   const queryClient = useQueryClient();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
-  return useMutation<MuteResponseDto, Error, number>({
+  return useMutation<
+    MuteResponseDto,
+    Error,
+    number,
+    Awaited<ReturnType<typeof onMutate>>
+  >({
     mutationFn: async (userId: number) => {
       try {
         const response = await muteApi.unmuteUser(userId);
@@ -58,6 +79,12 @@ export const useUnmuteUser = () => {
         throw new Error(errorMessage);
       }
     },
+    onMutate: (userId: number) => {
+      return onMutate(OPTIMISTIC_TYPES.MUTE, userId);
+    },
+    onError: (error, variables, context) => {
+      handleErrorOptimisticTweet(context);
+    },
     onSuccess: (_, userId) => {
       // Invalidate muted users list
       queryClient.invalidateQueries({
@@ -68,6 +95,7 @@ export const useUnmuteUser = () => {
         queryKey: ['profile', 'user', userId],
       });
     },
+    networkMode: 'always',
   });
 };
 

@@ -1,11 +1,21 @@
 'use client';
-import { useState } from 'react';
 import ListItem from '@/components/ui/ListItem';
 import UserCard from '@/components/ui/UserCard';
-import { MUTED_USERS, BlockedUser } from '../../constants/BLOCKED_USERS';
+import { useGetMutedUsers } from '@/hooks/useInteractions';
+import { Loader } from '@/components/generic';
 
 export default function MutedAccountsList() {
-  const [mutedUsers] = useState<BlockedUser[]>(MUTED_USERS);
+  const { data, isLoading } = useGetMutedUsers({ page: 1, limit: 50 });
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <Loader />
+      </div>
+    );
+  }
+
+  const mutedUsers = data?.data || [];
 
   if (mutedUsers.length === 0) {
     return (
@@ -34,15 +44,15 @@ export default function MutedAccountsList() {
       {mutedUsers.map((user) => (
         <ListItem
           key={user.id}
-          href={`/profile/${user.handle.slice(1)}`}
+          href={`/${user.username}`}
           data-testid={`muted-account-item-${user.id}`}
         >
           <UserCard
-            name={user.name}
+            name={user.displayName}
             userId={user.id}
-            handle={user.handle}
-            verified={user.verified}
-            avatarUrl={user.avatarUrl}
+            handle={`@${user.username}`}
+            verified={false}
+            avatarUrl={user.profileImageUrl ?? undefined}
             isMuted={true}
             actionType="mute"
             data-testid={`muted-account-card-${user.id}`}

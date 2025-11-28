@@ -38,6 +38,7 @@ export const useToggleLikeTweet = (
   parentId?: number,
   type: string = 'POST'
 ) => {
+  //console.log('useToggleLikeTweet called with tweetId:', tweetId);
   const queryClient = useQueryClient();
   const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
   return useMutation({

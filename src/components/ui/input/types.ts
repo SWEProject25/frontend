@@ -19,10 +19,9 @@ export interface CharCounterProps {
   maxLength: number;
 }
 
-export interface InputBaseProps
-  extends React.HTMLAttributes<
-    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-  > {
+export interface InputBaseProps extends React.HTMLAttributes<
+  HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+> {
   // loosened ref type to support both input and textarea refs
   inputRef?: React.Ref<
     HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement

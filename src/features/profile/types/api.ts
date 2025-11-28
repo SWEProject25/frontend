@@ -13,6 +13,9 @@ export interface UserProfile {
   created_at: string;
   updated_at: string;
   is_followed_by_me: boolean;
+  is_muted_by_me: boolean;
+  is_blocked_by_me: boolean;
+  is_been_blocked: boolean;
   User: {
     id: number;
     username: string;

@@ -44,11 +44,32 @@ vi.mock('@/components/generic/buttons/FollowBtn', () => ({
   ),
 }));
 
+vi.mock('@/components/generic/buttons/BlockBtn', () => ({
+  default: ({ isBlocked }: { isBlocked: boolean }) => (
+    <button data-testid="profile-block-button">
+      {isBlocked ? 'Blocked' : 'Block'}
+    </button>
+  ),
+}));
+
+vi.mock('@/hooks/useInteractions', () => ({
+  useInteractions: () => ({
+    muteUser: vi.fn(),
+    unmuteUser: vi.fn(),
+    blockUser: vi.fn(),
+    unblockUser: vi.fn(),
+  }),
+}));
+
 const mockUserData = {
   name: 'John Doe',
+  username: 'johndoe',
   userId: 123,
   bio: 'Software Developer',
   isFollowed: false,
+  isMuted: false,
+  isBlocked: false,
+  isBeenBlocked: false,
   profileImage: '/profile.jpg',
   bannerImage: '/banner.jpg',
   location: 'New York',
@@ -229,6 +250,132 @@ describe('ActionsPanel', () => {
 
       // More button should be clickable
       expect(moreButton).toBeEnabled();
+    });
+  });
+
+  describe('Blocking and Being Blocked Scenarios', () => {
+    it('should hide message and follow buttons when user is blocked (isBlocked=true)', () => {
+      const blockedUserData = { ...mockUserData, isBlocked: true };
+      render(<ActionsPanel isOwnProfile={false} userData={blockedUserData} />);
+
+      // Should show more button
+      expect(screen.getByTestId('profile-more-button')).toBeInTheDocument();
+
+      // Should show block button
+      expect(screen.getByTestId('profile-block-button')).toBeInTheDocument();
+
+      // Should NOT show message button
+      expect(
+        screen.queryByTestId('profile-message-button')
+      ).not.toBeInTheDocument();
+
+      // Should NOT show follow button
+      expect(
+        screen.queryByTestId('profile-follow-button')
+      ).not.toBeInTheDocument();
+    });
+
+    it('should hide message and follow buttons when user has blocked you (isBeenBlocked=true)', () => {
+      const beenBlockedUserData = { ...mockUserData, isBeenBlocked: true };
+      render(
+        <ActionsPanel isOwnProfile={false} userData={beenBlockedUserData} />
+      );
+
+      // Should show more button
+      expect(screen.getByTestId('profile-more-button')).toBeInTheDocument();
+
+      // Should NOT show block button (since isBlocked is false)
+      expect(
+        screen.queryByTestId('profile-block-button')
+      ).not.toBeInTheDocument();
+
+      // Should NOT show message button
+      expect(
+        screen.queryByTestId('profile-message-button')
+      ).not.toBeInTheDocument();
+
+      // Should NOT show follow button
+      expect(
+        screen.queryByTestId('profile-follow-button')
+      ).not.toBeInTheDocument();
+    });
+
+    it('should show only more dropdown when both isBlocked=false and isBeenBlocked=true', () => {
+      const beenBlockedUserData = {
+        ...mockUserData,
+        isBlocked: false,
+        isBeenBlocked: true,
+      };
+      render(
+        <ActionsPanel isOwnProfile={false} userData={beenBlockedUserData} />
+      );
+
+      // Should show more button
+      expect(screen.getByTestId('profile-more-button')).toBeInTheDocument();
+
+      // Should NOT show any action buttons
+      expect(
+        screen.queryByTestId('profile-block-button')
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('profile-message-button')
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('profile-follow-button')
+      ).not.toBeInTheDocument();
+    });
+
+    it('should show all action buttons when neither blocked nor been blocked', () => {
+      const normalUserData = {
+        ...mockUserData,
+        isBlocked: false,
+        isBeenBlocked: false,
+      };
+      render(<ActionsPanel isOwnProfile={false} userData={normalUserData} />);
+
+      // Should show more button
+      expect(screen.getByTestId('profile-more-button')).toBeInTheDocument();
+
+      // Should show message button
+      expect(screen.getByTestId('profile-message-button')).toBeInTheDocument();
+
+      // Should show follow button
+      expect(screen.getByTestId('profile-follow-button')).toBeInTheDocument();
+
+      // Should NOT show block button
+      expect(
+        screen.queryByTestId('profile-block-button')
+      ).not.toBeInTheDocument();
+    });
+
+    it('should render block button with correct blocked state', () => {
+      const blockedUserData = { ...mockUserData, isBlocked: true };
+      render(<ActionsPanel isOwnProfile={false} userData={blockedUserData} />);
+
+      const blockButton = screen.getByTestId('profile-block-button');
+      expect(blockButton).toHaveTextContent('Blocked');
+    });
+
+    it('should show message and follow when both isBlocked and isBeenBlocked are undefined', () => {
+      const undefinedBlockUserData = {
+        ...mockUserData,
+        isBlocked: undefined,
+        isBeenBlocked: undefined,
+      };
+      render(
+        <ActionsPanel isOwnProfile={false} userData={undefinedBlockUserData} />
+      );
+
+      // Should show message button (undefined is falsy)
+      expect(screen.getByTestId('profile-message-button')).toBeInTheDocument();
+
+      // Should show follow button (undefined is falsy)
+      expect(screen.getByTestId('profile-follow-button')).toBeInTheDocument();
+
+      // Should NOT show block button
+      expect(
+        screen.queryByTestId('profile-block-button')
+      ).not.toBeInTheDocument();
     });
   });
 });
