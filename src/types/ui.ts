@@ -4,8 +4,7 @@ export interface IconProps {
 }
 
 // Allow standard button HTML attributes so consumers can pass data-testid, id, aria-*, etc.
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'social' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
@@ -16,10 +15,9 @@ export interface ButtonProps
 }
 
 // Allow standard input HTML attributes so consumers can pass data-testid, name, id, aria-*, etc.
-export interface InputProps
-  extends React.InputHTMLAttributes<
-    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-  > {
+export interface InputProps extends React.InputHTMLAttributes<
+  HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+> {
   label?: string;
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'textarea';
   value: string;
@@ -50,8 +48,7 @@ export interface InputProps
   className?: string;
 }
 
-export interface SelectProps
-  extends React.SelectHTMLAttributes<HTMLSelectElement> {
+export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;

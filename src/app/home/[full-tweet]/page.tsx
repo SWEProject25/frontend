@@ -11,6 +11,7 @@ function Page() {
   // const tweetId = Number(params?.['full-tweet'] || 0);
   // const viewdTweet =
   //   tweets?.data?.posts?.find((post) => post.postId === tweetId) || null;
+  // if (!tweet) router.push('./home');
 
   return (
     <>

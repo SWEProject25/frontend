@@ -16,17 +16,29 @@ export default function MuteAndBlockPage() {
   };
 
   return (
-    <div className="border-r border-border min-h-screen">
+    <div
+      className="border-r border-border min-h-screen"
+      data-testid="mute-and-block-page"
+    >
       <Breadcrumb
         title="Mute and block"
         description={description}
         onBack={handleBack}
         showArrow={true}
+        data-testid="mute-and-block-breadcrumb"
       />
-      <nav className="flex flex-col">
+      <nav className="flex flex-col" data-testid="mute-and-block-nav">
         {block_mute_Items.map((item) => (
-          <ListItem key={item.id} href={item.path}>
-            <OptionItem label={item.label} showArrow={true} />
+          <ListItem
+            key={item.id}
+            href={item.path}
+            data-testid={`mute-and-block-item-${item.id}`}
+          >
+            <OptionItem
+              label={item.label}
+              showArrow={true}
+              data-testid={`mute-and-block-option-${item.id}`}
+            />
           </ListItem>
         ))}
       </nav>

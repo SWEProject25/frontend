@@ -123,7 +123,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     isRepost: data.isRepost,
     isQuote: data.isQuote,
     userId: data.userId,
-    type: data?.type ?? 'POST',
+    type: data?.type,
     parentId: data?.parentId,
 
     likesCount: data.likesCount,

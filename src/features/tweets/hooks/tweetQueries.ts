@@ -35,8 +35,8 @@ export const useToggleLikeTweet = (
   isRepost: boolean,
   isQuote: boolean,
   userId: number,
-  type: string,
-  parentId?: number
+  parentId?: number,
+  type: string = 'POST'
 ) => {
   //console.log('useToggleLikeTweet called with tweetId:', tweetId);
   const queryClient = useQueryClient();
@@ -73,8 +73,8 @@ export const useToggleRepostTweet = (
   isRepost: boolean,
   isQuote: boolean,
   userId: number,
-  type: string,
-  parentId?: number
+  parentId?: number,
+  type: string = 'POST'
 ) => {
   const queryClient = useQueryClient();
   const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
