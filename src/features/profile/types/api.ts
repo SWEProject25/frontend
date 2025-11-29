@@ -89,11 +89,18 @@ export interface ProfileTweet {
   isRepostedByMe: boolean;
   text: string;
   media: Media[];
+  parentId: number | null;
+  type: string;
 }
 export interface ProfileFeed extends ProfileTweet {
   isRepost: boolean;
   isQuote: boolean;
   originalPostData?: ProfileTweet;
+}
+export interface ProfileDtoResponse {
+  status: string;
+  message: string;
+  data: ProfileFeed[];
 }
 export interface ProfileFeedDtoResponse {
   status: string;

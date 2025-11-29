@@ -35,7 +35,7 @@ export const useToggleLikeTweet = (
   isRepost: boolean,
   isQuote: boolean,
   userId: number,
-  parentId?: number,
+  parentId?: number | null,
   type: string = 'POST'
 ) => {
   //console.log('useToggleLikeTweet called with tweetId:', tweetId);
@@ -73,7 +73,7 @@ export const useToggleRepostTweet = (
   isRepost: boolean,
   isQuote: boolean,
   userId: number,
-  parentId?: number,
+  parentId?: number | null,
   type: string = 'POST'
 ) => {
   const queryClient = useQueryClient();

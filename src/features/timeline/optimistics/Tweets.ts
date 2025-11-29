@@ -179,7 +179,7 @@ export function useOptimisticTweet() {
     tweetId?: number,
     isRepost?: boolean,
     postType: string = 'POST',
-    parentId: number = -1
+    parentId: number | null = null
   ): Promise<{
     previousFeeds: {
       queryKey:
@@ -206,7 +206,7 @@ export function useOptimisticTweet() {
     let oldTweet: TimelineFeed | undefined;
 
     const currentKey =
-      postType.toLowerCase() === 'reply'
+      postType.toLowerCase() === 'reply' && parentId
         ? TWEET_QUERY_KEYS.getRepliesByTweetId(parentId)
         : currTabQueryKey;
     const queryKeys: (

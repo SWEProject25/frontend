@@ -4,6 +4,7 @@ import {
   ProfileSearchResponseDto,
   SearchProfilesParams,
   ProfileFeedDtoResponse,
+  ProfileDtoResponse,
 } from '../types/api';
 import { PROFILE_API_CONFIG, PROFILE_ENDPOINTS } from '../constants/api';
 import { API_CONFIG } from '@/constants/api';
@@ -230,6 +231,10 @@ export const profileApi = {
         credentials: 'include',
       }
     );
-    return handleResponse<ProfileFeedDtoResponse>(response);
+    const data = await handleResponse<ProfileDtoResponse>(response);
+    return {
+      ...data,
+      data: { posts: data.data },
+    };
   },
 };

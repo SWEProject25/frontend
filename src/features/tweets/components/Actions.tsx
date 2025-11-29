@@ -15,7 +15,7 @@ type stats = {
   isQuote: boolean;
   userId: number;
   type?: string;
-  parentId?: number;
+  parentId?: number | null;
   likesCount: number;
   retweetsCount: number;
   commentsCount: number;
