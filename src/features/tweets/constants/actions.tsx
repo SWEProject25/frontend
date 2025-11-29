@@ -8,7 +8,13 @@ import {
 /**
  * Tweet action buttons metadata
  */
-export const ACTIONS_META = [
+export const ACTIONS_META = ({
+  isRepostedByMe,
+  isLikedByMe,
+}: {
+  isRepostedByMe?: boolean;
+  isLikedByMe?: boolean;
+}) => [
   {
     key: 'reply',
     icon: <ReplyIcon />,
@@ -18,13 +24,13 @@ export const ACTIONS_META = [
   {
     key: 'retweet',
     icon: <RetweetIcon />,
-    label: 'Repost',
+    label: isRepostedByMe ? 'Undo Repost' : 'Repost',
     color: 'green',
   },
   {
     key: 'like',
     icon: <LikeIcon />,
-    label: 'Like',
+    label: isLikedByMe ? 'Unlike' : 'Like',
     color: 'rose', // use rose for pinkish-red
   },
   {

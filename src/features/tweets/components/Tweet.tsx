@@ -144,7 +144,13 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
             </div>
           </div>
           <Content content={content} />
-          <Actions stats={actionsStats} onOpened={setHovered} />
+          <Actions
+            stats={actionsStats}
+            onOpened={setHovered}
+            replyClick={() => {
+              setCurrentTweet(data);
+            }}
+          />
         </div>
       </div>
 

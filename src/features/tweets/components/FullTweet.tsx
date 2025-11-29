@@ -18,6 +18,7 @@ import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Loader from '@/components/generic/Loader';
 import { useGetRepliesByTweetId } from '../hooks/tweetQueries';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
+import { useTweetStore } from '../store/tweetStore';
 
 function FullTweet({ data }: { data: TimelineFeed | null }) {
   const [showBlockModal, setShowBlockModal] = useState(false);
@@ -97,6 +98,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     setBlockAction(null);
   };
 
+  const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
   if (!data) {
     return (
       <div className="flex justify-center items-center h-32">
@@ -165,7 +167,11 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
             <Timing time={data.date} full={true} />
           </div>
           <div className="border-b border-gray-700 my-2" />
-          <Actions stats={actionsStats} full={true} />
+          <Actions
+            stats={actionsStats}
+            full={true}
+            replyClick={() => setCurrentTweet(data)}
+          />
           <div className="border-b border-gray-700 mt-3" />
         </div>
       </div>
