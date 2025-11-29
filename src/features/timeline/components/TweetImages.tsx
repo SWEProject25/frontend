@@ -27,19 +27,29 @@ export default function TweetImages() {
     const arrayFiles: File[] = Array.from(files);
     console.log(arrayFiles);
     if (!arrayFiles.every((media) => MEDIA_TYPES.includes(media.type))) {
-      toasterMessage('Please choose up valid format ' + MEDIA_TYPES.join(','));
+      toasterMessage(
+        'Please choose up valid format ' + MEDIA_TYPES.join(','),
+        'bottom-center',
+        'error'
+      );
       e.target.value = '';
       return;
     }
     if (arrayFiles.length + mediaNum > MAX_MEDIA_NUM) {
-      toasterMessage('Please choose up to 4 photos, video or GIFs');
+      toasterMessage(
+        'Please choose up to 4 photos, video or GIFs',
+        'bottom-center',
+        'error'
+      );
       e.target.value = '';
       return;
     }
 
     if (!arrayFiles.every((media) => media.size <= MAX_MEDIA_SIZE)) {
       toasterMessage(
-        'You can not upload any media larger than 100 MB please choose smaller media'
+        'You can not upload any media larger than 100 MB please choose smaller media',
+        'bottom-center',
+        'error'
       );
 
       e.target.value = '';

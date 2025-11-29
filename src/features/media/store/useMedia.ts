@@ -6,9 +6,9 @@ interface MediaState {
   media: mediaType[];
   addMedia: (newMedia: File[]) => void;
   removeMedia: (id: string) => void;
-  addGifs: (gif: GifData) => void;
   actions: {
     clearMedia: () => void;
+    addGifs: (gif: GifData) => void;
   };
 }
 
@@ -29,19 +29,20 @@ const useMedia = create<MediaState>()(
         const newMedia = state.media.filter((med) => med.id !== id);
         return { media: newMedia };
       }),
-    addGifs: (gif) =>
-      set((state) => {
-        const mediaWithGif: mediaType = {
-          id: gif.id + `${new Date().getTime()}`,
-          type: 'externalGif',
-          data: gif,
-        };
-        return {
-          media: [...state.media, mediaWithGif],
-        };
-      }),
+
     actions: {
       clearMedia: () => set({ media: [] }),
+      addGifs: (gif) =>
+        set((state) => {
+          const mediaWithGif: mediaType = {
+            id: gif.id + `${new Date().getTime()}`,
+            type: 'externalGif',
+            data: gif,
+          };
+          return {
+            media: [...state.media, mediaWithGif],
+          };
+        }),
     },
   }))
 );

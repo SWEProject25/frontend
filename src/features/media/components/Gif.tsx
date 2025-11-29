@@ -2,14 +2,12 @@ import { getQueryClient } from '@/lib/getQueryClient';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { gifApi } from '../services/gifAPi';
 import GifModal from './GifModal';
+import { prefetchSearchCategories } from '../hooks/mediaQueries';
 
 export default async function Gif() {
   const queryClient = getQueryClient();
-  const { getCategories } = gifApi;
-  await queryClient.prefetchQuery({
-    queryKey: ['catergoryGif'],
-    queryFn: getCategories,
-  });
+
+  await prefetchSearchCategories();
   // useEffect(function () {
   //   async function fetchGif() {
   //     const response = await fetch(
