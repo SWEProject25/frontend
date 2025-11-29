@@ -10,6 +10,9 @@ export interface SearchInputProps {
   onClear?: () => void;
   className?: string;
   autoFocus?: boolean;
+  hover?: boolean;
+  clearColor?: string;
+  hoverColor?: string;
 }
 
 export default function SearchInput({
@@ -19,6 +22,9 @@ export default function SearchInput({
   onClear,
   className = '',
   autoFocus = false,
+  hover = false,
+  clearColor = 'bg-primary',
+  hoverColor = 'hover:bg-primary-hover',
 }: SearchInputProps) {
   const [internalValue, setInternalValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -80,14 +86,16 @@ export default function SearchInput({
       {value && (
         <button
           onClick={handleClear}
-          className="
+          className={`
             mr-3 p-1
             rounded-full
-            bg-primary
-            hover:bg-primary-hover
+          ${clearColor}
+          ${hoverColor}
+            
             transition-colors duration-200
             flex items-center justify-center
-          "
+            ${hover && 'hover:cursor-pointer'}
+          `}
           aria-label="Clear search"
         >
           <CloseIcon className="w-3 h-3 text-background" />

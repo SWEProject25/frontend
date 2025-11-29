@@ -8,7 +8,7 @@ interface XModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
   overlayColor?: string;
@@ -16,6 +16,7 @@ interface XModalProps {
   title?: string;
   showLogo?: boolean;
   showCloseButton?: boolean;
+  padding?: boolean;
 }
 
 export default function XModal({
@@ -30,6 +31,7 @@ export default function XModal({
   title = 'Custom Modal',
   showLogo = false,
   showCloseButton = false,
+  padding = true,
 }: XModalProps) {
   useEffect(() => {
     if (!closeOnEscape || !isOpen) return;
@@ -63,6 +65,7 @@ export default function XModal({
     lg: 'sm:max-w-lg sm:max-h-[500px]',
     xl: 'sm:max-w-xl sm:max-h-[600px]',
     '2xl': 'sm:h-[427.5px] sm:w-[600px]',
+    '3xl': 'sm:h-[427.5px] sm:w-[630px]',
   };
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -74,7 +77,7 @@ export default function XModal({
   return createPortal(
     <div>
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center  ${overlayColor}`}
+        className={`fixed inset-0 z-50 flex items-center justify-center overflow-y-clip ${overlayColor}`}
         onClick={handleOverlayClick}
         data-testid={`overlay-xmodal`}
         role="dialog"
@@ -120,7 +123,7 @@ export default function XModal({
             </>
           )}
           {/* Content */}
-          <div className="px-2 pb-8">{children}</div>
+          <div className={`${padding && 'px-2 pb-8'}`}>{children}</div>
         </div>
       </div>
     </div>,

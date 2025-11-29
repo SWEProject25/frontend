@@ -17,7 +17,7 @@ export default function MediaPreview() {
     <div>
       <div
         data-testid="media-preview"
-        className={`${media.length == 1 ? 'w-full' : ' grid grid-cols-2 gap-1 max-h-[250px]'} max-w-[514px] mx-auto rounded-2xl overflow-hidden`}
+        className={`${media.length == 1 ? 'w-full' : ' grid grid-cols-2 gap-1 max-h-[300px]'} max-w-[514px] mx-auto rounded-2xl overflow-hidden`}
       >
         <div className="relative">
           {/* Left arrow */}
@@ -38,6 +38,7 @@ export default function MediaPreview() {
           {/* Left or only image */}
           <MediaItem
             full={media.length === 1}
+            key={media[currentIndex].id}
             id={media[currentIndex].id}
             media={media[currentIndex]}
             onClick={() => {
@@ -49,6 +50,7 @@ export default function MediaPreview() {
         {media.length > 1 && (
           <div className="relative">
             <MediaItem
+              key={media[currentIndex + 1].id}
               full={false}
               id={media[currentIndex + 1].id}
               media={media[currentIndex + 1]}
@@ -75,7 +77,7 @@ export default function MediaPreview() {
           </div>
         )}
       </div>
-      <div className="px-3 flex items-center gap-x-4 text-base">
+      {/* <div className="px-3 flex items-center gap-x-4 text-base">
         <button
           data-testid={`Tag-people`}
           className="hover:underline cursor-pointer flex items-center"
@@ -100,7 +102,7 @@ export default function MediaPreview() {
           />
           <span className="  text-text-inactive text-xs">Add descriptions</span>
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }
