@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import GifData, { mediaType } from '../types/components';
+import { EXTERNAL_GIF, LOCAL_MEDIA } from '../constants/mediaConstants';
 
 interface MediaState {
   media: mediaType[];
@@ -19,7 +20,7 @@ const useMedia = create<MediaState>()(
       set((state) => {
         const mediaWithIndx: mediaType[] = newMedia.map((med, ind) => ({
           id: `${med.lastModified}${new Date().getTime()}${med.name}${ind}`,
-          type: 'localMedia',
+          type: LOCAL_MEDIA,
           data: med,
         }));
         return { media: [...state.media, ...mediaWithIndx] };
@@ -36,7 +37,7 @@ const useMedia = create<MediaState>()(
         set((state) => {
           const mediaWithGif: mediaType = {
             id: gif.id + `${new Date().getTime()}`,
-            type: 'externalGif',
+            type: EXTERNAL_GIF,
             data: gif,
           };
           return {

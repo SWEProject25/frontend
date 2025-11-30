@@ -44,11 +44,20 @@ export default function TweetSubmitSection() {
       : media.length > 0;
   const enableSection = tweetText.trim().length !== 0 || isOpen;
 
-  function handleAddTweet() {
+  async function handleAddTweet() {
     const tweetFormData = new FormData();
-    media.forEach((med) => {
+    for (const med of media) {
       if (med.type === LOCAL_MEDIA) tweetFormData.append('media', med.data);
-    });
+      else {
+        const res = await fetch(med.data.images.original.url);
+        const blob = await res.blob();
+        const gifFile = new File([blob], med.data.title, { type: 'image/gif' });
+        console.log(gifFile);
+        tweetFormData.append('media', gifFile);
+      }
+    }
+    console.log(tweetFormData.getAll('media'));
+    console.log(media);
     const seclectdReply = options[selectedReplyOption - 1].Name;
     if (tweetText.trim().length !== 0)
       tweetFormData.append(TweetFormDataKeys.CONTENT, tweetText);
