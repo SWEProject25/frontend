@@ -2,13 +2,16 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import GifData, { mediaType } from '../types/components';
 import { EXTERNAL_GIF, LOCAL_MEDIA } from '../constants/mediaConstants';
+import { EmojiClickData } from 'emoji-picker-react';
 
 interface MediaState {
   media: mediaType[];
+  emoji: string;
   addMedia: (newMedia: File[]) => void;
   removeMedia: (id: string) => void;
   actions: {
     clearMedia: () => void;
+    setEmoji: (emoji: string) => void;
     addGifs: (gif: GifData) => void;
   };
 }
@@ -16,6 +19,7 @@ interface MediaState {
 const useMedia = create<MediaState>()(
   devtools((set) => ({
     media: [],
+    emoji: '',
     addMedia: (newMedia) =>
       set((state) => {
         const mediaWithIndx: mediaType[] = newMedia.map((med, ind) => ({
@@ -32,6 +36,7 @@ const useMedia = create<MediaState>()(
       }),
 
     actions: {
+      setEmoji: (emoji) => set({ emoji: emoji }),
       clearMedia: () => set({ media: [] }),
       addGifs: (gif) =>
         set((state) => {
@@ -50,3 +55,4 @@ const useMedia = create<MediaState>()(
 
 export default useMedia;
 export const useMediaActions = () => useMedia((state) => state.actions);
+export const useEmoji = () => useMedia((state) => state.emoji);

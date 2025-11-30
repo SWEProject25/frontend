@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   useGifACtions,
-  useGifs,
   useGifsSearch,
   useGifVisibility,
 } from '../store/useGif';
