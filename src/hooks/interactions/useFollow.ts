@@ -53,6 +53,10 @@ export const useFollowUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['profile'],
       });
+      // Invalidate all tweet queries to update full tweet page
+      queryClient.invalidateQueries({
+        queryKey: ['tweet'],
+      });
     },
     networkMode: 'always',
   });
@@ -95,6 +99,10 @@ export const useUnfollowUser = () => {
       // Invalidate all profile queries to ensure UI updates everywhere
       queryClient.invalidateQueries({
         queryKey: ['profile'],
+      });
+      // Invalidate all tweet queries to update full tweet page
+      queryClient.invalidateQueries({
+        queryKey: ['tweet'],
       });
     },
     networkMode: 'always',

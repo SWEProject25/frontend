@@ -21,6 +21,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
     username: data.username,
     isFollowed: data.isFollowedByMe,
+    isMuted: data.isMutedByMe || false,
   });
 
   const [Hovered, setHovered] = useState(false);
@@ -34,6 +35,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     followUser,
     unfollowUser,
     muteUser,
+    unmuteUser,
     blockUser,
     unblockUser,
     isBlockLoading,
@@ -83,7 +85,11 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
         }
         break;
       case 'mute':
-        await muteUser(data.userId);
+        if (data.isMutedByMe) {
+          await unmuteUser(data.userId);
+        } else {
+          await muteUser(data.userId);
+        }
         break;
       case 'block':
         setBlockAction('block');
