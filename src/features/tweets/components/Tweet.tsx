@@ -8,13 +8,14 @@ import Action from './Action';
 import DropDown from './DropDown';
 import Timing from './Timing';
 import { useRouter } from 'next/navigation';
-import { TimelineFeed } from '@/features/timeline/types/api';
+import { TimelineFeed, TimelineTweet } from '@/features/timeline/types/api';
 import { useTweetStore } from '../store/tweetStore';
-import { DropIcon } from '@/components/ui/icons/UIIcons';
+import { DropIcon, RetweetIcon } from '@/components/ui/icons/UIIcons';
 import { GrokIcon } from '@/components/ui/icons/BrandIcons';
 import { getTweetDropdownItems } from '../constants';
 import { useInteractions } from '@/hooks/useInteractions';
 import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
+import Link from 'next/link';
 
 export default function Tweet({ data }: { data: TimelineFeed }) {
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
@@ -38,27 +39,33 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     isBlockLoading,
   } = useInteractions();
 
+  const dataViewd = data.isRepost
+    ? data.originalPostData
+      ? data.originalPostData
+      : data
+    : data;
+
   const user = {
     id: data.userId,
-    name: data.name,
-    username: data.username,
-    verified: data.verified,
-    avatar: data.avatar,
-    isFollowedByMe: data.isFollowedByMe,
+    name: dataViewd?.name,
+    username: dataViewd?.username,
+    verified: dataViewd?.verified,
+    avatar: dataViewd?.avatar,
+    isFollowedByMe: dataViewd?.isFollowedByMe,
   };
   const content = {
-    text: data.text,
-    media: data.media,
+    text: dataViewd?.text,
+    media: dataViewd?.media,
   };
 
   const actionsStats = {
-    postId: data.postId,
+    postId: dataViewd?.postId,
     isRepost: data.isRepost,
     isQuote: data.isQuote,
     userId: data.userId,
     likesCount: data.likesCount,
-    type: data?.type,
-    parentId: data?.parentId,
+    type: data.type,
+    parentId: data.parentId,
     retweetsCount: data.retweetsCount,
     commentsCount: data.commentsCount,
     isLikedByMe: data.isLikedByMe,
@@ -103,11 +110,28 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     <div
       data-testid={`tweet-${data.postId}`}
       onClick={() => {
-        setCurrentTweet(data);
+        //setCurrentTweet(data);
+        console.log('tweet:', data);
         router.push(`/home/${data.postId}`);
       }}
       className={`block mx-auto w-full border-b border-gray-700 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer p-4`}
     >
+      {/* Show reposted by if present */}
+      {data.isRepost && (
+        <Link
+          href={`/${data.username}`}
+          onClick={(e) => e.stopPropagation()}
+          className="flex items-center text-xs text-gray-400 mb-1 ml-10 hover:underline"
+        >
+          <span className="mr-1">
+            <RetweetIcon />
+          </span>
+          <span className="font-semibold">
+            <span>{data.name} </span>
+            reposted
+          </span>
+        </Link>
+      )}
       <div className="flex w-full gap-2">
         <TweetAvatar data={user} onHoverCard={setHovered} />
         <div className="flex flex-col items-center flex-1">
@@ -144,7 +168,13 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
             </div>
           </div>
           <Content content={content} />
-          <Actions stats={actionsStats} onOpened={setHovered} />
+          <Actions
+            stats={actionsStats}
+            onOpened={setHovered}
+            replyClick={() => {
+              setCurrentTweet(data);
+            }}
+          />
         </div>
       </div>
 

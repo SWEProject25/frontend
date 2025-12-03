@@ -29,7 +29,7 @@ export interface Tweet {
 export interface TweetResponseDto {
   status: string;
   message: string;
-  data: Tweet;
+  data: TimelineFeed;
 }
 
 export interface Media {
