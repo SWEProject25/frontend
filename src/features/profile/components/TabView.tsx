@@ -6,7 +6,7 @@ import {
   useProfileStore,
   useSelectedTab,
 } from '../store/profileStore';
-import Tweets from './Tweets';
+import BlockedByUserNotice from './BlockedByUserNotice';
 
 const TabView = () => {
   const selectedTab = useSelectedTab();
@@ -22,6 +22,9 @@ const TabView = () => {
         onClick={selectTab}
         height="h-[53px]"
       />
+      {profile?.is_been_blocked && (
+        <BlockedByUserNotice username={profile.User.username} />
+      )}
       {/* {profile?.User && <Tweets />} */}
     </div>
   );

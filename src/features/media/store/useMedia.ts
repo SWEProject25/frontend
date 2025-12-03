@@ -1,25 +1,30 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import GifData, { mediaType } from '../types/components';
+import { EXTERNAL_GIF, LOCAL_MEDIA } from '../constants/mediaConstants';
+import { EmojiClickData } from 'emoji-picker-react';
 
 interface MediaState {
   media: mediaType[];
+  emoji: string;
   addMedia: (newMedia: File[]) => void;
   removeMedia: (id: string) => void;
-  addGifs: (gif: GifData) => void;
   actions: {
     clearMedia: () => void;
+    setEmoji: (emoji: string) => void;
+    addGifs: (gif: GifData) => void;
   };
 }
 
 const useMedia = create<MediaState>()(
   devtools((set) => ({
     media: [],
+    emoji: '',
     addMedia: (newMedia) =>
       set((state) => {
         const mediaWithIndx: mediaType[] = newMedia.map((med, ind) => ({
           id: `${med.lastModified}${new Date().getTime()}${med.name}${ind}`,
-          type: 'localMedia',
+          type: LOCAL_MEDIA,
           data: med,
         }));
         return { media: [...state.media, ...mediaWithIndx] };
@@ -29,22 +34,25 @@ const useMedia = create<MediaState>()(
         const newMedia = state.media.filter((med) => med.id !== id);
         return { media: newMedia };
       }),
-    addGifs: (gif) =>
-      set((state) => {
-        const mediaWithGif: mediaType = {
-          id: gif.id + `${new Date().getTime()}`,
-          type: 'externalGif',
-          data: gif,
-        };
-        return {
-          media: [...state.media, mediaWithGif],
-        };
-      }),
+
     actions: {
+      setEmoji: (emoji) => set({ emoji: emoji }),
       clearMedia: () => set({ media: [] }),
+      addGifs: (gif) =>
+        set((state) => {
+          const mediaWithGif: mediaType = {
+            id: gif.id + `${new Date().getTime()}`,
+            type: EXTERNAL_GIF,
+            data: gif,
+          };
+          return {
+            media: [...state.media, mediaWithGif],
+          };
+        }),
     },
   }))
 );
 
 export default useMedia;
 export const useMediaActions = () => useMedia((state) => state.actions);
+export const useEmoji = () => useMedia((state) => state.emoji);

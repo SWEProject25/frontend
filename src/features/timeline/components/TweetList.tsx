@@ -8,6 +8,7 @@ import { useTweetStore } from '@/features/tweets/store/tweetStore';
 // import InfiniteScrollContainer from '@/components/generic/InfiniteScrollContainer';
 import Loader from '@/components/generic/Loader';
 import { TimelineFeedDtoResponse } from '../types/api';
+import toasterMessage from '@/components/ui/home/ToasterMessage';
 
 export default function TweetList() {
   const {
@@ -47,7 +48,7 @@ export default function TweetList() {
 
   const hasInitialData = pages ? pages[0].data.posts.length > 0 : false;
   return isError ? (
-    <div data-testid="tweet-list-error">Error {error.message}</div>
+    <>{toasterMessage(error.message, 'bottom-center', 'error')}</>
   ) : isLoading ? (
     <div
       className="flex justify-center items-center h-64 mx-4"

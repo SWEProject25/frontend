@@ -2,6 +2,7 @@
 import { ReactNode, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 interface XMenuState {
   menuName?: string;
@@ -11,13 +12,15 @@ interface XMenuState {
   setPosition: (position: { top: number; left: number }) => void;
 }
 
-const useXMenu = create<XMenuState>()((set) => ({
-  menuName: '',
-  position: { top: 0, left: 0 },
-  setPosition: (position) => set({ position }),
-  open: (name) => set({ menuName: name }),
-  close: () => set({ menuName: '' }),
-}));
+const useXMenu = create<XMenuState>()(
+  devtools((set) => ({
+    menuName: '',
+    position: { top: 0, left: 0 },
+    setPosition: (position) => set({ position }),
+    open: (name) => set({ menuName: name }),
+    close: () => set({ menuName: '' }),
+  }))
+);
 
 interface XMenuProps {
   children: ReactNode;

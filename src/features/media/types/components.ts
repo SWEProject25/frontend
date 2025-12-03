@@ -9,6 +9,21 @@ export default interface GifData {
       width: string;
       height: string;
     };
+    fixed_height_downsampled: {
+      url: string;
+      width: string;
+      height: string;
+    };
+    fixed_width_downsampled: {
+      url: string;
+      width: string;
+      height: string;
+    };
+    original: {
+      url: string;
+      width: string;
+      height: string;
+    };
   };
 }
 export type mediaType =

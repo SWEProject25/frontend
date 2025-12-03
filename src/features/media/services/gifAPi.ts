@@ -20,7 +20,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
     try {
       const errorData = await response.json();
-      errorMessage = errorData.message || errorMessage;
+      errorMessage = errorData.meta.msg || errorMessage;
     } catch {
       // If response is not JSON, use status text
       errorMessage = response.statusText || errorMessage;
@@ -59,12 +59,28 @@ export const gifApi = {
         });
         // const data = await singleResponse.json();
         // return data;
-        return handleResponse(response);
+        return handleResponse<GifResponse>(response);
       }
     );
     // Wait for all promises to resolve
     const results = await Promise.all(promises);
     console.log(results);
     return results.map((res) => res.data[0]);
+  },
+  async searchGif(
+    searchText: string,
+    page = 0,
+    limit = 10
+  ): Promise<GifResponse> {
+    const response = await fetch(
+      `${GIF_ENDPOINTS.search(searchText)}&` +
+        new URLSearchParams({ offset: `${page * limit}`, limit: `${limit}` }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return handleResponse<GifResponse>(response);
   },
 };

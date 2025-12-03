@@ -5,6 +5,7 @@ import Timeline from '@/features/timeline/components/Timeline';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Loader from '@/components/generic/Loader';
+import LayoutWrapper from '@/features/layout/components/LayoutWrapper';
 export default function Page() {
   const { open } = useGifACtions();
   const router = useRouter();
@@ -27,17 +28,15 @@ export default function Page() {
   );
   if (isLoading)
     return (
-      <div className="flex justify-center items-center h-64 mx-4">
+      <div className="flex justify-center items-center w-64 h-64 mx-4">
         <Loader />
       </div>
     );
   return (
     <>
-      <div className="grid grid-cols-[1fr_600px_1fr] min-h-screen overflow-x-hidden  ">
-        <aside className="bg-gray-100">Left</aside>
+      <LayoutWrapper>
         <Timeline />
-        <aside className="bg-gray-100">Left</aside>
-      </div>
+      </LayoutWrapper>
       <GifModal />
     </>
   );
