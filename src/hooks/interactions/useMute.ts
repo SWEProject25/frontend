@@ -54,6 +54,10 @@ export const useMuteUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['profile'],
       });
+      // Invalidate all tweet queries to update full tweet page
+      queryClient.invalidateQueries({
+        queryKey: ['tweet'],
+      });
     },
     networkMode: 'always',
   });
@@ -101,6 +105,10 @@ export const useUnmuteUser = () => {
       // Invalidate global profile queries (ensure profile UI updates everywhere)
       queryClient.invalidateQueries({
         queryKey: ['profile'],
+      });
+      // Invalidate all tweet queries to update full tweet page
+      queryClient.invalidateQueries({
+        queryKey: ['tweet'],
       });
     },
     networkMode: 'always',

@@ -21,9 +21,11 @@ import { RetweetIcon } from '@/components/ui/icons/UIIcons';
 export const getTweetDropdownItems = ({
   username = '@user',
   isFollowed = false,
+  isMuted = false,
 }: {
   username?: string;
   isFollowed?: boolean;
+  isMuted?: boolean;
 } = {}) => [
   {
     key: 'not_interested',
@@ -42,7 +44,7 @@ export const getTweetDropdownItems = ({
   },
   {
     key: 'mute',
-    label: 'Mute',
+    label: isMuted ? `Unmute ${username}` : `Mute ${username}`,
     icon: <MuteIcon />,
   },
   {
