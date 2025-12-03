@@ -46,12 +46,12 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
 };
 describe('render Timeline Header ', () => {
   it('render header component', () => {
-    const { getByTestId } = render(<Header />);
+    const { getByTestId } = render(<Header />, { wrapper });
     const header = getByTestId('timeline-header');
     expect(header).toBeInTheDocument();
   });
   it('render Tabs in header', () => {
-    const { getByTestId, getAllByTestId } = render(<Header />);
+    const { getByTestId, getAllByTestId } = render(<Header />, { wrapper });
     const timelineTab = getByTestId('timeline-header');
     const tabs = getAllByTestId(/timeline-tabs-tab/);
     const tab1 = getByTestId('timeline-tabs-tab-Following');
@@ -62,7 +62,7 @@ describe('render Timeline Header ', () => {
     expect(tabs.length).toBe(2);
   });
   it('selcect tab in header', () => {
-    const { getByTestId } = render(<Header />);
+    const { getByTestId } = render(<Header />, { wrapper });
     const tab1 = getByTestId('timeline-tabs-tab-Following');
     const tab2 = getByTestId('timeline-tabs-tab-ForYou');
 
@@ -77,7 +77,7 @@ describe('render Timeline Header ', () => {
   });
   it('expecting calling api when select tab', async () => {
     global.fetch = vi.fn();
-    const { getByTestId } = render(<Header />);
+    const { getByTestId } = render(<Header />, { wrapper });
     customRender(<TweetList />);
     const tab2 = getByTestId('timeline-tabs-tab-ForYou');
     console.log(global.fetch);
