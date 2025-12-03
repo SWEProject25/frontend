@@ -45,14 +45,7 @@ const BlockedUserWarning: React.FC<BlockedUserWarningProps> = ({
           data-testid="blocked-user-description"
         >
           Are you sure you want to view these posts? Viewing posts won&apos;t
-          unblock @{username}.{' '}
-          <a
-            href="#"
-            className="text-primary hover:underline"
-            data-testid="blocked-user-learn-more"
-          >
-            Learn more
-          </a>
+          unblock @{username}.
         </p>
 
         <div className="pt-4">
