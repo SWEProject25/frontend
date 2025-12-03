@@ -50,6 +50,10 @@ export const useMuteUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['profile', 'user', userId],
       });
+      // Invalidate global profile queries (ensure profile UI updates everywhere)
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
     },
     networkMode: 'always',
   });
@@ -93,6 +97,10 @@ export const useUnmuteUser = () => {
       // Invalidate the specific user's profile
       queryClient.invalidateQueries({
         queryKey: ['profile', 'user', userId],
+      });
+      // Invalidate global profile queries (ensure profile UI updates everywhere)
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
       });
     },
     networkMode: 'always',

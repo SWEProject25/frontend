@@ -50,6 +50,10 @@ export const useBlockUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['profile', 'user', userId],
       });
+      // Invalidate global profile queries (ensure profile UI updates everywhere)
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
       // Also invalidate following/followers as blocking affects these
       queryClient.invalidateQueries({
         queryKey: ['interactions', 'followers'],
@@ -100,6 +104,10 @@ export const useUnblockUser = () => {
       // Invalidate the specific user's profile
       queryClient.invalidateQueries({
         queryKey: ['profile', 'user', userId],
+      });
+      // Invalidate global profile queries (ensure profile UI updates everywhere)
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
       });
     },
     networkMode: 'always',
