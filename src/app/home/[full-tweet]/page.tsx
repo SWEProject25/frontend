@@ -3,16 +3,16 @@ import React from 'react';
 import FullTweet from '@/features/tweets/components/FullTweet';
 import { useTweetStore } from '@/features/tweets/store/tweetStore';
 import { useParams } from 'next/navigation';
+import { useTweetById } from '@/features/tweets/hooks/tweetQueries';
+import Loader from '@/components/generic/Loader';
 
 function Page() {
-  const tweet = useTweetStore((store) => store.currentTweet);
-  // const tweets = useTweetStore((store) => store.currentTimeLineFeed);
-  // const params = useParams();
-  // const tweetId = Number(params?.['full-tweet'] || 0);
-  // const viewdTweet =
-  //   tweets?.data?.posts?.find((post) => post.postId === tweetId) || null;
-  // if (!tweet) router.push('./home');
-
+  const tweetQuery = useTweetById(Number(useParams()?.['full-tweet'] || 0));
+  const tweet = tweetQuery.data?.data || null;
+  console.log('Full Tweet:', tweet);
+  // if (tweetQuery.isFetching && tweetQuery.data) {
+  //   return <Loader />; // ✅ Hide old data
+  // }
   return (
     <>
       <FullTweet data={tweet} />

@@ -75,7 +75,7 @@ export default function Actions({
     console.log('Selected item key:', key);
     switch (key) {
       case 'copy_link':
-        const link = `${window.location.origin}/home/${stats.postId}`;
+        const link = `https://hankers.tech/home/${stats.postId}`;
         navigator.clipboard.writeText(link);
         break;
       case 'send_via_message':

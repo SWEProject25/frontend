@@ -10,6 +10,7 @@ import { tweetApi } from '../services/tweetApi';
 import { ReplyDto, TweetResponseDto } from '../types/api';
 import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
 import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
+import { tweet } from '@/features/timeline/mocks/data';
 // Query keys
 export const TWEET_QUERY_KEYS = {
   tweetById: (tweetId: number) => ['tweet', 'id', tweetId] as const,
@@ -24,8 +25,9 @@ export const useTweetById = (tweetId: number) => {
   return useQuery<TweetResponseDto, Error>({
     queryKey: TWEET_QUERY_KEYS.tweetById(tweetId),
     queryFn: () => tweetApi.getTweetById(tweetId),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0,
     retry: 1,
+    refetchOnMount: true,
   });
 };
 
@@ -38,12 +40,28 @@ export const useToggleLikeTweet = (
   parentId?: number,
   type: string = 'POST'
 ) => {
-  //console.log('useToggleLikeTweet called with tweetId:', tweetId);
   const queryClient = useQueryClient();
   const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
   return useMutation({
     mutationFn: () => tweetApi.toggleLikeTweet(tweetId),
     onMutate: () => {
+      // Optimistically update cache before mutation
+      queryClient.setQueryData(
+        TWEET_QUERY_KEYS.tweetById(tweetId),
+        (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              isLikedByMe: !old.data.isLikedByMe,
+              likesCount: old.data.isLikedByMe
+                ? old.data.likesCount - 1
+                : old.data.likesCount + 1,
+            },
+          };
+        }
+      );
       return onMutate(
         OPTIMISTIC_TYPES.LIKE,
         userId,
@@ -54,13 +72,14 @@ export const useToggleLikeTweet = (
       );
     },
     onError: (error, variables, onMutateResult) => {
-      console.log('failure');
       handleErrorOptimisticTweet(onMutateResult);
     },
-
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.toggleLikeTweet(tweetId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: TWEET_QUERY_KEYS.tweetById(tweetId),
       });
     },
     networkMode: 'always',
@@ -81,21 +100,42 @@ export const useToggleRepostTweet = (
 
   return useMutation({
     mutationFn: () => tweetApi.toggleRepostTweet(tweetId),
-    onMutate: () =>
-      onMutate(
+    onMutate: () => {
+      // Optimistically update cache before mutation
+      queryClient.setQueryData(
+        TWEET_QUERY_KEYS.tweetById(tweetId),
+        (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              isRepostedByMe: !old.data.isRepostedByMe,
+              retweetsCount: old.data.isRepostedByMe
+                ? old.data.retweetsCount - 1
+                : old.data.retweetsCount + 1,
+            },
+          };
+        }
+      );
+      return onMutate(
         OPTIMISTIC_TYPES.REPOST,
         userId,
         tweetId,
         isRepost,
         type,
         parentId
-      ),
+      );
+    },
     onError: (error, variables, onMutateResult) => {
       handleErrorOptimisticTweet(onMutateResult);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.toggleRepostTweet(tweetId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: TWEET_QUERY_KEYS.tweetById(tweetId),
       });
     },
     networkMode: 'always',

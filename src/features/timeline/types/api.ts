@@ -39,6 +39,7 @@ export interface TimelineFeed extends TimelineTweet {
   isQuote: boolean;
   originalPostData?: TimelineTweet;
 }
+
 export interface TimelineFeedDtoResponse {
   status: string;
   message: string;
