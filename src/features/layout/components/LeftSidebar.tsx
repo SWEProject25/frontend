@@ -3,6 +3,7 @@ import MenuItems from './MenuItems';
 import ProfileSection from './ProfileSection';
 import PostButton from './PostButton';
 import { XLogo } from '@/components/ui/icons';
+import Link from 'next/link';
 
 export default function LeftSidebar() {
   return (
@@ -16,7 +17,10 @@ export default function LeftSidebar() {
           data-testid="sidebar-logo"
           className="px-3 py-2 rounded-full hover:bg-gray-900 cursor-pointer transition-colors w-fit"
         >
-          <XLogo className="w-7 h-7 text-white" />
+          <Link href={'/home'}>
+            <XLogo className="w-7 h-7 text-white" />
+          </Link>
+          {/* <XLogo className="w-7 h-7 text-white" /> */}
         </div>
         <MenuItems />
         <PostButton />

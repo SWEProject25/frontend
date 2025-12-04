@@ -29,34 +29,6 @@ export default function GifModal() {
     router.back();
   };
 
-  //   useEffect(function () {
-  //     async function fetchGif() {
-  //       const response = await fetch(
-  //         `${GIF_API}trending?${GIF_API_KEY}&limit=${1}&offset=0&rating=g&bundle=messaging_non_clips`
-  //       );
-  //       console.log(response);
-  //       const data = await response.json();
-  //       console.log(data.data);
-  //       // setCategoryGifs(data.data);
-  //       // addGifs(data.data[0]);
-  //     }
-  //     fetchGif();
-  //   }, []);
-  //   return <div> loading</div>;
-
-  //   const addGifs = useMedia((state) => state.addGifs);
-  //   const [categoryGifs, setCategoryGifs] = useState<GifData[]>([]);
-  //   const gifs = useGifs();
-
-  // const {
-  //   data: gifs,
-  //   status,
-  //   error,
-  // } = useQuery({
-  //   queryKey: ['catergoryGif'],
-  //   queryFn: getCategories,
-  // });
-  // console.log(gifs);
   const { setSearch } = useGifACtions();
   const { addGifs } = useMediaActions();
   const search = useGifsSearch();
@@ -81,8 +53,6 @@ export default function GifModal() {
   console.log(searchGif);
   const pages = searchGif?.pages.flat();
 
-  // Store the first group of tweets in the store when data changes
-
   const renderSearchedGifs = pages?.map((group, i) => (
     <React.Fragment key={i}>
       {group.data.map((gif, indx) => (
@@ -106,7 +76,6 @@ export default function GifModal() {
 
   const hasInitialData = pages ? pages[0].pagination.count > 0 : false;
 
-  // const serachGifs =
   return (
     <XModal
       overlayColor="bg-[rgba(91,112,131,0.4)]"
@@ -196,7 +165,6 @@ export default function GifModal() {
                 >
                   {renderSearchedGifs}
                 </div>
-                {/* <ul className="w-full">{renderTweets} </ul> */}
               </InfiniteScroll>
             </>
           )

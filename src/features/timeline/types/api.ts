@@ -1,3 +1,9 @@
+import { TWEET_QUERY_KEYS } from '@/features/tweets/hooks/tweetQueries';
+import { TIMELINE_QUERY_KEYS } from '../hooks/timelineQueries';
+import { EXPLORE_QUERY_KEYS } from '@/features/explore/hooks/exploreQueries';
+import { InfiniteData } from '@tanstack/react-query';
+import { ReplyDto } from '@/features/tweets/types';
+import { ExploreSearchFeedDtoResponse } from '@/features/explore/types/api';
 export const TweetFormDataKeys = {
   CONTENT: 'content',
   TYPE: 'type',
@@ -46,3 +52,48 @@ export interface TimelineFeedDtoResponse {
     posts: TimelineFeed[];
   };
 }
+export interface Profile {
+  name: string;
+  User: {
+    username: string;
+    is_verified: boolean;
+  };
+  is_followed_by_me: boolean;
+  id: number;
+  profile_image_url: string;
+}
+export interface ProfileSearchDtoResponse {
+  status: string;
+  message: string;
+  data: Profile[];
+  metadata: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+export interface HashtagSearchDtoResponse {
+  status: string;
+  message: string;
+  data: { posts: TimelineFeed[] };
+  metadata: {
+    hashtag: string;
+    totalItems: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+export type QueryKeyType =
+  | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING
+  | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU
+  | typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_FOR_YOU
+  | ReturnType<typeof TWEET_QUERY_KEYS.getRepliesByTweetId>
+  | ReturnType<typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_SEARCH_LATEST>
+  | ReturnType<typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_SEARCH_TOP>;
+
+export type FeedType =
+  | InfiniteData<TimelineFeedDtoResponse, number>
+  | InfiniteData<ExploreSearchFeedDtoResponse, number>
+  | InfiniteData<ReplyDto, number>;

@@ -1,16 +1,13 @@
 'use client';
 
-import { useTimelineFeed } from '../hooks/timelineQueries';
+import { useExploreSearchFeed } from '../hooks/exploreQueries';
 import React from 'react';
 import Tweet from '@/features/tweets/components/Tweet';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
-import { useTweetStore } from '@/features/tweets/store/tweetStore';
-// import InfiniteScrollContainer from '@/components/generic/InfiniteScrollContainer';
 import Loader from '@/components/generic/Loader';
-import { TimelineFeedDtoResponse } from '../types/api';
 import toasterMessage from '@/components/ui/home/ToasterMessage';
 
-export default function TweetList() {
+export default function SearchTweets() {
   const {
     data,
     error,
@@ -19,25 +16,16 @@ export default function TweetList() {
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
-  } = useTimelineFeed();
+  } = useExploreSearchFeed();
 
   console.log(data);
-  // const setStoreTimeLine = useTweetStore((store) => store.setTimeLineFeed);
   const pages = data?.pages.flat();
-
-  // Store the first group of tweets in the store when data changes
-  // React.useEffect(() => {
-  //   if (pages && pages.length > 0) {
-  //     // Type: TimelineFeedDtoResponse
-  //     setStoreTimeLine(pages[0] as TimelineFeedDtoResponse);
-  //   }
-  // }, [pages, setStoreTimeLine]);
 
   const renderTweets = pages?.map((group, i) => (
     <React.Fragment key={i}>
       {group.data.posts.map((tweet, ind) => (
         <Tweet
-          data-testid={`${tweet.userId}${tweet.postId}${tweet.date}`}
+          data-testid={`explore-search${tweet.userId}${tweet.postId}${tweet.date}`}
           data={tweet}
           key={ind}
         />
@@ -51,21 +39,24 @@ export default function TweetList() {
   ) : isLoading ? (
     <div
       className="flex justify-center items-center h-64 mx-4"
-      data-testid="tweet-list-loading"
+      data-testid="explore-search-tweet-list-loading"
     >
       <Loader />
     </div>
   ) : (
     <>
       <InfiniteScroll
-        data-testid="tweet-list"
+        data-testid="tweet-search-list"
         isLoadingInitial={isLoading}
         isLoadingMore={isFetchingNextPage}
         loadMore={() => hasNextPage && fetchNextPage()}
         hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
         hasInitialData={hasInitialData}
       >
-        <div className="flex flex-col w-full" data-testid="render-tweet-list">
+        <div
+          className="flex flex-col w-full"
+          data-testid="explore-search-render-tweet-list"
+        >
           {renderTweets}{' '}
         </div>
         {/* <ul className="w-full">{renderTweets} </ul> */}

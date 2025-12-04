@@ -7,11 +7,13 @@ interface LayoutWrapperProps {
   children: React.ReactNode;
   showRightSidebar?: boolean;
   showMobileBottomBar?: boolean;
+  hasSearch?: boolean;
 }
 
 export default function LayoutWrapper({
   children,
   showRightSidebar = true,
+  hasSearch = true,
   showMobileBottomBar = true,
 }: LayoutWrapperProps) {
   return (
@@ -27,15 +29,15 @@ export default function LayoutWrapper({
         </div>
       )}
 
-      <main className="flex flex-1 flex-row min-h-screen max-w-[1000px]">
+      <main className="flex flex-1 flex-row min-h-screen max-w-[1100px]">
         <div className="border-x-border border-x-[1px] sm:w-[560px] w-full flex-1">
           {children}
         </div>
 
         <div
-          className={`lg:block right-0 top-0 h-full hidden ${!showRightSidebar ? 'lg:hidden' : ''}`}
+          className={`lg:block  right-0 w-[440px] top-0 h-full hidden ${!showRightSidebar ? 'lg:hidden' : ''}`}
         >
-          <RightSidebar />
+          <RightSidebar hasSearch={hasSearch} />
         </div>
       </main>
     </div>

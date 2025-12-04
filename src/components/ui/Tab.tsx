@@ -19,14 +19,14 @@ export default function Tab({
       onClick={() => onClick(id)}
       className="flex flex-1 flex-col h-full items-center justify-center px-4 relative hover:cursor-pointer hover:bg-white/12"
     >
-      <div
-        className={`relative flex flex-1 h-full items-center   ${selected ? ' text-text-active' : 'text-text-inactive'}`}
-      >
-        <div className={`flex flex-1 w-fit  `}>
-          <span className="  text-center text-l font-bold ">{text}</span>
-        </div>
+      <div className="relative flex flex-col items-center h-full justify-center">
+        <span
+          className={`text-center text-l font-bold ${selected ? 'text-text-active' : 'text-text-inactive'}`}
+        >
+          {text}
+        </span>
         {selected && (
-          <div className="flex flex-1 w-full absolute min-w-14 h-1 bottom-0 rounded-lg bg-primary"></div>
+          <div className="absolute bottom-0 w-full h-1 rounded-lg bg-primary"></div>
         )}
       </div>
     </div>
