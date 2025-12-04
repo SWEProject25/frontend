@@ -9,6 +9,7 @@ import BlockedUserWarning from '@/features/profile/components/BlockedUserWarning
 import { useProfileStore } from '@/features/profile';
 import { useProfileContext } from './ProfileProvider';
 import { useAuthStore } from '@/features/authentication/store/authStore';
+import { usePageTitleNotifications } from '@/features/notifications/hooks';
 
 const UserPage = () => {
   const { profile, username } = useProfileContext();
@@ -16,6 +17,9 @@ const UserPage = () => {
   const currentUser = useAuthStore((s) => s.user);
   const isMine = Boolean(currentUser && currentUser.username === username);
   const [showBlockedPosts, setShowBlockedPosts] = useState(false);
+
+  // Update page title with unread count (uses "H" branding, static favicon)
+  usePageTitleNotifications('H', false);
 
   useEffect(() => {
     setCurrentProfile(profile);
