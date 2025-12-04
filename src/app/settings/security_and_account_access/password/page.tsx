@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { InputField } from '@/components/ui/input';
 import Button from '@/components/ui/Button';
-import { userData } from '@/features/settings/constants/USER_DATA';
+import { useAuth } from '@/features/authentication/hooks/useAuth';
 
 export default function PasswordPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [passwords, setPasswords] = useState({
     current: '',
     new: '',
@@ -87,7 +88,7 @@ export default function PasswordPage() {
     <div className="border-r border-border min-h-screen">
       <Breadcrumb
         title="Change your password"
-        subtitle={userData.username}
+        subtitle={user?.username}
         onBack={handleBack}
         showArrow={true}
       />

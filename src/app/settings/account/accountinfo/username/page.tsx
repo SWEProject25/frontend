@@ -39,8 +39,10 @@ export default function UsernamePage() {
       return;
     }
 
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      setError('Username can only contain letters, numbers, and underscores');
+    if (!/^[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+$/.test(username)) {
+      setError(
+        'Username must start with a letter and can only contain letters, numbers, dots, and underscores — without consecutive dots or underscores.'
+      );
       return;
     }
 
