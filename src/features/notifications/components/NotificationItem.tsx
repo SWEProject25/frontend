@@ -164,33 +164,36 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           </div>
         </div>
 
-        {/* Action description */}
-        <p className="text-[15px] text-secondary">
-          {notification.type === NotificationType.LIKE && 'liked your post'}
-          {notification.type === NotificationType.REPOST &&
-            'reposted your post'}
-          {notification.type === NotificationType.QUOTE && 'quoted your post'}
-          {notification.type === NotificationType.REPLY &&
-            'replied to your post'}
-          {notification.type === NotificationType.MENTION && 'mentioned you'}
-          {notification.type === NotificationType.FOLLOW && 'followed you'}
-          {notification.type === NotificationType.DM && 'sent you a message'}
-        </p>
+        {/* Content aligned with avatar - using left margin */}
+        <div className="ml-2">
+          {/* Action description */}
+          <p className="text-[15px] text-secondary">
+            {notification.type === NotificationType.LIKE && 'liked your post'}
+            {notification.type === NotificationType.REPOST &&
+              'reposted your post'}
+            {notification.type === NotificationType.QUOTE && 'quoted your post'}
+            {notification.type === NotificationType.REPLY &&
+              'replied to your post'}
+            {notification.type === NotificationType.MENTION && 'mentioned you'}
+            {notification.type === NotificationType.FOLLOW && 'followed you'}
+            {notification.type === NotificationType.DM && 'sent you a message'}
+          </p>
 
-        {/* Post preview (for post-related notifications) */}
-        {notification.postPreviewText && (
-          <div className="mt-2 rounded border border-border p-3 text-[15px] text-secondary">
-            <p className="line-clamp-3">{notification.postPreviewText}</p>
-          </div>
-        )}
-
-        {/* Message preview (for DM notifications) */}
-        {notification.messagePreview &&
-          notification.type === NotificationType.DM && (
+          {/* Post preview (for post-related notifications) */}
+          {notification.postPreviewText && (
             <div className="mt-2 rounded border border-border p-3 text-[15px] text-secondary">
-              <p className="line-clamp-2">{notification.messagePreview}</p>
+              <p className="line-clamp-3">{notification.postPreviewText}</p>
             </div>
           )}
+
+          {/* Message preview (for DM notifications) */}
+          {notification.messagePreview &&
+            notification.type === NotificationType.DM && (
+              <div className="mt-2 rounded border border-border p-3 text-[15px] text-secondary">
+                <p className="line-clamp-2">{notification.messagePreview}</p>
+              </div>
+            )}
+        </div>
       </div>
 
       {/* Unread indicator dot - top right corner */}
