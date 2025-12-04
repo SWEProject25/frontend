@@ -5,7 +5,9 @@ export default function PushNotificationsPage() {
         Push notifications
       </h2>
       <p className="text-text-inactive">
-        Push notifications settings will be added here
+        Push notifications are not available in this version. The notification
+        system uses REST API polling and optional Firestore real-time
+        subscriptions.
       </p>
     </div>
   );

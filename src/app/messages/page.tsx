@@ -3,10 +3,14 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/features/authentication/hooks';
 import MessagesLayout from '@/features/messages/components/MessagesLayout';
+import { usePageTitleNotifications } from '@/features/notifications/hooks';
 
 export default function MessagesPage() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
+
+  // Update page title with unread count
+  usePageTitleNotifications('Messages / X');
 
   useEffect(() => {
     if (!isAuthenticated) {
