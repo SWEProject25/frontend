@@ -142,28 +142,26 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
 
       {/* Right side - Content */}
       <div className="min-w-0 flex-1">
-        {/* Actor avatar */}
-        <div className="mb-1">
+        {/* Avatar, name, handle, and time in one line */}
+        <div className="flex items-center gap-2 mb-1">
           <Avatar
             avatarImage={notification.actor.avatarUrl}
             name={notification.actor.displayName}
             size="sm"
             position="relative"
           />
-        </div>
-
-        {/* Notification text with actor info and time */}
-        <div className="flex flex-wrap items-baseline gap-1">
-          <span className="font-bold text-foreground">
-            {notification.actor.displayName}
-          </span>
-          <span className="text-[15px] text-secondary">
-            @{notification.actor.username}
-          </span>
-          <span className="text-secondary">·</span>
-          <span className="text-[15px] text-secondary">
-            {formatTimeAgo(notification.createdAt)}
-          </span>
+          <div className="flex flex-wrap items-baseline gap-1 min-w-0">
+            <span className="font-bold text-foreground truncate">
+              {notification.actor.displayName}
+            </span>
+            <span className="text-[15px] text-secondary truncate">
+              @{notification.actor.username}
+            </span>
+            <span className="text-secondary">·</span>
+            <span className="text-[15px] text-secondary whitespace-nowrap">
+              {formatTimeAgo(notification.createdAt)}
+            </span>
+          </div>
         </div>
 
         {/* Action description */}
