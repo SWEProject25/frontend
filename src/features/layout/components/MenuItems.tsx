@@ -14,6 +14,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/features/authentication/store/authStore';
+import { NotificationBadge } from '@/features/notifications/components';
 
 export default function MenuItems() {
   const pathname = usePathname();
@@ -93,10 +94,14 @@ export default function MenuItems() {
               item.hideOnShortScreen ? 'max-[699px]:hidden' : ''
             }`}
           >
-            <item.icon
-              strokeWidth={isActive ? 3 : 2}
-              className="w-7 h-7 text-text-active shrink-0"
-            />
+            <div className="relative">
+              <item.icon
+                strokeWidth={isActive ? 3 : 2}
+                className="w-7 h-7 text-text-active shrink-0"
+              />
+              {/* Show notification badge on Bell icon */}
+              {item.label === 'Notifications' && <NotificationBadge />}
+            </div>
             <span
               className={`text-[20px] ${isActive ? 'font-bold' : ''} text-text-active/95 xs:hidden min-[1400px]:block`}
             >
