@@ -80,7 +80,24 @@ export default function TweetText({
       divRef.current.innerHTML = '';
     }
     console.log('handleINput ', e);
-    if (divRef.current) handleChangeText(divRef.current?.innerText);
+    if (divRef.current) {
+      if (
+        (divRef.current.innerText.endsWith(
+          ' @',
+          divRef.current.innerText.length - 1
+        ) &&
+          divRef.current.innerText[divRef.current.innerText.length - 1] !==
+            '@') ||
+        (divRef.current.innerText.startsWith('@', 0) &&
+          divRef.current.innerText.length === 2 &&
+          divRef.current.innerText[divRef.current.innerText.length - 1] !== '@')
+      ) {
+        // handle if mention in redlines
+
+        console.log('yep', divRef.current.innerText);
+      }
+      handleChangeText(divRef.current?.innerText);
+    }
   }
 
   return (
