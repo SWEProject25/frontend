@@ -10,8 +10,8 @@ type TabType = 'all' | 'verified' | 'mentions';
 export default function NotificationsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('all');
 
-  // Update page title with unread count
-  usePageTitleNotifications('Notifications / X');
+  // Update page title with unread count (uses "H" branding)
+  usePageTitleNotifications();
 
   const getFilterParams = () => {
     switch (activeTab) {

@@ -9,8 +9,8 @@ export default function MessagesPage() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
 
-  // Update page title with unread count
-  usePageTitleNotifications('Messages / X');
+  // Update page title with unread count (uses "H" branding)
+  usePageTitleNotifications();
 
   useEffect(() => {
     if (!isAuthenticated) {

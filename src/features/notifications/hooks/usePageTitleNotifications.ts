@@ -2,17 +2,18 @@
 
 import { useEffect } from 'react';
 import { useUnreadCount } from './useNotifications';
+import { setNotificationFavicon, resetFavicon } from '../lib/favicon';
 
 /**
  * Hook to update page title with unread notification count
- * Mimics X (Twitter) behavior of showing (count) in the title
+ * Shows (count) in the title and updates favicon with red badge when there are notifications
  *
- * @param baseTitle - The base title to display (default: 'X')
- * @param updateFavicon - Whether to update the favicon with a badge (default: false)
+ * @param baseTitle - The base title to display (default: 'H')
+ * @param updateFavicon - Whether to update the favicon with a badge (default: true)
  */
 export const usePageTitleNotifications = (
-  baseTitle: string = 'X',
-  updateFavicon: boolean = false
+  baseTitle: string = 'H',
+  updateFavicon: boolean = true
 ) => {
   const { data: unreadCount } = useUnreadCount();
 
@@ -21,30 +22,38 @@ export const usePageTitleNotifications = (
     const path = window.location.pathname;
     let pageTitle = baseTitle;
 
-    // Set page-specific titles
+    // Set page-specific titles with "H" branding
     if (path.includes('/notifications')) {
-      pageTitle = 'Notifications / X';
+      pageTitle = 'Notifications / H';
     } else if (path.includes('/messages')) {
-      pageTitle = 'Messages / X';
+      pageTitle = 'Messages / H';
     } else if (path.includes('/home')) {
-      pageTitle = 'Home / X';
+      pageTitle = 'Home / H';
     }
 
+    const hasNotifications = unreadCount && unreadCount > 0;
+
     // Update title with unread count if there are unread notifications
-    if (unreadCount && unreadCount > 0) {
+    if (hasNotifications) {
       document.title = `(${unreadCount}) ${pageTitle}`;
     } else {
       document.title = pageTitle;
     }
 
-    // Optionally update favicon (future enhancement)
-    if (updateFavicon && unreadCount && unreadCount > 0) {
-      // This could be enhanced to draw a badge on the favicon
-      // For now, we just change the title which is the main X behavior
+    // Update favicon with notification badge
+    if (updateFavicon) {
+      if (hasNotifications) {
+        setNotificationFavicon();
+      } else {
+        resetFavicon();
+      }
     }
 
-    // Cleanup function to reset title when component unmounts
+    // Cleanup function to reset when component unmounts
     return () => {
+      if (updateFavicon) {
+        resetFavicon();
+      }
       document.title = baseTitle;
     };
   }, [unreadCount, baseTitle, updateFavicon]);
