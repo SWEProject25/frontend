@@ -44,6 +44,28 @@ export interface FollowingListResponseDto {
   };
 }
 
+export interface FollowerYouKnowDto {
+  id: number;
+  username: string;
+  displayName: string;
+  bio?: string | null;
+  profileImageUrl?: string | null;
+  followedAt: string;
+  isFollowingMe: boolean;
+}
+
+export interface FollowersYouKnowListResponseDto {
+  status: string;
+  message: string;
+  data: FollowerYouKnowDto[];
+  metadata: {
+    totalItems: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 // Block Types
 export interface BlockResponseDto {
   success: boolean;
