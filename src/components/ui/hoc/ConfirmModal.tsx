@@ -26,8 +26,16 @@ export default function ConfirmModal({
   confirmButtonClass = 'bg-error hover:bg-error/90 text-white',
   isLoading = false,
 }: ConfirmModalProps) {
-  const handleConfirm = () => {
+  const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
     onConfirm();
+    onClose();
+  };
+
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
     onClose();
   };
 
@@ -59,7 +67,7 @@ export default function ConfirmModal({
             {isLoading ? 'Processing...' : confirmText}
           </button>
           <button
-            onClick={onClose}
+            onClick={handleCancel}
             disabled={isLoading}
             className="w-full px-4 py-2.5 rounded-full font-semibold text-sm transition-colors border border-border text-text-active hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
           >

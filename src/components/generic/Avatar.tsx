@@ -22,7 +22,7 @@ const Avatar = ({
   customPosition = false,
 }: AvatarProps) => {
   const sizeClasses = {
-    xs: 'w-[32px] h-[32px]',
+    xs: 'w-[38px] h-[38px]',
     s: 'w-[40px] h-[40px]',
     sm: 'w-[48px] h-[48px]',
     md: 'w-[96px] h-[96px] sm:w-[96px] sm:h-[96px]',

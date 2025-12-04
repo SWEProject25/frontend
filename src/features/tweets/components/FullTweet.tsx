@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Content from './Content';
 import Actions from './Actions';
 import UserInfo from './UserInfo';
@@ -18,17 +19,19 @@ import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Loader from '@/components/generic/Loader';
 import { useGetRepliesByTweetId } from '../hooks/tweetQueries';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
+import { useTweetStore } from '../store/tweetStore';
 
 function FullTweet({ data }: { data: TimelineFeed | null }) {
+  const router = useRouter();
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
     null
   );
-
   const {
     followUser,
     unfollowUser,
     muteUser,
+    unmuteUser,
     blockUser,
     unblockUser,
     isBlockLoading,
@@ -37,6 +40,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
     username: data?.username || '',
     isFollowed: data?.isFollowedByMe || false,
+    isMuted: data?.isMutedByMe || false,
   });
 
   const {
@@ -72,7 +76,11 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
         }
         break;
       case 'mute':
-        await muteUser(data.userId);
+        if (data.isMutedByMe) {
+          await unmuteUser(data.userId);
+        } else {
+          await muteUser(data.userId);
+        }
         break;
       case 'block':
         // Show confirmation modal for block/unblock
@@ -90,6 +98,8 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
 
     if (blockAction === 'block') {
       await blockUser(data.userId);
+      // Redirect to home after blocking
+      router.push('/home');
     } else if (blockAction === 'unblock') {
       await unblockUser(data.userId);
     }
@@ -97,6 +107,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     setBlockAction(null);
   };
 
+  const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
   if (!data) {
     return (
       <div className="flex justify-center items-center h-32">
@@ -165,7 +176,11 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
             <Timing time={data.date} full={true} />
           </div>
           <div className="border-b border-gray-700 my-2" />
-          <Actions stats={actionsStats} full={true} />
+          <Actions
+            stats={actionsStats}
+            full={true}
+            replyClick={() => setCurrentTweet(data)}
+          />
           <div className="border-b border-gray-700 mt-3" />
         </div>
       </div>

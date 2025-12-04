@@ -11,7 +11,9 @@ import {
   RequestCommunityIcon,
   CopyLinkIcon,
   SendViaMsgICon,
+  QuoteIcon,
 } from '@/components/ui/icons/DropDownIcons';
+import { RetweetIcon } from '@/components/ui/icons/UIIcons';
 
 /**
  * Tweet dropdown menu items generator
@@ -19,9 +21,11 @@ import {
 export const getTweetDropdownItems = ({
   username = '@user',
   isFollowed = false,
+  isMuted = false,
 }: {
   username?: string;
   isFollowed?: boolean;
+  isMuted?: boolean;
 } = {}) => [
   {
     key: 'not_interested',
@@ -40,7 +44,7 @@ export const getTweetDropdownItems = ({
   },
   {
     key: 'mute',
-    label: 'Mute',
+    label: isMuted ? `Unmute ${username}` : `Mute ${username}`,
     icon: <MuteIcon />,
   },
   {
@@ -80,5 +84,22 @@ export const getShareDropdownItems = () => [
     key: 'send_via_message',
     label: 'Send via Direct Message',
     icon: <SendViaMsgICon />,
+  },
+];
+
+export const getRepostDropdownItems = ({
+  isRepostedByMe = false,
+}: {
+  isRepostedByMe?: boolean;
+}) => [
+  {
+    key: 'repost',
+    label: isRepostedByMe ? 'Undo Repost' : 'Repost',
+    icon: <RetweetIcon />,
+  },
+  {
+    key: 'quote_post',
+    label: 'Quote',
+    icon: <QuoteIcon />,
   },
 ];

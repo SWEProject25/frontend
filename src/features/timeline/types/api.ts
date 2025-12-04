@@ -35,6 +35,7 @@ export interface TimelineTweet {
   isLikedByMe: boolean;
   isFollowedByMe: boolean;
   isRepostedByMe: boolean;
+  isMutedByMe?: boolean;
   text: string;
   type?: string;
   parentId?: number;
@@ -45,6 +46,7 @@ export interface TimelineFeed extends TimelineTweet {
   isQuote: boolean;
   originalPostData?: TimelineTweet;
 }
+
 export interface TimelineFeedDtoResponse {
   status: string;
   message: string;
