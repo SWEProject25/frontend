@@ -3,6 +3,13 @@ import { render, screen, waitFor } from '@/test/test-utils';
 import userEvent from '@testing-library/user-event';
 import ActionsPanel from '../ActionsPanel';
 
+// Mock next/navigation
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
+}));
+
 // Mock the dependencies
 vi.mock('../hooks', () => ({
   useProfile: () => ({
