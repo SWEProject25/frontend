@@ -6,10 +6,12 @@ import Breadcrumb from '@/components/ui/Breadcrumb';
 import { InputField } from '@/components/ui/input';
 import Button from '@/components/ui/Button';
 import { useAuth } from '@/features/authentication/hooks/useAuth';
+import ForgotPasswordLink from '@/features/settings/components/ForgotPasswordLink';
+import { CheckIcon } from '@/components/ui/icons';
 
 export default function PasswordPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, changePassword, isChangePasswordLoading } = useAuth();
   const [passwords, setPasswords] = useState({
     current: '',
     new: '',
@@ -19,8 +21,10 @@ export default function PasswordPage() {
     current: '',
     new: '',
     confirm: '',
+    general: '',
   });
-  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleBack = () => {
     router.back();
@@ -47,7 +51,7 @@ export default function PasswordPage() {
 
   const handleSave = async () => {
     let hasErrors = false;
-    const newErrors = { current: '', new: '', confirm: '' };
+    const newErrors = { current: '', new: '', confirm: '', general: '' };
 
     if (!passwords.current) {
       newErrors.current = 'Current password is required';
@@ -75,14 +79,94 @@ export default function PasswordPage() {
       return;
     }
 
-    setLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setLoading(false);
-    setPasswords({ current: '', new: '', confirm: '' });
+    try {
+      await changePassword({
+        oldPassword: passwords.current,
+        newPassword: passwords.new,
+      });
+
+      setSuccess(true);
+      setPasswords({ current: '', new: '', confirm: '' });
+      setErrors({ current: '', new: '', confirm: '', general: '' });
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrors((prev) => ({
+          ...prev,
+          general:
+            err.message || 'Failed to change password. Please try again.',
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          general: 'Failed to change password. Please try again.',
+        }));
+      }
+    }
   };
 
   const isDisabled = !passwords.current || !passwords.new || !passwords.confirm;
+
+  if (showForgotPassword) {
+    return (
+      <div className="border-r border-border min-h-screen">
+        <Breadcrumb
+          title="Reset your password"
+          subtitle={user?.username}
+          onBack={() => setShowForgotPassword(false)}
+          showArrow={true}
+        />
+        <div className="px-4 py-6">
+          <ForgotPasswordLink
+            onCancel={() => setShowForgotPassword(false)}
+            data-testid="password-page-forgot-link"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (success) {
+    return (
+      <div className="border-r border-border min-h-screen">
+        <Breadcrumb
+          title="Change your password"
+          subtitle={user?.username}
+          onBack={handleBack}
+          showArrow={true}
+        />
+        <div className="px-4 py-6">
+          <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-background border border-border">
+            <div className="bg-success/10 rounded-full p-4 mb-4">
+              <CheckIcon className="w-10 h-10 text-success" />
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Password changed successfully
+            </h2>
+            <p className="text-text-inactive mb-6 max-w-xl">
+              Your password has been updated. You can now use your new password
+              to log in.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="primary"
+                size="md"
+                onClick={() => router.push('/settings')}
+              >
+                Back to Settings
+              </Button>
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={() => setSuccess(false)}
+              >
+                Change Again
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="border-r border-border min-h-screen">
@@ -93,6 +177,11 @@ export default function PasswordPage() {
         showArrow={true}
       />
       <div className="px-4 py-6">
+        {errors.general && (
+          <div className="mb-4 p-3 rounded bg-error/10 border border-error text-error text-sm">
+            {errors.general}
+          </div>
+        )}
         <div className="space-y-6">
           <div>
             <InputField
@@ -103,15 +192,15 @@ export default function PasswordPage() {
               error={errors.current}
               showPasswordToggle
             />
-            <a
-              href="#"
-              className="text-primary text-sm hover:underline inline-block mt-2"
-              onClick={(e) => {
-                e.preventDefault();
-              }}
-            >
-              Forgot password?
-            </a>
+            <div className="mt-2">
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className="text-primary text-sm hover:underline cursor-pointer"
+              >
+                Forgot password?
+              </button>
+            </div>
           </div>
 
           <InputField
@@ -138,7 +227,7 @@ export default function PasswordPage() {
             variant="primary"
             size="md"
             disabled={isDisabled}
-            loading={loading}
+            loading={isChangePasswordLoading}
             onClick={handleSave}
           >
             Save
