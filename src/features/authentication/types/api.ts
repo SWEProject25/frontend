@@ -121,3 +121,13 @@ export interface UpdateUsernameResponseDto {
   status: string;
   message: string;
 }
+
+export interface ChangePasswordDto {
+  oldPassword: string;
+  newPassword: string;
+}
+
+export interface ChangePasswordResponseDto {
+  status: string;
+  message: string;
+}

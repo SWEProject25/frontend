@@ -166,6 +166,13 @@ export const useUpdateUsernameMutation = () => {
   });
 };
 
+// Change Password Mutation
+export const useChangePasswordMutation = () => {
+  return useMutation({
+    mutationFn: authApi.changePassword,
+  });
+};
+
 // OAuth Login Handler (not a mutation due to popup window mechanism)
 export const useOAuthLogin = () => {
   const setUser = useAuthStore((state) => state.setUser);
@@ -209,6 +216,7 @@ export const useAuth = () => {
   const resendOTPMutation = useResendOTPMutation();
   const updateEmailMutation = useUpdateEmailMutation();
   const updateUsernameMutation = useUpdateUsernameMutation();
+  const changePasswordMutation = useChangePasswordMutation();
   const oAuthLogin = useOAuthLogin();
 
   return {
@@ -233,6 +241,7 @@ export const useAuth = () => {
     resendOTP: resendOTPMutation.mutateAsync,
     updateEmail: updateEmailMutation.mutateAsync,
     updateUsername: updateUsernameMutation.mutateAsync,
+    changePassword: changePasswordMutation.mutateAsync,
     oAuthLogin,
     // Mutation loading states
     isLoginLoading: loginMutation.isPending,
@@ -246,5 +255,6 @@ export const useAuth = () => {
     isResendOTPLoading: resendOTPMutation.isPending,
     isUpdateEmailLoading: updateEmailMutation.isPending,
     isUpdateUsernameLoading: updateUsernameMutation.isPending,
+    isChangePasswordLoading: changePasswordMutation.isPending,
   };
 };

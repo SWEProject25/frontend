@@ -3,10 +3,10 @@ import React from 'react';
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
-import Tabs from '@/components/generic/Tabs';
-import FollowList from '@/features/profile/components/FollowList';
+import { Tabs, GenericUserList } from '@/components/generic';
 import { useInfiniteFollowing } from '@/hooks/interactions/useFollow';
 import { useProfileByUsername } from '@/features/profile/hooks';
+import { useAuthStore } from '@/features/authentication/store/authStore';
 import Loader from '@/components/generic/Loader';
 
 interface FollowingPageProps {
@@ -15,18 +15,27 @@ interface FollowingPageProps {
   }>;
 }
 
-const tabs = [
-  { title: 'Followers', value: 'followers' },
-  { title: 'Following', value: 'following' },
-];
-
 export default function FollowingPage({ params }: FollowingPageProps) {
   const { username } = use(params);
   const router = useRouter();
+  const currentUser = useAuthStore((s) => s.user);
 
   // Get user profile to get user ID
   const { data: profileData, isLoading: isLoadingProfile } =
     useProfileByUsername(username, true);
+
+  const isOwnProfile = currentUser?.username === username;
+
+  const tabs = React.useMemo(
+    () => [
+      { title: 'Followers', value: 'followers' },
+      { title: 'Following', value: 'following' },
+      ...(isOwnProfile
+        ? []
+        : [{ title: 'Followers you know', value: 'followers-you-know' }]),
+    ],
+    [isOwnProfile]
+  );
 
   const userId = profileData?.data?.User?.id;
   const displayName = profileData?.data?.name || username;
@@ -37,6 +46,8 @@ export default function FollowingPage({ params }: FollowingPageProps) {
   const handleTabClick = (value: string) => {
     if (value === 'followers') {
       router.push(`/${username}/followers`);
+    } else if (value === 'followers-you-know') {
+      router.push(`/${username}/followers-you-know`);
     }
   };
 
@@ -76,7 +87,7 @@ export default function FollowingPage({ params }: FollowingPageProps) {
       />
 
       {/* Following List */}
-      <FollowList query={followingQuery} data-testid="following-list" />
+      <GenericUserList query={followingQuery} data-testid="following-list" />
     </div>
   );
 }

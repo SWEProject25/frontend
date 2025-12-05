@@ -26,6 +26,9 @@ export {
   useFollowing,
   useGetFollowers,
   useGetFollowing,
+  useFollowersYouKnow,
+  useGetFollowersYouKnow,
+  useInfiniteFollowersYouKnow,
 } from './useFollow';
 
 // Export all block-related hooks
