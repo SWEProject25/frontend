@@ -29,7 +29,7 @@ export interface Tweet {
 export interface TweetResponseDto {
   status: string;
   message: string;
-  data: Tweet;
+  data: TimelineFeed;
 }
 
 export interface Media {
@@ -51,11 +51,24 @@ export interface Reply {
   isFollowedByMe: boolean;
   isRepostedByMe: boolean;
   text: string;
+  type: string;
+  parentId: number;
   media: Media[];
+  isRepost: boolean;
+  isQuote: boolean;
 }
 
 export interface ReplyResponseDto {
   status: string;
   message: string;
-  data: TimelineFeed[];
+
+  data: Reply[];
+}
+
+export interface ReplyDto {
+  status: string;
+  message: string;
+  data: {
+    posts: TimelineFeed[];
+  };
 }

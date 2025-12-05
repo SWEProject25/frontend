@@ -252,7 +252,10 @@ describe('UserDetails', () => {
       render(<UserDetails {...defaultProps} website={longUrl} />);
 
       const websiteLink = screen.getByTestId('profile-website-link');
-      expect(websiteLink).toHaveTextContent(longUrl);
+      // URL should be truncated to 20 characters with "..."
+      expect(websiteLink).toHaveTextContent('https://example.com/...');
+      // But href should have the full URL
+      expect(websiteLink).toHaveAttribute('href', longUrl);
     });
 
     it('should handle website with subdomain', () => {

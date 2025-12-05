@@ -6,6 +6,7 @@ import { defaultQueryOptions } from './config/query';
 import AuthInit from './AuthInit';
 import XLoader from '@/components/ui/XLoader';
 import { OnboardingFlow } from '@/features/onboarding';
+import { NotificationProvider } from '@/features/notifications/components';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -27,6 +28,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
           {children}
           {/* Onboarding flow - shows modals when user needs to complete onboarding steps */}
           <OnboardingFlow />
+          {/* Notification provider - handles real-time Firebase notifications */}
+          <NotificationProvider />
         </>
       )}
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}

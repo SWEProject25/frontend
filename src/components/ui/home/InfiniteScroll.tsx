@@ -11,6 +11,9 @@ interface InfiniteScrollProps {
   hasInitialData: boolean;
   loader?: React.ReactNode;
   threshold?: number;
+  'data-testid'?: string;
+  noMoreDataMessage?: string;
+  noDataMessage?: string;
 }
 
 export default function InfiniteScroll({
@@ -22,6 +25,9 @@ export default function InfiniteScroll({
   hasInitialData,
   loader,
   threshold = 100,
+  'data-testid': testId,
+  noMoreDataMessage = 'You have reached the end',
+  noDataMessage = 'No data available',
 }: InfiniteScrollProps) {
   const observerElement = useRef<HTMLDivElement | null>(null);
   useEffect(
@@ -52,11 +58,14 @@ export default function InfiniteScroll({
     [isLoadingMore, isLoadingInitial, loadMore, hasMoreData, threshold]
   );
   return (
-    <>
+    <div data-testid={testId} className="w-full">
       <>{children}</>
       <div ref={observerElement}>
         {isLoadingMore && !isLoadingInitial && (
-          <div className="flex justify-center items-center py-4">
+          <div
+            className="flex justify-center items-center py-4"
+            data-testid={testId ? `${testId}-loading-more` : undefined}
+          >
             {loader || <Loader />}
           </div>
         )}
@@ -64,17 +73,23 @@ export default function InfiniteScroll({
           !isLoadingMore &&
           !isLoadingInitial &&
           hasInitialData && (
-            <div className="flex flex-col items-center justify-center py-8 px-4">
-              <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
-                You&apos;ve reached the end
+            <div
+              className="flex flex-col items-center justify-center py-8 px-4"
+              data-testid={testId ? `${testId}-end-message` : undefined}
+            >
+              <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">
+                {noMoreDataMessage}
               </p>
               <div className="mt-2 h-1 w-24 bg-linear-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent rounded-full"></div>
             </div>
           )}
         {!hasInitialData && (
-          <div className="flex flex-col items-center justify-center py-12 px-4">
+          <div
+            className="flex flex-col items-center justify-center py-12 px-4"
+            data-testid={testId ? `${testId}-no-data` : undefined}
+          >
             <p className="text-gray-600 dark:text-gray-300 text-lg font-semibold mb-2">
-              No data available
+              {noDataMessage}
             </p>
             <p className="text-gray-400 dark:text-gray-500 text-sm text-center max-w-xs">
               There&apos;s nothing to display at the moment
@@ -87,6 +102,6 @@ export default function InfiniteScroll({
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

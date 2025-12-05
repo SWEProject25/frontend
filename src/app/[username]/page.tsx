@@ -1,19 +1,25 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { SearchIcon } from '@/components/ui/icons';
 import ProfileContainer from '@/features/profile/components/ProfileContainer';
 import Button from '@/components/ui/Button';
 import TabView from '@/features/profile/components/TabView';
+import BlockedUserWarning from '@/features/profile/components/BlockedUserWarning';
 import { useProfileStore } from '@/features/profile';
 import { useProfileContext } from './ProfileProvider';
 import { useAuthStore } from '@/features/authentication/store/authStore';
+import { usePageTitleNotifications } from '@/features/notifications/hooks';
 
 const UserPage = () => {
   const { profile, username } = useProfileContext();
   const { setCurrentProfile } = useProfileStore();
   const currentUser = useAuthStore((s) => s.user);
   const isMine = Boolean(currentUser && currentUser.username === username);
+  const [showBlockedPosts, setShowBlockedPosts] = useState(false);
+
+  // Update page title with unread count (uses "H" branding, static favicon)
+  usePageTitleNotifications('H', false);
 
   useEffect(() => {
     setCurrentProfile(profile);
@@ -54,7 +60,14 @@ const UserPage = () => {
       </div>
       <div className="flex flex-col">
         <ProfileContainer profileData={profile} isMine={isMine} />
-        <TabView />
+        {profile.is_blocked_by_me && !showBlockedPosts ? (
+          <BlockedUserWarning
+            username={profile.User.username}
+            onViewPosts={() => setShowBlockedPosts(true)}
+          />
+        ) : (
+          <TabView />
+        )}
       </div>
     </main>
   );

@@ -17,8 +17,12 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
   const userData = {
     name: profileData.name,
     userId: profileData.User.id,
+    username: profileData.User.username,
     bio: profileData.bio,
     isFollowed: profileData.is_followed_by_me,
+    isMuted: profileData.is_muted_by_me ?? false,
+    isBlocked: profileData.is_blocked_by_me ?? false,
+    isBeenBlocked: profileData.is_been_blocked ?? false,
     profileImage: profileData.profile_image_url,
     bannerImage: profileData.banner_image_url,
     location: profileData.location,

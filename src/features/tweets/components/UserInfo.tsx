@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import ProfileCard from './ProfileCard';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { VerifiedIcon } from '@/components/ui/icons/BrandIcons';
 
 type Direction = 'horizontal' | 'vertical';
@@ -30,6 +30,10 @@ export default function UserInfo({
   const [cardNameHover, setCardNameHover] = useState(false);
   const [cardUsernameHover, setCardUsernameHover] = useState(false);
 
+  // Timers for delayed hover
+  const nameTimer = useRef<NodeJS.Timeout | null>(null);
+  const usernameTimer = useRef<NodeJS.Timeout | null>(null);
+
   const containerClass =
     direction === 'horizontal'
       ? 'flex items-center gap-1'
@@ -42,7 +46,7 @@ export default function UserInfo({
   const profileCardClass =
     'absolute left-1/2 transform -translate-x-1/2 top-full z-50 cursor-default';
 
-  const delay = 400;
+  const delay = 700;
   const nameCardShow = cardShow && (showNameCard || cardNameHover);
   const usernameCardShow = cardShow && (showUsernameCard || cardUsernameHover);
   return (
@@ -52,8 +56,19 @@ export default function UserInfo({
           <span
             data-testid="tweet-user-name"
             className={nameRowClass}
-            onMouseEnter={() => setTimeout(() => setShowNameCard(true), delay)}
-            onMouseLeave={() => setTimeout(() => setShowNameCard(false), delay)}
+            onMouseEnter={() => {
+              nameTimer.current = setTimeout(
+                () => setShowNameCard(true),
+                delay
+              );
+            }}
+            onMouseLeave={() => {
+              if (nameTimer.current) {
+                clearTimeout(nameTimer.current);
+                nameTimer.current = null;
+              }
+              setShowNameCard(false);
+            }}
           >
             <span className="flex items-center gap-0.5">
               {data.name}
@@ -91,12 +106,19 @@ export default function UserInfo({
           <span
             data-testid="tweet-user-username"
             className={usernameClass}
-            onMouseEnter={() =>
-              setTimeout(() => setShowUsernameCard(true), 400)
-            }
-            onMouseLeave={() =>
-              setTimeout(() => setShowUsernameCard(false), 400)
-            }
+            onMouseEnter={() => {
+              usernameTimer.current = setTimeout(
+                () => setShowUsernameCard(true),
+                delay
+              );
+            }}
+            onMouseLeave={() => {
+              if (usernameTimer.current) {
+                clearTimeout(usernameTimer.current);
+                usernameTimer.current = null;
+              }
+              setShowUsernameCard(false);
+            }}
           >
             {data.username}
           </span>

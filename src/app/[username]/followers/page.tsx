@@ -46,8 +46,11 @@ export default function FollowersPage({ params }: FollowersPageProps) {
 
   if (isLoadingProfile) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader />
+      <div
+        className="flex items-center justify-center min-h-screen"
+        data-testid="followers-page-loading"
+      >
+        <Loader data-testid="followers-page-loader" />
       </div>
     );
   }
@@ -60,6 +63,7 @@ export default function FollowersPage({ params }: FollowersPageProps) {
         subtitle={`@${username}`}
         onBack={handleBack}
         showArrow={true}
+        data-testid="followers-breadcrumb"
       />
 
       {/* Tabs */}
@@ -68,10 +72,11 @@ export default function FollowersPage({ params }: FollowersPageProps) {
         selectedValue="followers"
         onClick={handleTabClick}
         height="h-[53px]"
+        data-testid="followers-tabs"
       />
 
       {/* Followers List */}
-      <FollowList query={followersQuery} />
+      <FollowList query={followersQuery} data-testid="followers-list" />
     </div>
   );
 }

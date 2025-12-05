@@ -6,6 +6,8 @@ import {
   PaginationParams,
 } from '@/types/userInteractions';
 import { INTERACTION_QUERY_KEYS } from './queryKeys';
+import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
+import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
 
 // ==================== MUTATION HOOKS ====================
 
@@ -15,8 +17,14 @@ import { INTERACTION_QUERY_KEYS } from './queryKeys';
  */
 export const useBlockUser = () => {
   const queryClient = useQueryClient();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
-  return useMutation<BlockResponseDto, Error, number>({
+  return useMutation<
+    BlockResponseDto,
+    Error,
+    number,
+    Awaited<ReturnType<typeof onMutate>>
+  >({
     mutationFn: async (userId: number) => {
       try {
         const response = await blockApi.blockUser(userId);
@@ -27,6 +35,12 @@ export const useBlockUser = () => {
         throw new Error(errorMessage);
       }
     },
+    onMutate: (userId: number) => {
+      return onMutate(OPTIMISTIC_TYPES.BLOCK, userId);
+    },
+    onError: (error, variables, context) => {
+      handleErrorOptimisticTweet(context);
+    },
     onSuccess: (_, userId) => {
       // Invalidate blocked users list
       queryClient.invalidateQueries({
@@ -36,6 +50,10 @@ export const useBlockUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['profile', 'user', userId],
       });
+      // Invalidate global profile queries (ensure profile UI updates everywhere)
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
       // Also invalidate following/followers as blocking affects these
       queryClient.invalidateQueries({
         queryKey: ['interactions', 'followers'],
@@ -43,7 +61,12 @@ export const useBlockUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['interactions', 'following'],
       });
+      // Invalidate all tweet queries to update full tweet page
+      queryClient.invalidateQueries({
+        queryKey: ['tweet'],
+      });
     },
+    networkMode: 'always',
   });
 };
 
@@ -53,8 +76,14 @@ export const useBlockUser = () => {
  */
 export const useUnblockUser = () => {
   const queryClient = useQueryClient();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
-  return useMutation<BlockResponseDto, Error, number>({
+  return useMutation<
+    BlockResponseDto,
+    Error,
+    number,
+    Awaited<ReturnType<typeof onMutate>>
+  >({
     mutationFn: async (userId: number) => {
       try {
         const response = await blockApi.unblockUser(userId);
@@ -65,6 +94,12 @@ export const useUnblockUser = () => {
         throw new Error(errorMessage);
       }
     },
+    onMutate: (userId: number) => {
+      return onMutate(OPTIMISTIC_TYPES.BLOCK, userId);
+    },
+    onError: (error, variables, context) => {
+      handleErrorOptimisticTweet(context);
+    },
     onSuccess: (_, userId) => {
       // Invalidate blocked users list
       queryClient.invalidateQueries({
@@ -74,7 +109,16 @@ export const useUnblockUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['profile', 'user', userId],
       });
+      // Invalidate global profile queries (ensure profile UI updates everywhere)
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      });
+      // Invalidate all tweet queries to update full tweet page
+      queryClient.invalidateQueries({
+        queryKey: ['tweet'],
+      });
     },
+    networkMode: 'always',
   });
 };
 
@@ -109,20 +153,10 @@ export const useGetBlockedUsers = (
   });
 };
 
-// ==================== COMPOSITE HOOKS ====================
-
-/**
- * Hook that provides all block-related functionality
- * Includes block/unblock mutations and their loading/error states
- */
 export const useBlock = () => {
   const blockMutation = useBlockUser();
   const unblockMutation = useUnblockUser();
 
-  /**
-   * Block a user
-   * @param userId - The ID of the user to block
-   */
   const blockUser = async (userId: number) => {
     try {
       const response = await blockMutation.mutateAsync(userId);
@@ -133,10 +167,6 @@ export const useBlock = () => {
     }
   };
 
-  /**
-   * Unblock a user
-   * @param userId - The ID of the user to unblock
-   */
   const unblockUser = async (userId: number) => {
     try {
       const response = await unblockMutation.mutateAsync(userId);
@@ -147,11 +177,6 @@ export const useBlock = () => {
     }
   };
 
-  /**
-   * Toggle block status (block if not blocked, unblock if blocked)
-   * @param userId - The ID of the user
-   * @param isCurrentlyBlocked - Current block status
-   */
   const toggleBlock = async (userId: number, isCurrentlyBlocked: boolean) => {
     try {
       if (isCurrentlyBlocked) {

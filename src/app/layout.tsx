@@ -4,15 +4,29 @@ import './globals.css';
 // import './globals.css';
 import { Providers } from '@/lib/providers';
 import { MSWProvider } from '@/mocks/MSWProvider';
-
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   title: {
-    template: '%s / X',
-    default: 'X',
+    template: '%s / H',
+    default: 'H',
   },
   description: 'X clone',
+  icons: {
+    icon: [
+      {
+        url: '/favicon.svg',
+        type: 'image/svg+xml',
+      },
+      {
+        url: '/favicon.ico',
+        sizes: '32x32',
+      },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({
@@ -35,6 +49,7 @@ export default function RootLayout({
               {gifModal}
               {scheduleModal}
             </>
+            <ReactQueryDevtools initialIsOpen={false} />
           </Providers>
           {/* <Providers>{modal}</Providers> */}
           {/* </MSWProvider> */}

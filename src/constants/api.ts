@@ -19,7 +19,7 @@ export const BLOCK_API_ENDPOINTS = {
     `/api/${API_CONFIG.VERSION}/users/${userId}/block`,
   UNBLOCK_USER: (userId: number) =>
     `/api/${API_CONFIG.VERSION}/users/${userId}/block`,
-  GET_BLOCKED_USERS: `/api/${API_CONFIG.VERSION}/blocks`,
+  GET_BLOCKED_USERS: `/api/${API_CONFIG.VERSION}/users/blocks/me`,
 } as const;
 
 export const MUTE_API_ENDPOINTS = {
@@ -27,5 +27,5 @@ export const MUTE_API_ENDPOINTS = {
     `/api/${API_CONFIG.VERSION}/users/${userId}/mute`,
   UNMUTE_USER: (userId: number) =>
     `/api/${API_CONFIG.VERSION}/users/${userId}/mute`,
-  GET_MUTED_USERS: `/api/${API_CONFIG.VERSION}/mutes`,
+  GET_MUTED_USERS: `/api/${API_CONFIG.VERSION}/users/mutes/me`,
 } as const;

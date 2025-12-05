@@ -40,7 +40,10 @@ export default function TweetReplySettings() {
               color="text-primary"
               path={options[selectedReplyOption - 1].path}
             />
-            <span className="text-center font-bold">
+            <span
+              className="text-center font-bold"
+              data-testid="selected-reply"
+            >
               {options[selectedReplyOption - 1].value} can reply
             </span>
           </div>
@@ -65,7 +68,10 @@ export default function TweetReplySettings() {
                 Anyone mentioned can always reply.
               </p>
             </div>
-            <ul className="flex flex-col gap-1 pb-1 ">
+            <ul
+              className="flex flex-col gap-1 pb-1 "
+              data-testid="reply-menu-items"
+            >
               {options.map((opt) => {
                 const selected = opt.id === selectedReplyOption;
                 return (
@@ -91,7 +97,10 @@ export default function TweetReplySettings() {
                         {opt.value}
                       </span>
                       {selected && (
-                        <span className="text-primary">
+                        <span
+                          className="text-primary"
+                          data-testid={`selected-reply-${opt.value.toLowerCase().replace(/\s+/g, '-')}`}
+                        >
                           <Icon path="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z" />
                         </span>
                       )}

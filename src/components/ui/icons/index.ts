@@ -35,4 +35,14 @@ export {
 } from './UIIcons';
 
 // Brand Icons
-export { XLogo, GrokIcon } from './BrandIcons';
+export { XLogo, GrokIcon, VerifiedIcon } from './BrandIcons';
+
+// Notification Icons
+export {
+  LikeNotificationIcon,
+  RepostNotificationIcon,
+  ReplyNotificationIcon,
+  FollowNotificationIcon,
+  DMNotificationIcon,
+  ErrorNotificationIcon,
+} from './NotificationIcons';

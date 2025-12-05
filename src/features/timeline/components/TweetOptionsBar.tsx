@@ -7,9 +7,10 @@ import GrokMenu from './GrokMenu';
 import Schedule from './schedule/Schedule';
 import TweetImages from './TweetImages';
 import { MAX_MEDIA_NUM } from '@/features/media/constants/mediaConstants';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useGifACtions, useGifVisibility } from '@/features/media/store/useGif';
+import { useState } from 'react';
+import Emoji from '@/features/media/components/Emoji';
 export default function TweetOptionsBar() {
   const open = usePollStore((state) => state.open);
   const isPollOpen = usePollStore((state) => state.isOpen);
@@ -31,6 +32,7 @@ export default function TweetOptionsBar() {
       }
     }
   };
+
   return (
     <div
       data-testid="tweet-options-bar"
@@ -54,12 +56,8 @@ export default function TweetOptionsBar() {
         title="Poll"
         path="M6 5c-1.1 0-2 .895-2 2s.9 2 2 2 2-.895 2-2-.9-2-2-2zM2 7c0-2.209 1.79-4 4-4s4 1.791 4 4-1.79 4-4 4-4-1.791-4-4zm20 1H12V6h10v2zM6 15c-1.1 0-2 .895-2 2s.9 2 2 2 2-.895 2-2-.9-2-2-2zm-4 2c0-2.209 1.79-4 4-4s4 1.791 4 4-1.79 4-4 4-4-1.791-4-4zm20 1H12v-2h10v2zM7 7c0 .552-.45 1-1 1s-1-.448-1-1 .45-1 1-1 1 .448 1 1z"
       />
-      <Icon
-        data-testid="tweet-option-emoji"
-        title="Emoji"
-        path="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"
-      />
 
+      <Emoji />
       <Schedule />
 
       <Icon

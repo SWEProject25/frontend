@@ -131,11 +131,12 @@ export const useResendOTPMutation = () => {
 // Update Email Mutation
 export const useUpdateEmailMutation = () => {
   const queryClient = useQueryClient();
+  const updateEmail = useAuthStore((state) => state.updateEmail);
 
   return useMutation({
     mutationFn: authApi.updateEmail,
-    onSuccess: () => {
-      // Invalidate auth user and profile queries to refetch updated data
+    onSuccess: (data, variables) => {
+      updateEmail(variables.email);
       queryClient.invalidateQueries({
         queryKey: authKeys.user(),
       });
@@ -149,11 +150,12 @@ export const useUpdateEmailMutation = () => {
 // Update Username Mutation
 export const useUpdateUsernameMutation = () => {
   const queryClient = useQueryClient();
+  const updateUsername = useAuthStore((state) => state.updateUsername);
 
   return useMutation({
     mutationFn: authApi.updateUsername,
-    onSuccess: () => {
-      // Invalidate auth user and profile queries to refetch updated data
+    onSuccess: (data, variables) => {
+      updateUsername(variables.username);
       queryClient.invalidateQueries({
         queryKey: authKeys.user(),
       });

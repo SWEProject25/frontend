@@ -5,16 +5,12 @@ import Icon from '@/components/ui/home/Icon';
 import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 import TypingProgressCircle from './TypingProgressCircle';
 import usePollStore from '../store/usePollStore';
-import {
-  MAX_TWEET_LENGTH,
-  MAX_WARNING_TWEET_LENGTH,
-} from '@/features/timeline/constants/tweetConstants';
+import { MAX_ALLOWABLE_TWEET_LENGTH } from '@/features/timeline/constants/tweetConstants';
 import { useAddTweet } from '../hooks/timelineQueries';
 import useMedia from '@/features/media/store/useMedia';
 import { LOCAL_MEDIA } from '@/features/media/constants/mediaConstants';
 import { options } from '../constants/replySettingsOptions';
 import { TweetFormDataKeys } from '../types/api';
-const MAX_ALLOWABLE_TWEET_LENGTH = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
 export default function TweetSubmitSection() {
   const tweetText = useAddTweetStore((state) => state.tweetText);
   const isOpen = usePollStore((state) => state.isOpen);
@@ -44,11 +40,20 @@ export default function TweetSubmitSection() {
       : media.length > 0;
   const enableSection = tweetText.trim().length !== 0 || isOpen;
 
-  function handleAddTweet() {
+  async function handleAddTweet() {
     const tweetFormData = new FormData();
-    media.forEach((med) => {
+    for (const med of media) {
       if (med.type === LOCAL_MEDIA) tweetFormData.append('media', med.data);
-    });
+      else {
+        const res = await fetch(med.data.images.original.url);
+        const blob = await res.blob();
+        const gifFile = new File([blob], med.data.title, { type: 'image/gif' });
+        console.log(gifFile);
+        tweetFormData.append('media', gifFile);
+      }
+    }
+    console.log(tweetFormData.getAll('media'));
+    console.log(media);
     const seclectdReply = options[selectedReplyOption - 1].Name;
     if (tweetText.trim().length !== 0)
       tweetFormData.append(TweetFormDataKeys.CONTENT, tweetText);

@@ -1,56 +1,105 @@
-import { TbSpeakerphone } from 'react-icons/tb';
-import { IoStatsChart } from 'react-icons/io5';
-import { TiVolumeMute } from 'react-icons/ti';
-import { FaUserPlus, FaListUl, FaBan, FaCode, FaFlag } from 'react-icons/fa';
-import { HiOutlineEmojiSad } from 'react-icons/hi';
+import {
+  NotInterstedIcon,
+  FollowIcon,
+  UnfollowIcon,
+  AddtoList,
+  MuteIcon,
+  BlockIcon,
+  EngagementsIcon,
+  EmbedIcon,
+  ReportIcon,
+  RequestCommunityIcon,
+  CopyLinkIcon,
+  SendViaMsgICon,
+  QuoteIcon,
+} from '@/components/ui/icons/DropDownIcons';
+import { RetweetIcon } from '@/components/ui/icons/UIIcons';
 
 /**
- * Tweet dropdown menu items
+ * Tweet dropdown menu items generator
  */
-export const TWEET_DROPDOWN_ITEMS = [
+export const getTweetDropdownItems = ({
+  username = '@user',
+  isFollowed = false,
+  isMuted = false,
+}: {
+  username?: string;
+  isFollowed?: boolean;
+  isMuted?: boolean;
+} = {}) => [
   {
     key: 'not_interested',
     label: 'Not interested in this post',
-    icon: <HiOutlineEmojiSad />,
+    icon: <NotInterstedIcon />,
   },
   {
     key: 'follow',
-    label: 'Follow @max_misk',
-    icon: <FaUserPlus />,
+    label: isFollowed ? `Unfollow ${username}` : `Follow ${username}`,
+    icon: isFollowed ? <UnfollowIcon /> : <FollowIcon />,
   },
   {
     key: 'lists',
     label: 'Add/remove from Lists',
-    icon: <FaListUl />,
+    icon: <AddtoList />,
   },
   {
     key: 'mute',
-    label: 'Mute',
-    icon: <TiVolumeMute />,
+    label: isMuted ? `Unmute ${username}` : `Mute ${username}`,
+    icon: <MuteIcon />,
   },
   {
     key: 'block',
-    label: 'Block @max_misk',
-    icon: <FaBan />,
+    label: `Block ${username}`,
+    icon: <BlockIcon />,
   },
   {
     key: 'engagement',
     label: 'View post engagements',
-    icon: <IoStatsChart />,
+    icon: <EngagementsIcon />,
   },
   {
     key: 'embed',
     label: 'Embed post',
-    icon: <FaCode />,
+    icon: <EmbedIcon />,
   },
   {
     key: 'report',
     label: 'Report post',
-    icon: <FaFlag />,
+    icon: <ReportIcon />,
   },
   {
     key: 'community_note',
     label: 'Request Community Note',
-    icon: <TbSpeakerphone />,
+    icon: <RequestCommunityIcon />,
+  },
+];
+
+export const getShareDropdownItems = () => [
+  {
+    key: 'copy_link',
+    label: 'copy link',
+    icon: <CopyLinkIcon />,
+  },
+  {
+    key: 'send_via_message',
+    label: 'Send via Direct Message',
+    icon: <SendViaMsgICon />,
+  },
+];
+
+export const getRepostDropdownItems = ({
+  isRepostedByMe = false,
+}: {
+  isRepostedByMe?: boolean;
+}) => [
+  {
+    key: 'repost',
+    label: isRepostedByMe ? 'Undo Repost' : 'Repost',
+    icon: <RetweetIcon />,
+  },
+  {
+    key: 'quote_post',
+    label: 'Quote',
+    icon: <QuoteIcon />,
   },
 ];

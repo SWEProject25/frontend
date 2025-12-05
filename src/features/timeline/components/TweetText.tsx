@@ -1,10 +1,11 @@
 'use client';
 import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import {
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
 } from '@/features/timeline/constants/tweetConstants';
+import { useEmoji } from '@/features/media/store/useMedia';
 
 const startRedText = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
 
@@ -18,10 +19,36 @@ export default function TweetText({
   const spanRef1 = useRef<null | HTMLSpanElement>(null);
   const [spanText1, setSpanText1] = useState("What's happening?");
   const [spanText2, setSpanText2] = useState('');
-
+  const emoji = useEmoji();
   useEffect(function () {
     setSpanText1("What's happening?");
   }, []);
+  const handleChangeText = useCallback(
+    (text: string) => {
+      if (spanRef1.current) {
+        if (text.length === 0) {
+          console.log('erase');
+          setSpanText1("What's happening?");
+          spanRef1.current.style.color = 'var(--color-text-inactive)';
+          setSpanText2('');
+          setTweetText('');
+          return;
+        }
+        setTweetText(text);
+        spanRef1.current.style.color = 'var(--color-text-active)';
+        setSpanText1(text.slice(0, startRedText));
+        if (text.length > startRedText) {
+          console.log('inside length greater than 10');
+
+          console.log(text, 'after slicing');
+          setSpanText2(text.slice(startRedText, text.length));
+        } else {
+          setSpanText2('');
+        }
+      }
+    },
+    [setTweetText]
+  );
 
   useEffect(
     function () {
@@ -36,35 +63,40 @@ export default function TweetText({
     },
     [isSuccess, divRef]
   );
+  useEffect(
+    function () {
+      if (emoji) {
+        if (divRef.current) {
+          divRef.current.innerText = divRef.current.innerText + emoji;
+          handleChangeText(divRef.current?.innerText);
+        }
+      }
+    },
+    [emoji, divRef, handleChangeText]
+  );
 
   function handleInput(e: React.ChangeEvent<HTMLDivElement>) {
     if (divRef.current && divRef.current.innerHTML === '<br>') {
       divRef.current.innerHTML = '';
     }
     console.log('handleINput ', e);
-    handleChangeText(e.target.innerText);
-  }
-  function handleChangeText(text: string) {
-    if (spanRef1.current) {
-      if (text.length === 0) {
-        console.log('erase');
-        setSpanText1("What's happening?");
-        spanRef1.current.style.color = 'var(--color-text-inactive)';
-        setSpanText2('');
-        setTweetText('');
-        return;
-      }
-      setTweetText(text);
-      spanRef1.current.style.color = 'var(--color-text-active)';
-      setSpanText1(text.slice(0, startRedText));
-      if (text.length > startRedText) {
-        console.log('inside length greater than 10');
+    if (divRef.current) {
+      if (
+        (divRef.current.innerText.endsWith(
+          ' @',
+          divRef.current.innerText.length - 1
+        ) &&
+          divRef.current.innerText[divRef.current.innerText.length - 1] !==
+            '@') ||
+        (divRef.current.innerText.startsWith('@', 0) &&
+          divRef.current.innerText.length === 2 &&
+          divRef.current.innerText[divRef.current.innerText.length - 1] !== '@')
+      ) {
+        // handle if mention in redlines
 
-        console.log(text, 'after slicing');
-        setSpanText2(text.slice(startRedText, text.length));
-      } else {
-        setSpanText2('');
+        console.log('yep', divRef.current.innerText);
       }
+      handleChangeText(divRef.current?.innerText);
     }
   }
 
