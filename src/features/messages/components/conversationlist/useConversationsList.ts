@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useMessageStore } from '../../store/useMessageStore';
 import { fetchConversations, createConversation } from '../../api/messages';
 import { useAuthStore } from '../../../authentication/store/authStore';
+import { useNotifications } from '../../../notifications/hooks';
 
 export function useConversationsList(
   onSelectConversation: (id: string) => void
@@ -16,29 +17,84 @@ export function useConversationsList(
   const typingUsers = useMessageStore((s) => s.typingUsers);
   const allMessages = useMessageStore((s) => s.messages);
   const setConversations = useMessageStore((s) => s.setConversations);
+  const addMessage = useMessageStore((s) => s.addMessage);
 
   const user = useAuthStore((s) => s.user);
   const currentUserId = (user as { id?: number })?.id ?? null;
+
+  // Get DM notifications to check which conversations have unread messages
+  const { data: dmNotificationsData } = useNotifications({
+    include: 'DM',
+    limit: 100,
+  });
 
   // Helper to check if a conversation has any unseen messages
   const hasUnseenMessages = useCallback(
     (conversationId: number): boolean => {
       const messages = allMessages[conversationId] || [];
 
-      // Check if there are any messages that are not seen and not sent by current user
-      const hasUnseen = messages.some(
+      // Method 1: Check local message store for unseen messages
+      const hasUnseenInStore = messages.some(
         (msg) => !msg.isSeen && msg.senderId !== currentUserId
       );
+
+      // Method 2: Check if there are unread DM notifications for this conversation
+      const hasUnreadDMNotification =
+        dmNotificationsData?.pages
+          .flatMap((page) => page.data)
+          .some(
+            (notification) =>
+              !notification.isRead &&
+              notification.conversationId === conversationId
+          ) || false;
+
+      const hasUnseen = hasUnseenInStore || hasUnreadDMNotification;
 
       console.log(`📊 Unseen check for conversation ${conversationId}:`, {
         totalMessages: messages.length,
         currentUserId,
+        hasUnseenInStore,
+        hasUnreadDMNotification,
         hasUnseen,
       });
 
       return hasUnseen;
     },
-    [allMessages, currentUserId]
+    [allMessages, currentUserId, dmNotificationsData]
+  );
+
+  // Helper to get the actual count of unseen messages
+  const getUnseenCount = useCallback(
+    (conversationId: number): number => {
+      const messages = allMessages[conversationId] || [];
+
+      // Count unseen messages in local store
+      const unseenInStore = messages.filter(
+        (msg) => !msg.isSeen && msg.senderId !== currentUserId
+      ).length;
+
+      // Count unread DM notifications for this conversation
+      const unreadDMNotifications =
+        dmNotificationsData?.pages
+          .flatMap((page) => page.data)
+          .filter(
+            (notification) =>
+              !notification.isRead &&
+              notification.conversationId === conversationId
+          ).length || 0;
+
+      // Return the maximum of both counts (prefer store count if available)
+      const count = Math.max(unseenInStore, unreadDMNotifications);
+
+      console.log(`🔢 Unread count for conversation ${conversationId}:`, {
+        unseenInStore,
+        unreadDMNotifications,
+        finalCount: count,
+      });
+
+      return count;
+    },
+    [allMessages, currentUserId, dmNotificationsData]
   );
 
   // Calculate total number of conversations with unseen messages
@@ -68,6 +124,25 @@ export function useConversationsList(
           const normalizedConversations = conversations.map(
             (conv: Record<string, unknown>) => {
               console.log('📋 Individual conversation:', conv);
+
+              // Extract lastMessage and add it to the message store
+              // This ensures unseen counts and blue dots work correctly
+              if (conv.lastMessage) {
+                const conversationId = conv.conversationId || conv.id;
+                const lastMsg = conv.lastMessage as any;
+                console.log(
+                  `📥 Adding lastMessage to store for conversation ${conversationId}:`,
+                  {
+                    messageId: lastMsg.id,
+                    senderId: lastMsg.senderId,
+                    isSeen: lastMsg.isSeen,
+                    text: lastMsg.text?.substring(0, 30),
+                    currentUserId,
+                  }
+                );
+                addMessage(lastMsg);
+              }
+
               return {
                 ...conv,
                 id: conv.conversationId || conv.id,
@@ -85,7 +160,7 @@ export function useConversationsList(
     };
 
     loadConversations();
-  }, [setConversations, conversations.length]);
+  }, [setConversations, conversations.length, addMessage, currentUserId]);
 
   const handleCreateConversation = useCallback(async () => {
     const userId = parseInt(newUserId);
@@ -216,8 +291,8 @@ export function useConversationsList(
         ? formatTimestamp(lastMessageObj.createdAt as string)
         : '';
 
-      // Check if conversation has unseen messages (returns 1 if yes, 0 if no)
-      const unseenCount = hasUnseenMessages(convId as number) ? 1 : 0;
+      // Get actual count of unseen messages
+      const unseenCount = getUnseenCount(convId as number);
 
       return {
         displayName,
@@ -230,7 +305,7 @@ export function useConversationsList(
         unseenCount,
       };
     },
-    [typingUsers, formatTimestamp, currentUserId, hasUnseenMessages]
+    [typingUsers, formatTimestamp, currentUserId, getUnseenCount]
   );
 
   return {

@@ -81,6 +81,8 @@ export interface GetNotificationsParams extends Record<string, unknown> {
   page?: number;
   limit?: number;
   unreadOnly?: boolean;
+  include?: string; // Comma-separated notification types to include (e.g., "DM,MENTION")
+  exclude?: string; // Comma-separated notification types to exclude (e.g., "DM")
 }
 
 /**

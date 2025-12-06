@@ -3,6 +3,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import ConversationsList from './ConversationsList';
 import WelcomeScreen from './WelcomeScreen';
 import { useMessages } from '../hooks/useMessages';
+import { useSyncDMNotifications } from '../hooks/useSyncDMNotifications';
 
 export default function MessagesLayout() {
   const router = useRouter();
@@ -12,6 +13,10 @@ export default function MessagesLayout() {
   useMessages((err) => {
     console.error('Socket connection error:', err);
   });
+
+  // Sync DM notifications with message store
+  // This ensures new messages appear even when WebSocket is not working
+  useSyncDMNotifications();
 
   const handleSelectConversation = (id: string) => {
     router.push(`/messages/${id}`);

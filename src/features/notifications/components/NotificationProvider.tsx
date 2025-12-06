@@ -2,10 +2,8 @@
 
 import React from 'react';
 import { useAuthStore } from '@/features/authentication/store/authStore';
-import { useQueryClient } from '@tanstack/react-query';
 import { useFirebaseNotifications, useFirebaseAuth } from '../hooks';
 import { FirebaseNotificationEvent } from '../types';
-import { NOTIFICATION_QUERY_KEYS } from '../constants';
 
 interface NotificationProviderProps {
   children?: React.ReactNode;
@@ -21,13 +19,13 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 }) => {
   const user = useAuthStore((s) => s.user);
   const userId = user?.id ?? null;
-  const queryClient = useQueryClient();
 
   // Sync Firebase Authentication with backend auth
   useFirebaseAuth();
 
   /**
    * Handle new notification from Firestore
+   * Uses optimistic updates instead of invalidating queries
    */
   const handleNewNotification = (event: FirebaseNotificationEvent) => {
     console.log('🔔 New notification event:', event);
@@ -35,10 +33,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     // Play notification sound
     playNotificationSound();
 
-    // Invalidate queries to refresh notifications
-    queryClient.invalidateQueries({
-      queryKey: NOTIFICATION_QUERY_KEYS.ALL,
-    });
+    // The optimistic update is now handled in useFirebaseNotifications
+    // No need to invalidate queries here - polling will sync later
+    console.log('⏰ Counter updated optimistically. Polling will confirm.');
   };
 
   /**

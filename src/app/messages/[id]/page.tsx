@@ -3,12 +3,16 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import ChatWindow from '@/features/messages/components/ChatWindow';
 import ConversationsList from '@/features/messages/components/ConversationsList';
+import { useSyncDMNotifications } from '@/features/messages/hooks/useSyncDMNotifications';
 import '@/features/messages/utils/mockMessages';
 
 export default function MessagePage() {
   const params = useParams();
   const router = useRouter();
   const conversationId = params?.id as string;
+
+  // Sync DM notifications with message store
+  useSyncDMNotifications();
 
   if (!conversationId) {
     router.push('/messages');
