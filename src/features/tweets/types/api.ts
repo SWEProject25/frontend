@@ -72,3 +72,14 @@ export interface ReplyDto {
     posts: TimelineFeed[];
   };
 }
+
+export interface TweetSummaryDto {
+  status: string;
+  message: string;
+  data: string;
+}
+
+export interface DeleteTweetResponseDto {
+  status: string;
+  message: string;
+}

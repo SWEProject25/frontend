@@ -92,7 +92,7 @@ export default function Actions({
     }
   }
   return (
-    <div className="w-full my-.5" data-testid="tweet-actions">
+    <div className="w-full my-.5 relative" data-testid="tweet-actions">
       <div className="flex justify-between items-center w-full mt-3 text-gray-500 text-sm">
         <>
           <Action

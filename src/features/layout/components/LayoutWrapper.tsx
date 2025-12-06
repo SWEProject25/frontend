@@ -3,6 +3,7 @@ import LeftSidebar from './LeftSidebar';
 import RightSidebar from './RightSidebar';
 import MobileBottomBar from './MobileBottomBar';
 import { Toaster } from 'react-hot-toast';
+import GrokSummary from './GrokSummary';
 interface LayoutWrapperProps {
   children: React.ReactNode;
   showRightSidebar?: boolean;
@@ -38,6 +39,9 @@ export default function LayoutWrapper({
           <RightSidebar />
         </div>
       </main>
+      <div className="fixed bottom-25 right-10 z-50">
+        <GrokSummary />
+      </div>
     </div>
   );
 }

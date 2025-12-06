@@ -16,11 +16,15 @@ import { getTweetDropdownItems } from '../constants';
 import { useInteractions } from '@/hooks/useInteractions';
 import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Link from 'next/link';
-
+import { useDeleteTweet, useGetTweetSummary } from '../hooks/tweetQueries';
+import { useAuthStore } from '@/features/authentication/store/authStore';
 export default function Tweet({ data }: { data: TimelineFeed }) {
+  const userId = useAuthStore((store) => store.user?.id);
+  const byMe = userId === data.userId;
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
     username: data.username,
     isFollowed: data.isFollowedByMe,
+    byMe,
   });
 
   const [Hovered, setHovered] = useState(false);
@@ -73,6 +77,8 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     isRepostedByMe: data.isRepostedByMe,
   };
 
+  const summary = useGetTweetSummary(data.postId);
+  const deleteTweetMutation = useDeleteTweet(data.postId);
   const handleDropdownAction = async (key: string) => {
     switch (key) {
       case 'follow':
@@ -88,6 +94,11 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
       case 'block':
         setBlockAction('block');
         setShowBlockModal(true);
+        break;
+      case 'delete':
+        // Handle delete action here
+        console.log('Delete action selected for tweet:', data.postId);
+        deleteTweetMutation.mutate();
         break;
       default:
         console.log('Selected item key:', key);
@@ -106,6 +117,17 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
   };
 
   const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
+  const setTweetSummary = useTweetStore((store) => store.setTweetSummary);
+  const setSummaryOpened = useTweetStore((store) => store.setSummaryOpened);
+  const setSummaryTweet = useTweetStore((store) => store.setSummaryTweet);
+  function handleFetchSummary() {
+    if (summary.data) {
+      setTweetSummary(summary.data.data);
+      setSummaryOpened(true);
+      setSummaryTweet(dataViewd);
+    }
+  }
+
   return (
     <div
       data-testid={`tweet-${data.postId}`}
@@ -115,6 +137,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
         router.push(`/home/${data.postId}`);
       }}
       className={`block mx-auto w-full border-b border-gray-700 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer p-4`}
+      style={{ boxSizing: 'border-box', maxWidth: '100%' }}
     >
       {/* Show reposted by if present */}
       {data.isRepost && (
@@ -134,10 +157,14 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
       )}
       <div className="flex w-full gap-2">
         <TweetAvatar data={user} onHoverCard={setHovered} />
-        <div className="flex flex-col items-center flex-1">
+        <div
+          className="flex flex-col items-center flex-1"
+          style={{ width: '100%', maxWidth: '100%' }}
+        >
           <div
             className="flex items-center justify-between w-full"
             data-testid="tweet-header"
+            style={{ maxWidth: '100%' }}
           >
             <div className="flex items-center gap-1">
               <UserInfo data={user} onHoverCard={setHovered} />
@@ -152,6 +179,9 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
                 icon={<GrokIcon />} // smaller icon
                 label="Explain this post"
                 color="blue"
+                onClick={() => {
+                  handleFetchSummary();
+                }}
               />
               <DropDown
                 items={TWEET_DROPDOWN_ITEMS}

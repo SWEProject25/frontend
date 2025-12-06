@@ -13,7 +13,16 @@ type TweetContent = {
 
 export default function Content({ content }: { content: TweetContent }) {
   return (
-    <div className="w-full" data-testid="tweet-content">
+    <div
+      className="w-full"
+      data-testid="tweet-content"
+      style={{
+        width: '100%',
+        maxWidth: '100%',
+        overflow: 'hidden',
+        wordBreak: 'break-word',
+      }}
+    >
       {content.text && (
         <p className="text-gray-200 text-left" data-testid="tweet-text">
           {content.text}

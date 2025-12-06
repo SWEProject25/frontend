@@ -7,7 +7,7 @@ import {
   InfiniteData,
 } from '@tanstack/react-query';
 import { tweetApi } from '../services/tweetApi';
-import { ReplyDto, TweetResponseDto } from '../types/api';
+import { ReplyDto, TweetResponseDto, TweetSummaryDto } from '../types/api';
 import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
 import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
 import { tweet } from '@/features/timeline/mocks/data';
@@ -18,6 +18,8 @@ export const TWEET_QUERY_KEYS = {
   toggleRepostTweet: (tweetId: number) => ['tweet', 'repost', tweetId] as const,
   getRepliesByTweetId: (tweetId: number) =>
     ['tweet', 'replies', tweetId] as const,
+  getTweetSummary: (tweetId: number) => ['tweet', 'summary', tweetId] as const,
+  deleteTweet: (tweetId: number) => ['tweet', 'delete', tweetId] as const,
 };
 
 // Hook: Get tweet by ID
@@ -159,6 +161,28 @@ export const useGetRepliesByTweetId = (tweetId: number) => {
     // staleTime: 5 * 60 * 1000, // 5 minutes
     staleTime: 0,
     retry: 1,
+  });
+};
+
+export const useGetTweetSummary = (tweetId: number) => {
+  return useQuery<TweetSummaryDto, Error>({
+    queryKey: TWEET_QUERY_KEYS.getTweetSummary(tweetId),
+    queryFn: () => tweetApi.getTweetSummary(tweetId),
+    staleTime: 0,
+    retry: 1,
+  });
+};
+
+export const useDeleteTweet = (tweetId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => tweetApi.deleteTweet(tweetId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: TWEET_QUERY_KEYS.deleteTweet(tweetId),
+      });
+    },
+    networkMode: 'always',
   });
 };
 

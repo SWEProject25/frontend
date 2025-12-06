@@ -16,16 +16,22 @@ import { getTweetDropdownItems } from '../constants';
 import { useInteractions } from '@/hooks/useInteractions';
 import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Loader from '@/components/generic/Loader';
-import { useGetRepliesByTweetId } from '../hooks/tweetQueries';
+import {
+  useDeleteTweet,
+  useGetRepliesByTweetId,
+  useGetTweetSummary,
+} from '../hooks/tweetQueries';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import { useTweetStore } from '../store/tweetStore';
+import { useAuthStore } from '@/features/authentication/store/authStore';
 
 function FullTweet({ data }: { data: TimelineFeed | null }) {
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
     null
   );
-
+  const userId = useAuthStore((store) => store.user?.id);
+  const byMe = userId === data?.userId;
   const {
     followUser,
     unfollowUser,
@@ -38,6 +44,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
     username: data?.username || '',
     isFollowed: data?.isFollowedByMe || false,
+    byMe,
   });
 
   const {
@@ -58,7 +65,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
       ))}
     </React.Fragment>
   ));
-
+  const deleteTweetMutation = useDeleteTweet(data?.postId || -1);
   const hasInitialData = pages ? pages[0].data.posts.length > 0 : false;
 
   const handleDropdownAction = async (key: string) => {
@@ -80,6 +87,12 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
         setBlockAction('block');
         setShowBlockModal(true);
         break;
+      case 'delete':
+        // Handle delete action here
+        console.log('Delete action selected for tweet:', data.postId);
+
+        deleteTweetMutation.mutate();
+        break;
       default:
         console.log('Selected item key:', key);
         break;
@@ -97,8 +110,18 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     setShowBlockModal(false);
     setBlockAction(null);
   };
-
+  const summary = useGetTweetSummary(data?.postId || 0);
   const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
+  const setTweetSummary = useTweetStore((store) => store.setTweetSummary);
+  const setSummaryOpened = useTweetStore((store) => store.setSummaryOpened);
+  const setSummaryTweet = useTweetStore((store) => store.setSummaryTweet);
+  function handleFetchSummary() {
+    if (summary.data) {
+      setTweetSummary(summary.data.data);
+      setSummaryOpened(true);
+      setSummaryTweet(data);
+    }
+  }
   if (!data) {
     return (
       <div className="flex justify-center items-center h-32">
@@ -147,6 +170,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
               icon={<GrokIcon />} // smaller icon
               label="Explain this post"
               color="blue"
+              onClick={handleFetchSummary}
             />
             <DropDown
               items={TWEET_DROPDOWN_ITEMS}
@@ -163,6 +187,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
         </div>
         <div className="mt-4 space-y-4">
           <Content content={content} />
+
           <div className="flex items-center space-x-1">
             <Timing time={data.date} full={true} />
           </div>
