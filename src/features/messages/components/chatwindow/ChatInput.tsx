@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Image as ImageIcon, Smile, Send } from 'lucide-react';
+import { Image as ImageIcon, Smile, Send, Ban } from 'lucide-react';
 import EmojiPicker from './EmojiPicker';
 
 interface ChatInputProps {
   message: string;
   error: string | null;
+  isBlocked?: boolean;
   onMessageChange: (value: string) => void;
   onSend: () => void;
   onKeyPress: (e: React.KeyboardEvent) => void;
@@ -14,6 +15,7 @@ interface ChatInputProps {
 export default function ChatInput({
   message,
   error,
+  isBlocked = false,
   onMessageChange,
   onSend,
   onKeyPress,
@@ -22,28 +24,56 @@ export default function ChatInput({
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isBlocked) return;
     onMessageChange(e.target.value);
     onTyping();
   };
 
   const handleEmojiSelect = (emoji: string) => {
+    if (isBlocked) return;
     onMessageChange(message + emoji);
     onTyping();
   };
 
   const toggleEmojiPicker = () => {
+    if (isBlocked) return;
     setShowEmojiPicker(!showEmojiPicker);
   };
 
   const MAX_CHARS = 1000;
   const charCount = message.length;
   const isOverLimit = charCount > MAX_CHARS;
-  const isSendDisabled = !message.trim() || isOverLimit;
+  const isSendDisabled = !message.trim() || isOverLimit || isBlocked;
+
+  // Show blocked message instead of input
+  if (isBlocked) {
+    return (
+      <div
+        id="chat-input-wrapper"
+        className="shrink-0 bg-black border-t border-gray-800 p-4"
+      >
+        <div className="flex items-center justify-center gap-2 bg-gray-900 rounded-lg px-4 py-3 text-gray-400">
+          <Ban className="w-5 h-5" />
+          <span className="text-sm">
+            You cannot send messages to this user because you have blocked them.
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="shrink-0 bg-black border-t border-gray-800 p-4">
+    <div
+      id="chat-input-wrapper"
+      className="shrink-0 bg-black border-t border-gray-800 p-4"
+    >
       <div className="flex items-center gap-3 bg-gray-900 rounded-full px-4 py-2 relative">
-        <button onClick={toggleEmojiPicker} className="shrink-0" type="button">
+        <button
+          id="emoji-button"
+          onClick={toggleEmojiPicker}
+          className="shrink-0"
+          type="button"
+        >
           <Smile className="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-400" />
         </button>
 
@@ -55,6 +85,7 @@ export default function ChatInput({
         )}
 
         <input
+          id="chat-input"
           type="text"
           value={message}
           onChange={handleChange}
@@ -72,6 +103,7 @@ export default function ChatInput({
           </span>
         )}
         <button
+          id="send-button"
           onClick={onSend}
           disabled={isSendDisabled || isOverLimit}
           className={`shrink-0 ${

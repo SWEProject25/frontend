@@ -96,7 +96,6 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
         setShowBlockModal(true);
         break;
       default:
-        console.log('Selected item key:', key);
         break;
     }
   };
@@ -117,7 +116,6 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
       data-testid={`tweet-${data.postId}`}
       onClick={() => {
         //setCurrentTweet(data);
-        console.log('tweet:', data);
         router.push(`/home/${data.postId}`);
       }}
       className={`block mx-auto w-full border-b border-gray-700 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer p-4`}

@@ -15,6 +15,31 @@ interface MessageBubbleProps {
   isCurrentUser: boolean;
 }
 
+// Function to detect URLs and make them clickable
+function linkifyText(text: string) {
+  // URL regex pattern
+  const urlPattern = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlPattern);
+
+  return parts.map((part, index) => {
+    if (part.match(urlPattern)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-blue-200 font-medium"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+}
+
 export default function MessageBubble({
   message,
   isCurrentUser,
@@ -30,7 +55,7 @@ export default function MessageBubble({
         }
       `}
     >
-      <p className="text-sm wrap-break-word">{message.text}</p>
+      <p className="text-sm wrap-break-word">{linkifyText(message.text)}</p>
       <span className="text-xs opacity-70 mt-1 flex items-center gap-1">
         <span>
           {new Date(message.createdAt).toLocaleTimeString([], {

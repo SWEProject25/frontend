@@ -24,17 +24,24 @@ export const signInToFirebase = async (): Promise<void> => {
 
     // Check if already signed in
     if (auth.currentUser) {
-      console.log('✅ Already signed in to Firebase:', auth.currentUser.uid);
       return;
     }
 
     // Sign in anonymously - no backend needed!
     const userCredential = await signInAnonymously(auth);
-    console.log(
-      '✅ Firebase Auth: Signed in anonymously',
-      userCredential.user.uid
-    );
-  } catch (error) {
+  } catch (error: any) {
+    // Handle configuration errors gracefully
+    if (
+      error?.code === 'auth/configuration-not-found' ||
+      error?.code === 'auth/operation-not-allowed' ||
+      error?.code === 'auth/invalid-api-key'
+    ) {
+      console.warn(
+        '⚠️ Firebase Auth: Anonymous authentication not configured or disabled. Notifications will not work.',
+        error?.code
+      );
+      return; // Don't throw - allow app to continue
+    }
     console.error('❌ Firebase Auth: Sign in failed', error);
     throw error;
   }
@@ -55,8 +62,16 @@ export const signOutFirebase = async (): Promise<void> => {
   try {
     const auth = getAuthInstance();
     await auth.signOut();
-    console.log('✅ Firebase Auth: Signed out');
-  } catch (error) {
+  } catch (error: any) {
+    // Gracefully handle auth configuration errors
+    if (
+      error?.code === 'auth/configuration-not-found' ||
+      error?.code === 'auth/operation-not-allowed' ||
+      error?.code === 'auth/invalid-api-key'
+    ) {
+      console.warn('⚠️ Firebase Auth: Configuration error during sign out');
+      return; // Don't throw
+    }
     console.error('❌ Firebase Auth: Sign out failed', error);
     throw error;
   }

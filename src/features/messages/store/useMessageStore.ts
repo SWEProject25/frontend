@@ -17,6 +17,15 @@ type Conversation = {
   createdAt: string;
   // Optional frontend-enriched fields
   id?: number; // Alias for conversationId
+  user?: {
+    id: number;
+    username?: string;
+    displayName?: string;
+    name?: string;
+    profile_image_url?: string;
+    avatar?: string;
+    verified?: boolean;
+  };
   participants?: {
     id: number;
     name?: string;
@@ -67,7 +76,7 @@ export const useMessageStore = create<State>((set) => ({
   messages: {},
   activeConversationId: null,
   typingUsers: {},
-  setConversations: (c) => set({ conversations: c }),
+  setConversations: (c) => set({ conversations: sortConversationsByRecent(c) }),
   addConversation: (newConv) =>
     set((s) => {
       // Check if conversation already exists
@@ -78,7 +87,6 @@ export const useMessageStore = create<State>((set) => ({
       });
 
       if (exists) {
-        console.log('⚠️ Conversation already exists, skipping add');
         return s;
       }
 
@@ -211,17 +219,8 @@ export const useMessageStore = create<State>((set) => ({
   markAllMessagesAsSeen: (conversationId) =>
     set((s) => {
       const arr = s.messages[conversationId] ?? [];
-      console.log(
-        '📦 STORE: markAllMessagesAsSeen called for conversation:',
-        conversationId
-      );
-      console.log('📦 STORE: Current messages:', arr);
 
       const updatedMessages = arr.map((m) => ({ ...m, isSeen: true }));
-      console.log(
-        '📦 STORE: Updated messages (all isSeen=true):',
-        updatedMessages
-      );
 
       return {
         messages: {

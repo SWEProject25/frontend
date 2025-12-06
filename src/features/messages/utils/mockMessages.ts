@@ -23,8 +23,6 @@ export const addMockMessage = (
   // Add to store
   useMessageStore.getState().addMessage(mockMessage);
 
-  console.log('✅ Mock message added to store:', mockMessage);
-
   return mockMessage;
 };
 

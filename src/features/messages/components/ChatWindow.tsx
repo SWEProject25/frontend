@@ -19,6 +19,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
     isTyping,
     currentUserId,
     isAuthenticated,
+    isBlocked,
     handleSendMessage,
     handleKeyPress,
     handleTyping,
@@ -65,7 +66,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
   }
 
   return (
-    <div className="flex flex-col bg-black w-full h-full">
+    <div id="chat-window" className="flex flex-col bg-black w-full h-full">
       <ChatHeader
         name={conversationDetails.name}
         username={conversationDetails.username}
@@ -91,6 +92,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
         onSend={handleSendMessage}
         onKeyPress={handleKeyPress}
         onTyping={handleTyping}
+        isBlocked={isBlocked}
       />
     </div>
   );
