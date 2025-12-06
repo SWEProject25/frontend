@@ -53,6 +53,7 @@ export interface Reply {
   text: string;
   type: string;
   parentId: number;
+  mentions: [];
   media: Media[];
   isRepost: boolean;
   isQuote: boolean;

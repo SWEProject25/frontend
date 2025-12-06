@@ -10,3 +10,7 @@ export const tabs = [
   { title: 'Likes', value: LIKES_TAB },
   { title: 'Mentions', value: MENTIONS_TAB },
 ];
+export const myTabs = tabs;
+export const userTabs = tabs.filter(
+  (tab) => tab.value !== LIKES_TAB && tab.value !== MENTIONS_TAB
+);

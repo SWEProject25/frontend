@@ -24,6 +24,7 @@ import {
 import { FOLLOWING_TAB } from '../constants/menuName';
 import { TIMELINE_ENDPOINTS } from '../constants/api';
 import { useAuth } from '@/features/authentication/hooks';
+import { Search } from 'lucide-react';
 export const TIMELINE_QUERY_KEYS = {
   ADD_TWEET: ['tweet'] as const,
   TIMELINE_FEED_FOR_YOU: ['timeline', 'forYou'] as const,
@@ -167,6 +168,7 @@ export const useSearchProfile = () => {
     number
   >({
     queryKey: TIMELINE_QUERY_KEYS.PROFILE_SEARCH(searchUser),
+    enabled: searchUser.trim() !== '',
     queryFn: ({ pageParam }) =>
       timelineApi.searchProfile(pageParam, searchUser),
     initialPageParam: 1,
@@ -183,6 +185,7 @@ export const useSearchHashtag = () => {
     ReturnType<typeof TIMELINE_QUERY_KEYS.HASHTAG_SEARCH>,
     number
   >({
+    enabled: hashtag.trim() !== '',
     queryKey: TIMELINE_QUERY_KEYS.HASHTAG_SEARCH(hashtag),
     queryFn: ({ pageParam }) => timelineApi.searchHashtag(pageParam, hashtag),
     initialPageParam: 1,

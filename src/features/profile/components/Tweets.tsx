@@ -14,6 +14,7 @@ export default function Tweets() {
     isFetchingNextPage,
     hasNextPage,
   } = useProfileFeed();
+  console.log(data);
   const pages = data?.pages.flat();
   const renderTweets = pages?.map((group, i) => (
     <React.Fragment key={i}>

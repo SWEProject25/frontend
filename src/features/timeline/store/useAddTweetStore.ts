@@ -13,12 +13,14 @@ interface AddTweetState {
   isSending: boolean;
   error: string;
   isSuccess: boolean;
+  mention: string;
   // setIsSending: (status: boolean) => void;
   // setIsError: (status: boolean) => void;
   actions: {
     startSending: () => void;
     onSuccess: () => void;
     seterror: (messgae: string) => void;
+    setMention: (text: string) => void;
   };
 }
 
@@ -35,6 +37,7 @@ const useAddTweetStore = create<AddTweetState>()(
     isSending: false,
     error: '',
     isSuccess: false,
+    mention: '',
     // setIsSending: (status) => set({ isSending: status }),
     // setIsError: (status) => set({ isError: status }),
     actions: {
@@ -45,14 +48,17 @@ const useAddTweetStore = create<AddTweetState>()(
           isSuccess: true,
           error: '',
           tweetText: '',
+          mentoin: '',
           defaultReplyOption: state.selectedReplyOption,
           selectedReplyOption: 0,
         })),
       seterror: (message) =>
         set({ isSending: false, error: message, isSuccess: false }),
+      setMention: (text) => set((state) => ({ mention: state.mention + text })),
     },
   }))
 );
 
 export default useAddTweetStore;
 export const useActions = () => useAddTweetStore((state) => state.actions);
+export const useMention = () => useAddTweetStore((state) => state.mention);

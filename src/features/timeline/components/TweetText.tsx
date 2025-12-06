@@ -1,14 +1,26 @@
 'use client';
-import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
+import useAddTweetStore, {
+  useMention,
+} from '@/features/timeline/store/useAddTweetStore';
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import {
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
 } from '@/features/timeline/constants/tweetConstants';
 import { useEmoji } from '@/features/media/store/useMedia';
+import { useActions } from '../store/useAddTweetStore';
 
 const startRedText = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
+function setCartAtEnd(div: HTMLDivElement) {
+  div.focus();
+  const range = document.createRange();
+  range.selectNodeContents(div);
+  range.collapse(false);
 
+  const selection = window.getSelection();
+  selection?.removeAllRanges();
+  selection?.addRange(range);
+}
 export default function TweetText({
   divRef,
 }: {
@@ -19,13 +31,44 @@ export default function TweetText({
   const spanRef1 = useRef<null | HTMLSpanElement>(null);
   const [spanText1, setSpanText1] = useState("What's happening?");
   const [spanText2, setSpanText2] = useState('');
+  const mention = useMention();
+  const { setMention } = useActions();
+  const spanMention = useRef<null | HTMLSpanElement>(null);
+  const [mentionIsOpen, setMentionIsOpen] = useState(false);
   const emoji = useEmoji();
   useEffect(function () {
     setSpanText1("What's happening?");
   }, []);
   const handleChangeText = useCallback(
-    (text: string) => {
-      if (spanRef1.current) {
+    (text: string, lastData: string | null = null) => {
+      if (
+        (text.endsWith(' @', text.length - 1) &&
+          text[text.length - 1] !== '@') ||
+        (text.startsWith('@', 0) &&
+          text.length === 2 &&
+          text[text.length - 1] !== '@') ||
+        mentionIsOpen
+      ) {
+        // if (lastData) setMention(lastData);
+        // handle if mention in redlines
+        if (spanRef1.current)
+          if (!mentionIsOpen) {
+            const span = document.createElement('span');
+            span.textContent = lastData;
+            span.className = 'text-primary-hover';
+            span.setAttribute('data-token', 'true');
+            spanMention.current = span;
+            spanRef1.current.appendChild(span);
+            // spanRef1.current.innerHTML += `<span class='text-primary-hover'>${mention}</span>`;
+          } else {
+            if (spanMention.current && spanMention.current.textContent)
+              spanMention.current.textContent += lastData;
+          }
+        setMentionIsOpen(true);
+        if (divRef.current) setCartAtEnd(divRef.current);
+        console.log('yep', text);
+      } else if (spanRef1.current) {
+        setMentionIsOpen(false);
         if (text.length === 0) {
           console.log('erase');
           setSpanText1("What's happening?");
@@ -47,7 +90,7 @@ export default function TweetText({
         }
       }
     },
-    [setTweetText]
+    [setTweetText, setMentionIsOpen, mentionIsOpen, divRef]
   );
 
   useEffect(
@@ -79,27 +122,33 @@ export default function TweetText({
     if (divRef.current && divRef.current.innerHTML === '<br>') {
       divRef.current.innerHTML = '';
     }
+    const input = e.nativeEvent as InputEvent;
+    console.log(input.data);
     console.log('handleINput ', e);
     if (divRef.current) {
-      if (
-        (divRef.current.innerText.endsWith(
-          ' @',
-          divRef.current.innerText.length - 1
-        ) &&
-          divRef.current.innerText[divRef.current.innerText.length - 1] !==
-            '@') ||
-        (divRef.current.innerText.startsWith('@', 0) &&
-          divRef.current.innerText.length === 2 &&
-          divRef.current.innerText[divRef.current.innerText.length - 1] !== '@')
-      ) {
-        // handle if mention in redlines
-
-        console.log('yep', divRef.current.innerText);
-      }
-      handleChangeText(divRef.current?.innerText);
+      handleChangeText(divRef.current?.innerText, input.data);
     }
   }
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key !== 'Backspace') return;
+    console.log('as');
+    const selction = document.getSelection();
+    if (!selction || !selction.anchorNode) return;
+    const node =
+      selction.anchorNode.nodeType === Node.TEXT_NODE
+        ? selction.anchorNode.parentNode
+        : selction.anchorNode;
 
+    console.log(node, selction.anchorNode);
+    if (
+      node instanceof HTMLSpanElement &&
+      node.getAttribute('data-token') === 'true'
+    ) {
+      console.log('asqq');
+      e.preventDefault();
+      node.remove();
+    }
+  }
   return (
     <div
       data-testid="tweet-text-container"
@@ -126,6 +175,7 @@ export default function TweetText({
         onInput={handleInput}
         data-testid="tweet-text-input"
         ref={divRef}
+        onKeyDown={handleKeyDown}
         spellCheck={true}
         aria-label="Tweet text input overlay"
         className="   absolute top-0 pl-2 left-0 py-3 inset-0 w-full h-full text-transparent caret-white  outline-none whitespace-pre-wrap break-words overflow-wrap-anywhere pointer-events-auto text-xl"

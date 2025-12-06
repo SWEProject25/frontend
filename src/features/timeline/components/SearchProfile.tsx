@@ -16,31 +16,39 @@ export default function SearchProfile() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState(-1);
+  const [unFocus, setUnFocus] = useState(false);
   const divRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const route = usePathname();
   const search = useSearch();
   const setSearch = useSearchAction();
   const erase = route === './home';
-  const isHash = search.trimStart().startsWith('#');
-  console.log(route);
+  const startWithHash = search.trimStart().startsWith('#');
+  const startWithMention = search.startsWith('@');
+  const isMention = /^[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+$/.test(
+    startWithMention ? search.slice(1) : search
+  );
+  const validSearch = search.trim() !== '';
   function handleSearch(text: string) {
     setSearch(text);
   }
   function handleFocus() {
     console.log('focus');
+    setUnFocus(false);
     setIsOpen(true);
     setSelectedTab(-1);
   }
   function handleKeyDown(e: React.KeyboardEvent) {
-    const statIndx = hasHashtag && !hasSpace ? 0 : !isHash ? 1 : 2;
+    const startIndx = hasHashtag && !hasSpace ? 0 : !startWithHash ? 1 : 2;
 
     const endIndx =
-      !hasAnySpace && !isHash ? totalProfiles + 2 : totalProfiles + 1;
+      !hasAnySpace && !startWithHash && isMention
+        ? totalProfiles + 2
+        : totalProfiles + 1;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       setSelectedTab((tab) =>
-        tab === -1 ? statIndx : tab + 1 > endIndx ? statIndx : tab + 1
+        tab === -1 ? startIndx : tab + 1 > endIndx ? startIndx : tab + 1
       );
       const scrollDown = selectedTab + 1 > endIndx ? -60 * totalProfiles : 60;
 
@@ -51,18 +59,19 @@ export default function SearchProfile() {
         });
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setSelectedTab((tab) => (tab - 1 < statIndx ? endIndx : tab - 1));
-      const scrollUp = selectedTab - 1 < statIndx ? 60 * totalProfiles : -60;
+      setSelectedTab((tab) => (tab - 1 < startIndx ? endIndx : tab - 1));
+      const scrollUp = selectedTab - 1 < startIndx ? 60 * totalProfiles : -60;
       if (selectedTab < totalProfiles)
         scrollRef.current?.scrollBy({
           top: scrollUp,
           behavior: 'smooth',
         });
     } else if (e.key === 'Enter') {
+      // e.preventDefault();
       let path = '';
       if (selectedTab === -1) {
-        const searchQuery = isHash ? '%23' + search.replace('#', '') : search;
-        path = `/search?q=${searchQuery}`;
+        // const searchQuery = startWithHash ? '%23' + search.replace('#', '') : search;
+        path = `/search?q=${encodeURIComponent(search)}`;
       } else if (selectedTab === 1) {
         //go to search for string
         // setSearchExplore(search);
@@ -71,16 +80,16 @@ export default function SearchProfile() {
       } else if (selectedTab === endIndx) {
         // go to page with @string
 
-        path = `./${search}`;
+        path = startWithMention ? `./${search.slice(1)}` : `./${search}`;
       } else if (selectedTab === 0 && hasHashtag) {
         // go to hasthag if exist
         // setSearchExplore('#' + search);
 
-        const searchQuery = isHash
+        const searchQuery = startWithHash
           ? search.trim().replace('#', '')
           : search.trim();
         console.log(search);
-        path = `/search?q=%23${searchQuery}`;
+        path = `/search?q=%23${encodeURIComponent(searchQuery)}`;
       } else {
         // go to profile number selectedTab -1
         if (pages) {
@@ -96,8 +105,9 @@ export default function SearchProfile() {
         }
       }
       if (erase) setSearch('');
-      router.push(path);
+      if (validSearch) router.push(path);
       setIsOpen(false);
+      setUnFocus(true);
     }
   }
   const hasAnySpace = search.includes(' ');
@@ -177,6 +187,7 @@ export default function SearchProfile() {
   return (
     <div className="  w-fulh-full flex flex-1 relative" ref={divRef}>
       <SearchInput
+        unFocus={unFocus}
         value={search}
         onChange={handleSearch}
         className="bg-background"
@@ -222,7 +233,7 @@ export default function SearchProfile() {
                   onClick={() => {
                     setIsOpen(false);
                     if (erase) setSearch('');
-                    const searchQuery = isHash
+                    const searchQuery = startWithHash
                       ? search.trim().replace('#', '')
                       : search.trim();
 
@@ -239,8 +250,8 @@ export default function SearchProfile() {
                         path="M9.094 3.095c-3.314 0-6 2.686-6 6s2.686 6 6 6c1.657 0 3.155-.67 4.243-1.757 1.087-1.088 1.757-2.586 1.757-4.243 0-3.314-2.686-6-6-6zm-9 6c0-4.971 4.029-9 9-9s9 4.029 9 9c0 1.943-.617 3.744-1.664 5.215l4.475 4.474-2.122 2.122-4.474-4.475c-1.471 1.047-3.272 1.664-5.215 1.664-4.97-.001-8.999-4.03-9-9z"
                       />
                       <span className="font-semibold text-xl break-all flex-1">
-                        {!isHash && '#'}
-                        {search.trimStart()}
+                        {!startWithHash && '#'}
+                        {search.trimStart()} hash
                       </span>
                     </>
                     // : (
@@ -251,7 +262,7 @@ export default function SearchProfile() {
                   }
                 </div>
               )}
-              {!isHash && (
+              {!startWithHash && validSearch && (
                 <div
                   className={`flex w-full h-16 items-center gap-x-2 p-3 py-6 border-b  border-border hover:cursor-pointer hover:bg-white/12 ${selectedTab === 1 && 'bg-white/12'}`}
                   onClick={() => {
@@ -284,7 +295,7 @@ export default function SearchProfile() {
               >
                 {renderProfiles}
               </InfiniteScroll>
-              {!hasAnySpace && !isHash && (
+              {!hasAnySpace && !startWithHash && isMention && (
                 <div
                   className={`flex w-full h-16 items-center gap-x-2 p-3 py-6 border-t  border-border hover:cursor-pointer hover:bg-white/12  ${selectedTab === totalProfiles + 2 && 'bg-white/12'}`}
                   onClick={() => {
@@ -295,7 +306,8 @@ export default function SearchProfile() {
                   }}
                 >
                   <span className="font-semibold text-base break-all flex-1">
-                    Go to @{search}
+                    Go to {!startWithMention && '@'}
+                    {search}
                   </span>
                 </div>
               )}

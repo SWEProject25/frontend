@@ -23,11 +23,21 @@ import {
   useSelectedSearchTab,
   useSelectedTab as useExploreSelectedTab,
 } from '@/features/explore/store/useExploreStore';
+import { useSelectedTab as useProfileSelectedTab } from '@/features/profile/store/profileStore';
 import {
   FOR_YOU_TAB,
   TOP_TAB,
   TRENDING_TAB,
 } from '@/features/explore/constants/tabs';
+import { PROFILE_QUERY_KEYS, useProfileStore } from '@/features/profile';
+import { useAuth } from '@/features/authentication/hooks';
+import {
+  LIKES_TAB,
+  MEDIA_TAB,
+  MENTIONS_TAB,
+  POSTS_TAB,
+  REPLIES_TAB,
+} from '@/features/profile/constants/tabs';
 
 function updateTweetInInfiniteData(
   data: InfiniteData<TimelineFeedDtoResponse, number>,
@@ -197,6 +207,30 @@ export function useTimelineQueryKey() {
   return TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU;
 }
 
+export function useProfileQueryKey() {
+  const profile = useProfileStore((state) => state.currentProfile)?.User;
+  const myProfile = useAuth().user;
+  const user = profile?.id ?? myProfile?.id ?? -1;
+  const selectedTab = useProfileSelectedTab();
+  switch (selectedTab) {
+    case POSTS_TAB:
+      return PROFILE_QUERY_KEYS.profilePosts(user);
+    case REPLIES_TAB:
+      return PROFILE_QUERY_KEYS.profileReplies(user);
+
+    case LIKES_TAB:
+      return PROFILE_QUERY_KEYS.profileLikes(user);
+
+    case MENTIONS_TAB:
+      return PROFILE_QUERY_KEYS.profileMentions(user);
+
+    case MEDIA_TAB:
+      return PROFILE_QUERY_KEYS.profileMedia(user);
+    default:
+      return PROFILE_QUERY_KEYS.profilePosts(user);
+  }
+}
+
 export function useExploreQueryKey() {
   const selectedSearchTab = useSelectedSearchTab();
   const selectedTab = useExploreSelectedTab();
@@ -214,11 +248,18 @@ export function useOptimisticTweet() {
   const queryClient = useQueryClient();
   const currTabQueryKey = useTimelineQueryKey();
   const currExploreTabQueryKey = useExploreQueryKey();
+  const currProfileTabQueryKey = useProfileQueryKey();
   const setCurrentTweet = useTweetStore((state) => state.setCurrentTweet);
   const currentTweet = useTweetStore((state) => state.currentTweet);
+  const profile = useProfileStore((state) => state.currentProfile)?.User;
+  const myProfile = useAuth().user;
+  const user = profile?.id ?? myProfile?.id ?? -1;
+  const username = profile?.username ?? myProfile?.username ?? '';
   const search = useSearch();
   const path = usePathname();
   const isHome = path?.startsWith('/home');
+  const isProfile = path?.startsWith(`/${username}`);
+  // console.log(path, username, user, profile, myProfile);
   const router = useRouter();
   const onMutate = async (
     type: string,
@@ -234,23 +275,41 @@ export function useOptimisticTweet() {
     }[];
     oldTweet: TimelineFeed | undefined;
   }> => {
+    if (tweetId)
+      queryClient.setQueryData(
+        TWEET_QUERY_KEYS.tweetById(tweetId),
+        (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: updateTweet(type, old.data, userId),
+          };
+        }
+      );
+
     const tabsFeeds: {
       queryKey: QueryKeyType;
       previousFeed: FeedType | undefined;
     }[] = [];
     let oldTweet: TimelineFeed | undefined;
 
-    const currentKey = !isHome
-      ? currExploreTabQueryKey
-      : postType.toLowerCase() === 'reply'
-        ? TWEET_QUERY_KEYS.getRepliesByTweetId(parentId)
-        : currTabQueryKey;
+    const currentKey = isProfile
+      ? currProfileTabQueryKey
+      : !isHome
+        ? currExploreTabQueryKey
+        : postType.toLowerCase() === 'reply'
+          ? TWEET_QUERY_KEYS.getRepliesByTweetId(parentId)
+          : currTabQueryKey;
     const queryKeys: QueryKeyType[] = [
       TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
       TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
       EXPLORE_QUERY_KEYS.EXPLORE_FEED_FOR_YOU,
       EXPLORE_QUERY_KEYS.EXPLORE_FEED_SEARCH_LATEST(search),
       EXPLORE_QUERY_KEYS.EXPLORE_FEED_SEARCH_TOP(search),
+      PROFILE_QUERY_KEYS.profileLikes(user),
+      PROFILE_QUERY_KEYS.profileReplies(user),
+      PROFILE_QUERY_KEYS.profilePosts(user),
+      PROFILE_QUERY_KEYS.profileMentions(user),
     ].filter((key) => JSON.stringify(key) !== JSON.stringify(currentKey));
     queryKeys.unshift(currentKey);
     console.log(queryKeys);

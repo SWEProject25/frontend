@@ -31,7 +31,7 @@ export default function Header() {
       />
       <header
         data-testid="timeline-header"
-        className="z-10 flex flex-col sticky top-0 w-full bg-black/50 backdrop-blur-md"
+        className="z-10 flex flex-col sticky top-0 w-full bg-background/50 backdrop-blur-md"
       >
         <div className="xs:hidden flex items-center justify-between px-4 py-2 border-b border-border">
           <div onClick={() => setIsSidebarOpen(true)}>

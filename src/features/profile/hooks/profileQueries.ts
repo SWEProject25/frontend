@@ -12,6 +12,7 @@ import {
   ProfileResponseDto,
   ProfileSearchResponseDto,
   ProfileFeedDtoResponse,
+  ProfileMediaFeedDtoResponse,
 } from '../types/api';
 import { useProfileStore, useSelectedTab } from '../store/profileStore';
 import { useAuthStore } from '@/features/authentication/store/authStore';
@@ -19,10 +20,13 @@ import { PROFILE_ENDPOINTS } from '../constants/api';
 import {
   LIKES_TAB,
   MEDIA_TAB,
+  MENTIONS_TAB,
   POSTS_TAB,
   REPLIES_TAB,
 } from '../constants/tabs';
 import { mockState } from '../mocks/mockState';
+import { TimelineFeedDtoResponse } from '@/features/timeline/types/api';
+import { useProfileContext } from '@/app/[username]/ProfileProvider';
 
 // Query keys
 export const PROFILE_QUERY_KEYS = {
@@ -36,6 +40,7 @@ export const PROFILE_QUERY_KEYS = {
   profileReplies: (userId: number) => ['profile', 'replies', userId],
   profileLikes: (userId: number) => ['profile', 'likes', userId],
   profileMedia: (userId: number) => ['profile', 'media', userId],
+  profileMentions: (userId: number) => ['profile', 'mentions', userId],
 };
 
 // Hook: Get current user's profile
@@ -381,49 +386,192 @@ export const useSearchProfiles = (
 
 export const useProfileFeed = () => {
   const selectedTab = useSelectedTab();
-  const profile = useProfileStore((state) => state.currentProfile);
+  const { profile } = useProfileContext();
+
   const myProfile = useAuthStore((state) => state.user);
   const user = profile?.User.id === myProfile?.id ? 'me' : profile?.User.id;
   console.log(profile?.User.id);
   mockState.user = profile;
-
-  let queryKey,
-    queryEndPoint:
-      | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_POSTS>
-      | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_REPLIES>
-      | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_LIKES>
-      | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_MEDIA>;
+  const profilePosts = useProfilePosts();
+  const profileMentionPosts = useProfileMention();
+  const profileLikesPosts = useProfilelikes();
+  const profileRepliesPosts = useProfileReplies();
+  // let queryKey,
+  //   queryEndPoint:
+  //     | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_POSTS>
+  //     | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_REPLIES>
+  //     | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_LIKES>
+  //     | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_MEDIA>;
   if (profile?.User.id && user) {
-    if (selectedTab === POSTS_TAB) {
-      queryKey = PROFILE_QUERY_KEYS.profilePosts(profile.User.id);
-      queryEndPoint = PROFILE_ENDPOINTS.PROFILE_POSTS(user);
-    } else if (selectedTab === REPLIES_TAB) {
-      queryKey = PROFILE_QUERY_KEYS.profileReplies(profile.User.id);
-      queryEndPoint = PROFILE_ENDPOINTS.PROFILE_REPLIES(user);
-    } else if (selectedTab === LIKES_TAB) {
-      queryKey = PROFILE_QUERY_KEYS.profileLikes(profile.User.id);
-      queryEndPoint = PROFILE_ENDPOINTS.PROFILE_LIKES(user);
-    } else {
-      queryKey = PROFILE_QUERY_KEYS.profileMedia(profile.User.id);
-      queryEndPoint = PROFILE_ENDPOINTS.PROFILE_MEDIA(user);
+    switch (selectedTab) {
+      case POSTS_TAB:
+        return profilePosts;
+
+      case REPLIES_TAB:
+        return profileRepliesPosts;
+      case LIKES_TAB:
+        return profileLikesPosts;
+      case MENTIONS_TAB:
+        return profileMentionPosts;
+      default:
+        return profilePosts;
     }
+    // if (selectedTab === POSTS_TAB) {
+    //   queryKey = PROFILE_QUERY_KEYS.profilePosts(profile.User.id);
+    //   queryEndPoint = PROFILE_ENDPOINTS.PROFILE_POSTS(user);
+    // } else if (selectedTab === REPLIES_TAB) {
+    //   queryKey = PROFILE_QUERY_KEYS.profileReplies(profile.User.id);
+    //   queryEndPoint = PROFILE_ENDPOINTS.PROFILE_REPLIES(user);
+    // } else if (selectedTab === LIKES_TAB) {
+    //   queryKey = PROFILE_QUERY_KEYS.profileLikes(profile.User.id);
+    //   queryEndPoint = PROFILE_ENDPOINTS.PROFILE_LIKES(user);
+    // } else if (selectedTab === LIKES_TAB) {
+    // } else {
+    //   queryKey = PROFILE_QUERY_KEYS.profileMedia(profile.User.id);
+    //   queryEndPoint = PROFILE_ENDPOINTS.PROFILE_MEDIA(user);
+    // }
   } else {
     throw new Error('Profile called without userId');
   }
+  // return useInfiniteQuery<
+  //   ProfileFeedDtoResponse,
+  //   Error,
+  //   InfiniteData<ProfileFeedDtoResponse, number>,
+  //   | ReturnType<typeof PROFILE_QUERY_KEYS.profilePosts>
+  //   | ReturnType<typeof PROFILE_QUERY_KEYS.profileReplies>
+  //   | ReturnType<typeof PROFILE_QUERY_KEYS.profileLikes>,
+  //   number
+  // >({
+  //   queryKey: queryKey,
+  //   queryFn: ({ pageParam }) =>
+  //     profileApi.getProfileFeed(pageParam, queryEndPoint),
+  //   initialPageParam: 1,
+  //   getNextPageParam: (lastPage, pages) =>
+  //     lastPage.data.length ? pages.length + 1 : undefined,
+  // });
+};
+
+const useProfilePosts = () => {
+  const selectedTab = useSelectedTab();
+  const { profile } = useProfileContext();
+  const myProfile = useAuthStore((state) => state.user);
+  const user = profile?.User.id === myProfile?.id ? 'me' : profile?.User.id;
+  if (!(profile?.User.id && user))
+    throw new Error('Profile called without userId');
+  const valid = selectedTab === POSTS_TAB;
   return useInfiniteQuery<
-    ProfileFeedDtoResponse,
+    TimelineFeedDtoResponse,
     Error,
-    InfiniteData<ProfileFeedDtoResponse, number>,
-    | ReturnType<typeof PROFILE_QUERY_KEYS.profilePosts>
-    | ReturnType<typeof PROFILE_QUERY_KEYS.profileReplies>
-    | ReturnType<typeof PROFILE_QUERY_KEYS.profileLikes>,
+    InfiniteData<TimelineFeedDtoResponse, number>,
+    ReturnType<typeof PROFILE_QUERY_KEYS.profilePosts>,
     number
   >({
-    queryKey: queryKey,
+    enabled: valid,
+    queryKey: PROFILE_QUERY_KEYS.profilePosts(profile.User.id),
     queryFn: ({ pageParam }) =>
-      profileApi.getProfileFeed(pageParam, queryEndPoint),
+      profileApi.getProfilePostsFeed(pageParam, user, profile),
     initialPageParam: 1,
     getNextPageParam: (lastPage, pages) =>
       lastPage.data.posts.length ? pages.length + 1 : undefined,
+    // staleTime: 0,
+  });
+};
+
+const useProfileMention = () => {
+  const selectedTab = useSelectedTab();
+  const { profile } = useProfileContext();
+  const user = profile?.User.id;
+  if (!user) throw new Error('Profile called without userId');
+  const valid = selectedTab === MENTIONS_TAB;
+  return useInfiniteQuery<
+    TimelineFeedDtoResponse,
+    Error,
+    InfiniteData<TimelineFeedDtoResponse, number>,
+    ReturnType<typeof PROFILE_QUERY_KEYS.profileMentions>,
+    number
+  >({
+    enabled: valid,
+    queryKey: PROFILE_QUERY_KEYS.profileMentions(user),
+    queryFn: ({ pageParam }) =>
+      profileApi.getProfileMentionsFeed(pageParam, user),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.data.posts.length ? pages.length + 1 : undefined,
+    // staleTime: 0,
+  });
+};
+
+const useProfilelikes = () => {
+  const selectedTab = useSelectedTab();
+  const myProfile = useAuthStore((state) => state.user);
+  const user = myProfile?.id;
+  if (!user) throw new Error('Profile called without userId');
+  const valid = selectedTab === LIKES_TAB;
+  return useInfiniteQuery<
+    TimelineFeedDtoResponse,
+    Error,
+    InfiniteData<TimelineFeedDtoResponse, number>,
+    ReturnType<typeof PROFILE_QUERY_KEYS.profileLikes>,
+    number
+  >({
+    enabled: valid,
+    queryKey: PROFILE_QUERY_KEYS.profileLikes(user),
+    queryFn: ({ pageParam }) => profileApi.getProfileLikesFeed(pageParam, user),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.data.posts.length ? pages.length + 1 : undefined,
+    // staleTime: 0,
+  });
+};
+
+export const useProfileMedia = () => {
+  const selectedTab = useSelectedTab();
+  const { profile } = useProfileContext();
+
+  const myProfile = useAuthStore((state) => state.user);
+  const user = profile?.User.id === myProfile?.id ? 'me' : profile?.User.id;
+  if (!(profile?.User.id && user))
+    throw new Error('Profile called without userId');
+  const valid = selectedTab === MEDIA_TAB;
+  return useInfiniteQuery<
+    ProfileMediaFeedDtoResponse,
+    Error,
+    InfiniteData<ProfileMediaFeedDtoResponse, number>,
+    ReturnType<typeof PROFILE_QUERY_KEYS.profileMedia>,
+    number
+  >({
+    enabled: valid,
+    queryKey: PROFILE_QUERY_KEYS.profileMedia(profile.User.id),
+    queryFn: ({ pageParam }) => profileApi.getProfileMediaFeed(pageParam, user),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.data.length ? pages.length + 1 : undefined,
+    // staleTime: 0,
+  });
+};
+
+const useProfileReplies = () => {
+  const selectedTab = useSelectedTab();
+  const { profile } = useProfileContext();
+  const myProfile = useAuthStore((state) => state.user);
+  const user = profile?.User.id === myProfile?.id ? 'me' : profile?.User.id;
+  if (!(profile?.User.id && user))
+    throw new Error('Profile called without userId');
+  const valid = selectedTab === REPLIES_TAB;
+  return useInfiniteQuery<
+    TimelineFeedDtoResponse,
+    Error,
+    InfiniteData<TimelineFeedDtoResponse, number>,
+    ReturnType<typeof PROFILE_QUERY_KEYS.profileReplies>,
+    number
+  >({
+    enabled: valid,
+    queryKey: PROFILE_QUERY_KEYS.profileReplies(profile.User.id),
+    queryFn: ({ pageParam }) =>
+      profileApi.getProfileRepliesFeed(pageParam, user),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.data.posts.length ? pages.length + 1 : undefined,
+    // staleTime: 0,
   });
 };
