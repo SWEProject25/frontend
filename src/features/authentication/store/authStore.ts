@@ -26,6 +26,22 @@ export const useAuthStore = create<AuthStore>()(
       set({ user: null, isAuthenticated: false, passwordVerifiedAt: null });
     },
 
+    updateUsername: (username: string) => {
+      const { user } = get();
+      if (user) {
+        const updatedUser = { ...user, username };
+        set({ user: updatedUser });
+      }
+    },
+
+    updateEmail: (email: string) => {
+      const { user } = get();
+      if (user) {
+        const updatedUser = { ...user, email };
+        set({ user: updatedUser });
+      }
+    },
+
     setLoading: (loading: boolean) => {
       set({ isLoading: loading });
     },

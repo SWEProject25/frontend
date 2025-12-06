@@ -15,6 +15,7 @@ interface ConversationItemProps {
 }
 
 export default function ConversationItem({
+  id,
   avatar,
   name,
   username,
@@ -28,6 +29,7 @@ export default function ConversationItem({
 }: ConversationItemProps) {
   return (
     <div
+      id={`conversation-item-${id}`}
       onClick={onClick}
       className={`p-4 cursor-pointer hover:bg-gray-900 transition-colors border-b border-gray-800 ${
         isSelected ? 'bg-gray-900' : ''

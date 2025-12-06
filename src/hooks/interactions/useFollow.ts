@@ -10,6 +10,7 @@ import {
   FollowResponseDto,
   FollowersListResponseDto,
   FollowingListResponseDto,
+  FollowersYouKnowListResponseDto,
   PaginationParams,
 } from '@/types/userInteractions';
 import { INTERACTION_QUERY_KEYS } from './queryKeys';
@@ -277,6 +278,64 @@ export const useInfiniteFollowing = (userId: number, limit: number = 20) => {
     queryKey: ['interactions', 'following', 'infinite', userId, limit],
     queryFn: ({ pageParam }) =>
       followApi.getFollowing(userId, { page: pageParam, limit }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const { page, totalPages } = lastPage.metadata;
+      return page < totalPages ? page + 1 : undefined;
+    },
+    enabled: userId > 0,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+  });
+};
+
+export const useGetFollowersYouKnow = (
+  userId: number,
+  params?: PaginationParams,
+  enabled: boolean = true
+) => {
+  return useQuery<FollowersYouKnowListResponseDto, Error>({
+    queryKey: INTERACTION_QUERY_KEYS.followersYouKnow(userId, params),
+    queryFn: async () => {
+      try {
+        const response = await followApi.getFollowersYouKnow(userId, params);
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : 'Failed to fetch followers you know';
+        throw new Error(errorMessage);
+      }
+    },
+    enabled: enabled && userId > 0,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+  });
+};
+
+export const useFollowersYouKnow = (
+  userId: number,
+  params?: PaginationParams,
+  enabled: boolean = true
+) => {
+  return useGetFollowersYouKnow(userId, params, enabled);
+};
+
+export const useInfiniteFollowersYouKnow = (
+  userId: number,
+  limit: number = 20
+) => {
+  return useInfiniteQuery<
+    FollowersYouKnowListResponseDto,
+    Error,
+    InfiniteData<FollowersYouKnowListResponseDto, number>,
+    any,
+    number
+  >({
+    queryKey: ['interactions', 'followers-you-know', 'infinite', userId, limit],
+    queryFn: ({ pageParam }) =>
+      followApi.getFollowersYouKnow(userId, { page: pageParam, limit }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const { page, totalPages } = lastPage.metadata;

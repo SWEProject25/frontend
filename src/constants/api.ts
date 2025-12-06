@@ -8,6 +8,8 @@ export const FOLLOW_API_ENDPOINTS = {
     `/api/${API_CONFIG.VERSION}/users/${userId}/followers`,
   GET_FOLLOWING: (userId: number) =>
     `/api/${API_CONFIG.VERSION}/users/${userId}/following`,
+  GET_FOLLOWERS_YOU_KNOW: (userId: number) =>
+    `/api/${API_CONFIG.VERSION}/users/${userId}/followers-you-know`,
   FOLLOW_USER: (userId: number) =>
     `/api/${API_CONFIG.VERSION}/users/${userId}/follow`,
   UNFOLLOW_USER: (userId: number) =>

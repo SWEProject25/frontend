@@ -1,11 +1,13 @@
 // hooks/useMessages.ts
 import { useEffect, useRef, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { initSocket, getSocket, disconnectSocket } from '../services/socket';
 import { useMessageStore } from '../store/useMessageStore';
 import { MESSAGES_SOCKET_EVENTS, MESSAGES_CONSTANTS } from '../constants/api';
 import { createMessage as createMessageAPI } from '../api/messages';
 
 export const useMessages = (onError?: (err: any) => void) => {
+  const queryClient = useQueryClient();
   const addMessage = useMessageStore((s) => s.addMessage);
   const addConversation = useMessageStore((s) => s.addConversation);
   const activeConversationId = useMessageStore((s) => s.activeConversationId);
@@ -32,8 +34,6 @@ export const useMessages = (onError?: (err: any) => void) => {
 
     // Socket event handlers
     const handleConnect = () => {
-      console.log('🟢 WebSocket Connected!', socket.id);
-      console.log('✅ Real-time messaging is now active');
       if (activeConversationId) {
         socket.emit(
           MESSAGES_SOCKET_EVENTS.JOIN_CONVERSATION,
@@ -43,12 +43,7 @@ export const useMessages = (onError?: (err: any) => void) => {
     };
 
     const handleDisconnect = (reason: string) => {
-      // Only log non-transport errors to reduce noise
-      if (reason !== 'transport error' && reason !== 'transport close') {
-        console.log('🔴 WebSocket Disconnected:', reason);
-      }
       if (reason === 'io server disconnect') {
-        console.warn('⚠️ Server disconnected - you may have been logged out');
         socket.connect();
       }
     };
@@ -79,13 +74,6 @@ export const useMessages = (onError?: (err: any) => void) => {
     };
 
     const handleMessageCreated = async (msg: any) => {
-      console.log('📨 MESSAGE_CREATED event received:', {
-        messageId: msg.id,
-        conversationId: msg.conversationId,
-        senderId: msg.senderId,
-        text: msg.text?.substring(0, 30),
-      });
-
       // Check if this message already exists in the store
       const state = useMessageStore.getState();
       const existingMessages = state.messages[msg.conversationId] || [];
@@ -94,14 +82,8 @@ export const useMessages = (onError?: (err: any) => void) => {
       );
 
       if (messageAlreadyExists) {
-        console.log(
-          '⚠️ MESSAGE_CREATED: Message already exists, skipping duplicate:',
-          msg.id
-        );
         return;
       }
-
-      console.log('✅ MESSAGE_CREATED: Message is new, will add to store');
 
       // Check if conversation exists in our list
       const conversations = state.conversations;
@@ -112,13 +94,9 @@ export const useMessages = (onError?: (err: any) => void) => {
 
       // If conversation doesn't exist, fetch it first
       if (!conversationExists) {
-        console.log(
-          '🆕 Conversation not in list, fetching before adding message...'
-        );
         try {
           const { fetchConversationById } = await import('../api/messages');
           const conversation = await fetchConversationById(msg.conversationId);
-          console.log('✅ Fetched conversation:', conversation);
           addConversation(conversation);
         } catch (error) {
           console.error('❌ Failed to fetch conversation:', error);
@@ -134,27 +112,17 @@ export const useMessages = (onError?: (err: any) => void) => {
 
       // Add the message with correct isSeen status
       if (shouldMarkAsSeen) {
-        console.log(
-          '👁️ Received message while viewing conversation - marking as seen immediately'
-        );
         const seenMessage = { ...msg, isSeen: true };
         addMessage(seenMessage);
 
         // Emit to backend to broadcast to other user (so they see blue checkmark)
         setTimeout(() => {
           const socket = getSocket();
-          console.log(
-            '📤 Emitting MARK_SEEN to backend for conversation:',
-            msg.conversationId
-          );
           socket.emit(
             MESSAGES_SOCKET_EVENTS.MARK_SEEN,
             { conversationId: msg.conversationId, userId: currentUserId },
             (resp: any) => {
-              if (resp?.status === 'success') {
-                console.log('✅ Backend confirmed: messages marked as seen');
-                // Backend will broadcast messagesSeen event to sender
-              } else {
+              if (resp?.status !== 'success') {
                 console.warn('⚠️ Backend failed to mark as seen:', resp);
               }
             }
@@ -163,75 +131,57 @@ export const useMessages = (onError?: (err: any) => void) => {
       } else {
         // Add message as unseen (we're not viewing this conversation)
         addMessage(msg);
+
+        // Invalidate unseen count queries since there's a new unseen message
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', msg.conversationId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', 'total'],
+        });
       }
     };
 
     const handleMessagesSeen = (data: any) => {
-      console.log('👁️👁️👁️ MESSAGES_SEEN EVENT RECEIVED:', data);
-      console.log('👁️ Current user should update UI to show blue checkmarks');
       // Backend sends: { conversationId, userId, timestamp }
       // This means ALL messages in the conversation are now seen by userId
       if (data?.conversationId) {
-        console.log(
-          '👁️ Marking ALL messages as seen for conversation:',
-          data.conversationId
-        );
-        console.log('👁️ User who saw the messages:', data.userId);
         markAllMessagesAsSeen(data.conversationId);
-        console.log(
-          '👁️ ✅ Local state updated - checkmarks should turn blue now!'
-        );
+
+        // Invalidate unseen count queries since messages were seen
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', data.conversationId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', 'total'],
+        });
       }
     };
 
     const handleUserTyping = (data: any) => {
-      console.log('⌨️⌨️⌨️ USER_TYPING EVENT RECEIVED:', data);
       // Backend sends: { conversationId, userId }
       if (data?.conversationId && data?.userId) {
-        console.log(
-          '⌨️ User',
-          data.userId,
-          'is typing in conversation',
-          data.conversationId
-        );
         setUserTyping(data.conversationId, data.userId);
-        console.log('⌨️ ✅ Typing indicator should appear now!');
       }
     };
 
     const handleUserStoppedTyping = (data: any) => {
-      console.log('⌨️⌨️⌨️ USER_STOPPED_TYPING EVENT RECEIVED:', data);
       // Backend sends: { conversationId, userId }
       if (data?.conversationId && data?.userId) {
-        console.log(
-          '⌨️ User',
-          data.userId,
-          'stopped typing in conversation',
-          data.conversationId
-        );
         removeUserTyping(data.conversationId, data.userId);
-        console.log('⌨️ ✅ Typing indicator should disappear now!');
       }
     };
 
     const handleConversationCreated = (conversation: any) => {
-      console.log('🆕 New conversation created:', conversation);
       // Add normalized id if not present
       const normalizedConversation = {
         ...conversation,
         id: conversation.conversationId || conversation.id,
       };
       addConversation(normalizedConversation);
-      console.log('✅ Conversation added to list');
     };
 
     const handleNewMessageNotification = async (message: any) => {
-      console.log('🔔 NEW_MESSAGE_NOTIFICATION event received:', {
-        messageId: message?.id,
-        conversationId: message?.conversationId,
-        senderId: message?.senderId,
-        text: message?.text?.substring(0, 30),
-      });
       // This event is for messages in conversations we're not currently viewing
       // Backend sends the message object directly, not wrapped
       if (message?.conversationId) {
@@ -243,16 +193,8 @@ export const useMessages = (onError?: (err: any) => void) => {
         );
 
         if (messageAlreadyExists) {
-          console.log(
-            '⚠️ NEW_MESSAGE_NOTIFICATION: Message already exists (added by MESSAGE_CREATED), skipping duplicate:',
-            message.id
-          );
           return;
         }
-
-        console.log(
-          '✅ NEW_MESSAGE_NOTIFICATION: Message is new, will add to store'
-        );
 
         // Check if this conversation exists in our list
         const conversations = state.conversations;
@@ -263,13 +205,11 @@ export const useMessages = (onError?: (err: any) => void) => {
 
         // If conversation doesn't exist, fetch it first
         if (!conversationExists) {
-          console.log('🆕 Conversation not in list, fetching...');
           try {
             const { fetchConversationById } = await import('../api/messages');
             const conversation = await fetchConversationById(
               message.conversationId
             );
-            console.log('✅ Fetched conversation:', conversation);
             addConversation(conversation);
           } catch (error) {
             console.error('❌ Failed to fetch conversation:', error);
@@ -278,15 +218,16 @@ export const useMessages = (onError?: (err: any) => void) => {
 
         // Add the message to the messages array so unseen count works correctly
         // This message should be marked as unseen since we're not viewing this conversation
-        console.log(
-          '📥 Adding notification message to messages array for unseen count'
-        );
         const unseenMessage = { ...message, isSeen: false };
         addMessage(unseenMessage);
 
-        // The addMessage function already updates the conversation's lastMessage
-        // and sorts conversations by most recent
-        console.log('✅ Message added - unseen count should now be correct');
+        // Invalidate unseen count queries for this conversation and total
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', message.conversationId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', 'total'],
+        });
       }
     };
 
@@ -350,17 +291,11 @@ export const useMessages = (onError?: (err: any) => void) => {
   const joinConversation = useCallback(
     (conversationId: number, cb?: (resp: any) => void) => {
       const socket = getSocket();
-      console.log('🚪 Joining conversation:', conversationId);
       socket.emit(
         MESSAGES_SOCKET_EVENTS.JOIN_CONVERSATION,
         conversationId,
         (resp: any) => {
-          if (resp?.status === 'success') {
-            console.log('✅ Successfully joined conversation:', conversationId);
-            console.log(
-              '🎧 Now listening for messagesSeen broadcasts in this room'
-            );
-          } else {
+          if (resp?.status !== 'success') {
             console.warn('⚠️ Failed to join conversation:', resp);
           }
           cb?.(resp);
@@ -380,24 +315,19 @@ export const useMessages = (onError?: (err: any) => void) => {
 
         if (socket.connected) {
           // Use WebSocket (real-time)
-          console.log('📤 Sending via WebSocket:', payload);
           socket.emit(
             MESSAGES_SOCKET_EVENTS.CREATE_MESSAGE,
             payload,
             (resp: any) => {
-              console.log('✅ WebSocket response:', resp);
               cb?.(resp);
             }
           );
         } else {
           // Fallback to REST API (for testing while WebSocket is down)
-          console.log('⚠️ Socket not connected, using REST API fallback');
-          console.log('📤 Sending via REST API:', payload);
           const result = await createMessageAPI(
             payload.conversationId,
             payload.text
           );
-          console.log('✅ REST API response:', result);
 
           // Manually add message to store (since we won't get socket event)
           if (result?.data) {
@@ -409,9 +339,6 @@ export const useMessages = (onError?: (err: any) => void) => {
         }
       } catch (error: any) {
         console.error('❌ Failed to create message:', error.message);
-        console.log(
-          '💡 Check if POST /conversations/:id/messages endpoint exists'
-        );
         cb?.({ status: 'error', error });
       }
     },
@@ -421,25 +348,22 @@ export const useMessages = (onError?: (err: any) => void) => {
   const markSeen = useCallback(
     (conversationId: number, userId: number, cb?: (resp: any) => void) => {
       const socket = getSocket();
-      console.log('👁️📤 EMITTING markSeen event:', {
-        conversationId,
-        userId,
-        socketId: socket.id,
-      });
 
       socket.emit(
         MESSAGES_SOCKET_EVENTS.MARK_SEEN,
         { conversationId, userId },
         (resp: any) => {
           if (resp?.status === 'success') {
-            console.log('✅ Messages marked as seen - response received');
             // Immediately update local state - mark all messages in this conversation as seen
-            console.log(
-              '🔄 Updating local state for conversation:',
-              conversationId
-            );
             markAllMessagesAsSeen(conversationId);
-            console.log('👁️✅ Local checkmarks should be blue now!');
+
+            // Invalidate unseen count queries to refresh badges
+            queryClient.invalidateQueries({
+              queryKey: ['messages', 'unseen', conversationId],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ['messages', 'unseen', 'total'],
+            });
           } else {
             console.warn('⚠️ Failed to mark messages as seen:', resp);
           }
@@ -447,21 +371,16 @@ export const useMessages = (onError?: (err: any) => void) => {
         }
       );
     },
-    [markAllMessagesAsSeen]
+    [markAllMessagesAsSeen, queryClient]
   );
 
   const sendTyping = useCallback(
     (conversationId: number, cb?: (resp: any) => void) => {
       const socket = getSocket();
-      console.log('⌨️📤 EMITTING typing event:', {
-        conversationId,
-        socketId: socket.id,
-      });
       socket.emit(
         MESSAGES_SOCKET_EVENTS.TYPING,
         { conversationId },
         (resp: any) => {
-          console.log('⌨️📥 typing event response:', resp);
           cb?.(resp);
         }
       );
@@ -482,7 +401,6 @@ export const useMessages = (onError?: (err: any) => void) => {
   const sendStopTyping = useCallback(
     (conversationId: number, cb?: (resp: any) => void) => {
       const socket = getSocket();
-      console.log('⌨️ Sending stop typing indicator:', conversationId);
       socket.emit(
         MESSAGES_SOCKET_EVENTS.STOP_TYPING,
         { conversationId },

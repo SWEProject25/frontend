@@ -12,6 +12,8 @@ export interface AuthState {
 export interface AuthActions {
   setUser: (user: UserResponse) => void;
   clearUser: () => void;
+  updateUsername: (username: string) => void;
+  updateEmail: (email: string) => void;
   setLoading: (loading: boolean) => void;
   setPasswordVerified: (verified: boolean) => void;
   checkPasswordVerification: () => boolean;

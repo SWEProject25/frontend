@@ -73,8 +73,6 @@ export const useFirebaseNotifications = ({
    */
   const handleNewNotification = useCallback(
     async (event: FirebaseNotificationEvent) => {
-      console.log('🔔 New notification received:', event);
-
       // Call custom callback if provided
       onNewNotification?.(event);
 
@@ -118,17 +116,11 @@ export const useFirebaseNotifications = ({
 
     // Subscribe to notifications
     try {
-      console.log(
-        `🔔 Subscribing to real-time notifications for user ${userId}`
-      );
-
       unsubscribeRef.current = subscribeToNotifications(
         userId,
         handleNewNotification,
         handleError
       );
-
-      console.log('✅ Real-time notification subscription active');
     } catch (error) {
       console.error('❌ Error subscribing to notifications:', error);
       handleError(error instanceof Error ? error : new Error('Unknown error'));
@@ -137,7 +129,6 @@ export const useFirebaseNotifications = ({
     // Cleanup on unmount
     return () => {
       if (unsubscribeRef.current) {
-        console.log('🔕 Unsubscribing from real-time notifications');
         unsubscribeRef.current();
         unsubscribeRef.current = null;
       }

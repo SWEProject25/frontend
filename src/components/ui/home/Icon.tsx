@@ -13,6 +13,7 @@ interface IconOptions {
   width?: string;
   height?: string;
   dataTestId?: string;
+  center?: boolean;
 }
 export default function Icon({
   path,
@@ -26,12 +27,13 @@ export default function Icon({
   height = 'w-9',
   onClick,
   dataTestId = 'icon',
+  center = false,
 }: IconOptions) {
   const icon = (
     <div
       data-testid={dataTestId}
       onClick={onClick}
-      className={` relative flex items-center justify-center ${width} ${height}  ${!disabled && 'hover:cursor-pointer'} rounded-full  hover:${hoverColor}`}
+      className={`${center && 'self-center'} relative flex items-center justify-center ${width} ${height}  ${!disabled && 'hover:cursor-pointer'} rounded-full  hover:${hoverColor}`}
     >
       <svg
         viewBox={`0 0 ${viewBox} ${viewBox}`}

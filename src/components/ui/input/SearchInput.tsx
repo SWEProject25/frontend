@@ -8,11 +8,14 @@ export interface SearchInputProps {
   value?: string;
   onChange?: (value: string) => void;
   onClear?: () => void;
+  handleKeyDown?: (key: React.KeyboardEvent) => void;
+  onFocus?: () => void;
   className?: string;
   autoFocus?: boolean;
   hover?: boolean;
   clearColor?: string;
   hoverColor?: string;
+  spellCheck?: boolean;
 }
 
 export default function SearchInput({
@@ -20,11 +23,14 @@ export default function SearchInput({
   value: externalValue,
   onChange,
   onClear,
+  onFocus,
+  handleKeyDown,
   className = '',
   autoFocus = false,
   hover = false,
   clearColor = 'bg-primary',
   hoverColor = 'hover:bg-primary-hover',
+  spellCheck = true,
 }: SearchInputProps) {
   const [internalValue, setInternalValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -61,6 +67,7 @@ export default function SearchInput({
         transition-colors duration-200
 
         ${className}
+
       `}
     >
       <div className="pl-4 pr-3 flex items-center pointer-events-none">
@@ -71,7 +78,10 @@ export default function SearchInput({
         type="text"
         value={value}
         onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        onFocus={onFocus}
         placeholder={placeholder}
+        spellCheck={spellCheck}
         autoFocus={autoFocus}
         data-testid="search-input"
         className="

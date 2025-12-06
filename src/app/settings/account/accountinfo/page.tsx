@@ -1,20 +1,19 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import ListItem from '@/components/ui/ListItem';
 import OptionItem from '@/components/ui/OptionItem';
 import { PasswordConfirm } from '@/features/settings/components';
 import { useAuth } from '@/features/authentication/hooks/useAuth';
-import {
-  userData,
-  accountInfoItems,
-} from '@/features/settings/constants/USER_DATA';
+import { getAccountInfoItems } from '@/features/settings/constants/USER_DATA';
 
 export default function AccountInfoPage() {
   const router = useRouter();
-  const { checkPasswordVerification } = useAuth();
+  const { checkPasswordVerification, user } = useAuth();
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(true);
+
+  const accountInfoItems = useMemo(() => getAccountInfoItems(user), [user]);
 
   useEffect(() => {
     // Check if password is already verified and not expired
@@ -39,7 +38,7 @@ export default function AccountInfoPage() {
     >
       <Breadcrumb
         title="Account information"
-        subtitle={userData.username}
+        subtitle={user?.username}
         onBack={handleBack}
         showArrow={true}
         data-testid="account-info-breadcrumb"

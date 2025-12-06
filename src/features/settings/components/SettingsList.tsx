@@ -6,10 +6,21 @@ import Breadcrumb from '@/components/ui/Breadcrumb';
 import ListItem from '@/components/ui/ListItem';
 import OptionItem from '@/components/ui/OptionItem';
 import { SearchInput } from '@/components/ui/input';
-import type { SettingsOption } from '@/features/settings/constants/SETTINGs_ITEMS';
+import type {
+  SettingsOption,
+  SettingsSubOption,
+} from '@/features/settings/constants/SETTINGs_ITEMS';
 
 interface SettingsListProps {
   options: SettingsOption[];
+}
+
+interface FlattenedSettingItem {
+  id: string;
+  label: string;
+  description?: string;
+  path: string;
+  breadcrumb: string[];
 }
 
 export default function SettingsList({ options }: SettingsListProps) {
@@ -20,17 +31,62 @@ export default function SettingsList({ options }: SettingsListProps) {
     window.history.back();
   };
 
+  // Flatten all settings including nested items
+  const flattenedSettings = useMemo(() => {
+    const flattened: FlattenedSettingItem[] = [];
+
+    const flatten = (
+      items: (SettingsOption | SettingsSubOption)[],
+      breadcrumb: string[] = []
+    ) => {
+      items.forEach((item) => {
+        // Add the current item if it has a path
+        if ('path' in item && item.path) {
+          flattened.push({
+            id: item.id,
+            label: item.label,
+            description: item.description,
+            path: item.path,
+            breadcrumb,
+          });
+        }
+
+        // Recursively flatten subOptions
+        if (
+          'subOptions' in item &&
+          item.subOptions &&
+          item.subOptions.length > 0
+        ) {
+          flatten(item.subOptions, [...breadcrumb, item.label]);
+        }
+      });
+    };
+
+    flatten(options);
+    return flattened;
+  }, [options]);
+
   // Filter options based on search query
-  const filteredOptions = useMemo(() => {
+  const filteredItems = useMemo(() => {
     if (!searchQuery.trim()) {
-      return options;
+      // Return top-level options when no search
+      return options.map((option) => ({
+        id: option.id,
+        label: option.label,
+        description: option.description,
+        path: option.path || '#',
+        breadcrumb: [] as string[],
+      }));
     }
 
     const query = searchQuery.toLowerCase();
-    return options.filter((option) =>
-      option.label.toLowerCase().includes(query)
+    return flattenedSettings.filter(
+      (item) =>
+        item.label.toLowerCase().includes(query) ||
+        item.description?.toLowerCase().includes(query) ||
+        item.breadcrumb.some((crumb) => crumb.toLowerCase().includes(query))
     );
-  }, [options, searchQuery]);
+  }, [options, flattenedSettings, searchQuery]);
 
   return (
     <div
@@ -40,7 +96,6 @@ export default function SettingsList({ options }: SettingsListProps) {
       <div className="">
         <Breadcrumb
           title="Settings"
-          subtitle="@ahmedfathy0-0"
           onBack={handleBack}
           showSubtitleOnMobile={false}
           data-testid="settings-breadcrumb"
@@ -58,23 +113,26 @@ export default function SettingsList({ options }: SettingsListProps) {
 
         {/* Settings List */}
         <nav className="flex flex-col" data-testid="settings-nav">
-          {filteredOptions.length > 0 ? (
-            filteredOptions.map((option) => {
-              const isActive = pathname
-                ? pathname.startsWith(`/settings/${option.id}`)
-                : false;
+          {filteredItems.length > 0 ? (
+            filteredItems.map((item) => {
+              const isActive = pathname ? pathname === item.path : false;
 
               return (
                 <ListItem
-                  key={option.id}
-                  href={option.path || '#'}
+                  key={item.id}
+                  href={item.path}
                   isActive={isActive}
-                  data-testid={`settings-list-item-${option.id}`}
+                  data-testid={`settings-list-item-${item.id}`}
                 >
                   <OptionItem
-                    label={option.label}
+                    label={item.label}
+                    description={
+                      searchQuery && item.breadcrumb.length > 0
+                        ? item.breadcrumb.join(' > ')
+                        : item.description
+                    }
                     showArrow={true}
-                    data-testid={`settings-option-${option.id}`}
+                    data-testid={`settings-option-${item.id}`}
                   />
                 </ListItem>
               );

@@ -14,6 +14,7 @@ import {
 } from '../constants/dropdown';
 import XModal from '@/components/ui/hoc/XModal';
 import AddReply from './AddReply';
+import SharePostModal from './SharePostModal';
 type stats = {
   postId: number;
   isRepost: boolean;
@@ -49,6 +50,7 @@ export default function Actions({
     isLikedByMe: stats.isLikedByMe,
   });
   const [isOpen, setIsOpen] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const toggleLikeTweet = useToggleLikeTweet(
     stats.postId,
     stats.isRepost,
@@ -72,14 +74,13 @@ export default function Actions({
     toggleRepostTweet.mutate();
   }
   function onSelect(key: string) {
-    console.log('Selected item key:', key);
     switch (key) {
       case 'copy_link':
         const link = `https://hankers.tech/home/${stats.postId}`;
         navigator.clipboard.writeText(link);
         break;
       case 'send_via_message':
-        // Implement send via message functionality here
+        setShowShareModal(true);
         break;
       case 'repost':
         handleRetweet();
@@ -157,6 +158,14 @@ export default function Actions({
           />
         </DropDown>
       </div>
+
+      {/* Share Post Modal */}
+      <SharePostModal
+        show={showShareModal}
+        postId={stats.postId}
+        postUrl={`https://hankers.tech/home/${stats.postId}`}
+        onClose={() => setShowShareModal(false)}
+      />
     </div>
   );
 }

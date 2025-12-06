@@ -13,7 +13,7 @@ export function useConversationsList(
   const [newUserId, setNewUserId] = useState('');
   const [creatingConvo, setCreatingConvo] = useState(false);
 
-  const conversations = useMessageStore((s) => s.conversations);
+  const conversationsRaw = useMessageStore((s) => s.conversations);
   const typingUsers = useMessageStore((s) => s.typingUsers);
   const allMessages = useMessageStore((s) => s.messages);
   const setConversations = useMessageStore((s) => s.setConversations);
@@ -21,6 +21,9 @@ export function useConversationsList(
 
   const user = useAuthStore((s) => s.user);
   const currentUserId = (user as { id?: number })?.id ?? null;
+
+  // Use conversationsRaw as conversations for convenience
+  const conversations = conversationsRaw;
 
   // Get DM notifications to check which conversations have unread messages
   const { data: dmNotificationsData } = useNotifications({
@@ -109,7 +112,6 @@ export function useConversationsList(
   useEffect(() => {
     // Skip if conversations are already loaded
     if (conversations.length > 0) {
-      console.log('✅ Using cached conversations, skipping fetch');
       return;
     }
 
@@ -118,7 +120,6 @@ export function useConversationsList(
       setError(null);
       try {
         const conversations = await fetchConversations();
-        console.log('📥 Fetching conversations from backend:', conversations);
 
         if (Array.isArray(conversations)) {
           const normalizedConversations = conversations.map(
@@ -237,14 +238,11 @@ export function useConversationsList(
       timestamp: string;
       unseenCount: number;
     } => {
-      console.log('🔍 Processing conversation for display:', conversation);
-
       // Backend returns 'user' object, not 'participants' array
       const otherUser = (conversation.user ||
         (conversation.participants as unknown[])?.[0]) as
         | Record<string, unknown>
         | undefined;
-      console.log('👤 Other user:', otherUser);
 
       const displayName = String(
         conversation.name ||

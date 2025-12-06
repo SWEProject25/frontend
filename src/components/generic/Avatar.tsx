@@ -7,7 +7,7 @@ interface AvatarProps {
   name?: string;
   children?: React.ReactNode;
   className?: string;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  size?: 'xs' | 's' | 'sm' | 'md' | 'lg';
   position?: 'absolute' | 'relative';
   customPosition?: boolean;
 }
@@ -23,6 +23,7 @@ const Avatar = ({
 }: AvatarProps) => {
   const sizeClasses = {
     xs: 'w-[38px] h-[38px]',
+    s: 'w-[40px] h-[40px]',
     sm: 'w-[48px] h-[48px]',
     md: 'w-[96px] h-[96px] sm:w-[96px] sm:h-[96px]',
     lg: 'w-[100px] h-[100px] sm:w-[132px] sm:h-[132px]',
@@ -30,6 +31,7 @@ const Avatar = ({
 
   const fontSizes = {
     xs: 'text-xl',
+    s: 'text-xl',
     sm: 'text-2xl',
     md: 'text-4xl',
     lg: 'text-3xl sm:text-5xl',
