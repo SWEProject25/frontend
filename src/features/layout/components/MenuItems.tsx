@@ -45,18 +45,7 @@ export default function MenuItems() {
       href: '/messages',
       hideOnShortScreen: false,
     },
-    {
-      icon: Bookmark,
-      label: 'Bookmarks',
-      href: '/bookmarks',
-      hideOnShortScreen: true,
-    },
-    {
-      icon: Users,
-      label: 'Communities',
-      href: '/communities',
-      hideOnShortScreen: true,
-    },
+
     {
       icon: User,
       label: 'Profile',
@@ -68,12 +57,6 @@ export default function MenuItems() {
       label: 'Settings',
       href: '/settings',
       hideOnShortScreen: true,
-    },
-    {
-      icon: MoreHorizontal,
-      label: 'More',
-      href: '/more',
-      hideOnShortScreen: false,
     },
   ];
 

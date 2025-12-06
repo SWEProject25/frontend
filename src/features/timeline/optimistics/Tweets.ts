@@ -253,7 +253,6 @@ export function useOptimisticTweet() {
       EXPLORE_QUERY_KEYS.EXPLORE_FEED_SEARCH_TOP(search),
     ].filter((key) => JSON.stringify(key) !== JSON.stringify(currentKey));
     queryKeys.unshift(currentKey);
-    console.log(queryKeys);
     // }
     for (const queryKey of queryKeys) {
       const result = await optimisticsTabs(
@@ -308,24 +307,19 @@ export function useOptimisticTweet() {
       );
 
       if (oldTweets) {
-        console.log(previousFeed);
         let timelineFeed: FeedType;
         if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
-          console.log(oldTweets, queryKey, previousFeed);
           timelineFeed = updateTweetInInfiniteData(
             previousFeed,
             pages,
             oldTweets,
             type
           );
-          console.log(timelineFeed);
         } else {
           const newTweets: TimelineFeed[] = [];
           oldTweets.forEach((tweet) => {
             newTweets.push(updateTweet(type, tweet, userId));
-            console.log(tweet, queryKey);
           });
-          console.log(newTweets);
           timelineFeed = updateTweetInInfiniteData(
             previousFeed,
             pages,
@@ -335,7 +329,6 @@ export function useOptimisticTweet() {
         }
 
         queryClient.setQueryData<FeedType>(queryKey, timelineFeed);
-        console.log(timelineFeed);
 
         if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
           if (
@@ -360,10 +353,8 @@ export function useOptimisticTweet() {
             );
             if (oldTweet) {
               const newTweet = updateTweet(type, oldTweet, userId);
-              console.log('old');
               setCurrentTweet(newTweet);
             } else {
-              console.log('old2');
             }
           }
         }
@@ -383,7 +374,6 @@ export function useOptimisticTweet() {
         }
       | undefined
   ) {
-    console.log(context, 'hi');
     if (context) {
       context.previousFeeds.forEach((feed) => {
         if (feed.previousFeed && feed.queryKey) {

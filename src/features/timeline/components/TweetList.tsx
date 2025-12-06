@@ -21,7 +21,6 @@ export default function TweetList() {
     hasNextPage,
   } = useTimelineFeed();
 
-  console.log(data);
   // const setStoreTimeLine = useTweetStore((store) => store.setTimeLineFeed);
   const pages = data?.pages.flat();
 
