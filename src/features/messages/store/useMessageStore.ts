@@ -15,8 +15,8 @@ type Conversation = {
   user1Id: number;
   user2Id: number;
   createdAt: string;
-  // Optional frontend-enriched fields
-  id?: number; // Alias for conversationId
+  unseenCount?: number;
+  id?: number;
   user?: {
     id: number;
     username?: string;
@@ -56,7 +56,6 @@ type State = {
   markAllMessagesAsSeen: (conversationId: number) => void;
 };
 
-// Helper function to sort conversations by most recent message
 const sortConversationsByRecent = (
   conversations: Conversation[]
 ): Conversation[] => {
@@ -100,9 +99,18 @@ export const useMessageStore = create<State>((set) => ({
   addMessage: (m) =>
     set((s) => {
       const arr = s.messages[m.conversationId] ?? [];
-      const updatedMessages = [...arr, m];
 
-      // Update the conversation's lastMessage
+      const existingMessageIndex = arr.findIndex((msg) => msg.id === m.id);
+
+      let updatedMessages: Message[];
+      if (existingMessageIndex !== -1) {
+        updatedMessages = arr.map((msg, idx) =>
+          idx === existingMessageIndex ? { ...msg, ...m } : msg
+        );
+      } else {
+        updatedMessages = [...arr, m];
+      }
+
       const updatedConversations = s.conversations.map((conv) => {
         const convId = conv.conversationId || conv.id;
         if (convId === m.conversationId) {
@@ -114,7 +122,6 @@ export const useMessageStore = create<State>((set) => ({
         return conv;
       });
 
-      // Sort conversations by most recent message
       const sortedConversations =
         sortConversationsByRecent(updatedConversations);
 
@@ -126,10 +133,6 @@ export const useMessageStore = create<State>((set) => ({
   setActiveConversation: (id) => set({ activeConversationId: id }),
   setMessagesForConversation: (id, msgs) =>
     set((s) => {
-      // Use fresh messages from backend - they are the source of truth
-      // Backend handles isSeen and updatedAt correctly
-
-      // Update the conversation's lastMessage when loading messages
       const lastMessage = msgs.length > 0 ? msgs[msgs.length - 1] : undefined;
       const updatedConversations = s.conversations.map((conv) => {
         const convId = conv.conversationId || conv.id;

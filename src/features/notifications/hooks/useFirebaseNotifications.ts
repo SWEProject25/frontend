@@ -79,11 +79,37 @@ export const useFirebaseNotifications = ({
       // Optimistically increment the count immediately
       optimisticallyIncrementCount(event.type);
 
-      // NOTE: We do NOT invalidate queries here
+      // If this is a DM notification, invalidate message-related queries
+      // This ensures the messages system syncs when WebSocket is not active
+      if (event.type === 'DM') {
+        console.log(
+          '📬 DM notification received via Firebase - syncing messages'
+        );
+
+        // Invalidate DM notification queries to trigger refetch
+        queryClient.invalidateQueries({
+          queryKey: ['notifications', 'list', { include: 'DM' }],
+        });
+
+        // Invalidate message queries to ensure conversations and counts update
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'conversations'],
+        });
+
+        // Invalidate total unseen message count
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', 'total'],
+        });
+
+        // Note: Per-conversation unseen counts will be invalidated when
+        // useSyncDMNotifications runs and fetches the conversations
+      }
+
+      // NOTE: We do NOT invalidate the main unread count query here
       // The polling system (refetchInterval in useUnreadCount) will
       // fetch the real count from the server every 30 seconds
     },
-    [onNewNotification, optimisticallyIncrementCount]
+    [onNewNotification, optimisticallyIncrementCount, queryClient]
   );
 
   /**

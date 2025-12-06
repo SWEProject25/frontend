@@ -1,5 +1,4 @@
 'use client';
-import { useConversationUnseenCount } from '../hooks/useUnseenCounts';
 import ConversationItem from './conversationlist/ConversationItem';
 
 interface ConversationItemWithUnseenProps {
@@ -12,6 +11,7 @@ interface ConversationItemWithUnseenProps {
   timestamp: string;
   isSelected: boolean;
   isTyping: boolean;
+  unseenCount: number; // Now passed as prop instead of fetched from API
   onClick: () => void;
 }
 
@@ -25,11 +25,9 @@ export default function ConversationItemWithUnseen({
   timestamp,
   isSelected,
   isTyping,
+  unseenCount,
   onClick,
 }: ConversationItemWithUnseenProps) {
-  // Fetch unseen count from API
-  const { data: unseenCount = 0 } = useConversationUnseenCount(id, true);
-
   return (
     <ConversationItem
       id={id}
