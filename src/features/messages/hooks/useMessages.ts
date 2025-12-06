@@ -27,6 +27,11 @@ export const useMessages = (onError?: (err: any) => void) => {
   useEffect(() => {
     const socket = initSocket();
 
+    // If no socket (no auth token), skip setup
+    if (!socket) {
+      return;
+    }
+
     // Socket event handlers
     const handleConnect = () => {
       if (activeConversationId) {
@@ -44,9 +49,9 @@ export const useMessages = (onError?: (err: any) => void) => {
     };
 
     const handleConnectError = (err: any) => {
-      // Only log once every 5 seconds to reduce spam
+      // Reduce error spam - only log once every 10 seconds
       const now = Date.now();
-      if (now - lastErrorLogRef.current > 5000) {
+      if (now - lastErrorLogRef.current > 10000) {
         console.error(
           '❌ WebSocket connection failed. Please check your authentication.'
         );
@@ -56,16 +61,16 @@ export const useMessages = (onError?: (err: any) => void) => {
     };
 
     const handleError = (err: any) => {
-      // Only log significant errors
+      // Only log authentication errors
       if (
         err.message?.includes('unauthorized') ||
-        err.message?.includes('401')
+        err.message?.includes('401') ||
+        err.message?.includes('403')
       ) {
         console.error('🚫 Authentication error - please log in again');
-      } else if (err.message && !err.message.includes('xhr')) {
-        console.error('❌ WebSocket error:', err.message);
+        onError?.(err);
       }
-      onError?.(err);
+      // Silently ignore other errors (like transport errors)
     };
 
     const handleMessageCreated = async (msg: any) => {

@@ -12,13 +12,17 @@ interface NotificationBadgeProps {
 /**
  * Badge component to display unread notification count
  * Typically used on the notification bell icon
+ * Excludes DM notifications (shown in MessageBadge instead)
  */
 export const NotificationBadge: React.FC<NotificationBadgeProps> = ({
   className = '',
   maxCount = 99,
   showZero = false,
 }) => {
-  const { data: unreadCount = 0, isLoading } = useUnreadCount();
+  // Exclude DM notifications - they appear in the Messages tab
+  const { data: unreadCount = 0, isLoading } = useUnreadCount({
+    exclude: 'DM',
+  });
 
   // Don't show badge if loading or count is 0 (unless showZero is true)
   if (isLoading || (!showZero && unreadCount === 0)) {

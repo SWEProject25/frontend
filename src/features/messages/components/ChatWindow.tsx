@@ -3,12 +3,16 @@ import ChatHeader from './chatwindow/ChatHeader';
 import ChatMessageList from './chatwindow/ChatMessageList';
 import ChatInput from './chatwindow/ChatInput';
 import { useChatWindow } from './chatwindow/useChatWindow';
+import { useMarkDMNotificationsAsRead } from '../hooks/useMarkDMNotificationsAsRead';
 
 interface ChatWindowProps {
   conversationId?: string;
 }
 
 export default function ChatWindow({ conversationId }: ChatWindowProps) {
+  // Mark DM notifications as read when this conversation is opened
+  useMarkDMNotificationsAsRead(conversationId);
+
   const {
     message,
     setMessage,

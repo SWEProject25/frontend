@@ -65,7 +65,7 @@ export default function ConversationItem({
                 <span className="text-xs text-gray-500">{timestamp}</span>
               )}
               {unseenCount > 0 && (
-                <span className="min-w-5 h-5 px-1.5 bg-blue-500 text-white text-xs font-semibold rounded-full flex items-center justify-center">
+                <span className="flex items-center justify-center min-w-5 h-5 px-1.5 bg-blue-500 text-white text-xs font-bold rounded-full">
                   {unseenCount > 99 ? '99+' : unseenCount}
                 </span>
               )}

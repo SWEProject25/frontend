@@ -15,12 +15,14 @@ import { NOTIFICATION_QUERY_KEYS, NOTIFICATION_DEFAULTS } from '../constants';
 
 /**
  * Hook to fetch paginated notifications with infinite scroll
+ * Uses optimistic caching to reduce API calls
  */
 export const useNotifications = (params?: GetNotificationsParams) => {
   return useInfiniteQuery<GetNotificationsResponse, Error>({
     queryKey: NOTIFICATION_QUERY_KEYS.LIST(params),
     queryFn: async ({ pageParam = NOTIFICATION_DEFAULTS.INITIAL_PAGE }) => {
       try {
+        console.log('🔄 Fetching notifications from API:', params);
         const response = await notificationsApi.getNotifications({
           ...params,
           page: pageParam as number,
@@ -40,8 +42,11 @@ export const useNotifications = (params?: GetNotificationsParams) => {
       return page < totalPages ? page + 1 : undefined;
     },
     initialPageParam: NOTIFICATION_DEFAULTS.INITIAL_PAGE,
-    staleTime: 30000, // 30 seconds
-    refetchOnWindowFocus: true,
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    refetchOnWindowFocus: false, // Don't refetch on tab switch
+    refetchOnMount: false, // Don't refetch on mount if data is fresh
+    refetchOnReconnect: true, // Do refetch when internet reconnects
   });
 };
 
@@ -54,13 +59,20 @@ export const useUnreadNotifications = () => {
 
 /**
  * Hook to fetch unread count
+ * Uses aggressive caching to prevent excessive API calls
  */
-export const useUnreadCount = () => {
+export const useUnreadCount = (
+  params?: Pick<GetNotificationsParams, 'include' | 'exclude'>
+) => {
   return useQuery({
-    queryKey: NOTIFICATION_QUERY_KEYS.UNREAD_COUNT,
+    queryKey: params
+      ? [...NOTIFICATION_QUERY_KEYS.UNREAD_COUNT, params]
+      : NOTIFICATION_QUERY_KEYS.UNREAD_COUNT,
     queryFn: async () => {
       try {
-        const response = await notificationsApi.getUnreadCount();
+        console.log('🔄 Fetching unread count from API:', params);
+        const response = await notificationsApi.getUnreadCount(params);
+        console.log('✅ Unread count received:', response.unreadCount);
         return response.unreadCount;
       } catch (error) {
         const errorMessage =
@@ -70,9 +82,12 @@ export const useUnreadCount = () => {
         throw new Error(errorMessage);
       }
     },
-    staleTime: 10000, // 10 seconds
+    staleTime: NOTIFICATION_DEFAULTS.POLLING_INTERVAL, // Consider data fresh for 30s
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
     refetchInterval: NOTIFICATION_DEFAULTS.POLLING_INTERVAL, // Poll every 30 seconds
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false, // Don't refetch on tab switch - rely on polling
+    refetchOnMount: false, // Don't refetch on mount if data is fresh
+    refetchOnReconnect: true, // Do refetch when internet reconnects
   });
 };
 

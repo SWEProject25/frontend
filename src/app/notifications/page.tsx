@@ -16,12 +16,15 @@ export default function NotificationsPage() {
   const getFilterParams = () => {
     switch (activeTab) {
       case 'mentions':
-        return { unreadOnly: false }; // In real implementation, filter by MENTION type
+        // Show only MENTION notifications, exclude DM
+        return { include: 'MENTION' };
       case 'verified':
-        return { unreadOnly: false }; // In real implementation, filter by verified actors
+        // Show all except DM notifications (would filter by verified actors on backend)
+        return { exclude: 'DM' };
       case 'all':
       default:
-        return {};
+        // Show all notifications except DM (DM notifications appear in Messages tab)
+        return { exclude: 'DM' };
     }
   };
 

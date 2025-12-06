@@ -5,8 +5,9 @@ import ConversationsList from './ConversationsList';
 import WelcomeScreen from './WelcomeScreen';
 import NewConversationModal from './conversationlist/NewConversationModal';
 import { useMessages } from '../hooks/useMessages';
-import { createConversation, fetchConversations } from '../api/messages';
+import { useSyncDMNotifications } from '../hooks/useSyncDMNotifications';
 import { useMessageStore } from '../store/useMessageStore';
+import { createConversation, fetchConversations } from '../api/messages';
 
 export default function MessagesLayout() {
   const router = useRouter();
@@ -21,6 +22,10 @@ export default function MessagesLayout() {
   useMessages((err) => {
     console.error('Socket connection error:', err);
   });
+
+  // Sync DM notifications with message store
+  // This ensures new messages appear even when WebSocket is not working
+  useSyncDMNotifications();
 
   const handleSelectConversation = (id: string) => {
     router.push(`/messages/${id}`);

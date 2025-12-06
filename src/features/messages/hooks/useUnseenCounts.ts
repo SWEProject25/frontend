@@ -17,8 +17,8 @@ export const useConversationUnseenCount = (
     queryKey: ['messages', 'unseen', conversationId],
     queryFn: () => getConversationUnseenCount(conversationId!),
     enabled: enabled && !!conversationId,
-    staleTime: 30 * 1000, // 30 seconds
-    refetchInterval: 60 * 1000, // Refetch every 60 seconds
+    staleTime: 10 * 1000, // 10 seconds - more aggressive to catch updates quickly
+    refetchInterval: 30 * 1000, // Refetch every 30 seconds (matches notification polling)
     retry: 1,
   });
 };
@@ -26,14 +26,17 @@ export const useConversationUnseenCount = (
 /**
  * Hook to get the total unseen message count across all conversations
  * @param enabled - Whether the query should be enabled
+ *
+ * This hook fetches the total count from the backend API.
+ * It refetches regularly to ensure the badge count is accurate.
  */
 export const useTotalUnseenCount = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ['messages', 'unseen', 'total'],
     queryFn: getTotalUnseenCount,
     enabled,
-    staleTime: 30 * 1000, // 30 seconds
-    refetchInterval: 60 * 1000, // Refetch every 60 seconds
+    staleTime: 10 * 1000, // 10 seconds - more aggressive
+    refetchInterval: 30 * 1000, // Refetch every 30 seconds (matches notification polling)
     retry: 1,
   });
 };

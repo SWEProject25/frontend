@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import { NotificationBadge } from '@/features/notifications/components';
+import { MessageBadge } from '@/features/messages/components/MessageBadge';
 
 export default function MenuItems() {
   const pathname = usePathname();
@@ -84,6 +85,8 @@ export default function MenuItems() {
               />
               {/* Show notification badge on Bell icon */}
               {item.label === 'Notifications' && <NotificationBadge />}
+              {/* Show message badge on Mail icon */}
+              {item.label === 'Messages' && <MessageBadge />}
             </div>
             <span
               className={`text-[20px] ${isActive ? 'font-bold' : ''} text-text-active/95 xs:hidden min-[1400px]:block`}

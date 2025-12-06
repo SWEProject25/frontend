@@ -15,13 +15,8 @@ export default function ConversationsList({
   onSelectConversation,
   onNewMessageClick,
 }: ConversationsListProps) {
-  const {
-    loading,
-    error,
-    conversations,
-    unseenConversationsCount,
-    getConversationDisplay,
-  } = useConversationsList(onSelectConversation);
+  const { loading, error, conversations, getConversationDisplay } =
+    useConversationsList(onSelectConversation);
 
   return (
     <div
@@ -29,7 +24,6 @@ export default function ConversationsList({
       className="w-full h-full flex flex-col bg-black"
     >
       <ConversationsHeader
-        unseenConversationsCount={unseenConversationsCount}
         onNewMessageClick={onNewMessageClick || (() => {})}
       />
 
@@ -48,20 +42,24 @@ export default function ConversationsList({
         ) : (
           conversations.map((conversation) => {
             const display = getConversationDisplay(conversation);
+            // Use conversationId as primary, fallback to id
+            const conversationId =
+              conversation.conversationId || conversation.id;
 
             return (
               <ConversationItemWithUnseen
-                key={conversation.id}
-                id={conversation.id!}
+                key={conversationId}
+                id={conversationId!}
                 avatar={display.displayAvatar}
                 name={display.displayName}
                 username={display.displayUsername}
                 isVerified={display.isVerified}
                 lastMessageText={display.lastMessageText}
                 timestamp={display.timestamp}
-                isSelected={Number(selectedConversation) === conversation.id}
+                unseenCount={display.unseenCount}
+                isSelected={Number(selectedConversation) === conversationId}
                 isTyping={display.isTyping}
-                onClick={() => onSelectConversation(String(conversation.id))}
+                onClick={() => onSelectConversation(String(conversationId))}
               />
             );
           })
