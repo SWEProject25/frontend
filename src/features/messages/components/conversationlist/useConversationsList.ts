@@ -16,19 +16,29 @@ export function useConversationsList(
   const typingUsers = useMessageStore((s) => s.typingUsers);
   const setConversations = useMessageStore((s) => s.setConversations);
   const addMessage = useMessageStore((s) => s.addMessage);
+  const unseenCounts = useMessageStore((s) => s.unseenCounts);
+  const updateConversationUnseenCount = useMessageStore(
+    (s) => s.updateConversationUnseenCount
+  );
 
   const user = useAuthStore((s) => s.user);
   const currentUserId = (user as { id?: number })?.id ?? null;
 
   const getUnseenCount = useCallback(
     (conversationId: number): number => {
+      // First check the unseenCounts store (most up-to-date from API)
+      if (unseenCounts[conversationId] !== undefined) {
+        return unseenCounts[conversationId];
+      }
+
+      // Fallback to conversation object's unseenCount
       const conversation = conversationsRaw.find((conv) => {
         const convId = conv.conversationId || conv.id;
         return convId === conversationId;
       });
       return conversation?.unseenCount ?? 0;
     },
-    [conversationsRaw]
+    [conversationsRaw, unseenCounts]
   );
 
   const unseenConversationsCount = useMemo(() => {
@@ -48,24 +58,40 @@ export function useConversationsList(
         const conversations = await fetchConversations();
 
         if (Array.isArray(conversations)) {
+          // First, add all last messages to the message store
+          conversations.forEach((conv: Record<string, unknown>) => {
+            if (conv.lastMessage) {
+              const conversationId = conv.conversationId || conv.id;
+              const unseenCount = (conv.unseenCount as number) ?? 0;
+              const lastMsg = conv.lastMessage as any;
+
+              const messageWithConversationId = {
+                ...lastMsg,
+                conversationId: conversationId,
+                isSeen: lastMsg.isSeen ?? unseenCount === 0,
+              };
+
+              addMessage(messageWithConversationId);
+            }
+          });
+
+          // Then normalize and set conversations
           const normalizedConversations = conversations.map(
             (conv: Record<string, unknown>) => {
-              if (conv.lastMessage) {
-                const conversationId = conv.conversationId || conv.id;
-                const lastMsg = conv.lastMessage as any;
+              const conversationId = conv.conversationId || conv.id;
 
-                const messageWithConversationId = {
-                  ...lastMsg,
-                  conversationId: conversationId,
-                  isSeen: lastMsg.isSeen ?? (conv.unseenCount as number) === 0,
-                };
-
-                addMessage(messageWithConversationId);
-              }
+              // Update unseen count in store from API
+              const unseenCount = (conv.unseenCount as number) ?? 0;
+              updateConversationUnseenCount(
+                conversationId as number,
+                unseenCount
+              );
 
               return {
                 ...conv,
-                id: conv.conversationId || conv.id,
+                id: conversationId,
+                // Ensure lastMessage is preserved
+                lastMessage: conv.lastMessage,
               } as any;
             }
           );
@@ -80,7 +106,12 @@ export function useConversationsList(
     };
 
     loadConversations();
-  }, [setConversations, conversationsRaw.length, addMessage]);
+  }, [
+    setConversations,
+    conversationsRaw.length,
+    addMessage,
+    updateConversationUnseenCount,
+  ]);
 
   const handleCreateConversation = useCallback(async () => {
     const userId = parseInt(newUserId);

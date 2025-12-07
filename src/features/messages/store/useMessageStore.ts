@@ -44,6 +44,7 @@ type State = {
   messages: Record<number, Message[]>; // key conversation id
   activeConversationId: number | null;
   typingUsers: Record<number, number[]>; // conversationId -> array of userIds typing
+  unseenCounts: Record<number, number>; // conversationId -> unseen count from API
   setConversations: (c: Conversation[]) => void;
   addConversation: (c: Conversation) => void;
   addMessage: (m: Message) => void;
@@ -54,6 +55,11 @@ type State = {
   removeUserTyping: (conversationId: number, userId: number) => void;
   markMessagesAsSeen: (conversationId: number, messageIds: number[]) => void;
   markAllMessagesAsSeen: (conversationId: number) => void;
+  setUnseenCount: (conversationId: number, count: number) => void;
+  updateConversationUnseenCount: (
+    conversationId: number,
+    count: number
+  ) => void;
 };
 
 const sortConversationsByRecent = (
@@ -75,6 +81,7 @@ export const useMessageStore = create<State>((set) => ({
   messages: {},
   activeConversationId: null,
   typingUsers: {},
+  unseenCounts: {},
   setConversations: (c) => set({ conversations: sortConversationsByRecent(c) }),
   addConversation: (newConv) =>
     set((s) => {
@@ -229,6 +236,34 @@ export const useMessageStore = create<State>((set) => ({
         messages: {
           ...s.messages,
           [conversationId]: updatedMessages,
+        },
+      };
+    }),
+  setUnseenCount: (conversationId, count) =>
+    set((s) => ({
+      unseenCounts: {
+        ...s.unseenCounts,
+        [conversationId]: count,
+      },
+    })),
+  updateConversationUnseenCount: (conversationId, count) =>
+    set((s) => {
+      const updatedConversations = s.conversations.map((conv) => {
+        const convId = conv.conversationId || conv.id;
+        if (convId === conversationId) {
+          return {
+            ...conv,
+            unseenCount: count,
+          };
+        }
+        return conv;
+      });
+
+      return {
+        conversations: updatedConversations,
+        unseenCounts: {
+          ...s.unseenCounts,
+          [conversationId]: count,
         },
       };
     }),

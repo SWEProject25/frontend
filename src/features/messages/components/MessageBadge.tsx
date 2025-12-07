@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useUnreadCount } from '@/features/notifications/hooks';
+import { useTotalUnseenCount } from '../hooks/useUnseenCounts';
 
 interface MessageBadgeProps {
   className?: string;
@@ -11,9 +11,9 @@ interface MessageBadgeProps {
 }
 
 /**
- * Badge component to display unread message (DM) notification count
- * Can be used on icons (absolute) or inline (relative)
- * Shows only DM-type notifications
+ * Badge component to display unseen messages count
+ * Works independently from notifications system
+ * Uses only the Messages API for accurate count
  */
 export const MessageBadge: React.FC<MessageBadgeProps> = ({
   className = '',
@@ -21,19 +21,17 @@ export const MessageBadge: React.FC<MessageBadgeProps> = ({
   showZero = false,
   variant = 'icon', // Default to icon positioning for sidebar
 }) => {
-  // Include only DM notifications
-  const { data: unreadCount = 0, isLoading } = useUnreadCount({
-    include: 'DM',
-  });
+  // Get total unseen messages count from Messages API only
+  const { data: unseenCount = 0, isLoading } = useTotalUnseenCount(true);
 
   // Don't show badge if loading or count is 0 (unless showZero is true)
-  if (isLoading || (!showZero && unreadCount === 0)) {
+  if (isLoading || (!showZero && unseenCount === 0)) {
     return null;
   }
 
   // Format count (e.g., 99+ if over maxCount)
   const displayCount =
-    unreadCount > maxCount ? `${maxCount}+` : unreadCount.toString();
+    unseenCount > maxCount ? `${maxCount}+` : unseenCount.toString();
 
   // Different styling based on variant
   const baseClasses =
@@ -44,7 +42,7 @@ export const MessageBadge: React.FC<MessageBadgeProps> = ({
   return (
     <span
       className={`${baseClasses} ${className}`}
-      aria-label={`${unreadCount} unread messages`}
+      aria-label={`${unseenCount} unseen messages`}
     >
       {displayCount}
     </span>
