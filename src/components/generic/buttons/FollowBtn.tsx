@@ -6,10 +6,16 @@ import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 interface FollowBtnProps {
   userId: number;
   isFollowed?: boolean;
+  isFollowingMe?: boolean;
   onFollowChange?: (userId: number, isFollowed: boolean) => void;
 }
 
-function FollowBtn({ userId, isFollowed, onFollowChange }: FollowBtnProps) {
+function FollowBtn({
+  userId,
+  isFollowed,
+  isFollowingMe,
+  onFollowChange,
+}: FollowBtnProps) {
   const [followed, setFollowed] = useState<boolean>(isFollowed || false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [showUnfollowModal, setShowUnfollowModal] = useState<boolean>(false);
@@ -73,7 +79,13 @@ function FollowBtn({ userId, isFollowed, onFollowChange }: FollowBtnProps) {
           setIsHovered(false);
         }}
       >
-        {followed ? (isHovered ? 'Unfollow' : 'Following') : 'Follow'}
+        {followed
+          ? isHovered
+            ? 'Unfollow'
+            : 'Following'
+          : isFollowingMe
+            ? 'Follow Back'
+            : 'Follow'}
       </button>
 
       <ConfirmModal
