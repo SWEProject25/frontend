@@ -65,6 +65,8 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
           followingCount={profileData.following_count}
           followersCount={profileData.followers_count}
           username={profileData.User.username}
+          userId={profileData.User.id}
+          isMine={isMine}
         />
       </div>
     </div>
