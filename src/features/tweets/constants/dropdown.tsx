@@ -22,10 +22,12 @@ export const getTweetDropdownItems = ({
   username = '@user',
   isFollowed = false,
   isMuted = false,
+  isBlocked = false,
 }: {
   username?: string;
   isFollowed?: boolean;
   isMuted?: boolean;
+  isBlocked?: boolean;
 } = {}) => [
   {
     key: 'not_interested',
@@ -49,7 +51,7 @@ export const getTweetDropdownItems = ({
   },
   {
     key: 'block',
-    label: `Block ${username}`,
+    label: isBlocked ? `Unblock ${username}` : `Block ${username}`,
     icon: <BlockIcon />,
   },
   {

@@ -41,6 +41,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     username: data?.username || '',
     isFollowed: data?.isFollowedByMe || false,
     isMuted: data?.isMutedByMe || false,
+    isBlocked: data?.isBlockedByMe || false,
   });
 
   const {
@@ -83,8 +84,13 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
         }
         break;
       case 'block':
-        // Show confirmation modal for block/unblock
-        setBlockAction('block');
+        if (data.isBlockedByMe) {
+          // Show confirmation modal for unblock
+          setBlockAction('unblock');
+        } else {
+          // Show confirmation modal for block
+          setBlockAction('block');
+        }
         setShowBlockModal(true);
         break;
       default:

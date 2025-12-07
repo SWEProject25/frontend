@@ -37,6 +37,7 @@ export interface TimelineTweet {
   isFollowedByMe: boolean;
   isRepostedByMe: boolean;
   isMutedByMe?: boolean;
+  isBlockedByMe?: boolean;
   text: string;
   type?: string;
   parentId?: number;
