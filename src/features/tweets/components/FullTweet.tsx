@@ -180,9 +180,9 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
             <Timing time={data.date} full={true} />
           </div>
           <div className="border-b border-gray-700 my-2" />
+
           <Actions
             stats={actionsStats}
-            full={true}
             replyClick={() => setCurrentTweet(data)}
           />
           <div className="border-b border-gray-700 mt-3" />

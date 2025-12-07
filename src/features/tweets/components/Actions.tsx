@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Action from './Action';
 import { LikeIconFilled } from '@/components/ui/icons/UIIcons';
 import { ACTIONS_META } from '../constants';
@@ -32,15 +33,14 @@ type stats = {
 
 export default function Actions({
   stats,
-  full = false,
   onOpened,
   replyClick,
 }: {
   stats: stats;
-  full?: boolean;
   onOpened?: (opened: boolean) => void;
   replyClick?: () => void;
 }) {
+  const router = useRouter();
   const shareDropdownItems = getShareDropdownItems();
   const repostDropdownItems = getRepostDropdownItems({
     isRepostedByMe: stats.isRepostedByMe,
@@ -72,6 +72,11 @@ export default function Actions({
   }
   function handleRetweet() {
     toggleRepostTweet.mutate();
+  }
+  function handleLikeCountClick() {
+    if (stats.likesCount > 0) {
+      router.push(`/home/${stats.postId}/likers`);
+    }
   }
   function onSelect(key: string) {
     switch (key) {
@@ -143,6 +148,7 @@ export default function Actions({
           label={actionsMeta[2].label}
           color={actionsMeta[2].color}
           onClick={handleLike}
+          onCountClick={handleLikeCountClick}
           isColored={stats.isLikedByMe}
         />
         <DropDown

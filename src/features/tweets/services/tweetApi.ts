@@ -1,4 +1,9 @@
-import { ReplyDto, ReplyResponseDto, TweetResponseDto } from '../types';
+import {
+  ReplyDto,
+  ReplyResponseDto,
+  TweetResponseDto,
+  LikersResponseDto,
+} from '../types';
 import {
   TWEET_API_CONFIG,
   TWEET_ENDPOINTS,
@@ -125,4 +130,23 @@ export const tweetApi = {
   //     );
   //     return handleResponse<ReplyResponseDto>(response);
   //   },
+
+  async getLikersByTweetId(
+    tweetId: number,
+    page: number = TWEET_CONSTANTS.DEFAULT_PAGE,
+    limit: number = 10
+  ): Promise<LikersResponseDto> {
+    const response = await fetch(
+      `${TWEET_API_CONFIG.BASE_URL}${TWEET_ENDPOINTS.GET_LIKERS_BY_TWEET_ID(tweetId)}?` +
+        `${new URLSearchParams({ page: `${page}`, limit: `${limit}` })}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    return handleResponse<LikersResponseDto>(response);
+  },
 };

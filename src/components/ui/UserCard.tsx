@@ -5,6 +5,7 @@ import FollowBtn from '@/components/generic/buttons/FollowBtn';
 import BlockBtn from '@/components/generic/buttons/BlockBtn';
 import MuteBtn from '@/components/generic/buttons/MuteBtn';
 import { VerifiedIcon } from '@/components/ui/icons/BrandIcons';
+import { LikeIconFilled } from '@/components/ui/icons/UIIcons';
 import Icon from './home/Icon';
 
 export interface UserCardProps {
@@ -18,7 +19,7 @@ export interface UserCardProps {
   isFollowingMe?: boolean;
   isBlocked?: boolean;
   isMuted?: boolean;
-  actionType?: 'follow' | 'block' | 'mute';
+  actionType?: 'follow' | 'block' | 'mute' | 'like';
   className?: string;
   onFollowChange?: (userId: number, isFollowed: boolean) => void;
   linkTo?: string;
@@ -101,6 +102,10 @@ export default function UserCard({
             <BlockBtn userId={userId} isBlocked={isBlocked} />
           ) : actionType === 'mute' ? (
             <MuteBtn userId={userId} isMuted={isMuted} />
+          ) : actionType === 'like' ? (
+            <div className="p-2">
+              <LikeIconFilled className="w-5 h-5 text-rose-400" />
+            </div>
           ) : (
             <FollowBtn
               userId={userId}

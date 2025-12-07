@@ -7,7 +7,7 @@ import {
   InfiniteData,
 } from '@tanstack/react-query';
 import { tweetApi } from '../services/tweetApi';
-import { ReplyDto, TweetResponseDto } from '../types/api';
+import { ReplyDto, TweetResponseDto, LikersResponseDto } from '../types/api';
 import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
 import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
 import { tweet } from '@/features/timeline/mocks/data';
@@ -20,6 +20,8 @@ export const TWEET_QUERY_KEYS = {
   toggleRepostTweet: (tweetId: number) => ['tweet', 'repost', tweetId] as const,
   getRepliesByTweetId: (tweetId: number) =>
     ['tweet', 'replies', tweetId] as const,
+  getLikersByTweetId: (tweetId: number) =>
+    ['tweet', 'likers', tweetId] as const,
 };
 
 // Hook: Get tweet by ID
@@ -174,6 +176,26 @@ export const useGetRepliesByTweetId = (tweetId: number) => {
     getNextPageParam: (lastPage, pages) =>
       lastPage.data.posts.length ? pages.length + 1 : undefined,
     // staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0,
+    retry: 1,
+  });
+};
+
+// Hook: Get likers by tweet ID
+export const useGetLikersByTweetId = (tweetId: number) => {
+  return useInfiniteQuery<
+    LikersResponseDto,
+    Error,
+    InfiniteData<LikersResponseDto, number>,
+    any,
+    number
+  >({
+    queryKey: TWEET_QUERY_KEYS.getLikersByTweetId(tweetId),
+    queryFn: ({ pageParam }) =>
+      tweetApi.getLikersByTweetId(tweetId, pageParam, 10),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.data.length >= 10 ? pages.length + 1 : undefined,
     staleTime: 0,
     retry: 1,
   });
