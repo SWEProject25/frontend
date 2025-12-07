@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { SearchIcon, CloseIcon } from '@/components/ui/icons';
 
 export interface SearchInputProps {
@@ -16,6 +16,7 @@ export interface SearchInputProps {
   clearColor?: string;
   hoverColor?: string;
   spellCheck?: boolean;
+  unFocus?: boolean;
 }
 
 export default function SearchInput({
@@ -31,6 +32,7 @@ export default function SearchInput({
   clearColor = 'bg-primary',
   hoverColor = 'hover:bg-primary-hover',
   spellCheck = true,
+  unFocus = false,
 }: SearchInputProps) {
   const [internalValue, setInternalValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,6 +57,12 @@ export default function SearchInput({
     onClear?.();
     inputRef.current?.focus();
   };
+  useEffect(
+    function () {
+      if (unFocus) inputRef.current?.blur();
+    },
+    [unFocus]
+  );
 
   return (
     <div

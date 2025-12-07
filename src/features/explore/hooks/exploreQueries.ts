@@ -29,10 +29,14 @@ export const useExploreSearchFeed = () => {
   const selectedTab = useSelectedSearchTab();
   const search = useSearch();
   const searchDate = useSearchDate();
-  const isHash = search.trimStart().startsWith('#');
+  const isHash =
+    search.trimStart().startsWith('#') &&
+    !search.trimStart().includes(' ') &&
+    !search.trimStart().slice(1).includes('#');
   //   const { setSearchDate } = useActions();
   //   if (selectedTab === LATEST_TAB) setSearchDate(new Date().toISOString());
   const type = isHash ? 'hashtag' : 'searchQuery';
+  console.log(isHash);
   const queryKey:
     | ReturnType<typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_SEARCH_TOP>
     | ReturnType<typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_SEARCH_LATEST> =
@@ -52,6 +56,7 @@ export const useExploreSearchFeed = () => {
     number
   >({
     queryKey: queryKey,
+    enabled: search.trim() !== '',
     queryFn: ({ pageParam }) =>
       exploreApi.getSearchFeed(
         pageParam,

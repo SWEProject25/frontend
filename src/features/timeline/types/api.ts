@@ -4,6 +4,7 @@ import { EXPLORE_QUERY_KEYS } from '@/features/explore/hooks/exploreQueries';
 import { InfiniteData } from '@tanstack/react-query';
 import { ReplyDto } from '@/features/tweets/types';
 import { ExploreSearchFeedDtoResponse } from '@/features/explore/types/api';
+import { PROFILE_QUERY_KEYS } from '@/features/profile';
 export const TweetFormDataKeys = {
   CONTENT: 'content',
   TYPE: 'type',
@@ -36,10 +37,15 @@ export interface TimelineTweet {
   isFollowedByMe: boolean;
   isRepostedByMe: boolean;
   isMutedByMe?: boolean;
+  isBlockedByMe?: boolean;
   text: string;
   type?: string;
   parentId?: number;
+  mentions: [];
   media: Media[];
+  created_at?: string;
+  user_id?: number;
+  post_id?: number;
 }
 export interface TimelineFeed extends TimelineTweet {
   isRepost: boolean;
@@ -93,7 +99,12 @@ export type QueryKeyType =
   | typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_FOR_YOU
   | ReturnType<typeof TWEET_QUERY_KEYS.getRepliesByTweetId>
   | ReturnType<typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_SEARCH_LATEST>
-  | ReturnType<typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_SEARCH_TOP>;
+  | ReturnType<typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_SEARCH_TOP>
+  | ReturnType<typeof PROFILE_QUERY_KEYS.profilePosts>
+  | ReturnType<typeof PROFILE_QUERY_KEYS.profileMedia>
+  | ReturnType<typeof PROFILE_QUERY_KEYS.profileLikes>
+  | ReturnType<typeof PROFILE_QUERY_KEYS.profileReplies>
+  | ReturnType<typeof PROFILE_QUERY_KEYS.profileMedia>;
 
 export type FeedType =
   | InfiniteData<TimelineFeedDtoResponse, number>

@@ -12,7 +12,7 @@ interface UserListItem {
   profileImageUrl?: string | null;
   verified?: boolean;
   is_followed_by_me?: boolean;
-  isFollowingMe?: boolean;
+  is_following_me?: boolean;
 }
 
 interface GenericUserListProps {
@@ -48,8 +48,9 @@ export default function GenericUserList({
         <div className="divide-y divide-border" data-testid={`${testId}-items`}>
           {users.map((user) => {
             const isCurrentUser = currentUser?.username === user.username;
-            const isFollowingMe = user.isFollowingMe ?? false;
-            const isFollowed = user.is_followed_by_me ?? false;
+            const isFollowingMe = user.is_following_me ?? false;
+            // If is_followed_by_me is undefined, default to true (for followers-you-know list)
+            const isFollowed = user.is_followed_by_me ?? true;
 
             return (
               <div

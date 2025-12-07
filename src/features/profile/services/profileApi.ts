@@ -4,9 +4,12 @@ import {
   ProfileSearchResponseDto,
   SearchProfilesParams,
   ProfileFeedDtoResponse,
+  ProfileMediaFeedDtoResponse,
+  UserProfile,
 } from '../types/api';
 import { PROFILE_API_CONFIG, PROFILE_ENDPOINTS } from '../constants/api';
 import { API_CONFIG } from '@/constants/api';
+import { TimelineFeedDtoResponse } from '@/features/timeline/types/api';
 
 class ApiError extends Error {
   constructor(
@@ -211,16 +214,13 @@ export const profileApi = {
 
     return handleResponse<ProfileSearchResponseDto>(response);
   },
-  async getProfileFeed(
+  async getProfileMentionsFeed(
     pageNumber = 1,
-    queryEndPoint:
-      | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_POSTS>
-      | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_REPLIES>
-      | ReturnType<typeof PROFILE_ENDPOINTS.PROFILE_LIKES>,
+    user: number,
     limit = 10
-  ): Promise<ProfileFeedDtoResponse> {
+  ): Promise<TimelineFeedDtoResponse> {
     const response = await fetch(
-      `${API_CONFIG.BASE_URL}${queryEndPoint}?` +
+      `${API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.PROFILE_MENTIONS(user)}?` +
         new URLSearchParams({ page: `${pageNumber}`, limit: `${limit}` }),
       {
         method: 'GET',
@@ -230,6 +230,125 @@ export const profileApi = {
         credentials: 'include',
       }
     );
-    return handleResponse<ProfileFeedDtoResponse>(response);
+    const data = await handleResponse<ProfileFeedDtoResponse>(response);
+
+    return {
+      ...data,
+      data: { posts: data.data },
+    };
+  },
+
+  async getProfilePostsFeed(
+    pageNumber = 1,
+    user: 'me' | number,
+    profile: UserProfile,
+    limit = 10
+  ): Promise<TimelineFeedDtoResponse> {
+    const response = await fetch(
+      `${API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.PROFILE_POSTS(user)}?` +
+        new URLSearchParams({ page: `${pageNumber}`, limit: `${limit}` }),
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+
+    const data = await handleResponse<ProfileFeedDtoResponse>(response);
+
+    return {
+      ...data,
+      data: {
+        ...data.data,
+        posts: data.data.map((post) => ({
+          ...post,
+          username: profile.User.username,
+          name: profile.name,
+          userId: post.userId ?? post.user_id,
+          postId: post.postId ?? post.post_id,
+
+          date: post.date ?? post.created_at,
+          isLikedByMe: post.isLikedByMe ?? post.originalPostData?.isLikedByMe,
+          isFollowedByMe:
+            post.isFollowedByMe ?? post.originalPostData?.isFollowedByMe,
+          isRepostedByMe:
+            post.isRepostedByMe ?? post.originalPostData?.isRepostedByMe,
+          retweetsCount:
+            post.retweetsCount ?? post.originalPostData?.retweetsCount,
+          likesCount: post.likesCount ?? post.originalPostData?.likesCount,
+          commentsCount:
+            post.commentsCount ?? post.originalPostData?.commentsCount,
+        })),
+      },
+    };
+  },
+
+  async getProfileLikesFeed(
+    pageNumber = 1,
+    user: number,
+    limit = 10
+  ): Promise<TimelineFeedDtoResponse> {
+    const response = await fetch(
+      `${API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.PROFILE_LIKES(user)}?` +
+        new URLSearchParams({ page: `${pageNumber}`, limit: `${limit}` }),
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    const data = await handleResponse<ProfileFeedDtoResponse>(response);
+
+    return {
+      ...data,
+      data: { posts: data.data },
+    };
+  },
+
+  async getProfileMediaFeed(
+    pageNumber = 1,
+    user: number | 'me',
+    limit = 10
+  ): Promise<ProfileMediaFeedDtoResponse> {
+    const response = await fetch(
+      `${API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.PROFILE_MEDIA(user)}?` +
+        new URLSearchParams({ page: `${pageNumber}`, limit: `${limit}` }),
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    return handleResponse<ProfileMediaFeedDtoResponse>(response);
+  },
+
+  async getProfileRepliesFeed(
+    pageNumber = 1,
+    user: 'me' | number,
+    limit = 10
+  ): Promise<TimelineFeedDtoResponse> {
+    const response = await fetch(
+      `${API_CONFIG.BASE_URL}${PROFILE_ENDPOINTS.PROFILE_REPLIES(user)}?` +
+        new URLSearchParams({ page: `${pageNumber}`, limit: `${limit}` }),
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    const data = await handleResponse<ProfileFeedDtoResponse>(response);
+
+    return {
+      ...data,
+      data: { posts: data.data },
+    };
   },
 };

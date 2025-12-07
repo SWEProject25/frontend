@@ -18,6 +18,7 @@ export interface FollowerDto {
   verified?: boolean;
   followedAt: string;
   is_followed_by_me: boolean;
+  is_following_me: boolean;
 }
 
 export interface FollowersListResponseDto {
@@ -51,7 +52,8 @@ export interface FollowerYouKnowDto {
   bio?: string | null;
   profileImageUrl?: string | null;
   followedAt: string;
-  isFollowingMe: boolean;
+  is_followed_by_me?: boolean;
+  is_following_me?: boolean;
 }
 
 export interface FollowersYouKnowListResponseDto {

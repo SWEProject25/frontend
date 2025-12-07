@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import TabView from '../TabView';
+import { ProfileProvider } from '@/app/[username]/ProfileProvider';
 
 // Mock the profile store
 vi.mock('../store/profileStore', () => ({
@@ -11,6 +12,7 @@ vi.mock('../store/profileStore', () => ({
   useProfileStore: () => ({
     User: { id: 1 },
   }),
+
   useSelectedTab: () => 'posts',
 }));
 
@@ -27,6 +29,17 @@ vi.mock('@/components/generic/Tabs', () => ({
   ),
 }));
 
+vi.mock('@/features/authentication/store/authStore', () => ({
+  useAuthStore: vi.fn((selector) => {
+    const state = { user: { id: 1 } };
+    return selector ? selector(state) : state;
+  }),
+}));
+vi.mock('@/app/[username]/ProfileProvider', () => ({
+  ProfileProvider: ({ children }: any) => <>{children}</>,
+  useProfileContext: () => ({ profile: { User: { id: 1 } } }),
+}));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { retry: false },
@@ -34,7 +47,11 @@ const queryClient = new QueryClient({
 });
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  <QueryClientProvider client={queryClient}>
+    <ProfileProvider params={Promise.resolve({ username: 'ahmed' })}>
+      {children}
+    </ProfileProvider>
+  </QueryClientProvider>
 );
 
 describe('TabView', () => {
