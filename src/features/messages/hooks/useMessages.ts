@@ -285,6 +285,7 @@ export const useMessages = (onError?: (err: any) => void) => {
     markAllMessagesAsSeen,
     onError,
     getCurrentUserId,
+    queryClient,
   ]);
 
   // Helper functions
@@ -349,15 +350,51 @@ export const useMessages = (onError?: (err: any) => void) => {
     (conversationId: number, userId: number, cb?: (resp: any) => void) => {
       const socket = getSocket();
 
+      // 🚀 OPTIMISTIC UPDATE: Get current unseen count before marking
+      const currentUnseenCount =
+        useMessageStore.getState().unseenCounts[conversationId] || 0;
+
+      console.log(
+        `🚀 Optimistic: Marking conversation ${conversationId} as seen (was ${currentUnseenCount} unseen)`
+      );
+
+      // 1. Immediately update local state - mark all messages as seen
+      markAllMessagesAsSeen(conversationId);
+
+      // 2. Optimistically set unseen count to 0 for this conversation
+      useMessageStore
+        .getState()
+        .updateConversationUnseenCount(conversationId, 0);
+
+      // 3. Optimistically update total unseen count in cache
+      queryClient.setQueryData(
+        ['messages', 'unseen', 'total'],
+        (oldCount: number | undefined) => {
+          const newCount = Math.max(0, (oldCount || 0) - currentUnseenCount);
+          console.log(
+            `🚀 Optimistic: Total unseen ${oldCount} → ${newCount} (decremented by ${currentUnseenCount})`
+          );
+          return newCount;
+        }
+      );
+
+      // 4. Optimistically update per-conversation unseen count in cache
+      queryClient.setQueryData(['messages', 'unseen', conversationId], () => {
+        console.log(`🚀 Optimistic: Conversation ${conversationId} unseen → 0`);
+        return 0;
+      });
+
+      // Now emit to backend
       socket.emit(
         MESSAGES_SOCKET_EVENTS.MARK_SEEN,
         { conversationId, userId },
         (resp: any) => {
           if (resp?.status === 'success') {
-            // Immediately update local state - mark all messages in this conversation as seen
-            markAllMessagesAsSeen(conversationId);
+            console.log(
+              `✅ Backend confirmed: Conversation ${conversationId} marked as seen`
+            );
 
-            // Invalidate unseen count queries to refresh badges
+            // Invalidate to refetch and confirm the optimistic update
             queryClient.invalidateQueries({
               queryKey: ['messages', 'unseen', conversationId],
             });
@@ -366,6 +403,14 @@ export const useMessages = (onError?: (err: any) => void) => {
             });
           } else {
             console.warn('⚠️ Failed to mark messages as seen:', resp);
+
+            // On error, invalidate to refetch correct data (rollback optimistic update)
+            queryClient.invalidateQueries({
+              queryKey: ['messages', 'unseen', conversationId],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ['messages', 'unseen', 'total'],
+            });
           }
           cb?.(resp);
         }

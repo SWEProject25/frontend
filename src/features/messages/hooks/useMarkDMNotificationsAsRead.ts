@@ -1,14 +1,12 @@
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useMarkAsRead } from '@/features/notifications/hooks';
-import { useNotifications } from '@/features/notifications/hooks';
 import { useMessageStore } from '../store/useMessageStore';
 import { markMessagesSeen } from '../api/messages';
 
 /**
- * Hook to mark DM notifications as read for a specific conversation
- * Also syncs with the messages system to mark messages as seen
- * Should be called when a conversation is opened
+ * Hook to mark messages as seen when a conversation is opened
+ * Handles the messages module independently from notifications
+ * Should be called when a conversation is opened/viewed
  *
  * @param conversationId - The ID of the conversation being viewed
  */
@@ -16,75 +14,99 @@ export const useMarkDMNotificationsAsRead = (
   conversationId?: string | number
 ) => {
   const queryClient = useQueryClient();
-  const { mutate: markAsRead } = useMarkAsRead();
   const markAllMessagesAsSeen = useMessageStore((s) => s.markAllMessagesAsSeen);
-
-  // Get all DM notifications for this conversation
-  const { data: notificationsData } = useNotifications({
-    include: 'DM',
-    limit: 100, // Get enough to cover recent DMs
-  });
+  const updateConversationUnseenCount = useMessageStore(
+    (s) => s.updateConversationUnseenCount
+  );
 
   useEffect(() => {
-    if (!conversationId || !notificationsData) return;
+    if (!conversationId) return;
 
     const numericConversationId = Number(conversationId);
 
-    // Find all unread DM notifications for this conversation
-    const unreadDMNotifications = notificationsData.pages
-      .flatMap((page) => page.data)
-      .filter(
-        (notification) =>
-          !notification.isRead &&
-          notification.conversationId === numericConversationId
-      );
+    // Get current unseen count BEFORE marking as seen (for optimistic update)
+    const currentUnseenCount =
+      useMessageStore.getState().unseenCounts[numericConversationId] ||
+      useMessageStore
+        .getState()
+        .conversations.find(
+          (c) => (c.conversationId || c.id) === numericConversationId
+        )?.unseenCount ||
+      0;
 
-    // Only proceed if there are notifications to mark
-    if (unreadDMNotifications.length === 0) return;
+    console.log(
+      `📊 Current unseen count for conversation ${numericConversationId}: ${currentUnseenCount}`
+    );
 
-    // Mark each unread DM notification as read
-    unreadDMNotifications.forEach((notification) => {
-      markAsRead(notification.id, {
-        onSuccess: () => {
-          console.log(`✅ Marked DM notification ${notification.id} as read`);
-        },
-        onError: (error) => {
-          console.error(
-            `❌ Failed to mark DM notification ${notification.id} as read:`,
-            error
-          );
-        },
-      });
-    });
+    // If no unseen messages, nothing to do
+    if (currentUnseenCount === 0) {
+      return;
+    }
 
-    // Sync with messages system: mark all messages in this conversation as seen
+    // 🚀 OPTIMISTIC UPDATE: Immediately update UI before API calls
+    console.log(
+      `🚀 Optimistic update: Setting unseen count to 0 for conversation ${numericConversationId}`
+    );
+
+    // 1. Update conversation unseen count to 0 immediately
+    updateConversationUnseenCount(numericConversationId, 0);
+
+    // 2. Mark messages as seen in local store immediately
+    markAllMessagesAsSeen(numericConversationId);
+
+    // 3. Optimistically update the total unseen count in React Query cache
+    queryClient.setQueryData(
+      ['messages', 'unseen', 'total'],
+      (oldCount: number | undefined) => {
+        const newCount = Math.max(0, (oldCount || 0) - currentUnseenCount);
+        console.log(
+          `🚀 Optimistic: Total unseen count ${oldCount} → ${newCount} (decremented by ${currentUnseenCount})`
+        );
+        return newCount;
+      }
+    );
+
+    // 4. Optimistically update per-conversation unseen count
+    queryClient.setQueryData(
+      ['messages', 'unseen', numericConversationId],
+      () => {
+        console.log(
+          `🚀 Optimistic: Conversation ${numericConversationId} unseen count → 0`
+        );
+        return 0;
+      }
+    );
+
+    // Now mark messages as seen in the backend
     markMessagesSeen(numericConversationId)
       .then(() => {
         console.log(
           `✅ Marked messages as seen in backend for conversation ${numericConversationId}`
         );
-        // Update local message store to reflect that messages are seen
-        markAllMessagesAsSeen(numericConversationId);
-        console.log(
-          `✅ Updated local message store for conversation ${numericConversationId}`
-        );
+
+        // Invalidate queries to refetch and confirm the optimistic update
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', numericConversationId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', 'total'],
+        });
       })
       .catch((error) => {
         console.error(`❌ Failed to mark messages as seen in backend:`, error);
-      });
 
-    // Invalidate both notification and message queries
-    queryClient.invalidateQueries({
-      queryKey: ['notifications', 'unread-count'],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ['messages', 'unseen-count'],
-    });
+        // On error, invalidate to refetch correct data (rollback optimistic update)
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', numericConversationId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', 'total'],
+        });
+      });
   }, [
     conversationId,
-    notificationsData,
-    markAsRead,
     markAllMessagesAsSeen,
+    updateConversationUnseenCount,
     queryClient,
   ]);
 };
