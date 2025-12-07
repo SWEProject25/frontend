@@ -32,6 +32,7 @@ export default function MessageItem({
 
   return (
     <div
+      id={`message-item-${message.id}`}
       className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-4 group`}
       onMouseLeave={closeMenu}
     >
@@ -41,6 +42,7 @@ export default function MessageItem({
         {/* More button - shows on hover */}
         {isCurrentUser && (
           <button
+            id={`message-more-${message.id}`}
             onClick={toggleMenu}
             className={`
               absolute top-1 -left-8

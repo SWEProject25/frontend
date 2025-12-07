@@ -25,7 +25,6 @@ let analytics: Analytics | null = null;
 export const initializeFirebase = (): FirebaseApp => {
   if (!getApps().length) {
     firebaseApp = initializeApp(firebaseConfig);
-    console.log('✅ Firebase initialized');
   } else {
     firebaseApp = getApps()[0];
   }
@@ -55,7 +54,6 @@ export const getAnalyticsInstance = (): Analytics | null => {
   try {
     const app = initializeFirebase();
     analytics = getAnalytics(app);
-    console.log('✅ Firebase Analytics initialized');
     return analytics;
   } catch (error) {
     console.warn('⚠️ Firebase Analytics not available:', error);

@@ -70,7 +70,6 @@ export default function TweetText({
       } else if (spanRef1.current) {
         setMentionIsOpen(false);
         if (text.length === 0) {
-          console.log('erase');
           setSpanText1("What's happening?");
           spanRef1.current.style.color = 'var(--color-text-inactive)';
           setSpanText2('');
@@ -81,9 +80,6 @@ export default function TweetText({
         spanRef1.current.style.color = 'var(--color-text-active)';
         setSpanText1(text.slice(0, startRedText));
         if (text.length > startRedText) {
-          console.log('inside length greater than 10');
-
-          console.log(text, 'after slicing');
           setSpanText2(text.slice(startRedText, text.length));
         } else {
           setSpanText2('');
@@ -122,11 +118,21 @@ export default function TweetText({
     if (divRef.current && divRef.current.innerHTML === '<br>') {
       divRef.current.innerHTML = '';
     }
-    const input = e.nativeEvent as InputEvent;
-    console.log(input.data);
-    console.log('handleINput ', e);
     if (divRef.current) {
-      handleChangeText(divRef.current?.innerText, input.data);
+      if (
+        (divRef.current.innerText.endsWith(
+          ' @',
+          divRef.current.innerText.length - 1
+        ) &&
+          divRef.current.innerText[divRef.current.innerText.length - 1] !==
+            '@') ||
+        (divRef.current.innerText.startsWith('@', 0) &&
+          divRef.current.innerText.length === 2 &&
+          divRef.current.innerText[divRef.current.innerText.length - 1] !== '@')
+      ) {
+        // handle if mention in redlines
+      }
+      handleChangeText(divRef.current?.innerText);
     }
   }
   function handleKeyDown(e: React.KeyboardEvent) {

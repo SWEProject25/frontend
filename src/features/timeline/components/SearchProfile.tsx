@@ -33,7 +33,7 @@ export default function SearchProfile() {
     setSearch(text);
   }
   function handleFocus() {
-    console.log('focus');
+    // console.log('focus');
     setUnFocus(false);
     setIsOpen(true);
     setSelectedTab(-1);
@@ -94,12 +94,9 @@ export default function SearchProfile() {
         // go to profile number selectedTab -1
         if (pages) {
           const limit = pages[0].metadata.limit;
-          console.log(limit);
           const page = Math.floor((selectedTab - 2) / limit);
           const index = (selectedTab - 2) % limit;
-          console.log(page, index, selectedTab);
           const profile = pages[page].data[index];
-          console.log(profile);
 
           path = `/${profile.User.username}`;
         }
@@ -128,7 +125,6 @@ export default function SearchProfile() {
     ? hashtagPages[0].data.posts.length > 0
     : false;
 
-  console.log(profiles);
   const pages = profiles?.pages.flat();
 
   useEffect(function () {
@@ -146,7 +142,6 @@ export default function SearchProfile() {
   useEffect(() => {
     const unloadCallback = (event: BeforeUnloadEvent) => {
       if (search) {
-        console.log(event);
         event.preventDefault();
         return '';
       }

@@ -18,14 +18,12 @@ export default function TweetImages() {
   const media = useMedia((state) => state.media);
   // const size = images.reduce((size, img) => size + img.size, 0);
   const mediaNum = media.length;
-  console.log(mediaNum);
   // const [error, setError] = useState(false);
 
   function handleImportImage(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (!files) return;
     const arrayFiles: File[] = Array.from(files);
-    console.log(arrayFiles);
     if (!arrayFiles.every((media) => MEDIA_TYPES.includes(media.type))) {
       toasterMessage(
         'Please choose up valid format ' + MEDIA_TYPES.join(','),

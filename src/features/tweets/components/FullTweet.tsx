@@ -53,7 +53,6 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     isFetchingNextPage,
     hasNextPage,
   } = useGetRepliesByTweetId(data?.postId || 0);
-  console.log(repliesResponse);
   const pages = repliesResponse?.pages.flat();
   const renderReplys = pages?.map((group, i) => (
     <React.Fragment key={i}>
@@ -94,7 +93,6 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
         setShowBlockModal(true);
         break;
       default:
-        console.log('Selected item key:', key);
         break;
     }
   };

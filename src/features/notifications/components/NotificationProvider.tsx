@@ -30,8 +30,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
    * Handle new notification from Firestore
    */
   const handleNewNotification = (event: FirebaseNotificationEvent) => {
-    console.log('🔔 New notification event:', event);
-
     // Play notification sound
     playNotificationSound();
 
