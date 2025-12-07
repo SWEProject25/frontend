@@ -2,6 +2,7 @@ import {
   FollowResponseDto,
   FollowersListResponseDto,
   FollowingListResponseDto,
+  FollowersYouKnowListResponseDto,
   BlockResponseDto,
   BlockedUsersListResponseDto,
   MuteResponseDto,
@@ -143,6 +144,30 @@ export class FollowApi {
     );
 
     return handleResponse<FollowingListResponseDto>(response);
+  }
+
+  // Get followers you know
+  async getFollowersYouKnow(
+    userId: number,
+    params?: PaginationParams
+  ): Promise<FollowersYouKnowListResponseDto> {
+    const searchParams = new URLSearchParams({
+      page: params?.page?.toString() || '1',
+      limit: params?.limit?.toString() || '20',
+    });
+
+    const response = await fetch(
+      `${API_CONFIG.BASE_URL}${FOLLOW_API_ENDPOINTS.GET_FOLLOWERS_YOU_KNOW(userId)}?${searchParams}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+
+    return handleResponse<FollowersYouKnowListResponseDto>(response);
   }
 }
 

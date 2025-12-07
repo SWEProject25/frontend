@@ -10,6 +10,8 @@ export const INTERACTION_QUERY_KEYS = {
     ['interactions', 'followers', userId, params] as const,
   following: (userId: number, params?: PaginationParams) =>
     ['interactions', 'following', userId, params] as const,
+  followersYouKnow: (userId: number, params?: PaginationParams) =>
+    ['interactions', 'followers-you-know', userId, params] as const,
 
   // Block keys
   blockedUsers: (params?: PaginationParams) =>

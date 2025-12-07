@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/test/test-utils';
-import FollowList from '../FollowList';
+import GenericUserList from '@/components/generic/GenericUserList';
 
 // Mock dependencies
 vi.mock('@/features/authentication/store/authStore', () => ({
@@ -27,7 +27,7 @@ vi.mock('@/components/ui/home/InfiniteScroll', () => ({
   ),
 }));
 
-describe('FollowList', () => {
+describe('GenericUserList', () => {
   const mockQuery = {
     data: {
       pages: [
@@ -59,32 +59,32 @@ describe('FollowList', () => {
     hasNextPage: false,
   };
 
-  it('should render follow list container', () => {
-    render(<FollowList query={mockQuery} />);
-    expect(screen.getByTestId('follow-list')).toBeInTheDocument();
+  it('should render generic user list container', () => {
+    render(<GenericUserList query={mockQuery} />);
+    expect(screen.getByTestId('generic-user-list')).toBeInTheDocument();
   });
 
   it('should render user cards', () => {
-    render(<FollowList query={mockQuery} />);
+    render(<GenericUserList query={mockQuery} />);
     const userCards = screen.getAllByTestId('user-card');
     expect(userCards).toHaveLength(2);
   });
 
   it('should show action button for other users', () => {
-    render(<FollowList query={mockQuery} />);
+    render(<GenericUserList query={mockQuery} />);
     const actionButtons = screen.getAllByTestId('action-button');
     // We have 2 users, but mock shows action for all - UserCard mock always shows button when actionType is provided
     expect(actionButtons.length).toBeGreaterThan(0);
   });
 
   it('should hide action button for current user', () => {
-    render(<FollowList query={mockQuery} />);
+    render(<GenericUserList query={mockQuery} />);
     expect(screen.getByText('Current User')).toBeInTheDocument();
     // Current user should not have action button shown
   });
 
   it('should display user information', () => {
-    render(<FollowList query={mockQuery} />);
+    render(<GenericUserList query={mockQuery} />);
     expect(screen.getByText('User One')).toBeInTheDocument();
     expect(screen.getByText('@user1')).toBeInTheDocument();
   });
@@ -94,12 +94,12 @@ describe('FollowList', () => {
       ...mockQuery,
       data: { pages: [] },
     };
-    render(<FollowList query={emptyQuery} />);
+    render(<GenericUserList query={emptyQuery} />);
     expect(screen.getByText('No data')).toBeInTheDocument();
   });
 
   it('should render infinite scroll', () => {
-    render(<FollowList query={mockQuery} />);
+    render(<GenericUserList query={mockQuery} />);
     expect(screen.getByTestId('infinite-scroll')).toBeInTheDocument();
   });
 });
