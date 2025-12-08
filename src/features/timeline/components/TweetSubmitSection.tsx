@@ -61,13 +61,15 @@ export default function TweetSubmitSection() {
     console.log(mentions);
     const mentionsId = mentions.map((mention) => mention.id);
 
-    // Append mentions as array - some backends expect mentionsIds[] format
-    if (mentionsId.length > 0) {
-      mentionsId.forEach((id) => {
-        tweetFormData.append('mentionsIds[]', id.toString());
-      });
-    }
-    console.log('mentionsIds:', tweetFormData.getAll('mentionsIds[]'));
+    // if (mentionsId.length > 0) {
+    //   mentionsId.forEach((id) => {
+    //     tweetFormData.append('mentionsIds[]', id.toString());
+    //   });
+    // }
+    const allMentions = mentionsId.join(',');
+    tweetFormData.append('mentionsIds', allMentions);
+
+    console.log('mentionsIds:', tweetFormData.getAll('mentionsIds'));
 
     const seclectdReply =
       selectedReplyOption === 0
