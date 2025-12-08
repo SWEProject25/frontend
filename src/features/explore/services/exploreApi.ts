@@ -1,7 +1,10 @@
 import { API_CONFIG } from '@/constants/api';
 import { EXPLORE_ENDPOINTS } from '../constants/api';
-import { TOP_TAB } from '../constants/tabs';
-import { ExploreSearchFeedDtoResponse } from '../types/api';
+import { TOP_TAB, TRENDING_TAB } from '../constants/tabs';
+import {
+  ExploreSearchFeedDtoResponse,
+  ExploreTrendingFeedDtoResponse,
+} from '../types/api';
 import { TimelineFeedDtoResponse } from '@/features/timeline/types/api';
 
 class ApiError extends Error {
@@ -45,7 +48,9 @@ async function handleResponse<T>(response: Response): Promise<T> {
     throw new ApiError(errorMessage, statusCode);
     // console.log(errorMessage, statusCode);
   }
-  return response.json();
+  const data = await response.json();
+  console.log(data);
+  return data;
 }
 export const exploreApi = {
   async getSearchFeed(
@@ -61,13 +66,13 @@ export const exploreApi = {
       tab === TOP_TAB
         ? new URLSearchParams({
             page: `${pageNumber}`,
-            limit: `${limit} `,
+            limit: `${limit}`,
             [type]: `${query}`,
           })
         : new URLSearchParams({
             page: `${pageNumber}`,
-            limit: `${limit} `,
-            [type]: `${query} `,
+            limit: `${limit}`,
+            [type]: `${query}`,
             order_by: `latest`,
             before_date: `${date}`,
           });
@@ -105,5 +110,27 @@ export const exploreApi = {
     );
 
     return handleResponse<TimelineFeedDtoResponse>(response);
+  },
+
+  async getTrendingFeed(
+    category = TRENDING_TAB,
+    limit = 10
+  ): Promise<ExploreTrendingFeedDtoResponse> {
+    const response = await fetch(
+      `${API_CONFIG.BASE_URL}${EXPLORE_ENDPOINTS.EXPLORE_FEED_TRENDING}?` +
+        new URLSearchParams({
+          limit: `${limit} `,
+          category: category,
+        }),
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+
+    return handleResponse<ExploreTrendingFeedDtoResponse>(response);
   },
 };

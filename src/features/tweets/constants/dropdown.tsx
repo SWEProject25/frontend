@@ -22,57 +22,69 @@ export const getTweetDropdownItems = ({
   username = '@user',
   isFollowed = false,
   isMuted = false,
+  isBlocked = false,
+  myTweet = false,
 }: {
   username?: string;
   isFollowed?: boolean;
   isMuted?: boolean;
-} = {}) => [
-  {
-    key: 'not_interested',
-    label: 'Not interested in this post',
-    icon: <NotInterstedIcon />,
-  },
-  {
-    key: 'follow',
-    label: isFollowed ? `Unfollow ${username}` : `Follow ${username}`,
-    icon: isFollowed ? <UnfollowIcon /> : <FollowIcon />,
-  },
-  {
-    key: 'lists',
-    label: 'Add/remove from Lists',
-    icon: <AddtoList />,
-  },
-  {
-    key: 'mute',
-    label: isMuted ? `Unmute ${username}` : `Mute ${username}`,
-    icon: <MuteIcon />,
-  },
-  {
-    key: 'block',
-    label: `Block ${username}`,
-    icon: <BlockIcon />,
-  },
-  {
-    key: 'engagement',
-    label: 'View post engagements',
-    icon: <EngagementsIcon />,
-  },
-  {
-    key: 'embed',
-    label: 'Embed post',
-    icon: <EmbedIcon />,
-  },
-  {
-    key: 'report',
-    label: 'Report post',
-    icon: <ReportIcon />,
-  },
-  {
-    key: 'community_note',
-    label: 'Request Community Note',
-    icon: <RequestCommunityIcon />,
-  },
-];
+  isBlocked?: boolean;
+  myTweet?: boolean;
+}) => {
+  const items = [
+    {
+      key: 'not_interested',
+      label: 'Not interested in this post',
+      icon: <NotInterstedIcon />,
+    },
+    {
+      key: 'follow',
+      label: isFollowed ? `Unfollow ${username}` : `Follow ${username}`,
+      icon: isFollowed ? <UnfollowIcon /> : <FollowIcon />,
+    },
+    {
+      key: 'lists',
+      label: 'Add/remove from Lists',
+      icon: <AddtoList />,
+    },
+    {
+      key: 'mute',
+      label: isMuted ? `Unmute ${username}` : `Mute ${username}`,
+      icon: <MuteIcon />,
+    },
+    {
+      key: 'block',
+      label: isBlocked ? `Unblock ${username}` : `Block ${username}`,
+      icon: <BlockIcon />,
+    },
+    {
+      key: 'engagement',
+      label: 'View post engagements',
+      icon: <EngagementsIcon />,
+    },
+    {
+      key: 'embed',
+      label: 'Embed post',
+      icon: <EmbedIcon />,
+    },
+    {
+      key: 'report',
+      label: 'Report post',
+      icon: <ReportIcon />,
+    },
+    {
+      key: 'community_note',
+      label: 'Request Community Note',
+      icon: <RequestCommunityIcon />,
+    },
+  ];
+  let displayedItems = items;
+  if (myTweet)
+    displayedItems = items.filter((item) =>
+      ['lists', 'engagement', 'embed', 'community_note'].includes(item.key)
+    );
+  return displayedItems;
+};
 
 export const getShareDropdownItems = () => [
   {

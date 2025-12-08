@@ -6,7 +6,6 @@ import {
   useIsOpen,
   useMentionIsDone,
 } from '@/features/timeline/store/useMentionStore';
-import { useActions as useAddTweetActions } from '@/features/timeline/store/useAddTweetStore';
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import {
   MAX_TWEET_LENGTH,
@@ -15,6 +14,7 @@ import {
 import { useEmoji } from '@/features/media/store/useMedia';
 
 const startRedText = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
+
 function getCurrCursorPos(div: HTMLDivElement) {
   const selection = window.getSelection();
   if (!selection || !selection.anchorNode) return 0;
@@ -44,12 +44,6 @@ function setCartAtEnd(div: HTMLDivElement) {
   selection?.removeAllRanges();
   selection?.addRange(range);
 }
-export type mentionType = {
-  indx: number;
-  username: string;
-  checked: boolean;
-  id: number;
-};
 export default function TweetText({
   divRef,
 }: {
@@ -63,20 +57,22 @@ export default function TweetText({
   const mention = useMention();
   const mentionIsDone = useMentionIsDone();
   const { setMention, setIsOpen, setIsDone } = useActions();
-  const { setMentions } = useAddTweetActions();
   const spanMention = useRef<null | HTMLSpanElement>(null);
-  const completedMentions = useRef<mentionType[]>([]);
-
+  type mentionSPan = {
+    indx: number;
+    username: string;
+  };
+  const completedMentions = useRef<mentionSPan[]>([]);
   // const [mentionIsOpen, setMentionIsOpen] = useState(false);
   const emoji = useEmoji();
   const handleChangeText = useCallback(
-    (text: string, lastData: string = '') => {
+    (text: string, lastData: string | null = null) => {
       const lastMatch = text.match(
         /(?<=^|\s)@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+$/
       ) ?? [''];
-      const index = lastMatch.index;
-      // let lastMention = lastMatch[0].slice(1);
-      // let isActiveMention =
+      // const index = lastMatch.index;
+      // const lastMention = lastMatch[0].slice(1);
+      // const isActiveMention =
       //   lastMatch &&
       //   lastMatch.length <= 10 &&
       //   text.length + 10 <= startRedText &&
@@ -93,8 +89,6 @@ export default function TweetText({
           setMention('');
           setIsDone('');
           completedMentions.current = [];
-          setMentions(completedMentions.current);
-
           setIsOpen(false);
           spanMention.current = null;
           setSpanText2('');
@@ -107,27 +101,10 @@ export default function TweetText({
         spanRef1.current.innerHTML = '';
         const displayedText = text.slice(0, startRedText);
         let lastIndex = 0;
-
-        const matchRegex = /(?<=^|\s)@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+/g;
+        const matchRegex = /@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+/g;
         let match;
         let cursor = 0;
         if (divRef.current) cursor = getCurrCursorPos(divRef.current);
-        console.log(cursor);
-
-        console.log(
-          completedMentions,
-          completedMentions.current.filter((ment) => ment.checked)
-        );
-        completedMentions.current = completedMentions.current.map(
-          (mention) => ({
-            ...mention,
-            checked: false,
-          })
-        );
-        console.log(
-          completedMentions,
-          completedMentions.current.filter((ment) => ment.checked)
-        );
         while ((match = matchRegex.exec(displayedText)) !== null) {
           const mentionIndex = match.index;
           const mentionText = match[0];
@@ -139,48 +116,16 @@ export default function TweetText({
             );
             spanRef1.current.appendChild(node);
           }
-          let currIndx = 0;
-          const isCompleted = completedMentions.current.some((ment, index) => {
-            if (
-              ment.username === mentionText &&
-              Math.abs(ment.indx - mentionIndex) < 10 &&
-              ment.checked === false
-            ) {
-              currIndx = index;
-              return true;
-            }
-            return false;
-          });
-          if (isCompleted)
-            completedMentions.current[currIndx] = {
-              ...completedMentions.current[currIndx],
-              checked: true,
-              indx: mentionIndex,
-            };
-          // completedMentions.current = completedMentions.current.map(
-          //   (ment) => {
-          //     if (
-          //       ment.username === mentionText &&
-          //       Math.abs(ment.indx - mentionIndex) < 10 &&
-          //       ment.checked === false
-          //     ) {
-          //       return { ...ment, checked: true, indx: mentionIndex };
-          //     }
-          //     return ment;
-          //   }
-          //   // ment.indx === mentionIndex &&
-          // );
-
+          const isCompleted = completedMentions.current.some(
+            (ment) =>
+              ment.indx === mentionIndex && ment.username === mentionText
+          );
+          // const isActive = isActiveMention && mentionIndex === index;
           const isActive = cursor >= mentionIndex && cursor <= mentionEndIndx;
-          // (isActiveMention && mentionIndex === index) ||
-          // isActiveMention = cursor >= mentionIndex && cursor <= mentionEndIndx;
-          // const isActive = cursor >= mentionIndex && cursor <= mentionEndIndx;
-          // console.log(cursor >= mentionIndex && cursor <= mentionEndIndx);
           // setIsOpen(true);
           // setMention(lastMatch);
           if (isActive || isCompleted) {
             const span = document.createElement('span');
-
             span.textContent = mentionText;
             span.className = 'text-primary-hover';
             span.setAttribute(
@@ -188,14 +133,12 @@ export default function TweetText({
               `${isCompleted ? 'completed' : 'active'}`
             );
             span.setAttribute('data-indx', `${mentionIndex}`);
-            if (isActive && !isCompleted) {
+            if (isActive) {
               spanMention.current = span;
-              spanMention.current.style.color =
-                'var( --color-mention-progress)';
               setIsOpen(true);
-              setMention(mentionText.slice(1));
+              setMention(mentionText);
               isActiveMention = true;
-              lastMention = mentionText.slice(1);
+              lastMention = mentionText;
             }
             // spanRef1.current.textContent = text.slice(0, index);
             spanRef1.current.appendChild(span);
@@ -209,19 +152,6 @@ export default function TweetText({
           // if (spanMention.current && spanMention.current.textContent) {
           //   spanMention.current.text
         }
-        const prevLength = completedMentions.current.length;
-        completedMentions.current = completedMentions.current.filter(
-          (ment) => ment.checked
-        );
-        setMentions(completedMentions.current);
-
-        if (prevLength !== completedMentions.current.length) {
-          console.log('s');
-          if (spanMention.current)
-            spanMention.current.style.color = 'var( --color-mention-progress)';
-          // handleChangeText(text);
-        }
-        console.log(completedMentions);
         if (lastIndex < displayedText.length)
           spanRef1.current.appendChild(
             document.createTextNode(displayedText.slice(lastIndex))
@@ -249,8 +179,8 @@ export default function TweetText({
       setMention,
       setIsDone,
       completedMentions,
-      setMentions,
       setIsOpen,
+      mentionIsDone,
       divRef,
     ]
   );
@@ -261,31 +191,20 @@ export default function TweetText({
   useEffect(
     function () {
       if (mentionIsDone && mention && divRef.current) {
-        const currMention = mentionIsDone.split(' ');
-
         if (spanMention.current && spanMention.current.textContent)
-          spanMention.current.textContent = `@` + currMention[0] + ` `;
-        // const indx = divRef.current?.innerText.match(
-        //   /(?<=^|\s)@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+$/
-        // )?.index;
+          spanMention.current.textContent = `@` + mentionIsDone;
+        const indx = divRef.current?.innerText.match(
+          /(?<=^|\s)@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+$/
+        )?.index;
 
-        const matches = divRef.current?.innerText.matchAll(
-          /(?<=^|\s)@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+/g
-        ) ?? [''];
-        const indx = +(spanMention.current?.getAttribute('data-indx') ?? 0);
-        // matches.find(
-        //   (ment) => ment[0] === `@` + mentionIsDone && ment.index === indx
-        // );
-        console.log(indx);
         if (indx !== undefined) {
           const text = divRef.current?.innerText;
           console.log(mention, mentionIsDone, text, indx);
-          console.log(currMention, mentionIsDone);
+
           const newText =
             text?.slice(0, indx) +
             `@` +
-            currMention[0] +
-            ` ` +
+            mentionIsDone +
             text?.slice(indx + mention.length + 1) +
             ` `;
           divRef.current.textContent = newText;
@@ -293,12 +212,8 @@ export default function TweetText({
 
           completedMentions.current.push({
             indx: indx,
-            username: `@` + currMention[0],
-            checked: true,
-            id: +currMention[1],
+            username: `@` + mentionIsDone,
           });
-          setMentions(completedMentions.current);
-
           spanMention.current = null;
           setIsDone('');
           setIsOpen(false);
@@ -316,7 +231,6 @@ export default function TweetText({
       setMention,
       setIsOpen,
       completedMentions,
-      setMentions,
       handleChangeText,
     ]
   );
@@ -332,8 +246,6 @@ export default function TweetText({
         setSpanText2('');
         if (divRef.current) divRef.current.innerText = '';
         completedMentions.current = [];
-        setMentions(completedMentions.current);
-
         setIsDone('');
         setIsOpen(false);
         setMention('');
@@ -361,8 +273,8 @@ export default function TweetText({
     const input = e.nativeEvent as InputEvent;
     console.log(input.data);
     console.log('handleINput ', e);
-    if (divRef.current?.innerText) {
-      handleChangeText(divRef.current.innerText, input.data ?? '');
+    if (divRef.current) {
+      handleChangeText(divRef.current?.innerText, input.data);
     }
   }
   function handleKeyDown(e: React.KeyboardEvent) {
@@ -386,7 +298,6 @@ export default function TweetText({
           mention.indx !== +(node.getAttribute('data-indx') ?? -1) ||
           mention.username !== node.textContent
       );
-      setMentions(completedMentions.current);
 
       console.log('asqq');
       e.preventDefault();
@@ -424,7 +335,7 @@ export default function TweetText({
         onInput={handleInput}
         data-testid="tweet-text-input"
         ref={divRef}
-        // onKeyDown={handleKeyDown}
+        onKeyDown={handleKeyDown}
         spellCheck={true}
         aria-label="Tweet text input overlay"
         className="   absolute top-0 pl-2 left-0 py-3 inset-0 w-full h-full text-transparent caret-white  outline-none whitespace-pre-wrap break-words overflow-wrap-anywhere pointer-events-auto text-xl"

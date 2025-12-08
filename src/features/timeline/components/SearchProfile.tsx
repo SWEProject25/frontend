@@ -7,21 +7,25 @@ import { useSearchHashtag, useSearchProfile } from '../hooks/timelineQueries';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import { Loader } from '@/components/generic';
 import toasterMessage from '@/components/ui/home/ToasterMessage';
-import { useSearch, useSearchAction } from '../store/useTimelineStore';
+import {
+  useSearch,
+  useSearchAction,
+  useSearchIsopen,
+} from '../store/useTimelineStore';
 
 import { usePathname, useRouter } from 'next/navigation';
 import Icon from '@/components/ui/home/Icon';
 
 export default function SearchProfile() {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState(-1);
   const [unFocus, setUnFocus] = useState(false);
   const divRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const route = usePathname();
   const search = useSearch();
-  const setSearch = useSearchAction();
+  const { setSearch, setIsOpen } = useSearchAction();
+  const isOpen = useSearchIsopen();
   const erase = route === './home';
   const startWithHash = search.trimStart().startsWith('#');
   const startWithMention = search.startsWith('@');
@@ -120,7 +124,7 @@ export default function SearchProfile() {
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
-  } = useSearchProfile();
+  } = useSearchProfile(search);
   const totalProfiles = profiles?.pages[0].metadata.total ?? 0;
   const { data: hashtag } = useSearchHashtag();
   const hashtagPages = hashtag?.pages.flat();
@@ -131,18 +135,21 @@ export default function SearchProfile() {
   console.log(profiles);
   const pages = profiles?.pages.flat();
 
-  useEffect(function () {
-    function handleCloseSearch(e: MouseEvent) {
-      if (
-        divRef.current &&
-        e.target instanceof Node &&
-        !divRef.current.contains(e.target)
-      )
-        setIsOpen(false);
-    }
-    document.addEventListener('mousedown', handleCloseSearch);
-    return () => document.removeEventListener('mousedown', handleCloseSearch);
-  }, []);
+  useEffect(
+    function () {
+      function handleCloseSearch(e: MouseEvent) {
+        if (
+          divRef.current &&
+          e.target instanceof Node &&
+          !divRef.current.contains(e.target)
+        )
+          setIsOpen(false);
+      }
+      document.addEventListener('mousedown', handleCloseSearch);
+      return () => document.removeEventListener('mousedown', handleCloseSearch);
+    },
+    [setIsOpen]
+  );
   useEffect(() => {
     const unloadCallback = (event: BeforeUnloadEvent) => {
       if (search) {
@@ -185,7 +192,7 @@ export default function SearchProfile() {
   const hasInitialData = pages ? pages[0].data.length > 0 : false;
 
   return (
-    <div className="  w-fulh-full flex flex-1 relative" ref={divRef}>
+    <div className="  w-full h-full flex flex-1 relative" ref={divRef}>
       <SearchInput
         unFocus={unFocus}
         value={search}

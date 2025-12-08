@@ -37,14 +37,15 @@ export interface TimelineTweet {
   isFollowedByMe: boolean;
   isRepostedByMe: boolean;
   isMutedByMe?: boolean;
+  isBlockedByMe?: boolean;
   text: string;
   type?: string;
   parentId?: number;
   mentions: [];
   media: Media[];
-  created_at?: string;
-  user_id?: number;
-  post_id?: number;
+  // created_at?: string;
+  // user_id?: number;
+  // post_id?: number;
 }
 export interface TimelineFeed extends TimelineTweet {
   isRepost: boolean;

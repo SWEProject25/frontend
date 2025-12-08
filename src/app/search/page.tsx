@@ -22,6 +22,7 @@ export default function Page() {
         setSearchQuery(query);
         setSearchDate(new Date().toISOString());
       }
+      console.log(new Date().toISOString());
     },
     [
       query,

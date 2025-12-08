@@ -89,8 +89,10 @@ export interface ProfileTweet {
   isLikedByMe: boolean;
   isFollowedByMe: boolean;
   isRepostedByMe: boolean;
+  isMutedByMe: boolean;
+  isBlockedByMe: boolean;
   text: string;
-  created_at?: string;
+  // created_at?: string;
   mentions?: [];
   media: Media[];
 }

@@ -15,6 +15,7 @@ import usePollStore from '../store/usePollStore';
 import useMedia from '@/features/media/store/useMedia';
 import { useMenuName } from '@/components/ui/home/XMenu';
 import { GROK_MENU, REPLY_MENU } from '../constants/menuName';
+import Mention from './Mention';
 export default function AddTweet() {
   const scheduledTime = useAddTweetStore((state) => state.scheduledTime);
   const isSending = useAddTweetStore((state) => state.isSending);
@@ -121,6 +122,7 @@ export default function AddTweet() {
           {!isSending && (
             <div>
               <TweetReplySettings />
+              <Mention />
               <TweetFooter>
                 <TweetOptionsBar />
                 <TweetSubmitSection />

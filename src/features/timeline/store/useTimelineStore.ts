@@ -10,22 +10,26 @@ import { TimelineFeed } from '../types/api';
 interface TimelineState {
   selectedTab: string;
   searchUser: string;
+  searchIsOpen: boolean;
   newTweets: TimelineFeed[];
   actions: {
     selectTab: (value: string) => void;
     setSearchUser: (user: string) => void;
     setNewTweets: (tweets: TimelineFeed[]) => void;
+    setSearchIsOpen: (isOpen: boolean) => void;
   };
 }
 const useTimelineStore = create<TimelineState>()(
   devtools((set) => ({
     selectedTab: FOLLOWING_TAB,
     searchUser: '',
+    searchIsOpen: false,
     newTweets: [],
     actions: {
       selectTab: (value) => set({ selectedTab: value }),
       setSearchUser: (user) => set({ searchUser: user }),
       setNewTweets: (tweets) => set({ newTweets: tweets }),
+      setSearchIsOpen: (isOpen) => set({ searchIsOpen: isOpen }),
     },
   }))
 );
@@ -44,9 +48,13 @@ export const useSearch = () => {
 };
 export const useSearchAction = () => {
   const route = usePathname();
-  const { setSearchUser } = useActions();
+  const { setSearchUser, setSearchIsOpen } = useActions();
   const { setSearchQuery: setSearchExplore } = useExploreActions();
-  return route === '/home' ? setSearchUser : setSearchExplore;
+  return {
+    setSearch: route === '/home' ? setSearchUser : setSearchExplore,
+    setIsOpen: setSearchIsOpen,
+  };
 };
-
+export const useSearchIsopen = () =>
+  useTimelineStore((state) => state.searchIsOpen);
 export const useNewTweets = () => useTimelineStore((state) => state.newTweets);

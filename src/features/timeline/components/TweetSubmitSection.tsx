@@ -2,7 +2,9 @@
 
 import Button from '../../../components/ui/home/Button';
 import Icon from '@/components/ui/home/Icon';
-import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
+import useAddTweetStore, {
+  useMentions,
+} from '@/features/timeline/store/useAddTweetStore';
 import TypingProgressCircle from './TypingProgressCircle';
 import usePollStore from '../store/usePollStore';
 import { MAX_ALLOWABLE_TWEET_LENGTH } from '@/features/timeline/constants/tweetConstants';
@@ -11,11 +13,13 @@ import useMedia from '@/features/media/store/useMedia';
 import { LOCAL_MEDIA } from '@/features/media/constants/mediaConstants';
 import { options } from '../constants/replySettingsOptions';
 import { TweetFormDataKeys } from '../types/api';
+import { json } from 'stream/consumers';
 export default function TweetSubmitSection() {
   const tweetText = useAddTweetStore((state) => state.tweetText);
   const isOpen = usePollStore((state) => state.isOpen);
   const choices = usePollStore((state) => state.choices);
   const media = useMedia((state) => state.media);
+  const mentions = useMentions();
   const selectedReplyOption = useAddTweetStore(
     (state) => state.selectedReplyOption
   );
@@ -54,6 +58,16 @@ export default function TweetSubmitSection() {
     }
     console.log(tweetFormData.getAll('media'));
     console.log(media);
+    console.log(mentions);
+    const mentionsId = mentions.map((mention) => mention.id);
+
+    // Append mentions as array - some backends expect mentionsIds[] format
+    if (mentionsId.length > 0) {
+      mentionsId.forEach((id) => {
+        tweetFormData.append('mentionsIds[]', id.toString());
+      });
+    }
+    console.log('mentionsIds:', tweetFormData.getAll('mentionsIds[]'));
 
     const seclectdReply =
       selectedReplyOption === 0

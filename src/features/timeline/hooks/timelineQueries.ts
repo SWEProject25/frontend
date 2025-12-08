@@ -13,11 +13,13 @@ import {
   TimelineFeedDtoResponse,
 } from '../types/api';
 import { useActions } from '../store/useAddTweetStore';
+import { useMention } from '../store/useMentionStore';
 
 import toasterMessage from '@/components/ui/home/ToasterMessage';
 import { useMediaActions } from '@/features/media/store/useMedia';
 import {
   useSearch,
+  useSearchIsopen,
   useSearchUser,
   useSelectedTab,
 } from '../store/useTimelineStore';
@@ -158,8 +160,11 @@ export const useTimelineFeed = () => {
       lastPage.data.posts.length ? pages.length + 1 : undefined,
   });
 };
-export const useSearchProfile = () => {
-  const searchUser = useSearch();
+export const useSearchProfile = (searchUser: string) => {
+  // const search = useSearch();
+  // const isSearch = useSearchIsopen();
+  // const mention = useMention();
+  // const searchUser = isSearch ? search : mention;
   return useInfiniteQuery<
     ProfileSearchDtoResponse,
     Error,
@@ -177,7 +182,7 @@ export const useSearchProfile = () => {
   });
 };
 export const useSearchHashtag = () => {
-  const hashtag = useSearchUser().trimStart();
+  const hashtag = useSearch().trimStart();
   return useInfiniteQuery<
     HashtagSearchDtoResponse,
     Error,

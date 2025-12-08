@@ -8,7 +8,7 @@ import Loader from '@/components/generic/Loader';
 
 function Page() {
   const tweetQuery = useTweetById(Number(useParams()?.['full-tweet'] || 0));
-  const tweet = tweetQuery.data?.data || null;
+  const tweet = tweetQuery.data?.data[0] || null;
   console.log('Full Tweet:', tweet);
   // if (tweetQuery.isFetching && tweetQuery.data) {
   //   return <Loader />; // ✅ Hide old data
