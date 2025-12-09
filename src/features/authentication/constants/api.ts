@@ -19,6 +19,7 @@ export const AUTH_ENDPOINTS = {
   VERIFY_RECAPTCHA: `/api/${AUTH_API_CONFIG.VERSION}/auth/verify-recaptcha`,
   FORGOT_PASSWORD: `/api/${AUTH_API_CONFIG.VERSION}/auth/forgotPassword`,
   RESET_PASSWORD: `/api/${AUTH_API_CONFIG.VERSION}/auth/resetPassword`,
+  CHANGE_PASSWORD: `/api/${AUTH_API_CONFIG.VERSION}/auth/changePassword`,
   GOOGLE_OAUTH_LOGIN: `/api/v1.0/auth/google/login`,
   GITHUB_OAUTH_LOGIN: `/api/v1.0/auth/github/login`,
   UPDATE_EMAIL: `/api/${AUTH_API_CONFIG.VERSION}/auth/update-email`,

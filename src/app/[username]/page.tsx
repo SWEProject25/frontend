@@ -9,13 +9,17 @@ import BlockedUserWarning from '@/features/profile/components/BlockedUserWarning
 import { useProfileStore } from '@/features/profile';
 import { useProfileContext } from './ProfileProvider';
 import { useAuthStore } from '@/features/authentication/store/authStore';
-
+import { usePageTitleNotifications } from '@/features/notifications/hooks';
+import { useRouter } from 'next/navigation';
 const UserPage = () => {
   const { profile, username } = useProfileContext();
   const { setCurrentProfile } = useProfileStore();
   const currentUser = useAuthStore((s) => s.user);
   const isMine = Boolean(currentUser && currentUser.username === username);
   const [showBlockedPosts, setShowBlockedPosts] = useState(false);
+  const router = useRouter();
+  // Update page title with unread count (uses "H" branding, static favicon)
+  usePageTitleNotifications('H', false);
 
   useEffect(() => {
     setCurrentProfile(profile);
@@ -35,7 +39,7 @@ const UserPage = () => {
   return (
     <main className="flex flex-col" data-testid="profile-page">
       <div
-        className="flex flex-row justify-between items-center px-4 sticky top-0 bg-background/90 z-10"
+        className="flex flex-row  justify-between items-center px-4 sticky top-0 bg-background/50 backdrop-blur-md z-30"
         data-testid="profile-header"
       >
         <Breadcrumb
@@ -50,6 +54,7 @@ const UserPage = () => {
           variant="ghost"
           size="md"
           shape="circle"
+          onClick={() => router.push('/explore')}
         >
           <SearchIcon className="w-5 h-6 text-text-primary" />
         </Button>

@@ -17,6 +17,8 @@ import {
   UpdateEmailResponseDto,
   UpdateUsernameDto,
   UpdateUsernameResponseDto,
+  ChangePasswordDto,
+  ChangePasswordResponseDto,
   UserResponse,
   MeResponse,
 } from '../types/api';
@@ -445,6 +447,24 @@ export const authApi = {
     cachedAt = 0;
 
     return data;
+  },
+
+  async changePassword(
+    passwordData: ChangePasswordDto
+  ): Promise<ChangePasswordResponseDto> {
+    const response = await fetch(
+      `${AUTH_API_CONFIG.BASE_URL}${AUTH_ENDPOINTS.CHANGE_PASSWORD}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(passwordData),
+      }
+    );
+
+    return handleResponse<ChangePasswordResponseDto>(response);
   },
 
   clearUserCache(): void {

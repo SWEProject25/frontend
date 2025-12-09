@@ -61,6 +61,10 @@ export const useBlockUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['interactions', 'following'],
       });
+      // Invalidate all tweet queries to update full tweet page
+      queryClient.invalidateQueries({
+        queryKey: ['tweet'],
+      });
     },
     networkMode: 'always',
   });
@@ -109,6 +113,10 @@ export const useUnblockUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['profile'],
       });
+      // Invalidate all tweet queries to update full tweet page
+      queryClient.invalidateQueries({
+        queryKey: ['tweet'],
+      });
     },
     networkMode: 'always',
   });
@@ -145,20 +153,10 @@ export const useGetBlockedUsers = (
   });
 };
 
-// ==================== COMPOSITE HOOKS ====================
-
-/**
- * Hook that provides all block-related functionality
- * Includes block/unblock mutations and their loading/error states
- */
 export const useBlock = () => {
   const blockMutation = useBlockUser();
   const unblockMutation = useUnblockUser();
 
-  /**
-   * Block a user
-   * @param userId - The ID of the user to block
-   */
   const blockUser = async (userId: number) => {
     try {
       const response = await blockMutation.mutateAsync(userId);
@@ -169,10 +167,6 @@ export const useBlock = () => {
     }
   };
 
-  /**
-   * Unblock a user
-   * @param userId - The ID of the user to unblock
-   */
   const unblockUser = async (userId: number) => {
     try {
       const response = await unblockMutation.mutateAsync(userId);
@@ -183,11 +177,6 @@ export const useBlock = () => {
     }
   };
 
-  /**
-   * Toggle block status (block if not blocked, unblock if blocked)
-   * @param userId - The ID of the user
-   * @param isCurrentlyBlocked - Current block status
-   */
   const toggleBlock = async (userId: number, isCurrentlyBlocked: boolean) => {
     try {
       if (isCurrentlyBlocked) {

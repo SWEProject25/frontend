@@ -22,68 +22,80 @@ import { RetweetIcon } from '@/components/ui/icons/UIIcons';
 export const getTweetDropdownItems = ({
   username = '@user',
   isFollowed = false,
-  byMe = true,
+  isMuted = false,
+  isBlocked = false,
+  byMe = false,
 }: {
   username?: string;
   isFollowed?: boolean;
+  isMuted?: boolean;
+  isBlocked?: boolean;
   byMe?: boolean;
-} = {}) => [
-  // Only include delete if byMe is true
-  ...(byMe
-    ? [
-        {
-          key: 'delete',
-          label: 'Delete',
-          icon: <DeleteIcon />,
-        },
-      ]
-    : []),
-  {
-    key: 'not_interested',
-    label: 'Not interested in this post',
-    icon: <NotInterstedIcon />,
-  },
-  {
-    key: 'follow',
-    label: isFollowed ? `Unfollow ${username}` : `Follow ${username}`,
-    icon: isFollowed ? <UnfollowIcon /> : <FollowIcon />,
-  },
-  {
-    key: 'lists',
-    label: 'Add/remove from Lists',
-    icon: <AddtoList />,
-  },
-  {
-    key: 'mute',
-    label: 'Mute',
-    icon: <MuteIcon />,
-  },
-  {
-    key: 'block',
-    label: `Block ${username}`,
-    icon: <BlockIcon />,
-  },
-  {
-    key: 'engagement',
-    label: 'View post engagements',
-    icon: <EngagementsIcon />,
-  },
-  {
-    key: 'embed',
-    label: 'Embed post',
-    icon: <EmbedIcon />,
-  },
-  {
-    key: 'report',
-    label: 'Report post',
-    icon: <ReportIcon />,
-  },
-  {
-    key: 'community_note',
-    label: 'Request Community Note',
-    icon: <RequestCommunityIcon />,
-  },
-];
+} = {}) => {
+  const items = [
+    // Only include delete if byMe is true
+    ...(byMe
+      ? [
+          {
+            key: 'delete',
+            label: 'Delete',
+            icon: <DeleteIcon />,
+          },
+        ]
+      : []),
+    {
+      key: 'not_interested',
+      label: 'Not interested in this post',
+      icon: <NotInterstedIcon />,
+    },
+    ...(!isBlocked
+      ? [
+          {
+            key: 'follow',
+            label: isFollowed ? `Unfollow ${username}` : `Follow ${username}`,
+            icon: isFollowed ? <UnfollowIcon /> : <FollowIcon />,
+          },
+        ]
+      : []),
+    {
+      key: 'lists',
+      label: 'Add/remove from Lists',
+      icon: <AddtoList />,
+    },
+    {
+      key: 'mute',
+      label: isMuted ? `Unmute ${username}` : `Mute ${username}`,
+      icon: <MuteIcon />,
+    },
+    {
+      key: 'block',
+      label: isBlocked ? `Unblock ${username}` : `Block ${username}`,
+      icon: <BlockIcon />,
+    },
+    {
+      key: 'engagement',
+      label: 'View post engagements',
+      icon: <EngagementsIcon />,
+    },
+    {
+      key: 'embed',
+      label: 'Embed post',
+      icon: <EmbedIcon />,
+    },
+    {
+      key: 'report',
+      label: 'Report post',
+      icon: <ReportIcon />,
+    },
+    {
+      key: 'community_note',
+      label: 'Request Community Note',
+      icon: <RequestCommunityIcon />,
+    },
+  ];
+
+  return items;
+};
 
 export const getShareDropdownItems = () => [
   {

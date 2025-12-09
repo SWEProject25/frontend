@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Content from './Content';
 import Actions from './Actions';
 import UserInfo from './UserInfo';
@@ -26,6 +27,7 @@ import { useTweetStore } from '../store/tweetStore';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 
 function FullTweet({ data }: { data: TimelineFeed | null }) {
+  const router = useRouter();
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
     null
@@ -36,6 +38,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     followUser,
     unfollowUser,
     muteUser,
+    unmuteUser,
     blockUser,
     unblockUser,
     isBlockLoading,
@@ -45,6 +48,8 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     username: data?.username || '',
     isFollowed: data?.isFollowedByMe || false,
     byMe,
+    isMuted: data?.isMutedByMe || false,
+    isBlocked: data?.isBlockedByMe || false,
   });
 
   const {
@@ -56,7 +61,6 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     isFetchingNextPage,
     hasNextPage,
   } = useGetRepliesByTweetId(data?.postId || 0);
-  console.log(repliesResponse);
   const pages = repliesResponse?.pages.flat();
   const renderReplys = pages?.map((group, i) => (
     <React.Fragment key={i}>
@@ -80,11 +84,20 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
         }
         break;
       case 'mute':
-        await muteUser(data.userId);
+        if (data.isMutedByMe) {
+          await unmuteUser(data.userId);
+        } else {
+          await muteUser(data.userId);
+        }
         break;
       case 'block':
-        // Show confirmation modal for block/unblock
-        setBlockAction('block');
+        if (data.isBlockedByMe) {
+          // Show confirmation modal for unblock
+          setBlockAction('unblock');
+        } else {
+          // Show confirmation modal for block
+          setBlockAction('block');
+        }
         setShowBlockModal(true);
         break;
       case 'delete':
@@ -94,7 +107,6 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
         deleteTweetMutation.mutate();
         break;
       default:
-        console.log('Selected item key:', key);
         break;
     }
   };
@@ -104,6 +116,8 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
 
     if (blockAction === 'block') {
       await blockUser(data.userId);
+      // Redirect to home after blocking
+      router.push('/home');
     } else if (blockAction === 'unblock') {
       await unblockUser(data.userId);
     }
@@ -192,9 +206,9 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
             <Timing time={data.date} full={true} />
           </div>
           <div className="border-b border-gray-700 my-2" />
+
           <Actions
             stats={actionsStats}
-            full={true}
             replyClick={() => setCurrentTweet(data)}
           />
           <div className="border-b border-gray-700 mt-3" />

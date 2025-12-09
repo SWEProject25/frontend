@@ -7,10 +7,17 @@ import {
   InfiniteData,
 } from '@tanstack/react-query';
 import { tweetApi } from '../services/tweetApi';
-import { ReplyDto, TweetResponseDto, TweetSummaryDto } from '../types/api';
+import {
+  ReplyDto,
+  TweetResponseDto,
+  LikersResponseDto,
+  TweetSummaryDto,
+} from '../types/api';
 import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
 import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
 import { tweet } from '@/features/timeline/mocks/data';
+import { PROFILE_QUERY_KEYS } from '@/features/profile';
+import { useAuth } from '@/features/authentication/hooks';
 // Query keys
 export const TWEET_QUERY_KEYS = {
   tweetById: (tweetId: number) => ['tweet', 'id', tweetId] as const,
@@ -20,6 +27,8 @@ export const TWEET_QUERY_KEYS = {
     ['tweet', 'replies', tweetId] as const,
   getTweetSummary: (tweetId: number) => ['tweet', 'summary', tweetId] as const,
   deleteTweet: (tweetId: number) => ['tweet', 'delete', tweetId] as const,
+  getLikersByTweetId: (tweetId: number) =>
+    ['tweet', 'likers', tweetId] as const,
 };
 
 // Hook: Get tweet by ID
@@ -44,26 +53,27 @@ export const useToggleLikeTweet = (
 ) => {
   const queryClient = useQueryClient();
   const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
+  const user = useAuth().user?.id;
   return useMutation({
     mutationFn: () => tweetApi.toggleLikeTweet(tweetId),
     onMutate: () => {
       // Optimistically update cache before mutation
-      queryClient.setQueryData(
-        TWEET_QUERY_KEYS.tweetById(tweetId),
-        (old: any) => {
-          if (!old) return old;
-          return {
-            ...old,
-            data: {
-              ...old.data,
-              isLikedByMe: !old.data.isLikedByMe,
-              likesCount: old.data.isLikedByMe
-                ? old.data.likesCount - 1
-                : old.data.likesCount + 1,
-            },
-          };
-        }
-      );
+      // queryClient.setQueryData(
+      //   TWEET_QUERY_KEYS.tweetById(tweetId),
+      //   (old: any) => {
+      //     if (!old) return old;
+      //     return {
+      //       ...old,
+      //       data: {
+      //         ...old.data,
+      //         isLikedByMe: !old.data.isLikedByMe,
+      //         likesCount: old.data.isLikedByMe
+      //           ? old.data.likesCount - 1
+      //           : old.data.likesCount + 1,
+      //       },
+      //     };
+      //   }
+      // );
       return onMutate(
         OPTIMISTIC_TYPES.LIKE,
         userId,
@@ -83,6 +93,10 @@ export const useToggleLikeTweet = (
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.tweetById(tweetId),
       });
+      if (user)
+        queryClient.invalidateQueries({
+          queryKey: PROFILE_QUERY_KEYS.profileLikes(user),
+        });
     },
     networkMode: 'always',
   });
@@ -99,27 +113,28 @@ export const useToggleRepostTweet = (
 ) => {
   const queryClient = useQueryClient();
   const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
+  const user = useAuth().user?.id;
 
   return useMutation({
     mutationFn: () => tweetApi.toggleRepostTweet(tweetId),
     onMutate: () => {
       // Optimistically update cache before mutation
-      queryClient.setQueryData(
-        TWEET_QUERY_KEYS.tweetById(tweetId),
-        (old: any) => {
-          if (!old) return old;
-          return {
-            ...old,
-            data: {
-              ...old.data,
-              isRepostedByMe: !old.data.isRepostedByMe,
-              retweetsCount: old.data.isRepostedByMe
-                ? old.data.retweetsCount - 1
-                : old.data.retweetsCount + 1,
-            },
-          };
-        }
-      );
+      // queryClient.setQueryData(
+      //   TWEET_QUERY_KEYS.tweetById(tweetId),
+      //   (old: any) => {
+      //     if (!old) return old;
+      //     return {
+      //       ...old,
+      //       data: {
+      //         ...old.data,
+      //         isRepostedByMe: !old.data.isRepostedByMe,
+      //         retweetsCount: old.data.isRepostedByMe
+      //           ? old.data.retweetsCount - 1
+      //           : old.data.retweetsCount + 1,
+      //       },
+      //     };
+      //   }
+      // );
       return onMutate(
         OPTIMISTIC_TYPES.REPOST,
         userId,
@@ -139,6 +154,15 @@ export const useToggleRepostTweet = (
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.tweetById(tweetId),
       });
+
+      if (user) {
+        queryClient.invalidateQueries({
+          queryKey: PROFILE_QUERY_KEYS.profilePosts(user),
+        });
+        queryClient.invalidateQueries({
+          queryKey: PROFILE_QUERY_KEYS.profileReplies(user),
+        });
+      }
     },
     networkMode: 'always',
   });
@@ -168,6 +192,25 @@ export const useGetTweetSummary = (tweetId: number) => {
   return useQuery<TweetSummaryDto, Error>({
     queryKey: TWEET_QUERY_KEYS.getTweetSummary(tweetId),
     queryFn: () => tweetApi.getTweetSummary(tweetId),
+    staleTime: 0,
+    retry: 1,
+  });
+};
+// Hook: Get likers by tweet ID
+export const useGetLikersByTweetId = (tweetId: number) => {
+  return useInfiniteQuery<
+    LikersResponseDto,
+    Error,
+    InfiniteData<LikersResponseDto, number>,
+    any,
+    number
+  >({
+    queryKey: TWEET_QUERY_KEYS.getLikersByTweetId(tweetId),
+    queryFn: ({ pageParam }) =>
+      tweetApi.getLikersByTweetId(tweetId, pageParam, 10),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.data.length >= 10 ? pages.length + 1 : undefined,
     staleTime: 0,
     retry: 1,
   });

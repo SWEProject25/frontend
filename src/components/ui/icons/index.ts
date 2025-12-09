@@ -36,3 +36,13 @@ export {
 
 // Brand Icons
 export { XLogo, GrokIcon, VerifiedIcon } from './BrandIcons';
+
+// Notification Icons
+export {
+  LikeNotificationIcon,
+  RepostNotificationIcon,
+  ReplyNotificationIcon,
+  FollowNotificationIcon,
+  DMNotificationIcon,
+  ErrorNotificationIcon,
+} from './NotificationIcons';

@@ -1,6 +1,12 @@
 import Button from '@/components/ui/Button';
 
-export default function WelcomeScreen() {
+interface WelcomeScreenProps {
+  onNewMessageClick?: () => void;
+}
+
+export default function WelcomeScreen({
+  onNewMessageClick,
+}: WelcomeScreenProps) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center  w-[600px] p-8 text-center">
       <h2 className="text-3xl font-bold text-white mb-3">Select a message</h2>
@@ -8,7 +14,12 @@ export default function WelcomeScreen() {
         Choose from your existing conversations, start a new one, or just keep
         swimming.
       </p>
-      <Button variant="primary" size="lg">
+      <Button
+        id="welcome-new-message-btn"
+        variant="primary"
+        size="lg"
+        onClick={onNewMessageClick}
+      >
         New message
       </Button>
     </div>

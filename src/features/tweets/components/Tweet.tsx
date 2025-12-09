@@ -25,6 +25,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     username: data.username,
     isFollowed: data.isFollowedByMe,
     byMe,
+    isMuted: data.isMutedByMe || false,
   });
 
   const [Hovered, setHovered] = useState(false);
@@ -38,6 +39,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     followUser,
     unfollowUser,
     muteUser,
+    unmuteUser,
     blockUser,
     unblockUser,
     isBlockLoading,
@@ -89,7 +91,11 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
         }
         break;
       case 'mute':
-        await muteUser(data.userId);
+        if (data.isMutedByMe) {
+          await unmuteUser(data.userId);
+        } else {
+          await muteUser(data.userId);
+        }
         break;
       case 'block':
         setBlockAction('block');
@@ -101,7 +107,6 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
         deleteTweetMutation.mutate();
         break;
       default:
-        console.log('Selected item key:', key);
         break;
     }
   };
@@ -133,7 +138,6 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
       data-testid={`tweet-${data.postId}`}
       onClick={() => {
         //setCurrentTweet(data);
-        console.log('tweet:', data);
         router.push(`/home/${data.postId}`);
       }}
       className={`block mx-auto w-full border-b border-gray-700 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer p-4`}

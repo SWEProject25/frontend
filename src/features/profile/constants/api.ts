@@ -20,10 +20,12 @@ export const PROFILE_ENDPOINTS = {
     `/api/${API_CONFIG.VERSION}/posts/profile/${user}`,
   PROFILE_REPLIES: (user: number | string) =>
     `/api/${API_CONFIG.VERSION}/posts/profile/${user}/replies`,
-  PROFILE_LIKES: (user: number | string) =>
-    `/api/${API_CONFIG.VERSION}/posts/profile/${user}/likes`,
+  PROFILE_LIKES: (user: number) =>
+    `/api/${API_CONFIG.VERSION}/posts/liked/${user}`,
   PROFILE_MEDIA: (user: number | string) =>
     `/api/${API_CONFIG.VERSION}/posts/profile/${user}/media`,
+  PROFILE_MENTIONS: (user: number) =>
+    `/api/${API_CONFIG.VERSION}/posts/mentioned/${user}`,
 } as const;
 
 export const PROFILE_CONSTANTS = {

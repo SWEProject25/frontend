@@ -54,7 +54,11 @@ export default function TweetSubmitSection() {
     }
     console.log(tweetFormData.getAll('media'));
     console.log(media);
-    const seclectdReply = options[selectedReplyOption - 1].Name;
+
+    const seclectdReply =
+      selectedReplyOption === 0
+        ? options[0].Name
+        : options[selectedReplyOption - 1].Name;
     if (tweetText.trim().length !== 0)
       tweetFormData.append(TweetFormDataKeys.CONTENT, tweetText);
     tweetFormData.append(TweetFormDataKeys.TYPE, 'POST');

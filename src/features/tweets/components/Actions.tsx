@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Action from './Action';
 import { LikeIconFilled } from '@/components/ui/icons/UIIcons';
 import { ACTIONS_META } from '../constants';
@@ -14,6 +15,7 @@ import {
 } from '../constants/dropdown';
 import XModal from '@/components/ui/hoc/XModal';
 import AddReply from './AddReply';
+import SharePostModal from './SharePostModal';
 type stats = {
   postId: number;
   isRepost: boolean;
@@ -31,15 +33,14 @@ type stats = {
 
 export default function Actions({
   stats,
-  full = false,
   onOpened,
   replyClick,
 }: {
   stats: stats;
-  full?: boolean;
   onOpened?: (opened: boolean) => void;
   replyClick?: () => void;
 }) {
+  const router = useRouter();
   const shareDropdownItems = getShareDropdownItems();
   const repostDropdownItems = getRepostDropdownItems({
     isRepostedByMe: stats.isRepostedByMe,
@@ -49,6 +50,7 @@ export default function Actions({
     isLikedByMe: stats.isLikedByMe,
   });
   const [isOpen, setIsOpen] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const toggleLikeTweet = useToggleLikeTweet(
     stats.postId,
     stats.isRepost,
@@ -71,15 +73,19 @@ export default function Actions({
   function handleRetweet() {
     toggleRepostTweet.mutate();
   }
+  function handleLikeCountClick() {
+    if (stats.likesCount > 0) {
+      router.push(`/home/${stats.postId}/likers`);
+    }
+  }
   function onSelect(key: string) {
-    console.log('Selected item key:', key);
     switch (key) {
       case 'copy_link':
         const link = `https://hankers.tech/home/${stats.postId}`;
         navigator.clipboard.writeText(link);
         break;
       case 'send_via_message':
-        // Implement send via message functionality here
+        setShowShareModal(true);
         break;
       case 'repost':
         handleRetweet();
@@ -142,6 +148,7 @@ export default function Actions({
           label={actionsMeta[2].label}
           color={actionsMeta[2].color}
           onClick={handleLike}
+          onCountClick={handleLikeCountClick}
           isColored={stats.isLikedByMe}
         />
         <DropDown
@@ -157,6 +164,14 @@ export default function Actions({
           />
         </DropDown>
       </div>
+
+      {/* Share Post Modal */}
+      <SharePostModal
+        show={showShareModal}
+        postId={stats.postId}
+        postUrl={`https://hankers.tech/home/${stats.postId}`}
+        onClose={() => setShowShareModal(false)}
+      />
     </div>
   );
 }

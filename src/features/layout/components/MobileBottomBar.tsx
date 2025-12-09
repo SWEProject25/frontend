@@ -1,5 +1,7 @@
 import { Home, Search, Bell, Mail } from 'lucide-react';
 import Link from 'next/link';
+import { NotificationBadge } from '@/features/notifications/components/NotificationBadge';
+import { MessageBadge } from '@/features/messages/components/MessageBadge';
 
 export default function MobileBottomBar() {
   const mobileMenuItems = [
@@ -24,10 +26,16 @@ export default function MobileBottomBar() {
             aria-label={item.label}
             className="flex flex-col items-center justify-center flex-1 h-full hover:bg-gray-900 transition-colors"
           >
-            <item.icon
-              strokeWidth={item.active ? 2.5 : 2}
-              className={`w-6 h-6 ${item.active ? 'text-white' : 'text-gray-400'}`}
-            />
+            <div className="relative">
+              <item.icon
+                strokeWidth={item.active ? 2.5 : 2}
+                className={`w-6 h-6 ${item.active ? 'text-white' : 'text-gray-400'}`}
+              />
+              {/* Show notification badge on Bell icon */}
+              {item.label === 'Notifications' && <NotificationBadge />}
+              {/* Show message badge on Mail icon */}
+              {item.label === 'Messages' && <MessageBadge />}
+            </div>
           </Link>
         ))}
       </div>

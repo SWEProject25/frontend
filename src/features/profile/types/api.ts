@@ -1,3 +1,5 @@
+import { TimelineFeed } from '@/features/timeline/types/api';
+
 // Profile API Types
 export interface UserProfile {
   id: number;
@@ -13,6 +15,7 @@ export interface UserProfile {
   created_at: string;
   updated_at: string;
   is_followed_by_me: boolean;
+  is_following_me: boolean;
   is_muted_by_me: boolean;
   is_blocked_by_me: boolean;
   is_been_blocked: boolean;
@@ -88,6 +91,8 @@ export interface ProfileTweet {
   isFollowedByMe: boolean;
   isRepostedByMe: boolean;
   text: string;
+  created_at?: string;
+  mentions?: [];
   media: Media[];
 }
 export interface ProfileFeed extends ProfileTweet {
@@ -95,10 +100,28 @@ export interface ProfileFeed extends ProfileTweet {
   isQuote: boolean;
   originalPostData?: ProfileTweet;
 }
+// export interface ProfileFeedDtoResponse {
+//   status: string;
+//   message: string;
+//   data: ProfileFeed[];
+// }
 export interface ProfileFeedDtoResponse {
   status: string;
   message: string;
-  data: {
-    posts: ProfileFeed[];
-  };
+  data: TimelineFeed[];
+}
+
+export interface ProfileMediaFeedDtoResponse {
+  status: string;
+  message: string;
+  data: MediaFeed[];
+}
+
+export interface MediaFeed {
+  id: number;
+  post_id: number;
+  user_id: number;
+  media_url: string;
+  created_at: string;
+  type: string;
 }

@@ -16,6 +16,8 @@ export const TWEET_ENDPOINTS = {
     `/api/${TWEET_API_CONFIG.VERSION}/posts/summary/${tweetId}`,
   DELETE_TWEET: (tweetId: number) =>
     `/api/${TWEET_API_CONFIG.VERSION}/posts/${tweetId}`,
+  GET_LIKERS_BY_TWEET_ID: (tweetId: number) =>
+    `/api/${TWEET_API_CONFIG.VERSION}/posts/${tweetId}/likers`,
 } as const;
 
 export const TWEET_CONSTANTS = {

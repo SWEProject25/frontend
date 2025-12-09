@@ -3,6 +3,7 @@ import { useMessages } from '../../hooks/useMessages';
 import { useConversationDetails } from '../../hooks/useConversationDetails';
 import { useMessageStore } from '../../store/useMessageStore';
 import { useAuthStore } from '../../../authentication/store/authStore';
+import { useIsUserBlocked } from '../../hooks/useBlockStatus';
 import {
   fetchMessages,
   deleteMessage as deleteMessageApi,
@@ -51,12 +52,6 @@ export function useChatWindow(conversationId?: string) {
 
   // Debug authentication status
   useEffect(() => {
-    console.log('👤 Authentication Status:', {
-      isAuthenticated,
-      userId: currentUserId,
-      username: (user as any)?.username,
-    });
-
     if (!isAuthenticated || !currentUserId) {
       console.warn('⚠️ Not properly authenticated! You may need to log in.');
     }
@@ -66,16 +61,6 @@ export function useChatWindow(conversationId?: string) {
   const messages = useMemo(() => {
     if (!conversationId) return [];
     const msgs = allMessages[Number(conversationId)] || [];
-    console.log('🔄 ChatWindow messages updated:', {
-      conversationId,
-      messageCount: msgs.length,
-      seenCount: msgs.filter((m) => m.isSeen).length,
-      messages: msgs.map((m) => ({
-        id: m.id,
-        text: m.text.substring(0, 20),
-        isSeen: m.isSeen,
-      })),
-    });
     return msgs;
   }, [conversationId, allMessages]);
 
@@ -85,6 +70,16 @@ export function useChatWindow(conversationId?: string) {
   );
 
   const conversationDetails = useConversationDetails(conversation);
+
+  // Get the other user's ID from conversation
+  const otherUserId = useMemo(() => {
+    if (!conversation || !currentUserId) return undefined;
+    // Get the user from conversation.user or participants
+    return conversation.user?.id;
+  }, [conversation, currentUserId]);
+
+  // Check if the other user is blocked
+  const { isBlocked } = useIsUserBlocked(otherUserId);
 
   // Get typing users for current conversation (exclude current user)
   const otherUsersTyping = useMemo(() => {
@@ -108,7 +103,6 @@ export function useChatWindow(conversationId?: string) {
     // Fetch fresh messages every time we enter a conversation
     // This ensures we get the correct isSeen and updatedAt values from backend
     const loadMessages = async () => {
-      console.log('🚀 Starting loadMessages for conversation:', numId);
       setLoading(true);
       setError(null);
 
@@ -117,7 +111,6 @@ export function useChatWindow(conversationId?: string) {
         // This tells backend we're viewing it, so it can mark messages as seen
         joinConversation(numId, (resp) => {
           if (resp?.status === 'success') {
-            console.log('✅ Successfully joined conversation:', numId);
           } else {
             console.warn('⚠️ Join conversation response:', resp);
           }
@@ -127,28 +120,20 @@ export function useChatWindow(conversationId?: string) {
         await new Promise((resolve) => setTimeout(resolve, 150));
 
         if (cancelled) {
-          console.log('🚫 Load cancelled, skipping fetch');
           return;
         }
 
         // Step 3: Now fetch messages - they should have correct isSeen status
         try {
-          console.log('📥 Fetching messages with updated seen status:', numId);
           const response = await fetchMessages(numId);
-          console.log('✅ Messages fetched successfully:', response);
 
           if (cancelled) {
-            console.log('🚫 Load cancelled, not updating store');
             return;
           }
 
           // Backend returns: { messages: [...], metadata: {...} }
           if (response?.messages) {
             setMessagesForConversation(numId, response.messages);
-            console.log('📊 Metadata:', response.metadata);
-            console.log(
-              '👁️ Messages should now have isSeen: true for received messages'
-            );
 
             // If there are any unseen messages from the other user, mark them as seen
             const unseenMessages = response.messages.filter(
@@ -156,23 +141,18 @@ export function useChatWindow(conversationId?: string) {
             );
 
             if (unseenMessages.length > 0 && currentUserId) {
-              console.log(
-                `📬 Found ${unseenMessages.length} unseen messages, marking as seen...`
-              );
               markSeen(numId, currentUserId, (resp) => {
-                if (resp?.status === 'success') {
-                  console.log('✅ Unseen messages marked as seen on load');
+                if (resp?.status !== 'success') {
+                  console.warn('⚠️ Failed to mark messages as seen:', resp);
                 }
               });
             }
           } else {
-            console.log('ℹ️ No messages in response, setting empty array');
             setMessagesForConversation(numId, []);
           }
         } catch (fetchError: any) {
           if (cancelled) return;
           console.warn('⚠️ Could not fetch messages:', fetchError.message);
-          console.log('Setting empty message array due to fetch error');
           setMessagesForConversation(numId, []);
         }
       } catch (err) {
@@ -181,7 +161,6 @@ export function useChatWindow(conversationId?: string) {
         setError('Failed to load conversation');
       } finally {
         if (!cancelled) {
-          console.log('✅ Finished loading messages, setting loading=false');
           setLoading(false);
         }
       }
@@ -191,10 +170,6 @@ export function useChatWindow(conversationId?: string) {
 
     // Cleanup function to prevent race conditions
     return () => {
-      console.log(
-        '🧹 Cleaning up loadMessages effect for conversation:',
-        numId
-      );
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -241,19 +216,15 @@ export function useChatWindow(conversationId?: string) {
       if (!conversationId) return;
 
       try {
-        console.log(
-          `🗑️ Deleting message ${messageId} from conversation ${conversationId}`
-        );
         await deleteMessageApi(Number(conversationId), messageId);
         deleteMessageFromStore(Number(conversationId), messageId);
-        console.log('✅ Message deleted successfully');
       } catch (error: any) {
         console.error('❌ Failed to delete message:', error.message);
         setError('Failed to delete message. Please try again.');
         setTimeout(() => setError(null), 3000);
       }
     },
-    [conversationId, deleteMessageFromStore]
+    [conversationId, deleteMessageFromStore, setError]
   );
 
   const isMyMessage = useCallback(
@@ -278,6 +249,7 @@ export function useChatWindow(conversationId?: string) {
     isTyping,
     currentUserId,
     isAuthenticated,
+    isBlocked,
 
     // Handlers
     handleSendMessage,

@@ -12,65 +12,86 @@ export function useConversationsList(
   const [newUserId, setNewUserId] = useState('');
   const [creatingConvo, setCreatingConvo] = useState(false);
 
-  const conversations = useMessageStore((s) => s.conversations);
+  const conversationsRaw = useMessageStore((s) => s.conversations);
   const typingUsers = useMessageStore((s) => s.typingUsers);
-  const allMessages = useMessageStore((s) => s.messages);
   const setConversations = useMessageStore((s) => s.setConversations);
+  const addMessage = useMessageStore((s) => s.addMessage);
+  const unseenCounts = useMessageStore((s) => s.unseenCounts);
+  const updateConversationUnseenCount = useMessageStore(
+    (s) => s.updateConversationUnseenCount
+  );
 
   const user = useAuthStore((s) => s.user);
   const currentUserId = (user as { id?: number })?.id ?? null;
 
-  // Helper to check if a conversation has any unseen messages
-  const hasUnseenMessages = useCallback(
-    (conversationId: number): boolean => {
-      const messages = allMessages[conversationId] || [];
+  const getUnseenCount = useCallback(
+    (conversationId: number): number => {
+      // First check the unseenCounts store (most up-to-date from API)
+      if (unseenCounts[conversationId] !== undefined) {
+        return unseenCounts[conversationId];
+      }
 
-      // Check if there are any messages that are not seen and not sent by current user
-      const hasUnseen = messages.some(
-        (msg) => !msg.isSeen && msg.senderId !== currentUserId
-      );
-
-      console.log(`📊 Unseen check for conversation ${conversationId}:`, {
-        totalMessages: messages.length,
-        currentUserId,
-        hasUnseen,
+      // Fallback to conversation object's unseenCount
+      const conversation = conversationsRaw.find((conv) => {
+        const convId = conv.conversationId || conv.id;
+        return convId === conversationId;
       });
-
-      return hasUnseen;
+      return conversation?.unseenCount ?? 0;
     },
-    [allMessages, currentUserId]
+    [conversationsRaw, unseenCounts]
   );
 
-  // Calculate total number of conversations with unseen messages
   const unseenConversationsCount = useMemo(() => {
-    return conversations.filter((conv) => {
+    return conversationsRaw.filter((conv) => {
       const convId = conv.conversationId || conv.id;
-      return convId ? hasUnseenMessages(convId) : false;
+      return convId ? getUnseenCount(convId) > 0 : false;
     }).length;
-  }, [conversations, hasUnseenMessages]);
+  }, [conversationsRaw, getUnseenCount]);
 
-  // Load conversations on mount - only if not already loaded
   useEffect(() => {
-    // Skip if conversations are already loaded
-    if (conversations.length > 0) {
-      console.log('✅ Using cached conversations, skipping fetch');
-      return;
-    }
+    if (conversationsRaw.length > 0) return;
 
     const loadConversations = async () => {
       setLoading(true);
       setError(null);
       try {
         const conversations = await fetchConversations();
-        console.log('📥 Fetching conversations from backend:', conversations);
 
         if (Array.isArray(conversations)) {
+          // First, add all last messages to the message store
+          conversations.forEach((conv: Record<string, unknown>) => {
+            if (conv.lastMessage) {
+              const conversationId = conv.conversationId || conv.id;
+              const unseenCount = (conv.unseenCount as number) ?? 0;
+              const lastMsg = conv.lastMessage as any;
+
+              const messageWithConversationId = {
+                ...lastMsg,
+                conversationId: conversationId,
+                isSeen: lastMsg.isSeen ?? unseenCount === 0,
+              };
+
+              addMessage(messageWithConversationId);
+            }
+          });
+
+          // Then normalize and set conversations
           const normalizedConversations = conversations.map(
             (conv: Record<string, unknown>) => {
-              console.log('📋 Individual conversation:', conv);
+              const conversationId = conv.conversationId || conv.id;
+
+              // Update unseen count in store from API
+              const unseenCount = (conv.unseenCount as number) ?? 0;
+              updateConversationUnseenCount(
+                conversationId as number,
+                unseenCount
+              );
+
               return {
                 ...conv,
-                id: conv.conversationId || conv.id,
+                id: conversationId,
+                // Ensure lastMessage is preserved
+                lastMessage: conv.lastMessage,
               } as any;
             }
           );
@@ -85,7 +106,12 @@ export function useConversationsList(
     };
 
     loadConversations();
-  }, [setConversations, conversations.length]);
+  }, [
+    setConversations,
+    conversationsRaw.length,
+    addMessage,
+    updateConversationUnseenCount,
+  ]);
 
   const handleCreateConversation = useCallback(async () => {
     const userId = parseInt(newUserId);
@@ -162,14 +188,10 @@ export function useConversationsList(
       timestamp: string;
       unseenCount: number;
     } => {
-      console.log('🔍 Processing conversation for display:', conversation);
-
-      // Backend returns 'user' object, not 'participants' array
       const otherUser = (conversation.user ||
         (conversation.participants as unknown[])?.[0]) as
         | Record<string, unknown>
         | undefined;
-      console.log('👤 Other user:', otherUser);
 
       const displayName = String(
         conversation.name ||
@@ -192,7 +214,6 @@ export function useConversationsList(
       const usersTypingInConvo = typingUsers[convId as number] || [];
       const isTyping = usersTypingInConvo.length > 0;
 
-      // Check if last message was sent by current user
       const lastMessage = conversation.lastMessage as
         | Record<string, unknown>
         | undefined;
@@ -201,7 +222,6 @@ export function useConversationsList(
       if (isTyping) {
         lastMessageText = 'typing...';
       } else if (lastMessage?.text) {
-        // If current user sent the message, prefix with "You: "
         if (currentUserId && lastMessage.senderId === currentUserId) {
           lastMessageText = `You: ${String(lastMessage.text)}`;
         } else {
@@ -209,15 +229,11 @@ export function useConversationsList(
         }
       }
 
-      const lastMessageObj = conversation.lastMessage as
-        | Record<string, unknown>
-        | undefined;
-      const timestamp = lastMessageObj?.createdAt
-        ? formatTimestamp(lastMessageObj.createdAt as string)
+      const timestamp = lastMessage?.createdAt
+        ? formatTimestamp(lastMessage.createdAt as string)
         : '';
 
-      // Check if conversation has unseen messages (returns 1 if yes, 0 if no)
-      const unseenCount = hasUnseenMessages(convId as number) ? 1 : 0;
+      const unseenCount = getUnseenCount(convId as number);
 
       return {
         displayName,
@@ -230,24 +246,19 @@ export function useConversationsList(
         unseenCount,
       };
     },
-    [typingUsers, formatTimestamp, currentUserId, hasUnseenMessages]
+    [typingUsers, formatTimestamp, currentUserId, getUnseenCount]
   );
 
   return {
-    // State
     loading,
     error,
-    conversations,
+    conversations: conversationsRaw,
     showNewConvoModal,
     newUserId,
     creatingConvo,
     unseenConversationsCount,
-
-    // Setters
     setShowNewConvoModal,
     setNewUserId,
-
-    // Handlers
     handleCreateConversation,
     getConversationDisplay,
   };

@@ -1,6 +1,11 @@
 import { API_CONFIG } from '@/constants/api';
 import { TIMELINE_ENDPOINTS } from '../constants/api';
-import { TimelineFeedDtoResponse, AddTweetResponse } from '../types/api';
+import {
+  TimelineFeedDtoResponse,
+  AddTweetResponse,
+  ProfileSearchDtoResponse,
+  HashtagSearchDtoResponse,
+} from '../types/api';
 
 class ApiError extends Error {
   constructor(
@@ -78,5 +83,49 @@ export const timelineApi = {
     );
 
     return handleResponse<TimelineFeedDtoResponse>(response);
+  },
+  async searchProfile(
+    pageNumber = 1,
+    user: string,
+    limit = 10
+  ): Promise<ProfileSearchDtoResponse> {
+    const response = await fetch(
+      `${API_CONFIG.BASE_URL}${TIMELINE_ENDPOINTS.PROFILE_SEARCH}?` +
+        new URLSearchParams({
+          query: user,
+          page: `${pageNumber}`,
+          limit: `${limit}`,
+        }),
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    return handleResponse<ProfileSearchDtoResponse>(response);
+  },
+  async searchHashtag(
+    pageNumber = 1,
+    hashtag: string,
+    limit = 10
+  ): Promise<HashtagSearchDtoResponse> {
+    const response = await fetch(
+      `${API_CONFIG.BASE_URL}${TIMELINE_ENDPOINTS.HASTHAG_SEARCH}?` +
+        new URLSearchParams({
+          hashtag: hashtag,
+          page: `${pageNumber}`,
+          limit: `${limit}`,
+        }),
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    return handleResponse<HashtagSearchDtoResponse>(response);
   },
 };

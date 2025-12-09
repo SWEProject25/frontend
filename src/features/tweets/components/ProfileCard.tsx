@@ -64,11 +64,14 @@ export default function ProfileCard({ userId }: ProfileCardProps) {
           name={profile.name}
           username={profile.User.username}
         />
-        <FollowBtn
-          data-testid="profile-card-follow-button"
-          userId={profile.user_id}
-          isFollowed={profile.is_followed_by_me ?? false}
-        />
+        {/* Show Follow button only if not been blocked and not blocking */}
+        {!profile.is_been_blocked && !profile.is_blocked_by_me && (
+          <FollowBtn
+            data-testid="profile-card-follow-button"
+            userId={profile.user_id}
+            isFollowed={profile.is_followed_by_me ?? false}
+          />
+        )}
       </div>
       <div className="mt-3">
         <div className="flex items-center space-x-1">

@@ -2,46 +2,61 @@
 import React from 'react';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import UserCard from '@/components/ui/UserCard';
-import { FollowerDto } from '@/types/userInteractions';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 
-interface FollowListProps {
-  // Using any to avoid complex type inference issues with useInfiniteQuery
-  // The query should be a result from useInfiniteFollowers or useInfiniteFollowing
-  query: any;
+interface UserListItem {
+  id: number;
+  username: string;
+  displayName: string;
+  bio?: string | null;
+  profileImageUrl?: string | null;
+  verified?: boolean;
+  is_followed_by_me?: boolean;
+  is_following_me?: boolean;
 }
 
-export default function FollowList({ query }: FollowListProps) {
+interface GenericUserListProps {
+  query: any;
+  'data-testid'?: string;
+}
+
+export default function GenericUserList({
+  query,
+  'data-testid': testId = 'generic-user-list',
+}: GenericUserListProps) {
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     query;
   const currentUser = useAuthStore((s) => s.user);
 
-  const users: FollowerDto[] = React.useMemo(() => {
+  const users: UserListItem[] = React.useMemo(() => {
     if (!data?.pages) return [];
-    return data.pages.flatMap((page: { data: FollowerDto[] }) => page.data);
+    return data.pages.flatMap((page: { data: UserListItem[] }) => page.data);
   }, [data]);
 
   const hasInitialData = users.length > 0;
-  console.log('FollowList users:', users);
 
   return (
-    <div className="w-full" data-testid="follow-list">
+    <div className="w-full" data-testid={testId}>
       <InfiniteScroll
         isLoadingInitial={isLoading}
         isLoadingMore={isFetchingNextPage}
         loadMore={fetchNextPage}
         hasMoreData={hasNextPage ?? false}
         hasInitialData={hasInitialData}
-        data-testid="follow-list-infinite-scroll"
+        data-testid={`${testId}-infinite-scroll`}
       >
-        <div className="divide-y divide-border" data-testid="follow-list-items">
+        <div className="divide-y divide-border" data-testid={`${testId}-items`}>
           {users.map((user) => {
             const isCurrentUser = currentUser?.username === user.username;
+            const isFollowingMe = user.is_following_me ?? false;
+            // If is_followed_by_me is undefined, default to true (for followers-you-know list)
+            const isFollowed = user.is_followed_by_me ?? true;
+
             return (
               <div
                 key={user.id}
                 className="p-4 hover:bg-muted transition-colors"
-                data-testid={`follow-list-item-${user.id}`}
+                data-testid={`${testId}-item-${user.id}`}
               >
                 <UserCard
                   name={user.displayName}
@@ -49,10 +64,11 @@ export default function FollowList({ query }: FollowListProps) {
                   handle={`@${user.username}`}
                   verified={user.verified}
                   avatarUrl={user.profileImageUrl ?? undefined}
-                  isFollowed={user.is_followed_by_me}
+                  isFollowed={isFollowed}
+                  isFollowingMe={isFollowingMe}
                   actionType={isCurrentUser ? undefined : 'follow'}
                   linkTo={`/${user.username}`}
-                  data-testid={`follow-list-user-card-${user.id}`}
+                  data-testid={`${testId}-user-card-${user.id}`}
                 />
               </div>
             );

@@ -29,7 +29,7 @@ export interface Tweet {
 export interface TweetResponseDto {
   status: string;
   message: string;
-  data: TimelineFeed;
+  data: TimelineFeed[];
 }
 
 export interface Media {
@@ -53,6 +53,7 @@ export interface Reply {
   text: string;
   type: string;
   parentId: number;
+  mentions: [];
   media: Media[];
   isRepost: boolean;
   isQuote: boolean;
@@ -82,4 +83,18 @@ export interface TweetSummaryDto {
 export interface DeleteTweetResponseDto {
   status: string;
   message: string;
+}
+export interface Liker {
+  id: number;
+  username: string;
+  email: string;
+  name: string;
+  profileImageUrl: string | null;
+  is_verified: boolean;
+}
+
+export interface LikersResponseDto {
+  status: string;
+  message: string;
+  data: Liker[];
 }

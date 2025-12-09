@@ -20,17 +20,17 @@ export default function TweetList() {
     isFetchingNextPage,
     hasNextPage,
   } = useTimelineFeed();
-  console.log(data);
-  const setStoreTimeLine = useTweetStore((store) => store.setTimeLineFeed);
+
+  // const setStoreTimeLine = useTweetStore((store) => store.setTimeLineFeed);
   const pages = data?.pages.flat();
 
   // Store the first group of tweets in the store when data changes
-  React.useEffect(() => {
-    if (pages && pages.length > 0) {
-      // Type: TimelineFeedDtoResponse
-      setStoreTimeLine(pages[0] as TimelineFeedDtoResponse);
-    }
-  }, [pages, setStoreTimeLine]);
+  // React.useEffect(() => {
+  //   if (pages && pages.length > 0) {
+  //     // Type: TimelineFeedDtoResponse
+  //     setStoreTimeLine(pages[0] as TimelineFeedDtoResponse);
+  //   }
+  // }, [pages, setStoreTimeLine]);
 
   const renderTweets = pages?.map((group, i) => (
     <React.Fragment key={i}>

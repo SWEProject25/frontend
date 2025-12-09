@@ -83,9 +83,11 @@ interface ListProps {
   overlayColor?: string;
   name: string;
   height: string;
+  maxHeight?: string;
   width: string;
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
+  scroll?: boolean;
 }
 function List({
   children,
@@ -93,16 +95,18 @@ function List({
   overlayColor = 'bg-transparent',
   name,
   height,
+  maxHeight,
   width,
   closeOnOverlayClick = true,
   closeOnEscape = true,
+  scroll = false,
 }: ListProps) {
   const menuName = useXMenu((state) => state.menuName);
   const close = useXMenu((state) => state.close);
   const position = useXMenu((state) => state.position);
   // Close modal on scroll
   useEffect(() => {
-    if (menuName !== name || menuName === '' || preventScroll) return;
+    if (menuName !== name || menuName === '' || preventScroll || scroll) return;
     window.getSelection()?.removeAllRanges();
 
     const handleScroll = () => {
@@ -113,7 +117,7 @@ function List({
     return () => {
       window.removeEventListener('scroll', handleScroll, true);
     };
-  }, [menuName, name, close, preventScroll]);
+  }, [menuName, name, close, preventScroll, scroll]);
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (closeOnOverlayClick && e.target === e.currentTarget) {
@@ -134,15 +138,17 @@ function List({
   }, [closeOnEscape, close, menuName, name]);
 
   useEffect(() => {
-    if (menuName === name && preventScroll) {
-      document.body.style.overflow = 'hidden';
+    if (menuName === name) {
+      if (preventScroll) document.body.style.overflow = 'hidden';
+      else if (scroll) document.body.style.overflow = 'scroll';
+      else document.body.style.overflow = 'unset';
     } else {
       document.body.style.overflow = 'unset';
     }
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [preventScroll, menuName, name]);
+  }, [preventScroll, menuName, name, scroll]);
 
   const menuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -163,7 +169,7 @@ function List({
     >
       <div
         ref={menuRef}
-        className={`fixed z-50 ${width} ${height} bg-black border-border border-[1px] shadow-[0_0_20px_rgba(255,255,255,0.15)] rounded-2xl overflow-hidden`}
+        className={`fixed z-50 ${width} ${height} ${maxHeight}  bg-black border-border border-[1px] shadow-[0_0_20px_rgba(255,255,255,0.15)] rounded-2xl overflow-hidden`}
       >
         {children}
       </div>
