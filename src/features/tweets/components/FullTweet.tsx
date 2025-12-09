@@ -32,6 +32,8 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
   const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
     null
   );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const userId = useAuthStore((store) => store.user?.id);
   const byMe = userId === data?.userId;
   const {
@@ -102,15 +104,27 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
         break;
       case 'delete':
         // Handle delete action here
-        console.log('Delete action selected for tweet:', data.postId);
-
-        deleteTweetMutation.mutate();
+        setShowDeleteModal(true);
         break;
       default:
         break;
     }
   };
 
+  const handleDelete = async () => {
+    setIsDeleteLoading(true);
+    try {
+      await deleteTweetMutation.mutateAsync();
+      setShowDeleteModal(false);
+      // Optionally, you can add a success notification here
+      // Redirect to home after deletion
+      router.push('/home');
+    } catch (error) {
+      // Handle error, optionally show error notification
+    } finally {
+      setIsDeleteLoading(false);
+    }
+  };
   const handleConfirmBlock = async () => {
     if (!data) return;
 
@@ -153,7 +167,24 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
   const content = {
     text: data.text,
     media: data.media,
+    mentions: data.mentions,
   };
+
+  const quoteData = data.originalPostData
+    ? {
+        postId: data.originalPostData.postId,
+        tweetContent: {
+          text: data.originalPostData.text,
+          media: data.originalPostData.media,
+          mentions: data.originalPostData.mentions || [],
+        },
+        avatar: data.originalPostData.avatar ?? null,
+        name: data.originalPostData.name,
+        username: data.originalPostData.username,
+        isVerified: data.originalPostData.verified ?? false,
+        date: data.originalPostData.date,
+      }
+    : undefined;
 
   const actionsStats = {
     postId: data.postId,
@@ -200,7 +231,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
           </div>
         </div>
         <div className="mt-4 space-y-4">
-          <Content content={content} />
+          <Content content={content} isQuote={data.isQuote} data={quoteData} />
 
           <div className="flex items-center space-x-1">
             <Timing time={data.date} full={true} />
@@ -252,6 +283,16 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
         cancelText="Cancel"
         confirmButtonClass="bg-block hover:bg-block/90 text-white"
         isLoading={isBlockLoading}
+      />
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        title="Delete tweet?"
+        message="This action cannot be undone. Are you sure you want to delete this tweet?"
+        confirmText="Delete"
+        cancelText="Cancel"
+        isLoading={isDeleteLoading}
       />
     </div>
   );

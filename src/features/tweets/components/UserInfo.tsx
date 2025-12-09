@@ -36,12 +36,12 @@ export default function UserInfo({
 
   const containerClass =
     direction === 'horizontal'
-      ? 'flex items-center gap-1'
+      ? 'flex items-center gap-1 min-w-0 flex-1'
       : 'flex flex-col items-start';
 
-  const nameRowClass = 'font-bold hover:underline';
+  const nameRowClass = 'font-bold hover:underline truncate max-w-[150px]';
 
-  const usernameClass = 'text-gray-400 text-sm relative';
+  const usernameClass = 'text-gray-400 text-sm relative truncate max-w-[100px]';
 
   const profileCardClass =
     'absolute left-1/2 transform -translate-x-1/2 top-full z-50 cursor-default';
@@ -51,7 +51,7 @@ export default function UserInfo({
   const usernameCardShow = cardShow && (showUsernameCard || cardUsernameHover);
   return (
     <div className={containerClass} data-testid="tweet-user-info">
-      <div className="relative">
+      <div className="relative flex-shrink min-w-0">
         <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span
             data-testid="tweet-user-name"
@@ -71,9 +71,9 @@ export default function UserInfo({
             }}
           >
             <span className="flex items-center gap-0.5">
-              {data.name}
+              <span className="truncate">{data.name}</span>
               {data.verified && (
-                <VerifiedIcon className="w-4.5 h-4.5 text-blue-400" />
+                <VerifiedIcon className="w-4.5 h-4.5 text-blue-400 flex-shrink-0" />
               )}
             </span>
           </span>
@@ -101,7 +101,7 @@ export default function UserInfo({
           </div>
         )}
       </div>
-      <div className="relative">
+      <div className="relative flex-shrink min-w-0">
         <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span
             data-testid="tweet-user-username"

@@ -20,16 +20,11 @@ import { useDeleteTweet, useGetTweetSummary } from '../hooks/tweetQueries';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 export default function Tweet({ data }: { data: TimelineFeed }) {
   const userId = useAuthStore((store) => store.user?.id);
-  const byMe = userId === data.userId;
-  const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
-    username: data.username,
-    isFollowed: data.isFollowedByMe,
-    byMe,
-    isMuted: data.isMutedByMe || false,
-  });
 
   const [Hovered, setHovered] = useState(false);
   const [showBlockModal, setShowBlockModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
     null
   );
@@ -51,8 +46,16 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
       : data
     : data;
 
+  const byMe = userId === dataViewd.userId;
+  const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
+    username: dataViewd.username,
+    isFollowed: dataViewd.isFollowedByMe,
+    byMe,
+    isMuted: dataViewd.isMutedByMe || false,
+  });
+
   const user = {
-    id: data.userId,
+    id: dataViewd.userId,
     name: dataViewd?.name,
     username: dataViewd?.username,
     verified: dataViewd?.verified,
@@ -62,6 +65,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
   const content = {
     text: dataViewd?.text,
     media: dataViewd?.media,
+    mentions: dataViewd?.mentions,
   };
 
   const actionsStats = {
@@ -79,7 +83,23 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     isRepostedByMe: data.isRepostedByMe,
   };
 
-  const summary = useGetTweetSummary(data.postId);
+  const quoteData = data.originalPostData
+    ? {
+        postId: data.originalPostData.postId,
+        tweetContent: {
+          text: data.originalPostData.text,
+          media: data.originalPostData.media,
+          mentions: data.originalPostData.mentions || [],
+        },
+        avatar: data.originalPostData.avatar ?? null,
+        name: data.originalPostData.name,
+        username: data.originalPostData.username,
+        isVerified: data.originalPostData.verified ?? false,
+        date: data.originalPostData.date,
+      }
+    : undefined;
+
+  const summary = useGetTweetSummary(dataViewd.postId);
   const deleteTweetMutation = useDeleteTweet(data.postId);
   const handleDropdownAction = async (key: string) => {
     switch (key) {
@@ -103,14 +123,25 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
         break;
       case 'delete':
         // Handle delete action here
-        console.log('Delete action selected for tweet:', data.postId);
-        deleteTweetMutation.mutate();
+        setShowDeleteModal(true);
         break;
       default:
         break;
     }
   };
 
+  const handleDelete = async () => {
+    setIsDeleteLoading(true);
+    try {
+      await deleteTweetMutation.mutateAsync();
+      setShowDeleteModal(false);
+      // Optionally, you can add a success notification here
+    } catch (error) {
+      // Handle error, optionally show error notification
+    } finally {
+      setIsDeleteLoading(false);
+    }
+  };
   const handleConfirmBlock = async () => {
     if (blockAction === 'block') {
       await blockUser(data.userId);
@@ -135,29 +166,30 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
 
   return (
     <div
-      data-testid={`tweet-${data.postId}`}
+      data-testid={`tweet-${dataViewd.postId}`}
       onClick={() => {
         //setCurrentTweet(data);
-        router.push(`/home/${data.postId}`);
+        router.push(`/home/${dataViewd.postId}`);
       }}
       className={`block mx-auto w-full border-b border-gray-700 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer p-4`}
       style={{ boxSizing: 'border-box', maxWidth: '100%' }}
     >
       {/* Show reposted by if present */}
       {data.isRepost && (
-        <Link
-          href={`/${data.username}`}
-          onClick={(e) => e.stopPropagation()}
-          className="flex items-center text-xs text-gray-400 mb-1 ml-10 hover:underline"
-        >
+        <div className="flex items-center text-xs text-gray-400 mb-1 ml-10">
           <span className="mr-1">
             <RetweetIcon />
           </span>
           <span className="font-semibold">
-            <span>{data.name} </span>
-            reposted
+            <Link
+              href={`/${data.username}`}
+              onClick={(e) => e.stopPropagation()}
+              className="hover:underline"
+            >
+              {data.name} reposted
+            </Link>
           </span>
-        </Link>
+        </div>
       )}
       <div className="flex w-full gap-2">
         <TweetAvatar data={user} onHoverCard={setHovered} />
@@ -201,7 +233,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
               </DropDown>
             </div>
           </div>
-          <Content content={content} />
+          <Content content={content} isQuote={data.isQuote} data={quoteData} />
           <Actions
             stats={actionsStats}
             onOpened={setHovered}
@@ -229,6 +261,16 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
         cancelText="Cancel"
         confirmButtonClass="bg-block hover:bg-block/90 text-white"
         isLoading={isBlockLoading}
+      />
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        title="Delete tweet?"
+        message="This action cannot be undone. Are you sure you want to delete this tweet?"
+        confirmText="Delete"
+        cancelText="Cancel"
+        isLoading={isDeleteLoading}
       />
     </div>
   );

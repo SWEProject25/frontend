@@ -35,18 +35,18 @@ export default function SubTweet({
         }}
       >
         <div
-          className="flex items-center justify-between w-full"
+          className="flex items-center w-full gap-1 overflow-hidden"
           data-testid="tweet-header-add-reply"
           style={{
             maxWidth: '100%',
-            overflow: 'hidden',
-            wordBreak: 'break-word',
           }}
         >
-          <div className="flex items-center gap-1">
-            <span className="font-bold">{tweet?.name}</span>
-            <span className="text-gray-500">@{tweet?.username}</span>
-            <span className="text-gray-500">.</span>
+          <span className="font-bold truncate max-w-[30%]">{tweet?.name}</span>
+          <span className="text-gray-500 truncate max-w-[30%]">
+            @{tweet?.username}
+          </span>
+          <span className="text-gray-500">·</span>
+          <div className="flex-shrink-0">
             <Timing time={tweet?.date} hover={false} />
           </div>
         </div>
