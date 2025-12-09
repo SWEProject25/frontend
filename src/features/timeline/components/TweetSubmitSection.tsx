@@ -61,13 +61,8 @@ export default function TweetSubmitSection() {
     console.log(mentions);
     const mentionsId = mentions.map((mention) => mention.id);
 
-    // if (mentionsId.length > 0) {
-    //   mentionsId.forEach((id) => {
-    //     tweetFormData.append('mentionsIds[]', id.toString());
-    //   });
-    // }
     const allMentions = mentionsId.join(',');
-    tweetFormData.append('mentionsIds', allMentions);
+    tweetFormData.append(TweetFormDataKeys.MENTIONS, allMentions);
 
     console.log('mentionsIds:', tweetFormData.getAll('mentionsIds'));
 
@@ -75,8 +70,9 @@ export default function TweetSubmitSection() {
       selectedReplyOption === 0
         ? options[0].Name
         : options[selectedReplyOption - 1].Name;
-    if (tweetText.trim().length !== 0)
+    if (tweetText.trim().length !== 0) {
       tweetFormData.append(TweetFormDataKeys.CONTENT, tweetText);
+    }
     tweetFormData.append(TweetFormDataKeys.TYPE, 'POST');
     tweetFormData.append(TweetFormDataKeys.VISIBILITY, seclectdReply);
     mutate.mutate(tweetFormData);

@@ -13,13 +13,18 @@ export default function Trend({
   data,
   indx,
   category,
+  onClick,
 }: {
   data: TrendType;
   indx: number;
   category: string;
+  onClick: () => void;
 }) {
   return (
-    <div className="px-4 py-3 w-full flex flex-1 flex-col hover:bg-hover transition-colors cursor-pointer">
+    <div
+      className="px-4 py-3 w-full flex flex-1 flex-col hover:bg-input-bg-hover/40 transition-colors cursor-pointer"
+      onClick={onClick}
+    >
       <div className="text-[13px] text-text-inactive">
         <span>{indx}</span>
         <span>{category !== TRENDING_TAB && ` · ${category}`} · Trending</span>

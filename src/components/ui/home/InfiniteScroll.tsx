@@ -14,6 +14,7 @@ interface InfiniteScrollProps {
   'data-testid'?: string;
   noMoreDataMessage?: string;
   noDataMessage?: string;
+  showNoMoreData?: boolean;
 }
 
 export default function InfiniteScroll({
@@ -28,6 +29,7 @@ export default function InfiniteScroll({
   'data-testid': testId,
   noMoreDataMessage = 'You have reached the end',
   noDataMessage = 'No data available',
+  showNoMoreData = true,
 }: InfiniteScrollProps) {
   const observerElement = useRef<HTMLDivElement | null>(null);
   useEffect(
@@ -72,7 +74,8 @@ export default function InfiniteScroll({
         {!hasMoreData &&
           !isLoadingMore &&
           !isLoadingInitial &&
-          hasInitialData && (
+          hasInitialData &&
+          showNoMoreData && (
             <div
               className="flex flex-col items-center justify-center py-8 px-4"
               data-testid={testId ? `${testId}-end-message` : undefined}

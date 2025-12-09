@@ -13,25 +13,18 @@ import {
   MAX_WARNING_TWEET_LENGTH,
 } from '@/features/timeline/constants/tweetConstants';
 import { useEmoji } from '@/features/media/store/useMedia';
+import { useCheckValidUser } from '../hooks/timelineQueries';
 
 const startRedText = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
 function getCurrCursorPos(div: HTMLDivElement) {
   const selection = window.getSelection();
   if (!selection || !selection.anchorNode) return 0;
+  console.log(selection);
 
-  let pos = selection.anchorOffset;
-  let node = selection.anchorNode;
-
-  while (node && node !== div) {
-    let siblingNode = node.previousSibling;
-
-    while (siblingNode) {
-      pos += siblingNode.textContent?.length ?? 0;
-      siblingNode = siblingNode.previousSibling;
-    }
-    node = node.parentNode ?? div;
-  }
-  return pos;
+  const range = document.createRange();
+  range.setStart(div, 0);
+  range.setEnd(selection.anchorNode, selection.anchorOffset);
+  return range.toString().length;
 }
 
 function setCartAtEnd(div: HTMLDivElement) {
@@ -50,6 +43,11 @@ export type mentionType = {
   checked: boolean;
   id: number;
 };
+
+export type notMentionType = mentionType & {
+  username: string;
+  span: HTMLSpanElement;
+};
 export default function TweetText({
   divRef,
 }: {
@@ -62,12 +60,47 @@ export default function TweetText({
   const [spanText2, setSpanText2] = useState('');
   const mention = useMention();
   const mentionIsDone = useMentionIsDone();
-  const { setMention, setIsOpen, setIsDone } = useActions();
+  const { setMention, setIsOpen, setIsDone, setKeyDown } = useActions();
   const { setMentions } = useAddTweetActions();
   const spanMention = useRef<null | HTMLSpanElement>(null);
   const completedMentions = useRef<mentionType[]>([]);
 
-  // const [mentionIsOpen, setMentionIsOpen] = useState(false);
+  const notMentions = useRef<notMentionType[]>([]);
+  const [checkValidUsers, setCheckValidUsers] = useState(-1);
+  const { data } = useCheckValidUser(
+    notMentions.current[checkValidUsers]?.username.slice(1) ?? ''
+  );
+  const isOpen = useIsOpen();
+  console.log(notMentions.current);
+  console.log(completedMentions.current);
+  useEffect(
+    function () {
+      if (data?.data) {
+        console.log(notMentions.current);
+
+        console.log('dattttttttta0', data);
+        const mention = notMentions.current[checkValidUsers];
+        const span = mention.span;
+        span.className = 'text-primary-hover';
+        span.setAttribute('data-mention', 'completed');
+        completedMentions.current.push({
+          indx: mention.indx,
+          username: mention.username,
+          checked: true,
+          id: data.data.User.id,
+        });
+        notMentions.current = notMentions.current.filter(
+          (men, indx) => indx !== checkValidUsers
+        );
+        span.textContent = mention.username;
+
+        console.log(notMentions.current);
+        console.log(completedMentions.current);
+      }
+    },
+    [checkValidUsers, data]
+  );
+
   const emoji = useEmoji();
   const handleChangeText = useCallback(
     (text: string, lastData: string = '') => {
@@ -75,12 +108,6 @@ export default function TweetText({
         /(?<=^|\s)@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+$/
       ) ?? [''];
       const index = lastMatch.index;
-      // let lastMention = lastMatch[0].slice(1);
-      // let isActiveMention =
-      //   lastMatch &&
-      //   lastMatch.length <= 10 &&
-      //   text.length + 10 <= startRedText &&
-      //   !mentionIsDone;
       let isActiveMention = false;
       let lastMention = '';
 
@@ -96,17 +123,19 @@ export default function TweetText({
           setMentions(completedMentions.current);
 
           setIsOpen(false);
+          setKeyDown('reset');
           spanMention.current = null;
           setSpanText2('');
           setTweetText('');
           return;
         }
         setTweetText(text);
-        // if (divRef.current) divRef.current.textContent = text;
+
         spanRef1.current.style.color = 'var(--color-text-active)';
         spanRef1.current.innerHTML = '';
         const displayedText = text.slice(0, startRedText);
         let lastIndex = 0;
+        let tweetText = '';
 
         const matchRegex = /(?<=^|\s)@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+/g;
         let match;
@@ -132,12 +161,12 @@ export default function TweetText({
           const mentionIndex = match.index;
           const mentionText = match[0];
           const mentionEndIndx = mentionIndex + mentionText.length;
-
           if (mentionIndex > lastIndex) {
             const node = document.createTextNode(
               displayedText.slice(lastIndex, mentionIndex)
             );
             spanRef1.current.appendChild(node);
+            tweetText += displayedText.slice(lastIndex, mentionIndex);
           }
           let currIndx = 0;
           const isCompleted = completedMentions.current.some((ment, index) => {
@@ -157,37 +186,26 @@ export default function TweetText({
               checked: true,
               indx: mentionIndex,
             };
-          // completedMentions.current = completedMentions.current.map(
-          //   (ment) => {
-          //     if (
-          //       ment.username === mentionText &&
-          //       Math.abs(ment.indx - mentionIndex) < 10 &&
-          //       ment.checked === false
-          //     ) {
-          //       return { ...ment, checked: true, indx: mentionIndex };
-          //     }
-          //     return ment;
-          //   }
-          //   // ment.indx === mentionIndex &&
-          // );
 
           const isActive = cursor >= mentionIndex && cursor <= mentionEndIndx;
-          // (isActiveMention && mentionIndex === index) ||
-          // isActiveMention = cursor >= mentionIndex && cursor <= mentionEndIndx;
-          // const isActive = cursor >= mentionIndex && cursor <= mentionEndIndx;
-          // console.log(cursor >= mentionIndex && cursor <= mentionEndIndx);
-          // setIsOpen(true);
-          // setMention(lastMatch);
-          if (isActive || isCompleted) {
-            const span = document.createElement('span');
+          console.log(
+            isActive,
+            isCompleted,
+            mentionIndex,
+            mentionEndIndx,
+            cursor
+          );
+          tweetText += mentionText;
 
-            span.textContent = mentionText;
+          const span = document.createElement('span');
+          span.textContent = mentionText;
+          span.setAttribute(
+            'data-mention',
+            `${isCompleted ? 'completed' : isActive ? 'active' : 'notCompleted'}`
+          );
+          span.setAttribute('data-indx', `${mentionIndex}`);
+          if (isActive || isCompleted) {
             span.className = 'text-primary-hover';
-            span.setAttribute(
-              'data-mention',
-              `${isCompleted ? 'completed' : 'active'}`
-            );
-            span.setAttribute('data-indx', `${mentionIndex}`);
             if (isActive && !isCompleted) {
               spanMention.current = span;
               spanMention.current.style.color =
@@ -197,18 +215,33 @@ export default function TweetText({
               isActiveMention = true;
               lastMention = mentionText.slice(1);
             }
-            // spanRef1.current.textContent = text.slice(0, index);
+            if (isCompleted) {
+              tweetText += '$';
+            }
             spanRef1.current.appendChild(span);
-          } else
-            spanRef1.current.appendChild(document.createTextNode(mentionText));
+          } else {
+            span.className = 'text-active';
+            console.log(notMentions.current);
+            const notCompleted = notMentions.current.some(
+              (ment) => ment.username === mentionText
+            );
+            if (!notCompleted) {
+              notMentions.current.push({
+                username: mentionText,
+                span: span,
+                checked: false,
+                indx: mentionIndex,
+                id: mentionIndex,
+              });
+              setCheckValidUsers(notMentions.current.length - 1);
+              console.log('enterre');
+            }
+            spanRef1.current.appendChild(span);
+          }
 
           lastIndex = mentionIndex + mentionText.length;
-          // setMention(lastData ?? '');
-          // spanRef1.current.innerHTML += `<span class='text-primary-hover'>${mention}</span>`;
-
-          // if (spanMention.current && spanMention.current.textContent) {
-          //   spanMention.current.text
         }
+
         const prevLength = completedMentions.current.length;
         completedMentions.current = completedMentions.current.filter(
           (ment) => ment.checked
@@ -219,18 +252,23 @@ export default function TweetText({
           console.log('s');
           if (spanMention.current)
             spanMention.current.style.color = 'var( --color-mention-progress)';
-          // handleChangeText(text);
         }
         console.log(completedMentions);
-        if (lastIndex < displayedText.length)
+        if (lastIndex < displayedText.length) {
           spanRef1.current.appendChild(
             document.createTextNode(displayedText.slice(lastIndex))
           );
+          tweetText += displayedText.slice(lastIndex);
+        }
+
         if (isActiveMention) {
           setIsOpen(true);
           setMention(lastMention);
         } else {
           setIsOpen(false);
+
+          setKeyDown('reset');
+
           setMention('');
           spanMention.current = null;
         }
@@ -242,6 +280,7 @@ export default function TweetText({
         } else {
           setSpanText2('');
         }
+        console.log(tweetText);
       }
     },
     [
@@ -252,6 +291,7 @@ export default function TweetText({
       setMentions,
       setIsOpen,
       divRef,
+      setKeyDown,
     ]
   );
 
@@ -265,17 +305,12 @@ export default function TweetText({
 
         if (spanMention.current && spanMention.current.textContent)
           spanMention.current.textContent = `@` + currMention[0] + ` `;
-        // const indx = divRef.current?.innerText.match(
-        //   /(?<=^|\s)@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+$/
-        // )?.index;
 
         const matches = divRef.current?.innerText.matchAll(
           /(?<=^|\s)@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+/g
         ) ?? [''];
         const indx = +(spanMention.current?.getAttribute('data-indx') ?? 0);
-        // matches.find(
-        //   (ment) => ment[0] === `@` + mentionIsDone && ment.index === indx
-        // );
+
         console.log(indx);
         if (indx !== undefined) {
           const text = divRef.current?.innerText;
@@ -302,6 +337,8 @@ export default function TweetText({
           spanMention.current = null;
           setIsDone('');
           setIsOpen(false);
+          setKeyDown('reset');
+
           setMention('');
           handleChangeText(newText);
         }
@@ -318,6 +355,7 @@ export default function TweetText({
       completedMentions,
       setMentions,
       handleChangeText,
+      setKeyDown,
     ]
   );
 
@@ -336,18 +374,27 @@ export default function TweetText({
 
         setIsDone('');
         setIsOpen(false);
+        setKeyDown('reset');
+
         setMention('');
-        // setTweetText('');
       }
     },
-    [isSuccess, divRef, setIsDone, setIsOpen, setMention]
+    [
+      isSuccess,
+      divRef,
+      setIsDone,
+      setIsOpen,
+      setMention,
+      setMentions,
+      setKeyDown,
+    ]
   );
   useEffect(
     function () {
       if (emoji) {
         if (divRef.current) {
           divRef.current.innerText = divRef.current.innerText + emoji;
-          handleChangeText(divRef.current?.innerText);
+          handleChangeText(divRef.current.innerText);
         }
       }
     },
@@ -361,41 +408,19 @@ export default function TweetText({
     const input = e.nativeEvent as InputEvent;
     console.log(input.data);
     console.log('handleINput ', e);
-    if (divRef.current?.innerText) {
+    if (divRef.current) {
       handleChangeText(divRef.current.innerText, input.data ?? '');
     }
   }
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key !== 'Backspace') return;
-    console.log('as');
-    const selction = document.getSelection();
-    if (!selction || !selction.anchorNode) return;
-    const node =
-      selction.anchorNode.nodeType === Node.TEXT_NODE
-        ? selction.anchorNode.parentNode
-        : selction.anchorNode;
-
-    console.log(node, selction.anchorNode);
-    if (
-      node instanceof HTMLSpanElement &&
-      (node.getAttribute('data-mention') === 'completed' ||
-        node.getAttribute('data-mention') === 'active')
-    ) {
-      completedMentions.current.filter(
-        (mention) =>
-          mention.indx !== +(node.getAttribute('data-indx') ?? -1) ||
-          mention.username !== node.textContent
-      );
-      setMentions(completedMentions.current);
-
-      console.log('asqq');
+    if (isOpen) {
+      if (e.key === 'Enter' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        setKeyDown(e.key);
+      }
+    }
+    if (e.ctrlKey && e.key === 'z') {
       e.preventDefault();
-      node.remove();
-      setMention('');
-      setIsDone('');
-      setIsOpen(false);
-      if (divRef.current?.textContent)
-        handleChangeText(divRef.current.textContent);
     }
   }
   return (
@@ -424,7 +449,7 @@ export default function TweetText({
         onInput={handleInput}
         data-testid="tweet-text-input"
         ref={divRef}
-        // onKeyDown={handleKeyDown}
+        onKeyDown={handleKeyDown}
         spellCheck={true}
         aria-label="Tweet text input overlay"
         className="   absolute top-0 pl-2 left-0 py-3 inset-0 w-full h-full text-transparent caret-white  outline-none whitespace-pre-wrap break-words overflow-wrap-anywhere pointer-events-auto text-xl"

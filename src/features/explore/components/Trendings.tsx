@@ -5,10 +5,11 @@ import Trend from './Trend';
 import { Loader } from '@/components/generic';
 import React from 'react';
 import toasterMessage from '@/components/ui/home/ToasterMessage';
+import { useRouter } from 'next/navigation';
 
 export default function Trendings() {
   const { data, error, isError, isLoading } = useTrendingFeed();
-
+  const router = useRouter();
   const renderTrends = data?.data.trending.map((trend, ind) => (
     <Trend
       data-testid={`explore-feed-trend-${trend.tag}`}
@@ -16,6 +17,13 @@ export default function Trendings() {
       data={trend}
       key={ind}
       indx={ind + 1}
+      onClick={() => {
+        const params = new URLSearchParams({
+          q: `${trend.tag}`,
+        });
+
+        router.push(`/search?${params}`);
+      }}
     />
   ));
 

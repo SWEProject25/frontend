@@ -11,6 +11,7 @@ export const TweetFormDataKeys = {
   PARENT_ID: 'parentId',
   VISIBILITY: 'visibility',
   MEDIA: 'media',
+  MENTIONS: 'mentionsIds',
 };
 
 export interface AddTweetResponse {

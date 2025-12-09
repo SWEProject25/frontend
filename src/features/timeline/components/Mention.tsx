@@ -3,6 +3,7 @@ import {
   useMention,
   useActions,
   useIsOpen,
+  useCurrentKey,
 } from '@/features/timeline/store/useMentionStore';
 
 import { useSearchProfile } from '../hooks/timelineQueries';
@@ -16,7 +17,8 @@ export default function Mention() {
   const mention = useMention();
   const [selectedTab, setSelectedTab] = useState(-1);
 
-  const { setMention, setIsOpen, setIsDone } = useActions();
+  const { setMention, setIsOpen, setIsDone, setKeyDown } = useActions();
+  const currentKey = useCurrentKey();
   const isOpen = useIsOpen();
   const {
     data: profiles,
@@ -33,6 +35,75 @@ export default function Mention() {
 
   useEffect(
     function () {
+      const totalProfiles = profiles?.pages[0].metadata.total ?? 0;
+
+      function handleKeyDown(key: string) {
+        const startIndx = totalProfiles ? 0 : -1;
+        if (key === 'ArrowDown') {
+          setSelectedTab((tab) =>
+            tab + 1 > totalProfiles - 1 ? startIndx : tab + 1
+          );
+          const scrollDown =
+            selectedTab + 1 > totalProfiles - 1 ? -60 * totalProfiles : 60;
+
+          if (selectedTab > 2)
+            divRef.current?.scrollBy({
+              top: scrollDown,
+              behavior: 'smooth',
+            });
+        } else if (key === 'ArrowUp') {
+          setSelectedTab((tab) => (tab - 1 < 0 ? totalProfiles - 1 : tab - 1));
+          const scrollUp =
+            selectedTab - 1 < startIndx ? 60 * totalProfiles : -60;
+          if (selectedTab < totalProfiles)
+            divRef.current?.scrollBy({
+              top: scrollUp,
+              behavior: 'smooth',
+            });
+        }
+        if (key === 'Enter') {
+          if (selectedTab === -1) {
+            if (totalProfiles && pages) {
+              //   setMention(pages[0].data[0].User.username + '');
+              setIsDone(
+                pages[0].data[0].User.username + ' ' + pages[0].data[0].id
+              );
+
+              console.log(pages[0].data[0].User.username);
+              //set username with first one
+            }
+          } else {
+            if (pages) {
+              const limit = pages[0].metadata.limit;
+              console.log(limit);
+              const index = selectedTab % limit;
+              const page = Math.floor(selectedTab / limit);
+              console.log(page, index, selectedTab);
+              const profile = pages[page].data[index];
+              console.log(profile);
+              //   setMention(profile.User.username + '');
+              console.log(profile.User.username + ' ' + profile.id);
+              setIsDone(profile.User.username + ' ' + profile.id);
+              console.log(profile.User.username);
+              // set user name with profile
+            }
+          }
+          setIsOpen(false);
+          //   setIsDone(true);
+        } else {
+          if (key === 'reset') {
+            setSelectedTab(-1);
+          }
+        }
+      }
+      handleKeyDown(currentKey);
+      setKeyDown('');
+      console.log(currentKey);
+    },
+    [currentKey, setKeyDown, profiles, pages]
+  );
+  useEffect(
+    function () {
       function handleCloseSearch(e: MouseEvent) {
         if (
           divRef.current &&
@@ -47,68 +118,13 @@ export default function Mention() {
     [setIsOpen]
   );
 
-  function handleKeyDown(e: React.KeyboardEvent) {
-    const startIndx = totalProfiles ? 0 : -1;
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setSelectedTab((tab) =>
-        tab + 1 > totalProfiles - 1 ? startIndx : tab + 1
-      );
-      const scrollDown =
-        selectedTab + 1 > totalProfiles - 1 ? -60 * totalProfiles : 60;
-
-      if (selectedTab > 3)
-        divRef.current?.scrollBy({
-          top: scrollDown,
-          behavior: 'smooth',
-        });
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setSelectedTab((tab) => (tab - 1 < 0 ? totalProfiles - 1 : tab - 1));
-      const scrollUp = selectedTab - 1 < startIndx ? 60 * totalProfiles : -60;
-      if (selectedTab < totalProfiles)
-        divRef.current?.scrollBy({
-          top: scrollUp,
-          behavior: 'smooth',
-        });
-    }
-    if (e.key === 'Enter') {
-      if (selectedTab === -1) {
-        if (totalProfiles && pages) {
-          //   setMention(pages[0].data[0].User.username + '');
-          setIsDone(pages[0].data[0].User.username + ' ' + pages[0].data[0].id);
-
-          console.log(pages[0].data[0].User.username);
-          //set username with first one
-        }
-      } else {
-        if (pages) {
-          const limit = pages[0].metadata.limit;
-          console.log(limit);
-          const index = selectedTab % limit;
-          const page = Math.floor(selectedTab / limit);
-          console.log(page, index, selectedTab);
-          const profile = pages[page].data[index];
-          console.log(profile);
-          //   setMention(profile.User.username + '');
-          setIsDone(profile.User.username + ' ' + profile.id);
-          console.log(profile.User.username);
-          // set user name with profile
-        }
-      }
-      setIsOpen(false);
-      //   setIsDone(true);
-    }
-  }
-  const totalProfiles = profiles?.pages[0].metadata.total ?? 0;
-
   const renderProfiles = pages?.map((group, i) => (
     <React.Fragment key={i}>
       {group.data.map((profile, indx) => (
         <div
           key={profile.id}
-          //   className={`flex w-full ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3 ${selectedTab === i * group.metadata.limit + (indx + 2) && 'bg-white/12'} hover:cursor-pointer hover:bg-white/12`}
-          className={`flex w-full ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3  hover:cursor-pointer hover:bg-white/12`}
+          className={`flex w-full ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3 ${selectedTab === i * group.metadata.limit + indx && 'bg-white/12'} hover:cursor-pointer hover:bg-white/12`}
+          // className={`flex w-full ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3  hover:cursor-pointer hover:bg-white/12`}
           onClick={() => {
             // setMention(profile.User.username + '');
             console.log(profile.User.username);
@@ -116,7 +132,10 @@ export default function Mention() {
             // setIsDone(true);
             setIsDone(profile.User.username + ' ' + profile.id);
           }}
-          onKeyDown={handleKeyDown}
+          // onKeyDown={(e: React.KeyboardEvent) => {
+          //   e.preventDefault();
+          //   handleKeyDown(e.key);
+          // }}
         >
           <UserCard
             name={profile.name}
@@ -163,6 +182,7 @@ export default function Mention() {
             hasInitialData={hasInitialData}
             noDataMessage="no such profile"
             noMoreDataMessage="no more profiles"
+            showNoMoreData={false}
           >
             {renderProfiles}
           </InfiniteScroll>
