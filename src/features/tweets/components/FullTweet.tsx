@@ -173,6 +173,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
   const quoteData = data.originalPostData
     ? {
         postId: data.originalPostData.postId,
+        userId: data.originalPostData.userId,
         tweetContent: {
           text: data.originalPostData.text,
           media: data.originalPostData.media,
@@ -198,7 +199,6 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     retweetsCount: data.retweetsCount,
     commentsCount: data.commentsCount,
     isLikedByMe: data.isLikedByMe,
-    isFollowedByMe: data.isFollowedByMe,
     isRepostedByMe: data.isRepostedByMe,
   };
   return (
@@ -231,7 +231,12 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
           </div>
         </div>
         <div className="mt-4 space-y-4">
-          <Content content={content} isQuote={data.isQuote} data={quoteData} />
+          <Content
+            content={content}
+            isQuote={data.isQuote}
+            data={quoteData}
+            fullWidth={true}
+          />
 
           <div className="flex items-center space-x-1">
             <Timing time={data.date} full={true} />

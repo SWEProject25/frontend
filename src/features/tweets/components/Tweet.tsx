@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import Content from './Content';
 import Actions from './Actions';
 import UserInfo from './UserInfo';
@@ -69,23 +69,23 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
   };
 
   const actionsStats = {
-    postId: dataViewd?.postId,
+    postId: dataViewd.postId,
     isRepost: data.isRepost,
     isQuote: data.isQuote,
     userId: data.userId,
-    likesCount: data.likesCount,
+    likesCount: dataViewd.likesCount,
     type: data.type,
     parentId: data.parentId,
-    retweetsCount: data.retweetsCount,
-    commentsCount: data.commentsCount,
-    isLikedByMe: data.isLikedByMe,
-    isFollowedByMe: data.isFollowedByMe,
-    isRepostedByMe: data.isRepostedByMe,
+    retweetsCount: dataViewd.retweetsCount,
+    commentsCount: dataViewd.commentsCount,
+    isLikedByMe: dataViewd.isLikedByMe,
+    isRepostedByMe: dataViewd.isRepostedByMe,
   };
 
   const quoteData = data.originalPostData
     ? {
         postId: data.originalPostData.postId,
+        userId: data.originalPostData.userId,
         tweetContent: {
           text: data.originalPostData.text,
           media: data.originalPostData.media,
@@ -100,21 +100,21 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     : undefined;
 
   const summary = useGetTweetSummary(dataViewd.postId);
-  const deleteTweetMutation = useDeleteTweet(data.postId);
+  const deleteTweetMutation = useDeleteTweet(dataViewd.postId);
   const handleDropdownAction = async (key: string) => {
     switch (key) {
       case 'follow':
         if (data.isFollowedByMe) {
-          await unfollowUser(data.userId);
+          await unfollowUser(dataViewd.userId);
         } else {
-          await followUser(data.userId);
+          await followUser(dataViewd.userId);
         }
         break;
       case 'mute':
         if (data.isMutedByMe) {
-          await unmuteUser(data.userId);
+          await unmuteUser(dataViewd.userId);
         } else {
-          await muteUser(data.userId);
+          await muteUser(dataViewd.userId);
         }
         break;
       case 'block':
@@ -144,9 +144,9 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
   };
   const handleConfirmBlock = async () => {
     if (blockAction === 'block') {
-      await blockUser(data.userId);
+      await blockUser(dataViewd.userId);
     } else if (blockAction === 'unblock') {
-      await unblockUser(data.userId);
+      await unblockUser(dataViewd.userId);
     }
     setShowBlockModal(false);
     setBlockAction(null);
@@ -157,7 +157,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
   const setSummaryOpened = useTweetStore((store) => store.setSummaryOpened);
   const setSummaryTweet = useTweetStore((store) => store.setSummaryTweet);
   function handleFetchSummary() {
-    if (summary.data) {
+    if (summary?.data) {
       setTweetSummary(summary.data.data);
       setSummaryOpened(true);
       setSummaryTweet(dataViewd);

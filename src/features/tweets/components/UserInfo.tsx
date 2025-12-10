@@ -36,7 +36,7 @@ export default function UserInfo({
 
   const containerClass =
     direction === 'horizontal'
-      ? 'flex items-center gap-1 min-w-0 flex-1'
+      ? `flex items-center gap-1 min-w-0 flex-1`
       : 'flex flex-col items-start';
 
   const nameRowClass = 'font-bold hover:underline truncate max-w-[150px]';

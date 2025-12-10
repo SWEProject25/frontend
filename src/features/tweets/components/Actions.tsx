@@ -27,7 +27,6 @@ type stats = {
   retweetsCount: number;
   commentsCount: number;
   isLikedByMe: boolean;
-  isFollowedByMe: boolean;
   isRepostedByMe: boolean;
 };
 

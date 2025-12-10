@@ -23,6 +23,7 @@ type TweetContent = {
 };
 type quoteProps = {
   postId: number;
+  userId: number;
   tweetContent: TweetContent;
   avatar: string | null;
   name: string;
@@ -35,7 +36,7 @@ export default function QuoteTweet(data: quoteProps) {
   const router = useRouter();
 
   const user = {
-    id: 0, // You may need to pass userId in quoteProps
+    id: data.userId, // You may need to pass userId in quoteProps
     name: data.name,
     username: data.username,
     verified: data.isVerified,
@@ -55,10 +56,16 @@ export default function QuoteTweet(data: quoteProps) {
       <div className="flex w-full gap-2">
         <TweetAvatar data={user} onHoverCard={setHovered} />
         <div className="flex flex-col flex-1 min-w-0">
-          <div className="flex items-center gap-1 w-full">
-            <UserInfo data={user} onHoverCard={setHovered} cardShow={false} />
-            <span className="text-gray-500">·</span>
-            <Timing time={data.date} hover={false} />
+          <div
+            className="flex items-center justify-between w-full"
+            data-testid="tweet-header"
+            style={{ maxWidth: '100%' }}
+          >
+            <div className="flex items-center gap-1">
+              <UserInfo data={user} onHoverCard={setHovered} cardShow={false} />
+              <span className="text-gray-500">·</span>
+              <Timing time={data.date} hover={false} />
+            </div>
           </div>
           <Content content={data.tweetContent} />
         </div>
