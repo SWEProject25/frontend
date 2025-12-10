@@ -73,3 +73,18 @@ export interface ReplyDto {
     posts: TimelineFeed[];
   };
 }
+
+export interface Liker {
+  id: number;
+  username: string;
+  email: string;
+  name: string;
+  profileImageUrl: string | null;
+  is_verified: boolean;
+}
+
+export interface LikersResponseDto {
+  status: string;
+  message: string;
+  data: Liker[];
+}

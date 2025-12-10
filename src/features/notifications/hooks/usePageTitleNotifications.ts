@@ -7,6 +7,7 @@ import { setNotificationFavicon, resetFavicon } from '../lib/favicon';
 /**
  * Hook to update page title with unread notification count
  * Shows (count) in the title and updates favicon with red badge when there are notifications
+ * Excludes DM notifications (they have their own badge in Messages)
  *
  * @param baseTitle - The base title to display (default: 'H')
  * @param updateFavicon - Whether to update the favicon with a badge (default: true)
@@ -15,7 +16,10 @@ export const usePageTitleNotifications = (
   baseTitle: string = 'H',
   updateFavicon: boolean = true
 ) => {
-  const { data: unreadCount } = useUnreadCount();
+  // Exclude DM notifications - they're shown in the Messages badge
+  const { data: unreadCount } = useUnreadCount({
+    exclude: 'DM',
+  });
 
   useEffect(() => {
     // Get the current path to determine the page title

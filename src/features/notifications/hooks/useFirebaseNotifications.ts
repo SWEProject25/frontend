@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Unsubscribe } from 'firebase/firestore';
 import { subscribeToNotifications } from '../lib/firebase/firestore';
 import { isFirebaseConfigured } from '../lib/firebase/config';
-import { FirebaseNotificationEvent, Notification } from '../types';
+import { FirebaseNotificationEvent } from '../types';
 import { NOTIFICATION_QUERY_KEYS } from '../constants';
 
 interface UseFirebaseNotificationsOptions {
@@ -15,7 +15,7 @@ interface UseFirebaseNotificationsOptions {
 
 /**
  * Hook to listen to real-time Firebase notifications
- * Automatically syncs with React Query cache
+ * Uses optimistic updates to avoid excessive API calls
  */
 export const useFirebaseNotifications = ({
   userId,
@@ -25,50 +25,91 @@ export const useFirebaseNotifications = ({
 }: UseFirebaseNotificationsOptions) => {
   const queryClient = useQueryClient();
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
-  const invalidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
-   * Debounced invalidation to prevent multiple rapid refetches
-   * If multiple notifications arrive within 500ms, only refetch once
+   * Optimistically update unread count in cache
+   * The polling system will confirm/correct this value later
    */
-  const debouncedInvalidateQueries = useCallback(() => {
-    // Clear any pending invalidation
-    if (invalidationTimeoutRef.current) {
-      clearTimeout(invalidationTimeoutRef.current);
-    }
+  const optimisticallyIncrementCount = useCallback(
+    (notificationType: string) => {
+      console.log(`📈 Optimistically incrementing ${notificationType} count`);
 
-    // Schedule a new invalidation
-    invalidationTimeoutRef.current = setTimeout(async () => {
-      try {
-        await Promise.all([
-          queryClient.invalidateQueries({
-            queryKey: NOTIFICATION_QUERY_KEYS.ALL,
-          }),
-          queryClient.invalidateQueries({
-            queryKey: NOTIFICATION_QUERY_KEYS.UNREAD_COUNT,
-          }),
-        ]);
-        console.log('✅ Queries invalidated and refetched');
-      } catch (error) {
-        console.error('❌ Error invalidating queries:', error);
+      // Update the main unread count (all notifications)
+      queryClient.setQueryData(
+        NOTIFICATION_QUERY_KEYS.UNREAD_COUNT,
+        (oldCount: number | undefined) => {
+          const newCount = (oldCount || 0) + 1;
+          console.log(
+            `✅ Unread count: ${oldCount || 0} → ${newCount} (optimistic)`
+          );
+          return newCount;
+        }
+      );
+
+      // Update filtered counts based on notification type
+      if (notificationType === 'DM') {
+        // Increment DM count
+        queryClient.setQueryData(
+          [...NOTIFICATION_QUERY_KEYS.UNREAD_COUNT, { include: 'DM' }],
+          (oldCount: number | undefined) => (oldCount || 0) + 1
+        );
+      } else {
+        // Increment non-DM count
+        queryClient.setQueryData(
+          [...NOTIFICATION_QUERY_KEYS.UNREAD_COUNT, { exclude: 'DM' }],
+          (oldCount: number | undefined) => (oldCount || 0) + 1
+        );
       }
-    }, 500); // 500ms debounce
-  }, [queryClient]);
+
+      console.log(
+        '⏰ Polling will confirm this count in the next interval (30s)'
+      );
+    },
+    [queryClient]
+  );
 
   /**
    * Handler for new notifications from Firebase
    */
   const handleNewNotification = useCallback(
     async (event: FirebaseNotificationEvent) => {
-      console.log('🔔 New notification received:', event);
-
       // Call custom callback if provided
       onNewNotification?.(event);
 
-      // Use debounced invalidation to prevent multiple rapid refetches
-      debouncedInvalidateQueries();
+      // Optimistically increment the count immediately
+      optimisticallyIncrementCount(event.type);
+
+      // If this is a DM notification, invalidate message-related queries
+      // This ensures the messages system syncs when WebSocket is not active
+      if (event.type === 'DM') {
+        console.log(
+          '📬 DM notification received via Firebase - syncing messages'
+        );
+
+        // Invalidate DM notification queries to trigger refetch
+        queryClient.invalidateQueries({
+          queryKey: ['notifications', 'list', { include: 'DM' }],
+        });
+
+        // Invalidate message queries to ensure conversations and counts update
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'conversations'],
+        });
+
+        // Invalidate total unseen message count
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', 'total'],
+        });
+
+        // Note: Per-conversation unseen counts will be invalidated when
+        // useSyncDMNotifications runs and fetches the conversations
+      }
+
+      // NOTE: We do NOT invalidate the main unread count query here
+      // The polling system (refetchInterval in useUnreadCount) will
+      // fetch the real count from the server every 30 seconds
     },
-    [onNewNotification, debouncedInvalidateQueries]
+    [onNewNotification, optimisticallyIncrementCount, queryClient]
   );
 
   /**
@@ -101,17 +142,11 @@ export const useFirebaseNotifications = ({
 
     // Subscribe to notifications
     try {
-      console.log(
-        `🔔 Subscribing to real-time notifications for user ${userId}`
-      );
-
       unsubscribeRef.current = subscribeToNotifications(
         userId,
         handleNewNotification,
         handleError
       );
-
-      console.log('✅ Real-time notification subscription active');
     } catch (error) {
       console.error('❌ Error subscribing to notifications:', error);
       handleError(error instanceof Error ? error : new Error('Unknown error'));
@@ -120,14 +155,8 @@ export const useFirebaseNotifications = ({
     // Cleanup on unmount
     return () => {
       if (unsubscribeRef.current) {
-        console.log('🔕 Unsubscribing from real-time notifications');
         unsubscribeRef.current();
         unsubscribeRef.current = null;
-      }
-      // Clear any pending debounced invalidation
-      if (invalidationTimeoutRef.current) {
-        clearTimeout(invalidationTimeoutRef.current);
-        invalidationTimeoutRef.current = null;
       }
     };
   }, [userId, enabled, handleNewNotification, handleError]);
@@ -135,32 +164,4 @@ export const useFirebaseNotifications = ({
   return {
     isSubscribed: !!unsubscribeRef.current,
   };
-};
-
-/**
- * Hook to fetch a specific notification by ID
- * Useful after receiving a Firebase event
- */
-export const useFetchNotification = () => {
-  const queryClient = useQueryClient();
-
-  return useCallback(
-    async (notificationId: string): Promise<Notification | null> => {
-      try {
-        // In a real implementation, you'd have an API endpoint for this
-        // For now, we'll refetch the list and find the notification
-        await queryClient.invalidateQueries({
-          queryKey: NOTIFICATION_QUERY_KEYS.ALL,
-        });
-
-        // Suppress unused variable warning - kept for API compatibility
-        void notificationId;
-        return null; // Would return the fetched notification
-      } catch (error) {
-        console.error('❌ Error fetching notification:', error);
-        return null;
-      }
-    },
-    [queryClient]
-  );
 };

@@ -80,7 +80,10 @@ describe('render Timeline Header ', () => {
     const { getByTestId } = render(<Header />, { wrapper });
     customRender(<TweetList />);
     const tab2 = getByTestId('timeline-tabs-tab-ForYou');
-    console.log(global.fetch);
+
+    // Get the initial call count
+    const initialCallCount = (global.fetch as any).mock.calls.length;
+
     expect(global.fetch).toHaveBeenCalledWith(
       API_CONFIG.BASE_URL +
         TIMELINE_ENDPOINTS.TIMELINE_FEED_FLLOWING +
@@ -89,13 +92,16 @@ describe('render Timeline Header ', () => {
     );
 
     fireEvent.click(tab2);
+
     expect(global.fetch).toHaveBeenCalledWith(
       API_CONFIG.BASE_URL +
         TIMELINE_ENDPOINTS.TIMELINE_FEED_FOR_YOU +
         '?page=1&limit=10',
       expect.anything()
     );
-    expect(global.fetch).toHaveBeenCalledTimes(2);
+
+    // Verify that one more call was made after clicking
+    expect((global.fetch as any).mock.calls.length).toBe(initialCallCount + 1);
   });
 });
 

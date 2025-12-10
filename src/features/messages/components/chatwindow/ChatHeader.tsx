@@ -22,10 +22,14 @@ export default function ChatHeader({
   };
 
   return (
-    <div className="shrink-0 bg-black/80 backdrop-blur-sm z-10 border-b border-gray-800">
+    <div
+      id="chat-header"
+      className="shrink-0 bg-black/80 backdrop-blur-sm z-10 border-b border-gray-800"
+    >
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
           <button
+            id="chat-header-avatar"
             onClick={handleProfileClick}
             className="shrink-0 hover:opacity-80 transition-opacity"
             aria-label={`View ${name}'s profile`}
@@ -39,11 +43,14 @@ export default function ChatHeader({
             />
           </button>
           <button
+            id="chat-header-name-btn"
             onClick={handleProfileClick}
             className="text-left hover:opacity-80 transition-opacity"
           >
             <div className="flex items-center gap-1">
-              <h3 className="font-bold text-white">{name}</h3>
+              <h3 id="chat-header-name" className="font-bold text-white">
+                {name}
+              </h3>
               {isVerified && (
                 <svg
                   className="w-4 h-4 text-blue-500"
@@ -54,7 +61,9 @@ export default function ChatHeader({
                 </svg>
               )}
             </div>
-            <span className="text-sm text-gray-500">@{username}</span>
+            <span id="chat-header-username" className="text-sm text-gray-500">
+              @{username}
+            </span>
           </button>
         </div>
       </div>

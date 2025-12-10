@@ -20,6 +20,7 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
     username: profileData.User.username,
     bio: profileData.bio,
     isFollowed: profileData.is_followed_by_me,
+    isFollowingMe: profileData.is_following_me,
     isMuted: profileData.is_muted_by_me ?? false,
     isBlocked: profileData.is_blocked_by_me ?? false,
     isBeenBlocked: profileData.is_been_blocked ?? false,
@@ -64,6 +65,8 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
           followingCount={profileData.following_count}
           followersCount={profileData.followers_count}
           username={profileData.User.username}
+          userId={profileData.User.id}
+          isMine={isMine}
         />
       </div>
     </div>

@@ -184,11 +184,24 @@ export const createMessage = async (conversationId: number, text: string) => {
     credentials: 'include',
     body: JSON.stringify({ text }),
   });
-  if (!res.ok) throw new Error('Failed to create message');
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    console.error('Failed to create message:', {
+      status: res.status,
+      statusText: res.statusText,
+      error: errorData,
+      conversationId,
+    });
+    throw new Error(
+      errorData?.message || `Failed to create message: ${res.statusText}`
+    );
+  }
   return res.json();
 };
 
-export const getConversationUnseenCount = async (conversationId: number) => {
+export const getConversationUnseenCount = async (
+  conversationId: number
+): Promise<number> => {
   const res = await fetch(
     MESSAGES_ENDPOINTS.GET_CONVERSATION_UNSEEN_COUNT(conversationId),
     {
@@ -203,5 +216,40 @@ export const getConversationUnseenCount = async (conversationId: number) => {
     throw new Error('Failed to get unseen count');
   }
 
-  return res.json();
+  const response = await res.json();
+
+  // API returns: { status: 'success', unseenCount: 5 }
+  if (
+    response.status === 'success' &&
+    typeof response.unseenCount === 'number'
+  ) {
+    return response.unseenCount;
+  }
+
+  return 0;
+};
+
+export const getTotalUnseenCount = async (): Promise<number> => {
+  const res = await fetch(MESSAGES_ENDPOINTS.GET_UNSEEN_COUNT, {
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) {
+      throw new Error('Authentication token is missing or invalid');
+    }
+    throw new Error('Failed to get total unseen count');
+  }
+
+  const response = await res.json();
+
+  // API returns: { status: 'success', unseenCount: 5 }
+  if (
+    response.status === 'success' &&
+    typeof response.unseenCount === 'number'
+  ) {
+    return response.unseenCount;
+  }
+
+  return 0;
 };

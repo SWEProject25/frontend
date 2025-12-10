@@ -105,17 +105,21 @@ export class NotificationsApi {
   /**
    * Get unread notifications count
    */
-  async getUnreadCount(): Promise<GetUnreadCountResponse> {
-    const response = await fetch(
+  async getUnreadCount(
+    params?: Pick<GetNotificationsParams, 'include' | 'exclude'>
+  ): Promise<GetUnreadCountResponse> {
+    const url = buildUrlWithParams(
       `${API_CONFIG.BASE_URL}${NOTIFICATION_ENDPOINTS.UNREAD_COUNT}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      }
+      params as Record<string, string | number | boolean | undefined>
     );
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
 
     return handleResponse<GetUnreadCountResponse>(response);
   }

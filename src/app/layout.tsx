@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 // import './globals.css';
 import { Providers } from '@/lib/providers';
-import { MSWProvider } from '@/mocks/MSWProvider';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 

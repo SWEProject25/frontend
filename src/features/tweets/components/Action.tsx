@@ -14,6 +14,7 @@ function Action({
   color,
   stopPropagation = true,
   onClick,
+  onCountClick,
   isColored,
 }: {
   icon: React.ReactNode;
@@ -22,6 +23,7 @@ function Action({
   color: string;
   stopPropagation?: boolean;
   onClick?: () => void;
+  onCountClick?: () => void;
   isColored?: boolean;
 }) {
   // All hints gray, text white
@@ -68,8 +70,14 @@ function Action({
         </button>
         {count !== undefined && (
           <span
+            onClick={(e) => {
+              if (onCountClick) {
+                e.stopPropagation();
+                onCountClick();
+              }
+            }}
             data-testid={`${label ? label.toLowerCase().replace(/\s+/g, '-') + '-' : ''}count`}
-            className={`text-xs transition-colors ${ACTION_COLOR_MAP[color]} ${isColored !== undefined ? (isColored === true ? ACTION_ACTIVE_MAP[color] : '') : ''}`}
+            className={`text-xs transition-colors ${onCountClick ? 'cursor-pointer hover:underline' : ''} ${ACTION_COLOR_MAP[color]} ${isColored !== undefined ? (isColored === true ? ACTION_ACTIVE_MAP[color] : '') : ''}`}
           >
             {count}
           </span>

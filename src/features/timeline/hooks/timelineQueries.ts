@@ -42,12 +42,10 @@ export const useAddTweet = () => {
   const queryClient = useQueryClient();
   const { clearMedia } = useMediaActions();
   const user = useAuth().user;
-  console.log('inside useAddTweet');
   return useMutation<AddTweetResponse, Error, FormData>({
     mutationFn: async (tweetData) => {
       try {
         const response = await timelineApi.addTweet(tweetData);
-        console.log(response);
         return response;
       } catch (error) {
         const errorMessage =
@@ -68,7 +66,6 @@ export const useAddTweet = () => {
       onSuccess();
       clearMedia();
       toasterMessage('Your post was sent.');
-      console.log(data);
       const newTweet: TimelineFeed = {
         ...data.data,
         originalPostData: undefined,
@@ -77,7 +74,6 @@ export const useAddTweet = () => {
       queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
         TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
         (old) => {
-          console.log('Old data:', old);
           if (!old) return old;
 
           const updated = {
@@ -96,14 +92,12 @@ export const useAddTweet = () => {
             }),
           };
 
-          console.log('Updated data:', updated);
           return updated;
         }
       );
       queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
         TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
         (old) => {
-          console.log('Old data:', old);
           if (!old) return old;
 
           const updated = {
@@ -122,7 +116,6 @@ export const useAddTweet = () => {
             }),
           };
 
-          console.log('Updated data:', updated);
           return updated;
         }
       );

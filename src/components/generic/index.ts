@@ -2,6 +2,7 @@
 export { default as Avatar } from './Avatar';
 export { default as Cover } from './Cover';
 export { default as EditProfileModal } from './EditProfileModal';
+export { default as GenericUserList } from './GenericUserList';
 export { default as InfiniteScrollContainer } from './InfiniteScrollContainer';
 export { default as Loader } from './Loader';
 export { default as Tabs } from './Tabs';

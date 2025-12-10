@@ -21,6 +21,7 @@ interface ActionsPanelProps {
     userId: number;
     bio: string | null;
     isFollowed: boolean;
+    isFollowingMe: boolean;
     isMuted?: boolean;
     isBlocked?: boolean;
     isBeenBlocked?: boolean;
@@ -200,6 +201,7 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
               data-testid="profile-follow-button"
               userId={userData.userId}
               isFollowed={userData.isFollowed}
+              isFollowingMe={userData.isFollowingMe}
             />
           )}
         </>

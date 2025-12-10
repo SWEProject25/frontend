@@ -37,11 +37,15 @@ export const getTweetDropdownItems = ({
       label: 'Not interested in this post',
       icon: <NotInterstedIcon />,
     },
-    {
-      key: 'follow',
-      label: isFollowed ? `Unfollow ${username}` : `Follow ${username}`,
-      icon: isFollowed ? <UnfollowIcon /> : <FollowIcon />,
-    },
+    ...(!isBlocked
+      ? [
+          {
+            key: 'follow',
+            label: isFollowed ? `Unfollow ${username}` : `Follow ${username}`,
+            icon: isFollowed ? <UnfollowIcon /> : <FollowIcon />,
+          },
+        ]
+      : []),
     {
       key: 'lists',
       label: 'Add/remove from Lists',

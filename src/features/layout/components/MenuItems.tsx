@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import { NotificationBadge } from '@/features/notifications/components';
+import { MessageBadge } from '@/features/messages/components/MessageBadge';
 
 export default function MenuItems() {
   const pathname = usePathname();
@@ -45,18 +46,7 @@ export default function MenuItems() {
       href: '/messages',
       hideOnShortScreen: false,
     },
-    {
-      icon: Bookmark,
-      label: 'Bookmarks',
-      href: '/bookmarks',
-      hideOnShortScreen: true,
-    },
-    {
-      icon: Users,
-      label: 'Communities',
-      href: '/communities',
-      hideOnShortScreen: true,
-    },
+
     {
       icon: User,
       label: 'Profile',
@@ -68,12 +58,6 @@ export default function MenuItems() {
       label: 'Settings',
       href: '/settings',
       hideOnShortScreen: true,
-    },
-    {
-      icon: MoreHorizontal,
-      label: 'More',
-      href: '/more',
-      hideOnShortScreen: false,
     },
   ];
 
@@ -101,6 +85,8 @@ export default function MenuItems() {
               />
               {/* Show notification badge on Bell icon */}
               {item.label === 'Notifications' && <NotificationBadge />}
+              {/* Show message badge on Mail icon */}
+              {item.label === 'Messages' && <MessageBadge />}
             </div>
             <span
               className={`text-[20px] ${isActive ? 'font-bold' : ''} text-text-active/95 xs:hidden min-[1400px]:block`}

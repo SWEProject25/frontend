@@ -41,6 +41,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     username: data?.username || '',
     isFollowed: data?.isFollowedByMe || false,
     isMuted: data?.isMutedByMe || false,
+    isBlocked: data?.isBlockedByMe || false,
   });
 
   const {
@@ -52,7 +53,6 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     isFetchingNextPage,
     hasNextPage,
   } = useGetRepliesByTweetId(data?.postId || 0);
-  console.log(repliesResponse);
   const pages = repliesResponse?.pages.flat();
   const renderReplys = pages?.map((group, i) => (
     <React.Fragment key={i}>
@@ -83,12 +83,16 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
         }
         break;
       case 'block':
-        // Show confirmation modal for block/unblock
-        setBlockAction('block');
+        if (data.isBlockedByMe) {
+          // Show confirmation modal for unblock
+          setBlockAction('unblock');
+        } else {
+          // Show confirmation modal for block
+          setBlockAction('block');
+        }
         setShowBlockModal(true);
         break;
       default:
-        console.log('Selected item key:', key);
         break;
     }
   };
@@ -176,9 +180,9 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
             <Timing time={data.date} full={true} />
           </div>
           <div className="border-b border-gray-700 my-2" />
+
           <Actions
             stats={actionsStats}
-            full={true}
             replyClick={() => setCurrentTweet(data)}
           />
           <div className="border-b border-gray-700 mt-3" />

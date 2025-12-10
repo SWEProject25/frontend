@@ -1,24 +1,27 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import { signInToFirebase, signOutFirebase } from '../lib/firebase/auth';
 
 /**
  * Hook to authenticate with Firebase using anonymous auth
- * Simple approach - no backend token needed
+ * Gracefully handles missing Firebase Auth configuration
  */
 export const useFirebaseAuth = () => {
   const user = useAuthStore((s) => s.user);
+  const attemptedSignIn = useRef(false);
 
   useEffect(() => {
-    if (user) {
-      // User logged in - sign in to Firebase anonymously
-      signInToFirebase().catch((error) => {
-        console.error('Failed to sign in to Firebase:', error);
+    if (user && !attemptedSignIn.current) {
+      // User logged in - try to sign in to Firebase anonymously
+      attemptedSignIn.current = true;
+      signInToFirebase().catch(() => {
+        // Silently ignore - already logged in error handler
       });
-    } else {
+    } else if (!user) {
       // User logged out - sign out from Firebase
+      attemptedSignIn.current = false;
       signOutFirebase().catch(() => {
-        // Ignore errors
+        // Silently ignore
       });
     }
   }, [user]);

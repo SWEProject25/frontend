@@ -41,7 +41,7 @@ export const MESSAGES_ENDPOINTS = {
   MARK_SEEN: (conversationId: number) =>
     `${MESSAGES_API_CONFIG.BASE_URL}/api/${MESSAGES_API_CONFIG.VERSION}/conversations/${conversationId}/seen`,
   GET_CONVERSATION_UNSEEN_COUNT: (conversationId: number) =>
-    `${MESSAGES_API_CONFIG.BASE_URL}/api/${MESSAGES_API_CONFIG.VERSION}/messages/${conversationId}/unseen-count`,
+    `${MESSAGES_API_CONFIG.BASE_URL}/api/${MESSAGES_API_CONFIG.VERSION}/conversations/unseen/${conversationId}`,
 } as const;
 
 export const MESSAGES_SOCKET_EVENTS = {

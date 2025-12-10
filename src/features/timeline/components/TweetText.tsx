@@ -113,7 +113,6 @@ export default function TweetText({
 
       if (spanRef1.current) {
         if (text.length === 0) {
-          console.log('erase');
           setSpanText1("What's happening?");
           spanRef1.current.style.color = 'var(--color-text-inactive)';
           spanRef1.current.innerHTML = "What's happening?";
@@ -273,9 +272,6 @@ export default function TweetText({
           spanMention.current = null;
         }
         if (text.length > startRedText) {
-          console.log('inside length greater than 10');
-
-          console.log(text, 'after slicing');
           setSpanText2(text.slice(startRedText, text.length));
         } else {
           setSpanText2('');
@@ -406,8 +402,6 @@ export default function TweetText({
       divRef.current.innerHTML = '';
     }
     const input = e.nativeEvent as InputEvent;
-    console.log(input.data);
-    console.log('handleINput ', e);
     if (divRef.current) {
       handleChangeText(divRef.current.innerText, input.data ?? '');
     }

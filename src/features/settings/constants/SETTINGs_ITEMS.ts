@@ -3,6 +3,7 @@ export interface SettingsSubOption {
   label: string;
   description?: string;
   path: string;
+  subOptions?: SettingsSubOption[];
 }
 
 export interface SettingsOption {
@@ -27,6 +28,26 @@ export const SETTINGS_ITEMS: SettingsOption[] = [
         description:
           'See your account information like your phone number and email address.',
         path: '/settings/account/accountinfo',
+        subOptions: [
+          {
+            id: 'profile-info',
+            label: 'Profile information',
+            description: 'Name, bio, location, and more',
+            path: '/settings/account/accountinfo/profileinfo',
+          },
+          {
+            id: 'username',
+            label: 'Username',
+            description: 'Change your username',
+            path: '/settings/account/accountinfo/username',
+          },
+          {
+            id: 'email',
+            label: 'Email',
+            description: 'Update your email address',
+            path: '/settings/account/accountinfo/email',
+          },
+        ],
       },
       // {
       //   id: 'download-archive',
@@ -94,6 +115,20 @@ export const SETTINGS_ITEMS: SettingsOption[] = [
         description:
           'Manage the accounts, words, and notifications that you want to hide.',
         path: '/settings/privacy_and_safety/mute_and_block',
+        subOptions: [
+          {
+            id: 'blocked-accounts',
+            label: 'Blocked accounts',
+            description: 'View and manage blocked accounts',
+            path: '/settings/privacy_and_safety/mute_and_block/blocked_accounts',
+          },
+          {
+            id: 'muted-accounts',
+            label: 'Muted accounts',
+            description: 'View and manage muted accounts',
+            path: '/settings/privacy_and_safety/mute_and_block/muted_accounts',
+          },
+        ],
       },
       // {
       //   id: 'direct-messages',

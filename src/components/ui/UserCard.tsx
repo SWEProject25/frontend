@@ -5,6 +5,7 @@ import FollowBtn from '@/components/generic/buttons/FollowBtn';
 import BlockBtn from '@/components/generic/buttons/BlockBtn';
 import MuteBtn from '@/components/generic/buttons/MuteBtn';
 import { VerifiedIcon } from '@/components/ui/icons/BrandIcons';
+import { LikeIconFilled } from '@/components/ui/icons/UIIcons';
 import Icon from './home/Icon';
 
 export interface UserCardProps {
@@ -15,12 +16,13 @@ export interface UserCardProps {
   avatarUrl?: string;
   bio?: string;
   isFollowed?: boolean;
+  isFollowingMe?: boolean;
   isBlocked?: boolean;
   isMuted?: boolean;
-  actionType?: 'follow' | 'block' | 'mute';
+  actionType?: 'follow' | 'block' | 'mute' | 'like';
   className?: string;
   onFollowChange?: (userId: number, isFollowed: boolean) => void;
-  linkTo?: string; // Optional link to user profile
+  linkTo?: string;
   'data-testid'?: string;
   fontSize?: string;
 }
@@ -33,6 +35,7 @@ export default function UserCard({
   avatarUrl,
   bio,
   isFollowed = false,
+  isFollowingMe = false,
   isBlocked = false,
   isMuted = false,
   actionType,
@@ -69,23 +72,6 @@ export default function UserCard({
             {bio}
           </p>
         )}
-        {isFollowed && (
-          <div className="flex flex-row gap-0.5">
-            <Icon
-              color="text-text-secondary"
-              dataTestId={`${testId}-search-avatar`}
-              size="w-3 h-3"
-              width="w-3"
-              height="h-3"
-              disabled={true}
-              center={true}
-              path="M17.863 13.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44zM12 2C9.791 2 8 3.79 8 6s1.791 4 4 4 4-1.79 4-4-1.791-4-4-4z"
-            />
-            <p className="flex flex-row items-center gap-0.5 text-text-secondary text-sm   line-clamp-2">
-              Following
-            </p>
-          </div>
-        )}
       </div>
     </>
   );
@@ -116,10 +102,15 @@ export default function UserCard({
             <BlockBtn userId={userId} isBlocked={isBlocked} />
           ) : actionType === 'mute' ? (
             <MuteBtn userId={userId} isMuted={isMuted} />
+          ) : actionType === 'like' ? (
+            <div className="p-2">
+              <LikeIconFilled className="w-5 h-5 text-rose-400" />
+            </div>
           ) : (
             <FollowBtn
               userId={userId}
               isFollowed={isFollowed}
+              isFollowingMe={isFollowingMe}
               onFollowChange={onFollowChange}
             />
           )}
