@@ -23,7 +23,7 @@ export default function TweetReplySettings() {
   return (
     <div
       data-testid="tweet-reply-settings"
-      className="select-text w-full max-h-9 pb-3 flex flex-1 items-stretch   border-b-1 border-border "
+      className=" relative select-text w-full max-h-9 pb-3 flex flex-1 items-stretch   border-b-1 border-border "
     >
       <XMenu>
         <XMenu.Button name={REPLY_MENU} panelHeight={PANEL_HEIGHT}>

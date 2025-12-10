@@ -15,16 +15,13 @@ import usePollStore from '../store/usePollStore';
 import useMedia from '@/features/media/store/useMedia';
 import { useMenuName } from '@/components/ui/home/XMenu';
 import { GROK_MENU, REPLY_MENU } from '../constants/menuName';
+import Mention from './Mention';
+import AddPostSection from './AddPostSection';
 export default function AddTweet() {
   const scheduledTime = useAddTweetStore((state) => state.scheduledTime);
   const isSending = useAddTweetStore((state) => state.isSending);
   // const error = useAddTweetStore((state) => state.error);
-  const isReplySettingsVisible = useAddTweetStore(
-    (state) => state.selectedReplyOption
-  );
-  const showReplySettings = useAddTweetStore(
-    (state) => state.updateReplyOption
-  );
+
   const open = useScheduleStore((state) => state.open);
 
   const ref = useRef<HTMLDivElement>(null);
@@ -49,19 +46,6 @@ export default function AddTweet() {
     window.addEventListener('beforeunload', unloadCallback);
     return () => window.removeEventListener('beforeunload', unloadCallback);
   }, [hasText, isopenPoll, hasmMedia, isOpenMenu]);
-
-  useEffect(
-    function () {
-      function handleClick() {
-        showReplySettings();
-        textRef.current?.focus();
-      }
-      if (ref.current && !isReplySettingsVisible) {
-        ref.current.addEventListener('click', handleClick, { once: true });
-      }
-    },
-    [isReplySettingsVisible, showReplySettings]
-  );
 
   return (
     <div
@@ -108,22 +92,23 @@ export default function AddTweet() {
                 aria-label="Scheduled Tweet Time"
                 className="cursor-pointer hover:underline hover:underline-offset-1 hover:decoration-text-inactive"
               >
-                <ScheduledTweetTime />
+                {/* <ScheduledTweetTime /> */}
               </button>
             )}
             <TweetText divRef={textRef} />
 
             <div>
-              <Poll />
+              {/* <Poll /> */}
               <MediaPreview />
             </div>
           </div>
           {!isSending && (
             <div>
-              <TweetReplySettings />
+              {/* <TweetReplySettings /> */}
+              <Mention />
               <TweetFooter>
                 <TweetOptionsBar />
-                <TweetSubmitSection />
+                <AddPostSection />
               </TweetFooter>
             </div>
           )}

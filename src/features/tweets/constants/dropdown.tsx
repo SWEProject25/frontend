@@ -23,12 +23,14 @@ export const getTweetDropdownItems = ({
   isFollowed = false,
   isMuted = false,
   isBlocked = false,
+  myTweet = false,
 }: {
   username?: string;
   isFollowed?: boolean;
   isMuted?: boolean;
   isBlocked?: boolean;
-} = {}) => {
+  myTweet?: boolean;
+}) => {
   const items = [
     {
       key: 'not_interested',
@@ -80,8 +82,12 @@ export const getTweetDropdownItems = ({
       icon: <RequestCommunityIcon />,
     },
   ];
-
-  return items;
+  let displayedItems = items;
+  if (myTweet)
+    displayedItems = items.filter((item) =>
+      ['lists', 'engagement', 'embed', 'community_note'].includes(item.key)
+    );
+  return displayedItems;
 };
 
 export const getShareDropdownItems = () => [

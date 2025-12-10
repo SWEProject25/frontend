@@ -16,12 +16,19 @@ import { getTweetDropdownItems } from '../constants';
 import { useInteractions } from '@/hooks/useInteractions';
 import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Link from 'next/link';
+import { useAuth } from '@/features/authentication/hooks';
 
 export default function Tweet({ data }: { data: TimelineFeed }) {
+  const myId = useAuth().user?.id;
+  const myTweet = data.isRepost
+    ? data?.originalPostData?.userId === myId
+    : data.userId === myId;
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
     username: data.username,
     isFollowed: data.isFollowedByMe,
     isMuted: data.isMutedByMe || false,
+    isBlocked: data.isBlockedByMe || false,
+    myTweet: myTweet,
   });
 
   const [Hovered, setHovered] = useState(false);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useExploreFeed } from '../hooks/exploreQueries';
+import { useExploreFeed, useExplorePosts } from '../hooks/exploreQueries';
 import React from 'react';
 import Tweet from '@/features/tweets/components/Tweet';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
@@ -16,7 +16,7 @@ export default function TweetsList() {
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
-  } = useExploreFeed();
+  } = useExplorePosts();
 
   console.log(data);
   const pages = data?.pages.flat();
@@ -57,7 +57,7 @@ export default function TweetsList() {
           className="flex flex-col w-full"
           data-testid="explore-feed-render-tweet-list"
         >
-          {renderTweets}{' '}
+          {renderTweets}
         </div>
         {/* <ul className="w-full">{renderTweets} </ul> */}
       </InfiniteScroll>

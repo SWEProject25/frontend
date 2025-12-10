@@ -13,3 +13,18 @@ export interface ExploreSearchFeedDtoResponse {
     totalPages: number;
   };
 }
+export interface ExploreTrendingFeedDtoResponse {
+  status: string;
+  data: {
+    trending: Trend[];
+  };
+  metadata: {
+    HashtagsCount: number;
+    limit: number;
+    category: string;
+  };
+}
+export interface Trend {
+  tag: string;
+  totalPosts: number;
+}
