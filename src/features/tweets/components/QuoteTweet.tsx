@@ -50,7 +50,7 @@ export default function QuoteTweet(data: quoteProps) {
         e.stopPropagation();
         router.push(`/home/${data.postId}`);
       }}
-      className={`block mx-auto w-full text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer`}
+      className={`block mx-auto p-3 border border-gray-700 rounded-xl w-full text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0f0f0f]' : ''} hover:cursor-pointer`}
       style={{ boxSizing: 'border-box', maxWidth: '100%' }}
     >
       <div className="flex w-full gap-2">
@@ -62,9 +62,9 @@ export default function QuoteTweet(data: quoteProps) {
             style={{ maxWidth: '100%' }}
           >
             <div className="flex items-center gap-1">
-              <UserInfo data={user} onHoverCard={setHovered} cardShow={false} />
+              <UserInfo data={user} onHoverCard={setHovered} />
               <span className="text-gray-500">·</span>
-              <Timing time={data.date} hover={false} />
+              <Timing time={data.date} hover={true} />
             </div>
           </div>
           <Content content={data.tweetContent} />

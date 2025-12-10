@@ -281,9 +281,7 @@ export default function Content({
       {media.length > 0 && <div className="mt-3">{renderMediaGrid()}</div>}
 
       {isQuote && (
-        <div className="mt-3 p-3 border border-gray-700 rounded-xl">
-          {data && <QuoteTweet {...data} />}
-        </div>
+        <div className="mt-3">{data && <QuoteTweet {...data} />}</div>
       )}
 
       {/* Image Modal */}
