@@ -1,83 +1,20 @@
-'use client';
-
-import Button from '../../../components/ui/home/Button';
+import Button from '@/components/ui/home/Button';
 import Icon from '@/components/ui/home/Icon';
-import useAddTweetStore, {
-  useMentions,
-} from '@/features/timeline/store/useAddTweetStore';
 import TypingProgressCircle from './TypingProgressCircle';
-import usePollStore from '../store/usePollStore';
-import { MAX_ALLOWABLE_TWEET_LENGTH } from '@/features/timeline/constants/tweetConstants';
-import { useAddTweet } from '../hooks/timelineQueries';
-import useMedia from '@/features/media/store/useMedia';
-import { LOCAL_MEDIA } from '@/features/media/constants/mediaConstants';
-import { options } from '../constants/replySettingsOptions';
-import { TweetFormDataKeys } from '../types/api';
-import { json } from 'stream/consumers';
-export default function TweetSubmitSection() {
-  const tweetText = useAddTweetStore((state) => state.tweetText);
-  const isOpen = usePollStore((state) => state.isOpen);
-  const choices = usePollStore((state) => state.choices);
-  const media = useMedia((state) => state.media);
-  const mentions = useMentions();
-  const selectedReplyOption = useAddTweetStore(
-    (state) => state.selectedReplyOption
-  );
-  const mutate = useAddTweet();
-  const isValidPoll =
-    choices.filter((ch, ind) => {
-      if (ind < 2) {
-        return ch.trim().length !== 0;
-      } else {
-        if (ch === '') return true;
-        else return ch.trim().length !== 0;
-      }
-    }).length === 4;
 
-  const enableAddTweet =
-    tweetText.trim().length !== 0
-      ? tweetText.length <= MAX_ALLOWABLE_TWEET_LENGTH
-        ? isOpen
-          ? isValidPoll
-          : true
-        : false
-      : media.length > 0;
-  const enableSection = tweetText.trim().length !== 0 || isOpen;
+interface SubmitInterface {
+  enableSection: boolean;
+  enableAddTweet: boolean;
+  handleAddTweet: () => void;
+  label: string;
+}
 
-  async function handleAddTweet() {
-    const tweetFormData = new FormData();
-    for (const med of media) {
-      if (med.type === LOCAL_MEDIA) tweetFormData.append('media', med.data);
-      else {
-        const res = await fetch(med.data.images.original.url);
-        const blob = await res.blob();
-        const gifFile = new File([blob], med.data.title, { type: 'image/gif' });
-        console.log(gifFile);
-        tweetFormData.append('media', gifFile);
-      }
-    }
-    console.log(tweetFormData.getAll('media'));
-    console.log(media);
-    console.log(mentions);
-    const mentionsId = mentions.map((mention) => mention.id);
-
-    const allMentions = mentionsId.join(',');
-    tweetFormData.append(TweetFormDataKeys.MENTIONS, allMentions);
-
-    console.log('mentionsIds:', tweetFormData.getAll('mentionsIds'));
-
-    const seclectdReply =
-      selectedReplyOption === 0
-        ? options[0].Name
-        : options[selectedReplyOption - 1].Name;
-    if (tweetText.trim().length !== 0) {
-      tweetFormData.append(TweetFormDataKeys.CONTENT, tweetText);
-    }
-    tweetFormData.append(TweetFormDataKeys.TYPE, 'POST');
-    tweetFormData.append(TweetFormDataKeys.VISIBILITY, seclectdReply);
-    mutate.mutate(tweetFormData);
-  }
-
+export default function TweetSubmitSection({
+  enableSection,
+  enableAddTweet,
+  handleAddTweet,
+  label,
+}: SubmitInterface) {
   return (
     <div
       data-testid="tweet-submit-section"
@@ -90,7 +27,7 @@ export default function TweetSubmitSection() {
           width="w-16"
           disabled={!enableAddTweet}
           size="text-base"
-          label="Post"
+          label={label}
           onClick={handleAddTweet}
         />
       </div>

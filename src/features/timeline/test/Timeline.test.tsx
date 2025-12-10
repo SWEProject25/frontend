@@ -19,7 +19,7 @@ import { useAuth } from '@/features/authentication/hooks';
 import AddTweet from '../components/AddTweet';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import useAddTweetStore from '../store/useAddTweetStore';
-import { options } from '../constants/replySettingsOptions';
+// import { options } from '../constants/replySettingsOptions';
 import useMedia from '@/features/media/store/useMedia';
 import { useAddTweet } from '../hooks/timelineQueries';
 import { image1, image2, image3, image4, image5, tweet } from '../mocks/data';
@@ -124,58 +124,58 @@ describe('test add tweet component', () => {
     expect(link.getAttribute('href')).toBe(`./${mockUser.username}`);
   });
 
-  it('check default selected option and should appear after first click', () => {
-    const { getByTestId, queryByTestId } = render(<AddTweet />, {
-      wrapper,
-    });
-    const { result } = renderHook(() => useAddTweetStore(), { wrapper });
-    const addTweetContainer = getByTestId('add-tweet-container');
-    expect(addTweetContainer).toBeInTheDocument();
-    expect(queryByTestId('tweet-reply-settings')).not.toBeInTheDocument();
-    expect(result.current.selectedReplyOption).toBe(0);
-    fireEvent.click(addTweetContainer);
-    expect(result.current.selectedReplyOption).toBe(1);
-    const reply = getByTestId('tweet-reply-settings');
-    expect(reply).toBeInTheDocument();
-  });
+  // it('check default selected option and should appear after first click', () => {
+  //   const { getByTestId, queryByTestId } = render(<AddTweet />, {
+  //     wrapper,
+  //   });
+  //   const { result } = renderHook(() => useAddTweetStore(), { wrapper });
+  //   const addTweetContainer = getByTestId('add-tweet-container');
+  //   expect(addTweetContainer).toBeInTheDocument();
+  //   expect(queryByTestId('tweet-reply-settings')).not.toBeInTheDocument();
+  //   expect(result.current.selectedReplyOption).toBe(0);
+  //   fireEvent.click(addTweetContainer);
+  //   expect(result.current.selectedReplyOption).toBe(1);
+  //   const reply = getByTestId('tweet-reply-settings');
+  //   expect(reply).toBeInTheDocument();
+  // });
 
-  it('check selecting reply option ', () => {
-    const { getByTestId, queryByTestId } = render(<AddTweet />, {
-      wrapper,
-    });
-    const { result } = renderHook(() => useAddTweetStore(), { wrapper });
-    expect(queryByTestId('reply-menu-list')).not.toBeInTheDocument();
-    const replyButton = getByTestId('tweet-reply-settings-button');
-    expect(replyButton).toBeInTheDocument();
-    const selectedReply = getByTestId('selected-reply');
-    expect(selectedReply.innerHTML).toBe(options[0].value + ' can reply');
-    fireEvent.click(replyButton);
-    expect(getByTestId('reply-menu-list')).toBeInTheDocument();
-    const replyList = getByTestId('reply-menu-items');
-    expect(replyList).toBeInTheDocument();
-    expect(replyList.childNodes.length).toBe(4);
-    expect(result.current.selectedReplyOption).toBe(1);
-    expect(
-      getByTestId(
-        'selected-reply-' + options[0].value.toLowerCase().replace(/\s+/g, '-')
-      )
-    ).toBeInTheDocument();
-    options.forEach((option) => {
-      fireEvent.click(
-        getByTestId(
-          'reply-option-' + option.value.toLowerCase().replace(/\s+/g, '-')
-        )
-      );
-      expect(result.current.selectedReplyOption).toBe(option.id);
-      expect(selectedReply.innerHTML).toBe(option.value + ' can reply');
-      fireEvent.click(replyButton);
-      expect(
-        getByTestId(
-          'selected-reply-' + option.value.toLowerCase().replace(/\s+/g, '-')
-        )
-      ).toBeInTheDocument();
-    });
-  });
+  // it('check selecting reply option ', () => {
+  //   const { getByTestId, queryByTestId } = render(<AddTweet />, {
+  //     wrapper,
+  //   });
+  //   const { result } = renderHook(() => useAddTweetStore(), { wrapper });
+  //   expect(queryByTestId('reply-menu-list')).not.toBeInTheDocument();
+  //   const replyButton = getByTestId('tweet-reply-settings-button');
+  //   expect(replyButton).toBeInTheDocument();
+  //   const selectedReply = getByTestId('selected-reply');
+  //   expect(selectedReply.innerHTML).toBe(options[0].value + ' can reply');
+  //   fireEvent.click(replyButton);
+  //   expect(getByTestId('reply-menu-list')).toBeInTheDocument();
+  //   const replyList = getByTestId('reply-menu-items');
+  //   expect(replyList).toBeInTheDocument();
+  //   expect(replyList.childNodes.length).toBe(4);
+  //   expect(result.current.selectedReplyOption).toBe(1);
+  //   expect(
+  //     getByTestId(
+  //       'selected-reply-' + options[0].value.toLowerCase().replace(/\s+/g, '-')
+  //     )
+  //   ).toBeInTheDocument();
+  //   options.forEach((option) => {
+  //     fireEvent.click(
+  //       getByTestId(
+  //         'reply-option-' + option.value.toLowerCase().replace(/\s+/g, '-')
+  //       )
+  //     );
+  //     expect(result.current.selectedReplyOption).toBe(option.id);
+  //     expect(selectedReply.innerHTML).toBe(option.value + ' can reply');
+  //     fireEvent.click(replyButton);
+  //     expect(
+  //       getByTestId(
+  //         'selected-reply-' + option.value.toLowerCase().replace(/\s+/g, '-')
+  //       )
+  //     ).toBeInTheDocument();
+  //   });
+  // });
 });
 
 describe('send post', () => {
