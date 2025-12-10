@@ -6,6 +6,9 @@ describe('FollowStats', () => {
   const defaultProps = {
     followingCount: 100,
     followersCount: 250,
+    username: 'ahmedFathy',
+    userId: 5,
+    isMine: false,
   };
 
   it('should render follow stats container', () => {
@@ -79,7 +82,9 @@ describe('FollowStats', () => {
 
   describe('Various Count Values', () => {
     it('should display zero counts', () => {
-      render(<FollowStats followingCount={0} followersCount={0} />);
+      render(
+        <FollowStats {...defaultProps} followingCount={0} followersCount={0} />
+      );
 
       expect(screen.getByTestId('profile-following-count')).toHaveTextContent(
         '0'
@@ -90,7 +95,13 @@ describe('FollowStats', () => {
     });
 
     it('should display large counts', () => {
-      render(<FollowStats followingCount={10000} followersCount={50000} />);
+      render(
+        <FollowStats
+          {...defaultProps}
+          followingCount={10000}
+          followersCount={50000}
+        />
+      );
 
       expect(screen.getByTestId('profile-following-count')).toHaveTextContent(
         '10000'
@@ -102,7 +113,11 @@ describe('FollowStats', () => {
 
     it('should update counts when props change', () => {
       const { rerender } = render(
-        <FollowStats followingCount={100} followersCount={200} />
+        <FollowStats
+          {...defaultProps}
+          followingCount={100}
+          followersCount={200}
+        />
       );
 
       expect(screen.getByTestId('profile-following-count')).toHaveTextContent(
@@ -112,7 +127,13 @@ describe('FollowStats', () => {
         '200'
       );
 
-      rerender(<FollowStats followingCount={150} followersCount={300} />);
+      rerender(
+        <FollowStats
+          {...defaultProps}
+          followingCount={150}
+          followersCount={300}
+        />
+      );
 
       expect(screen.getByTestId('profile-following-count')).toHaveTextContent(
         '150'
@@ -128,15 +149,7 @@ describe('FollowStats', () => {
       render(<FollowStats {...defaultProps} />);
 
       const container = screen.getByTestId('profile-follow-stats');
-      expect(container).toHaveClass(
-        'flex',
-        'flex-row',
-        'flex-wrap',
-        'items-baseline',
-        'gap-x-2',
-        'sm:gap-x-3',
-        'w-full'
-      );
+      expect(container).toHaveClass('flex', 'flex-col', 'gap-3', 'w-full');
     });
 
     it('should have correct stat item classes', () => {

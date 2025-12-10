@@ -24,17 +24,17 @@ export const getTweetDropdownItems = ({
   isFollowed = false,
   isMuted = false,
   isBlocked = false,
-  byMe = false,
+  myTweet = false,
 }: {
   username?: string;
   isFollowed?: boolean;
   isMuted?: boolean;
   isBlocked?: boolean;
-  byMe?: boolean;
-} = {}) => {
+  myTweet?: boolean;
+}) => {
   const items = [
     // Only include delete if byMe is true
-    ...(byMe
+    ...(myTweet
       ? [
           {
             key: 'delete',
@@ -93,8 +93,12 @@ export const getTweetDropdownItems = ({
       icon: <RequestCommunityIcon />,
     },
   ];
-
-  return items;
+  let displayedItems = items;
+  if (myTweet)
+    displayedItems = items.filter((item) =>
+      ['lists', 'engagement', 'embed', 'community_note'].includes(item.key)
+    );
+  return displayedItems;
 };
 
 export const getShareDropdownItems = () => [

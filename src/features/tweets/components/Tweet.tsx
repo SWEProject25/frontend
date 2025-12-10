@@ -16,10 +16,20 @@ import { getTweetDropdownItems } from '../constants';
 import { useInteractions } from '@/hooks/useInteractions';
 import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Link from 'next/link';
+import { useAuth } from '@/features/authentication/hooks';
 import { useDeleteTweet, useGetTweetSummary } from '../hooks/tweetQueries';
-import { useAuthStore } from '@/features/authentication/store/authStore';
 export default function Tweet({ data }: { data: TimelineFeed }) {
-  const userId = useAuthStore((store) => store.user?.id);
+  const myId = useAuth().user?.id;
+  const myTweet = data.isRepost
+    ? data?.originalPostData?.userId === myId
+    : data.userId === myId;
+  const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
+    username: data.username,
+    isFollowed: data.isFollowedByMe,
+    isMuted: data.isMutedByMe || false,
+    isBlocked: data.isBlockedByMe || false,
+    myTweet: myTweet,
+  });
 
   const [Hovered, setHovered] = useState(false);
   const [showBlockModal, setShowBlockModal] = useState(false);
@@ -46,13 +56,13 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
       : data
     : data;
 
-  const byMe = userId === dataViewd.userId;
-  const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
-    username: dataViewd.username,
-    isFollowed: dataViewd.isFollowedByMe,
-    byMe,
-    isMuted: dataViewd.isMutedByMe || false,
-  });
+  // const byMe = userId === dataViewd.userId;
+  // const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
+  //   username: dataViewd.username,
+  //   isFollowed: dataViewd.isFollowedByMe,
+  //   byMe,
+  //   isMuted: dataViewd.isMutedByMe || false,
+  // });
 
   const user = {
     id: dataViewd.userId,

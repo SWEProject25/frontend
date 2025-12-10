@@ -1,6 +1,7 @@
 'use client';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { mentionType } from '../components/TweetText';
 
 interface AddTweetState {
   scheduledTime: string;
@@ -13,14 +14,14 @@ interface AddTweetState {
   isSending: boolean;
   error: string;
   isSuccess: boolean;
-  mention: string;
+  mentions: mentionType[];
   // setIsSending: (status: boolean) => void;
   // setIsError: (status: boolean) => void;
   actions: {
     startSending: () => void;
     onSuccess: () => void;
     seterror: (messgae: string) => void;
-    setMention: (text: string) => void;
+    setMentions: (currMentions: mentionType[]) => void;
   };
 }
 
@@ -37,28 +38,28 @@ const useAddTweetStore = create<AddTweetState>()(
     isSending: false,
     error: '',
     isSuccess: false,
-    mention: '',
+    mentions: [],
     // setIsSending: (status) => set({ isSending: status }),
     // setIsError: (status) => set({ isError: status }),
     actions: {
       startSending: () => set({ isSending: true, error: '', isSuccess: false }),
+      setMentions: (currMentions) => set({ mentions: currMentions }),
       onSuccess: () =>
         set((state) => ({
           isSending: false,
           isSuccess: true,
           error: '',
           tweetText: '',
-          mentoin: '',
+          mentoins: [],
           defaultReplyOption: state.selectedReplyOption,
           selectedReplyOption: 0,
         })),
       seterror: (message) =>
         set({ isSending: false, error: message, isSuccess: false }),
-      setMention: (text) => set((state) => ({ mention: state.mention + text })),
     },
   }))
 );
 
 export default useAddTweetStore;
 export const useActions = () => useAddTweetStore((state) => state.actions);
-export const useMention = () => useAddTweetStore((state) => state.mention);
+export const useMentions = () => useAddTweetStore((state) => state.mentions);

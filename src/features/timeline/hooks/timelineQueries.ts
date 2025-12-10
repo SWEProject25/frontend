@@ -2,6 +2,7 @@ import {
   InfiniteData,
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 import { timelineApi } from '../services/timelineAPi';
@@ -13,11 +14,13 @@ import {
   TimelineFeedDtoResponse,
 } from '../types/api';
 import { useActions } from '../store/useAddTweetStore';
+import { useMention } from '../store/useMentionStore';
 
 import toasterMessage from '@/components/ui/home/ToasterMessage';
 import { useMediaActions } from '@/features/media/store/useMedia';
 import {
   useSearch,
+  useSearchIsopen,
   useSearchUser,
   useSelectedTab,
 } from '../store/useTimelineStore';
@@ -25,12 +28,14 @@ import { FOLLOWING_TAB } from '../constants/menuName';
 import { TIMELINE_ENDPOINTS } from '../constants/api';
 import { useAuth } from '@/features/authentication/hooks';
 import { Search } from 'lucide-react';
+import { profileApi, ProfileResponseDto } from '@/features/profile';
 export const TIMELINE_QUERY_KEYS = {
   ADD_TWEET: ['tweet'] as const,
   TIMELINE_FEED_FOR_YOU: ['timeline', 'forYou'] as const,
   TIMELINE_FEED_FOLLOWING: ['timeline', 'following'] as const,
   PROFILE_SEARCH: (username: string) => ['profile', username] as const,
   HASHTAG_SEARCH: (hashtag: string) => ['hashtag', hashtag] as const,
+  VALID_USER: (username: string) => ['mention', username] as const,
 };
 export const useAddTweet = () => {
   const { onSuccess, startSending, seterror } = useActions();
@@ -151,8 +156,11 @@ export const useTimelineFeed = () => {
       lastPage.data.posts.length ? pages.length + 1 : undefined,
   });
 };
-export const useSearchProfile = () => {
-  const searchUser = useSearch();
+export const useSearchProfile = (searchUser: string) => {
+  // const search = useSearch();
+  // const isSearch = useSearchIsopen();
+  // const mention = useMention();
+  // const searchUser = isSearch ? search : mention;
   return useInfiniteQuery<
     ProfileSearchDtoResponse,
     Error,
@@ -170,7 +178,7 @@ export const useSearchProfile = () => {
   });
 };
 export const useSearchHashtag = () => {
-  const hashtag = useSearchUser().trimStart();
+  const hashtag = useSearch().trimStart();
   return useInfiniteQuery<
     HashtagSearchDtoResponse,
     Error,
@@ -184,5 +192,13 @@ export const useSearchHashtag = () => {
     initialPageParam: 1,
     getNextPageParam: (lastPage, pages) =>
       lastPage.data.posts.length ? pages.length + 1 : undefined,
+  });
+};
+export const useCheckValidUser = (username: string) => {
+  return useQuery<ProfileResponseDto, Error>({
+    queryKey: TIMELINE_QUERY_KEYS.VALID_USER(username),
+    queryFn: () => profileApi.getProfileByUsername(username),
+    enabled: username.length > 0,
+    retry: 1,
   });
 };

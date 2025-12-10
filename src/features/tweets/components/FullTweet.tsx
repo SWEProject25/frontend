@@ -25,7 +25,7 @@ import {
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import { useTweetStore } from '../store/tweetStore';
 import { useAuthStore } from '@/features/authentication/store/authStore';
-
+import { useAuth } from '@/features/authentication/hooks';
 function FullTweet({ data }: { data: TimelineFeed | null }) {
   const router = useRouter();
   const [showBlockModal, setShowBlockModal] = useState(false);
@@ -45,14 +45,25 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     unblockUser,
     isBlockLoading,
   } = useInteractions();
-
+  const myId = useAuth().user?.id;
+  const myTweet = data?.isRepost
+    ? data?.originalPostData?.userId === myId
+    : data?.userId === myId;
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
-    username: data?.username || '',
-    isFollowed: data?.isFollowedByMe || false,
-    byMe,
+    username: data?.username,
+    isFollowed: data?.isFollowedByMe,
     isMuted: data?.isMutedByMe || false,
     isBlocked: data?.isBlockedByMe || false,
+    myTweet: myTweet,
   });
+
+  // const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
+  //   username: data?.username || '',
+  //   isFollowed: data?.isFollowedByMe || false,
+  //   byMe,
+  //   isMuted: data?.isMutedByMe || false,
+  //   isBlocked: data?.isBlockedByMe || false,
+  // });
 
   const {
     data: repliesResponse,

@@ -11,6 +11,7 @@ export const TweetFormDataKeys = {
   PARENT_ID: 'parentId',
   VISIBILITY: 'visibility',
   MEDIA: 'media',
+  MENTIONS: 'mentionsIds',
 };
 
 export interface AddTweetResponse {
@@ -43,9 +44,9 @@ export interface TimelineTweet {
   parentId?: number;
   mentions: [];
   media: Media[];
-  created_at?: string;
-  user_id?: number;
-  post_id?: number;
+  // created_at?: string;
+  // user_id?: number;
+  // post_id?: number;
 }
 export interface TimelineFeed extends TimelineTweet {
   isRepost: boolean;

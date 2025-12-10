@@ -62,9 +62,14 @@ export default function MediaTweets() {
                 preload="metadata"
                 onLoadedMetadata={(e) => handleDuration(e, media)}
                 src={media.media_url}
+                onClick={(e) => {
+                  const video = e.currentTarget;
+                  if (video.paused) video.play();
+                  else video.pause();
+                }}
                 //   loop
                 //   preload="none"
-                //   autoPlay={false}
+                // autoPlay={false}
                 //   poster={media.media_url}
               >
                 {/* <source src={media.media_url} type={media.type}></source> */}
