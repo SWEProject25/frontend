@@ -74,6 +74,16 @@ export interface ReplyDto {
   };
 }
 
+export interface TweetSummaryDto {
+  status: string;
+  message: string;
+  data: string;
+}
+
+export interface DeleteTweetResponseDto {
+  status: string;
+  message: string;
+}
 export interface Liker {
   id: number;
   username: string;

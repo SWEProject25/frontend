@@ -97,13 +97,14 @@ export default function GenericDropdown({
               const borderRadius =
                 (isFirst ? 'rounded-t-xl ' : '') +
                 (isLast ? 'rounded-b-xl ' : '');
+              const isDelete = item.label.toLowerCase() === 'delete';
               return (
                 <DropdownItem
                   key={item.key}
                   data-testid={`${testId}-item-${item.key}`}
-                  color={item.color}
+                  color={isDelete ? 'danger' : item.color}
                   startContent={item.icon}
-                  className={`${borderRadius} hover:bg-white/10 hover:backdrop-blur-sm transition-all duration-200 py-2.5 ${item.className || ''}`}
+                  className={`${borderRadius} hover:bg-white/10 hover:backdrop-blur-sm transition-all duration-200 py-2.5 ${item.className || ''} ${isDelete ? 'text-red-500' : ''}`}
                   onClick={() => {
                     handleItemClick(item);
                   }}

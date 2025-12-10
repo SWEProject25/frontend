@@ -9,7 +9,7 @@ export default function Timeline() {
     <div className="flex flex-col" data-testid="timeline">
       <Header />
       <div
-        className="flex-col justify-items-center"
+        className="flex-col justify-items-center full-width"
         data-testid="timeline-content"
       >
         <AddTweet />

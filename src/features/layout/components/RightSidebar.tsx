@@ -3,6 +3,8 @@ import React from 'react';
 import WhatIsHappening from './WhatIsHappening';
 import WhoToFollow from './WhoToFollow';
 import Footer from './Footer';
+import GrokSummary from './GrokSummary';
+import { SearchInput } from '@/components/ui/input';
 import SearchProfile from '@/features/timeline/components/SearchProfile';
 
 export default function RightSidebar({

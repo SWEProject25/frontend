@@ -1,5 +1,5 @@
 import { useTweetStore } from '../store/tweetStore';
-import AddReplySubTweet from './AddReplySubTweet';
+import SubTweet from './SubTweet';
 
 export default function AddReply() {
   const tweet = useTweetStore((store) => store.currentTweet);
@@ -9,7 +9,7 @@ export default function AddReply() {
   };
   return (
     <div className="p-4" data-testid="add-reply-component">
-      {tweet && <AddReplySubTweet tweet={tweet} content={content} />}
+      {tweet && <SubTweet tweet={tweet} content={content} isReply={true} />}
     </div>
   );
 }

@@ -5,44 +5,47 @@ import {
   TimelineFeedDtoResponse,
 } from '@/features/timeline/types/api';
 import { TweetStore } from '../types/store';
-import { get } from 'https';
-import { getTweetDropdownItems } from '../constants/dropdown';
 
 export const useTweetStore = create<TweetStore>()(
-  devtools(
-    (set) => ({
-      // State
-      currentTweet: null,
-      currentTimeLineFeed: null,
-      isLoading: false,
-      error: null,
+  devtools((set) => ({
+    // State
+    currentTweet: null,
+    currentTimeLineFeed: null,
+    isLoading: false,
+    error: null,
+    tweetSummary:
+      'Hello iam here to summarize tweets content for you. \nclick on the grok icon to explore any tweet you want.',
+    isSummaryOpened: false,
+    summaryTweet: null,
 
-      // Actions
-      setCurrentTweet: (tweet: TimelineFeed | null) => {
-        set({ currentTweet: tweet, error: null });
-      },
+    // Actions
+    setCurrentTweet: (tweet: TimelineFeed | null) => {
+      set({ currentTweet: tweet, error: null });
+    },
 
-      setTimeLineFeed: (tweets: TimelineFeedDtoResponse | null) => {
-        set({ currentTimeLineFeed: tweets, error: null });
-      },
+    setTimeLineFeed: (tweets: TimelineFeedDtoResponse | null) => {
+      set({ currentTimeLineFeed: tweets, error: null });
+    },
 
-      setLoading: (loading: boolean) => {
-        set({ isLoading: loading });
-      },
+    setLoading: (loading: boolean) => {
+      set({ isLoading: loading });
+    },
 
-      setError: (error: string | null) => {
-        set({ error });
-      },
+    setError: (error: string | null) => {
+      set({ error });
+    },
 
-      clearTweet: () => {
-        set({ currentTweet: null, error: null, isLoading: false });
-      },
-    })
-    // {
-    //   name: 'tweet-storage',
-    //   partialize: (state: any) => ({
-    //     currentTweet: state.currentTweet,
-    //   }),
-    // }
-  )
+    clearTweet: () => {
+      set({ currentTweet: null, error: null, isLoading: false });
+    },
+    setTweetSummary: (summary: string | null) => {
+      set({ tweetSummary: summary });
+    },
+    setSummaryOpened: (opened: boolean) => {
+      set({ isSummaryOpened: opened });
+    },
+    setSummaryTweet: (tweet: TimelineFeed | null) => {
+      set({ summaryTweet: tweet });
+    },
+  }))
 );

@@ -12,6 +12,7 @@ import {
   CopyLinkIcon,
   SendViaMsgICon,
   QuoteIcon,
+  DeleteIcon,
 } from '@/components/ui/icons/DropDownIcons';
 import { RetweetIcon } from '@/components/ui/icons/UIIcons';
 
@@ -32,6 +33,16 @@ export const getTweetDropdownItems = ({
   myTweet?: boolean;
 }) => {
   const items = [
+    // Only include delete if byMe is true
+    ...(myTweet
+      ? [
+          {
+            key: 'delete',
+            label: 'Delete',
+            icon: <DeleteIcon />,
+          },
+        ]
+      : []),
     {
       key: 'not_interested',
       label: 'Not interested in this post',
