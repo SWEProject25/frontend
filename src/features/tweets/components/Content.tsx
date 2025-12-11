@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import QuoteTweet from './QuoteTweet';
 import Icon from '@/components/ui/home/Icon';
+import { useRouter } from 'next/navigation';
 
 type MediaItem = {
   url: string;
@@ -46,7 +47,7 @@ export default function Content({
   const media = content.media || [];
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-
+  const router = useRouter();
   const openModal = (index: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedImageIndex(index);
@@ -82,7 +83,11 @@ export default function Content({
           <span
             key={index}
             className="text-blue-400 hover:underline cursor-pointer"
-            onClick={(e) => e.stopPropagation()} // here put link to hashtag page
+            onClick={(e) => {
+              e.stopPropagation();
+
+              router.push(`/search?q=${encodeURIComponent(part)}`);
+            }} // here put link to hashtag page
           >
             {part}
           </span>

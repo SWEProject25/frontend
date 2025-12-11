@@ -18,7 +18,7 @@ export const GrokIcon = ({ className = 'w-4 h-4' }: IconProps) => {
   return (
     <svg
       className={className}
-      viewBox="0 0 30 30"
+      viewBox="0 0 32 32"
       aria-hidden="true"
       fill="currentColor"
     >

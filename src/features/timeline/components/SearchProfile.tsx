@@ -253,7 +253,7 @@ export default function SearchProfile() {
                       />
                       <span className="font-semibold text-xl break-all flex-1">
                         {!startWithHash && '#'}
-                        {search.trimStart()} hash
+                        {search.trimStart()}
                       </span>
                     </>
                     // : (

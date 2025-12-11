@@ -18,11 +18,18 @@ import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Link from 'next/link';
 import { useAuth } from '@/features/authentication/hooks';
 import { useDeleteTweet, useGetTweetSummary } from '../hooks/tweetQueries';
-export default function Tweet({ data }: { data: TimelineFeed }) {
+export default function Tweet({
+  data,
+  inProfile = false,
+}: {
+  data: TimelineFeed;
+  inProfile?: boolean;
+}) {
   const myId = useAuth().user?.id;
   const myTweet = data.isRepost
     ? data?.originalPostData?.userId === myId
     : data.userId === myId;
+
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
     username: data.username,
     isFollowed: data.isFollowedByMe,
@@ -89,6 +96,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     retweetsCount: dataViewd.retweetsCount,
     commentsCount: dataViewd.commentsCount,
     isLikedByMe: dataViewd.isLikedByMe,
+    isFollowedByMe: dataViewd.isFollowedByMe,
     isRepostedByMe: dataViewd.isRepostedByMe,
   };
 
@@ -232,18 +240,20 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
                   handleFetchSummary();
                 }}
               />
-              <DropDown
-                items={TWEET_DROPDOWN_ITEMS}
-                onOpened={setHovered}
-                onSelect={handleDropdownAction}
-              >
-                <Action
-                  icon={<DropIcon />} // smaller icon
-                  label="more"
-                  color="blue"
-                  stopPropagation={false}
-                />
-              </DropDown>
+              {!inProfile && (
+                <DropDown
+                  items={TWEET_DROPDOWN_ITEMS}
+                  onOpened={setHovered}
+                  onSelect={handleDropdownAction}
+                >
+                  <Action
+                    icon={<DropIcon />} // smaller icon
+                    label="more"
+                    color="blue"
+                    stopPropagation={false}
+                  />
+                </DropDown>
+              )}
             </div>
           </div>
           <Content content={content} isQuote={data.isQuote} data={quoteData} />

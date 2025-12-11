@@ -41,9 +41,11 @@ export default function LayoutWrapper({
           <RightSidebar hasSearch={hasSearch} />
         </div>
       </main>
-      <div className="fixed bottom-25 right-10 z-50">
-        <GrokSummary />
-      </div>
+      {showRightSidebar && (
+        <div className="fixed bottom-25 right-10 z-50">
+          <GrokSummary />
+        </div>
+      )}
     </div>
   );
 }
