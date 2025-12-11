@@ -48,7 +48,7 @@ export default function TweetList() {
       <Loader />
     </div>
   ) : (
-    <>
+    <div className="flex flex-col w-full" data-testid="tweet-list-container">
       <InfiniteScroll
         data-testid="tweet-list"
         isLoadingInitial={isLoading}
@@ -58,9 +58,9 @@ export default function TweetList() {
         hasInitialData={hasInitialData}
       >
         <div className="flex flex-col w-full" data-testid="render-tweet-list">
-          {renderTweets}{' '}
+          {renderTweets}
         </div>
       </InfiniteScroll>
-    </>
+    </div>
   );
 }

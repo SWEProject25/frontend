@@ -1,4 +1,7 @@
 import {
+  DeleteTweetResponseDto,
+  Tweet,
+  TweetSummaryDto,
   ReplyDto,
   ReplyResponseDto,
   TweetResponseDto,
@@ -111,6 +114,34 @@ export const tweetApi = {
         posts: data.data,
       },
     };
+  },
+
+  async getTweetSummary(tweetId: number): Promise<TweetSummaryDto> {
+    const response = await fetch(
+      `${TWEET_API_CONFIG.BASE_URL}${TWEET_ENDPOINTS.GET_TWEET_SUMMARY(tweetId)}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    return handleResponse<TweetSummaryDto>(response);
+  },
+
+  async deleteTweet(tweetId: number): Promise<DeleteTweetResponseDto> {
+    const response = await fetch(
+      `${TWEET_API_CONFIG.BASE_URL}${TWEET_ENDPOINTS.DELETE_TWEET(tweetId)}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+    return handleResponse<DeleteTweetResponseDto>(response);
   },
 
   //   async getRepliesByTweetId(

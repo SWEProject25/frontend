@@ -7,7 +7,12 @@ import {
   InfiniteData,
 } from '@tanstack/react-query';
 import { tweetApi } from '../services/tweetApi';
-import { ReplyDto, TweetResponseDto, LikersResponseDto } from '../types/api';
+import {
+  ReplyDto,
+  TweetResponseDto,
+  LikersResponseDto,
+  TweetSummaryDto,
+} from '../types/api';
 import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
 import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
 import { tweet } from '@/features/timeline/mocks/data';
@@ -20,6 +25,8 @@ export const TWEET_QUERY_KEYS = {
   toggleRepostTweet: (tweetId: number) => ['tweet', 'repost', tweetId] as const,
   getRepliesByTweetId: (tweetId: number) =>
     ['tweet', 'replies', tweetId] as const,
+  getTweetSummary: (tweetId: number) => ['tweet', 'summary', tweetId] as const,
+  deleteTweet: (tweetId: number) => ['tweet', 'delete', tweetId] as const,
   getLikersByTweetId: (tweetId: number) =>
     ['tweet', 'likers', tweetId] as const,
 };
@@ -182,6 +189,14 @@ export const useGetRepliesByTweetId = (tweetId: number) => {
   });
 };
 
+export const useGetTweetSummary = (tweetId: number) => {
+  return useQuery<TweetSummaryDto, Error>({
+    queryKey: TWEET_QUERY_KEYS.getTweetSummary(tweetId),
+    queryFn: () => tweetApi.getTweetSummary(tweetId),
+    staleTime: 0,
+    retry: 1,
+  });
+};
 // Hook: Get likers by tweet ID
 export const useGetLikersByTweetId = (tweetId: number) => {
   return useInfiniteQuery<
@@ -199,6 +214,19 @@ export const useGetLikersByTweetId = (tweetId: number) => {
       lastPage.data.length >= 10 ? pages.length + 1 : undefined,
     staleTime: 0,
     retry: 1,
+  });
+};
+
+export const useDeleteTweet = (tweetId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => tweetApi.deleteTweet(tweetId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: TWEET_QUERY_KEYS.deleteTweet(tweetId),
+      });
+    },
+    networkMode: 'always',
   });
 };
 

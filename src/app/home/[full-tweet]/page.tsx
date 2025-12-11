@@ -6,7 +6,8 @@ import { useTweetById } from '@/features/tweets/hooks/tweetQueries';
 import Loader from '@/components/generic/Loader';
 
 function Page() {
-  const tweetQuery = useTweetById(Number(useParams()?.['full-tweet'] || 0));
+  const id = Number(useParams()?.['full-tweet']);
+  const tweetQuery = useTweetById(id);
   const tweet = tweetQuery.data?.data[0] || null;
 
   // if (tweetQuery.isLoading) {
@@ -15,7 +16,7 @@ function Page() {
 
   return (
     <>
-      <FullTweet data={tweet} />
+      <FullTweet data={tweet} id={id} />
       {/* <Replies id={tweet?.postId || 0} /> */}
     </>
   );

@@ -17,16 +17,25 @@ import { getTweetDropdownItems } from '../constants';
 import { useInteractions } from '@/hooks/useInteractions';
 import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Loader from '@/components/generic/Loader';
-import { useGetRepliesByTweetId } from '../hooks/tweetQueries';
+import {
+  useDeleteTweet,
+  useGetRepliesByTweetId,
+  useGetTweetSummary,
+} from '../hooks/tweetQueries';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import { useTweetStore } from '../store/tweetStore';
-
-function FullTweet({ data }: { data: TimelineFeed | null }) {
+import { useAuthStore } from '@/features/authentication/store/authStore';
+import { useAuth } from '@/features/authentication/hooks';
+function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
   const router = useRouter();
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
     null
   );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const userId = useAuthStore((store) => store.user?.id);
+  const byMe = userId === data?.userId;
   const {
     followUser,
     unfollowUser,
@@ -36,13 +45,25 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     unblockUser,
     isBlockLoading,
   } = useInteractions();
-
+  const myId = useAuth().user?.id;
+  const myTweet = data?.isRepost
+    ? data?.originalPostData?.userId === myId
+    : data?.userId === myId;
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
-    username: data?.username || '',
-    isFollowed: data?.isFollowedByMe || false,
+    username: data?.username,
+    isFollowed: data?.isFollowedByMe,
     isMuted: data?.isMutedByMe || false,
     isBlocked: data?.isBlockedByMe || false,
+    myTweet: myTweet,
   });
+
+  // const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
+  //   username: data?.username || '',
+  //   isFollowed: data?.isFollowedByMe || false,
+  //   byMe,
+  //   isMuted: data?.isMutedByMe || false,
+  //   isBlocked: data?.isBlockedByMe || false,
+  // });
 
   const {
     data: repliesResponse,
@@ -61,7 +82,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
       ))}
     </React.Fragment>
   ));
-
+  const deleteTweetMutation = useDeleteTweet(data?.postId || -1);
   const hasInitialData = pages ? pages[0].data.posts.length > 0 : false;
 
   const handleDropdownAction = async (key: string) => {
@@ -92,11 +113,29 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
         }
         setShowBlockModal(true);
         break;
+      case 'delete':
+        // Handle delete action here
+        setShowDeleteModal(true);
+        break;
       default:
         break;
     }
   };
 
+  const handleDelete = async () => {
+    setIsDeleteLoading(true);
+    try {
+      await deleteTweetMutation.mutateAsync();
+      setShowDeleteModal(false);
+      // Optionally, you can add a success notification here
+      // Redirect to home after deletion
+      router.push('/home');
+    } catch (error) {
+      // Handle error, optionally show error notification
+    } finally {
+      setIsDeleteLoading(false);
+    }
+  };
   const handleConfirmBlock = async () => {
     if (!data) return;
 
@@ -112,6 +151,19 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
   };
 
   const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
+  const setTweetSummary = useTweetStore((store) => store.setTweetSummary);
+  const setSummaryOpened = useTweetStore((store) => store.setSummaryOpened);
+  const setSummaryTweet = useTweetStore((store) => store.setSummaryTweet);
+  const summary = useGetTweetSummary(id);
+  function handleFetchSummary() {
+    summary.refetch().then((res) => {
+      if (res?.data) {
+        setTweetSummary(res.data.data);
+        setSummaryOpened(true);
+        setSummaryTweet(data);
+      }
+    });
+  }
   if (!data) {
     return (
       <div className="flex justify-center items-center h-32">
@@ -129,7 +181,25 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
   const content = {
     text: data.text,
     media: data.media,
+    mentions: data.mentions,
   };
+
+  const quoteData = data.originalPostData
+    ? {
+        postId: data.originalPostData.postId,
+        userId: data.originalPostData.userId,
+        tweetContent: {
+          text: data.originalPostData.text,
+          media: data.originalPostData.media,
+          mentions: data.originalPostData.mentions || [],
+        },
+        avatar: data.originalPostData.avatar ?? null,
+        name: data.originalPostData.name,
+        username: data.originalPostData.username,
+        isVerified: data.originalPostData.verified ?? false,
+        date: data.originalPostData.date,
+      }
+    : undefined;
 
   const actionsStats = {
     postId: data.postId,
@@ -143,7 +213,6 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     retweetsCount: data.retweetsCount,
     commentsCount: data.commentsCount,
     isLikedByMe: data.isLikedByMe,
-    isFollowedByMe: data.isFollowedByMe,
     isRepostedByMe: data.isRepostedByMe,
   };
   return (
@@ -160,6 +229,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
               icon={<GrokIcon />} // smaller icon
               label="Explain this post"
               color="blue"
+              onClick={handleFetchSummary}
             />
             <DropDown
               items={TWEET_DROPDOWN_ITEMS}
@@ -175,7 +245,13 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
           </div>
         </div>
         <div className="mt-4 space-y-4">
-          <Content content={content} />
+          <Content
+            content={content}
+            isQuote={data.isQuote}
+            data={quoteData}
+            fullWidth={true}
+          />
+
           <div className="flex items-center space-x-1">
             <Timing time={data.date} full={true} />
           </div>
@@ -183,7 +259,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
 
           <Actions
             stats={actionsStats}
-            replyClick={() => setCurrentTweet(data)}
+            modalClick={() => setCurrentTweet(data)}
           />
           <div className="border-b border-gray-700 mt-3" />
         </div>
@@ -226,6 +302,16 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
         cancelText="Cancel"
         confirmButtonClass="bg-block hover:bg-block/90 text-white"
         isLoading={isBlockLoading}
+      />
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        title="Delete tweet?"
+        message="This action cannot be undone. Are you sure you want to delete this tweet?"
+        confirmText="Delete"
+        cancelText="Cancel"
+        isLoading={isDeleteLoading}
       />
     </div>
   );
