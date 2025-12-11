@@ -41,6 +41,7 @@ export default function WhoToFollow() {
                 isFollowed={user.isFollowed}
                 actionType="follow"
                 avatarUrl={user.avatarUrl}
+                linkTo={`/${user.handle.substring(1)}`}
               />
             ))}
           </div>
