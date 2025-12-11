@@ -8,7 +8,7 @@ import { useProfileByUserId } from '@/features/profile/hooks';
 import Loader from '@/components/generic/Loader';
 import { useProfileStore } from '@/features/profile';
 import { useEffect } from 'react';
-
+import { useAuth } from '@/features/authentication/hooks/useAuth';
 interface ProfileCardProps {
   userId: number;
 }
@@ -16,6 +16,9 @@ interface ProfileCardProps {
 export default function ProfileCard({ userId }: ProfileCardProps) {
   const { data: profileData, isLoading, error } = useProfileByUserId(userId);
   const { setCurrentProfile } = useProfileStore();
+  const auth = useAuth();
+  const myId = auth.user?.id;
+  const isMe = myId === userId;
   useEffect(() => {
     if (profileData?.data) {
       setCurrentProfile(profileData.data);
@@ -65,7 +68,7 @@ export default function ProfileCard({ userId }: ProfileCardProps) {
           username={profile.User.username}
         />
         {/* Show Follow button only if not been blocked and not blocking */}
-        {!profile.is_been_blocked && !profile.is_blocked_by_me && (
+        {!profile.is_been_blocked && !profile.is_blocked_by_me && !isMe && (
           <FollowBtn
             data-testid="profile-card-follow-button"
             userId={profile.user_id}
@@ -99,13 +102,13 @@ export default function ProfileCard({ userId }: ProfileCardProps) {
         </span>
       </div>
 
-      <div
+      {/* <div
         data-testid="profile-card-summary-button"
         className="mt-3 border border-gray-700 rounded-full py-2 text-center text-sm text-white hover:bg-gray-900 cursor-pointer transition flex items-center justify-center gap-2"
       >
         <GrokIcon />
         <span className="font-bold">Profile Summary</span>
-      </div>
+      </div> */}
     </div>
   );
 }

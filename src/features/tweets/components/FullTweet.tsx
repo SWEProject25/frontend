@@ -26,7 +26,7 @@ import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import { useTweetStore } from '../store/tweetStore';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import { useAuth } from '@/features/authentication/hooks';
-function FullTweet({ data }: { data: TimelineFeed | null }) {
+function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
   const router = useRouter();
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
@@ -149,17 +149,20 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
     setShowBlockModal(false);
     setBlockAction(null);
   };
-  const summary = useGetTweetSummary(data?.postId || 0);
+
   const setCurrentTweet = useTweetStore((store) => store.setCurrentTweet);
   const setTweetSummary = useTweetStore((store) => store.setTweetSummary);
   const setSummaryOpened = useTweetStore((store) => store.setSummaryOpened);
   const setSummaryTweet = useTweetStore((store) => store.setSummaryTweet);
+  const summary = useGetTweetSummary(id);
   function handleFetchSummary() {
-    if (summary.data) {
-      setTweetSummary(summary.data.data);
-      setSummaryOpened(true);
-      setSummaryTweet(data);
-    }
+    summary.refetch().then((res) => {
+      if (res?.data) {
+        setTweetSummary(res.data.data);
+        setSummaryOpened(true);
+        setSummaryTweet(data);
+      }
+    });
   }
   if (!data) {
     return (
@@ -256,7 +259,7 @@ function FullTweet({ data }: { data: TimelineFeed | null }) {
 
           <Actions
             stats={actionsStats}
-            replyClick={() => setCurrentTweet(data)}
+            modalClick={() => setCurrentTweet(data)}
           />
           <div className="border-b border-gray-700 mt-3" />
         </div>

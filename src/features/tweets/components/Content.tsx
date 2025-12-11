@@ -35,11 +35,13 @@ export default function Content({
   isQuote = false,
   data = undefined,
   fullWidth = false,
+  isInModal = false,
 }: {
   content: TweetContent;
   isQuote?: boolean;
   data?: quoteProps;
   fullWidth?: boolean;
+  isInModal?: boolean;
 }) {
   const media = content.media || [];
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -251,7 +253,7 @@ export default function Content({
       style={{
         width: '100%',
         maxWidth: '100%',
-        overflow: 'hidden',
+        overflow: 'visible',
         wordBreak: 'break-word',
       }}
     >
@@ -281,8 +283,8 @@ export default function Content({
       {media.length > 0 && <div className="mt-3">{renderMediaGrid()}</div>}
 
       {isQuote && (
-        <div className="mt-3 p-3 border border-gray-700 rounded-xl">
-          {data && <QuoteTweet {...data} />}
+        <div className="mt-3" style={{ overflow: 'visible' }}>
+          {data && <QuoteTweet {...data} isInModal={isInModal} />}
         </div>
       )}
 

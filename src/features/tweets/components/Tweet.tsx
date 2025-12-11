@@ -109,7 +109,6 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
       }
     : undefined;
 
-  const summary = useGetTweetSummary(dataViewd.postId);
   const deleteTweetMutation = useDeleteTweet(dataViewd.postId);
   const handleDropdownAction = async (key: string) => {
     switch (key) {
@@ -166,12 +165,16 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
   const setTweetSummary = useTweetStore((store) => store.setTweetSummary);
   const setSummaryOpened = useTweetStore((store) => store.setSummaryOpened);
   const setSummaryTweet = useTweetStore((store) => store.setSummaryTweet);
+
+  const summary = useGetTweetSummary(dataViewd.postId);
   function handleFetchSummary() {
-    if (summary?.data) {
-      setTweetSummary(summary.data.data);
-      setSummaryOpened(true);
-      setSummaryTweet(dataViewd);
-    }
+    summary.refetch().then((res) => {
+      if (res?.data) {
+        setTweetSummary(res.data.data);
+        setSummaryOpened(true);
+        setSummaryTweet(dataViewd);
+      }
+    });
   }
 
   return (
@@ -196,7 +199,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
               onClick={(e) => e.stopPropagation()}
               className="hover:underline"
             >
-              {data.name} reposted
+              {myId === data.userId ? 'You reposted' : `${data.name} reposted`}
             </Link>
           </span>
         </div>
@@ -247,7 +250,7 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
           <Actions
             stats={actionsStats}
             onOpened={setHovered}
-            replyClick={() => {
+            modalClick={() => {
               setCurrentTweet(data);
             }}
           />
@@ -285,3 +288,5 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     </div>
   );
 }
+
+//no

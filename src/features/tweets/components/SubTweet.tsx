@@ -13,14 +13,31 @@ export default function SubTweet({
   content: TweetContent;
   isReply?: boolean;
 }) {
+  const quoteData = tweet.originalPostData
+    ? {
+        postId: tweet.originalPostData.postId,
+        userId: tweet.originalPostData.userId,
+        tweetContent: {
+          text: tweet.originalPostData.text,
+          media: [],
+          mentions: tweet.originalPostData.mentions || [],
+        },
+        avatar: tweet.originalPostData.avatar ?? null,
+        name: tweet.originalPostData.name,
+        username: tweet.originalPostData.username,
+        isVerified: tweet.originalPostData.verified ?? false,
+        date: tweet.originalPostData.date,
+      }
+    : undefined;
+  const data = tweet?.isRepost ? tweet?.originalPostData : tweet;
   return (
     <div
       className="flex w-full gap-2"
       style={{ maxWidth: '100%', overflow: 'hidden' }}
     >
       <Avatar
-        avatarImage={tweet?.avatar ?? null}
-        name={tweet?.name}
+        avatarImage={data?.avatar ?? null}
+        name={data?.name}
         size="sm"
         position="relative"
         className="border-0"
@@ -41,13 +58,13 @@ export default function SubTweet({
             maxWidth: '100%',
           }}
         >
-          <span className="font-bold truncate max-w-[30%]">{tweet?.name}</span>
+          <span className="font-bold truncate max-w-[30%]">{data?.name}</span>
           <span className="text-gray-500 truncate max-w-[30%]">
-            @{tweet?.username}
+            @{data?.username}
           </span>
           <span className="text-gray-500">·</span>
           <div className="flex-shrink-0">
-            <Timing time={tweet?.date} hover={false} />
+            <Timing time={data?.date} hover={false} />
           </div>
         </div>
         <div
@@ -58,12 +75,17 @@ export default function SubTweet({
             wordBreak: 'break-word',
           }}
         >
-          <Content content={content} />
+          <Content
+            content={content}
+            isQuote={tweet.isQuote}
+            data={quoteData}
+            isInModal={true}
+          />
         </div>
         {isReply && (
           <div className="w-full mt-3">
             <span className="text-gray-400 text-md">Replying to </span>
-            <span className="text-blue-400 text-md">@{tweet?.username}</span>
+            <span className="text-blue-400 text-md">@{data?.username}</span>
           </div>
         )}
       </div>
