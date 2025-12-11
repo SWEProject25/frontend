@@ -72,6 +72,26 @@ export default function Content({
     }
   };
 
+  // Function to render text with hashtags styled
+  const renderTextWithHashtags = (text: string) => {
+    const parts = text.split(/(#\w+)/g);
+
+    return parts.map((part, index) => {
+      if (part.startsWith('#')) {
+        return (
+          <span
+            key={index}
+            className="text-blue-400 hover:underline cursor-pointer"
+            onClick={(e) => e.stopPropagation()} // here put link to hashtag page
+          >
+            {part}
+          </span>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
+
   // Function to render media grid based on count
   const renderMediaGrid = () => {
     if (media.length === 0) return null;
@@ -275,7 +295,7 @@ export default function Content({
         )}
         {content.text && (
           <span data-testid="tweet-text" className="inline">
-            {content.text}
+            {renderTextWithHashtags(content.text)}
           </span>
         )}
       </div>
