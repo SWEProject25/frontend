@@ -24,12 +24,14 @@ export const getTweetDropdownItems = ({
   isMuted = false,
   isBlocked = false,
   myTweet = false,
+  inProfile = false,
 }: {
   username?: string;
   isFollowed?: boolean;
   isMuted?: boolean;
   isBlocked?: boolean;
   myTweet?: boolean;
+  inProfile?: boolean;
 }) => {
   const items = [
     {
@@ -83,10 +85,11 @@ export const getTweetDropdownItems = ({
     },
   ];
   let displayedItems = items;
-  if (myTweet)
+  if (myTweet || inProfile)
     displayedItems = items.filter((item) =>
       ['lists', 'engagement', 'embed', 'community_note'].includes(item.key)
     );
+
   return displayedItems;
 };
 

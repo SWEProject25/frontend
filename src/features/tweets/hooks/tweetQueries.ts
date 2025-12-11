@@ -86,10 +86,11 @@ export const useToggleLikeTweet = (
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.tweetById(tweetId),
       });
-      if (user)
+      if (user) {
         queryClient.invalidateQueries({
           queryKey: PROFILE_QUERY_KEYS.profileLikes(user),
         });
+      }
     },
     networkMode: 'always',
   });

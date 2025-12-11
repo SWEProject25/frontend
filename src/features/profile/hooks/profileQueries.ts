@@ -466,7 +466,7 @@ const useProfilePosts = () => {
     ReturnType<typeof PROFILE_QUERY_KEYS.profilePosts>,
     number
   >({
-    enabled: valid,
+    // enabled: valid,
     queryKey: PROFILE_QUERY_KEYS.profilePosts(profile.User.id),
     queryFn: ({ pageParam }) =>
       profileApi.getProfilePostsFeed(pageParam, user, profile),
@@ -490,7 +490,7 @@ const useProfileMention = () => {
     ReturnType<typeof PROFILE_QUERY_KEYS.profileMentions>,
     number
   >({
-    enabled: valid,
+    // enabled: valid,
     queryKey: PROFILE_QUERY_KEYS.profileMentions(user),
     queryFn: ({ pageParam }) =>
       profileApi.getProfileMentionsFeed(pageParam, user),
@@ -514,7 +514,7 @@ const useProfilelikes = () => {
     ReturnType<typeof PROFILE_QUERY_KEYS.profileLikes>,
     number
   >({
-    enabled: valid,
+    // enabled: valid,
     queryKey: PROFILE_QUERY_KEYS.profileLikes(user),
     queryFn: ({ pageParam }) => profileApi.getProfileLikesFeed(pageParam, user),
     initialPageParam: 1,
@@ -540,7 +540,7 @@ export const useProfileMedia = () => {
     ReturnType<typeof PROFILE_QUERY_KEYS.profileMedia>,
     number
   >({
-    enabled: valid,
+    // enabled: valid,
     queryKey: PROFILE_QUERY_KEYS.profileMedia(profile.User.id),
     queryFn: ({ pageParam }) => profileApi.getProfileMediaFeed(pageParam, user),
     initialPageParam: 1,
@@ -565,7 +565,7 @@ const useProfileReplies = () => {
     ReturnType<typeof PROFILE_QUERY_KEYS.profileReplies>,
     number
   >({
-    enabled: valid,
+    // enabled: valid,
     queryKey: PROFILE_QUERY_KEYS.profileReplies(profile.User.id),
     queryFn: ({ pageParam }) =>
       profileApi.getProfileRepliesFeed(pageParam, user),

@@ -28,3 +28,8 @@ export interface Trend {
   tag: string;
   totalPosts: number;
 }
+export interface ExplorePersonalizedFeedDtoResponse {
+  status: string;
+  message: string;
+  data: Record<string, TimelineFeed[]>;
+}

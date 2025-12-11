@@ -154,6 +154,7 @@ export const useTimelineFeed = () => {
     initialPageParam: 1,
     getNextPageParam: (lastPage, pages) =>
       lastPage.data.posts.length ? pages.length + 1 : undefined,
+    staleTime: Infinity,
   });
 };
 export const useSearchProfile = (searchUser: string) => {

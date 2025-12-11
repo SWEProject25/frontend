@@ -1,7 +1,8 @@
 import { API_CONFIG } from '@/constants/api';
 import { EXPLORE_ENDPOINTS } from '../constants/api';
-import { TOP_TAB, TRENDING_TAB } from '../constants/tabs';
+import { FOR_YOU_TAB, TOP_TAB, TRENDING_TAB } from '../constants/tabs';
 import {
+  ExplorePersonalizedFeedDtoResponse,
   ExploreSearchFeedDtoResponse,
   ExploreTrendingFeedDtoResponse,
 } from '../types/api';
@@ -91,15 +92,14 @@ export const exploreApi = {
   },
 
   async getForYouFeed(
-    pageNumber = 1,
-    limit = 10
-  ): Promise<TimelineFeedDtoResponse> {
+    postsPerInterest = 5
+  ): Promise<ExplorePersonalizedFeedDtoResponse> {
+    const params = new URLSearchParams({
+      postsPerInterest: `${postsPerInterest}`,
+    });
     const response = await fetch(
       `${API_CONFIG.BASE_URL}${EXPLORE_ENDPOINTS.EXPLORE_FEED_FOR_YOU}?` +
-        new URLSearchParams({
-          page: `${pageNumber}`,
-          limit: `${limit} `,
-        }),
+        params,
       {
         method: 'GET',
         headers: {
@@ -109,11 +109,11 @@ export const exploreApi = {
       }
     );
 
-    return handleResponse<TimelineFeedDtoResponse>(response);
+    return handleResponse<ExplorePersonalizedFeedDtoResponse>(response);
   },
 
   async getTrendingFeed(
-    category = TRENDING_TAB,
+    category = FOR_YOU_TAB,
     limit = 10
   ): Promise<ExploreTrendingFeedDtoResponse> {
     const response = await fetch(
@@ -132,5 +132,40 @@ export const exploreApi = {
     );
 
     return handleResponse<ExploreTrendingFeedDtoResponse>(response);
+  },
+
+  async getInterestFeed(
+    page = 1,
+    interest = 'Sports',
+    tab = TOP_TAB,
+    limit = 10
+  ): Promise<TimelineFeedDtoResponse> {
+    const params =
+      tab === TOP_TAB
+        ? new URLSearchParams({
+            page: `${page}`,
+            interests: `${interest}`,
+            limit: `${limit}`,
+          })
+        : new URLSearchParams({
+            page: `${page}`,
+            interests: `${interest}`,
+            limit: `${limit}`,
+            order_by: `latest`,
+          });
+    console.log(tab);
+    const response = await fetch(
+      `${API_CONFIG.BASE_URL}${EXPLORE_ENDPOINTS.EXPLORE_FEED_INTEREST}?` +
+        params,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }
+    );
+
+    return handleResponse<TimelineFeedDtoResponse>(response);
   },
 };

@@ -94,13 +94,17 @@ export interface ProfileTweet {
   isBlockedByMe: boolean;
   text: string;
   // created_at?: string;
-  mentions?: [];
+  mentions?: Mention[];
   media: Media[];
 }
 export interface ProfileFeed extends ProfileTweet {
   isRepost: boolean;
   isQuote: boolean;
   originalPostData?: ProfileTweet;
+}
+interface Mention {
+  userId: number;
+  username: string;
 }
 // export interface ProfileFeedDtoResponse {
 //   status: string;

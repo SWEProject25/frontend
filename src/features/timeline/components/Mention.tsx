@@ -123,7 +123,7 @@ export default function Mention() {
       {group.data.map((profile, indx) => (
         <div
           key={profile.id}
-          className={`flex w-full ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3 ${selectedTab === i * group.metadata.limit + indx && 'bg-white/12'} hover:cursor-pointer hover:bg-white/12`}
+          className={`flex w-full  ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3 ${selectedTab === i * group.metadata.limit + indx && 'bg-white/12'} hover:cursor-pointer hover:bg-white/12`}
           // className={`flex w-full ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3  hover:cursor-pointer hover:bg-white/12`}
           onClick={() => {
             // setMention(profile.User.username + '');
@@ -157,7 +157,7 @@ export default function Mention() {
   return (
     <div
       ref={divRef}
-      className=" w-full z-50 bg-background border-border border shadow-[0_0_20px_rgba(255,255,255,0.15)] rounded-2xl absolute  left-6 right-0 flex flex-col max-h-[320px] min-h-[200px] max-w-[380px] overflow-y-scroll"
+      className=" w-full z-50 mt-0.5 bg-background border-border border shadow-[0_0_20px_rgba(255,255,255,0.15)] rounded-2xl absolute  left-6 right-0 flex flex-col max-h-[320px] min-h-[200px] max-w-[380px] overflow-y-scroll"
     >
       {isError ? (
         <>{toasterMessage(error.message, 'bottom-center', 'error')}</>

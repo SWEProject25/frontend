@@ -17,18 +17,27 @@ import { useInteractions } from '@/hooks/useInteractions';
 import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Link from 'next/link';
 import { useAuth } from '@/features/authentication/hooks';
+import { useAuthStore } from '@/features/authentication/store/authStore';
 
-export default function Tweet({ data }: { data: TimelineFeed }) {
+export default function Tweet({
+  data,
+  inProfile = false,
+}: {
+  data: TimelineFeed;
+  inProfile?: boolean;
+}) {
   const myId = useAuth().user?.id;
   const myTweet = data.isRepost
     ? data?.originalPostData?.userId === myId
     : data.userId === myId;
+
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
     username: data.username,
     isFollowed: data.isFollowedByMe,
     isMuted: data.isMutedByMe || false,
     isBlocked: data.isBlockedByMe || false,
     myTweet: myTweet,
+    inProfile,
   });
 
   const [Hovered, setHovered] = useState(false);
@@ -72,14 +81,14 @@ export default function Tweet({ data }: { data: TimelineFeed }) {
     isRepost: data.isRepost,
     isQuote: data.isQuote,
     userId: data.userId,
-    likesCount: data.likesCount,
+    likesCount: dataViewd.likesCount,
     type: data.type,
     parentId: data.parentId,
-    retweetsCount: data.retweetsCount,
-    commentsCount: data.commentsCount,
-    isLikedByMe: data.isLikedByMe,
-    isFollowedByMe: data.isFollowedByMe,
-    isRepostedByMe: data.isRepostedByMe,
+    retweetsCount: dataViewd.retweetsCount,
+    commentsCount: dataViewd.commentsCount,
+    isLikedByMe: dataViewd.isLikedByMe,
+    isFollowedByMe: dataViewd.isFollowedByMe,
+    isRepostedByMe: dataViewd.isRepostedByMe,
   };
 
   const handleDropdownAction = async (key: string) => {
