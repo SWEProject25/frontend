@@ -59,7 +59,8 @@ export default function Interest() {
         loadMore={() => hasNextPage && fetchNextPage()}
         hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
         hasInitialData={hasInitialData}
-        showNoMoreData={false}
+        // showNoMoreData={false}
+        noMoreDataMessage=""
       >
         <div
           className="flex flex-col w-full"

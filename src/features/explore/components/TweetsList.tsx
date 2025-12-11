@@ -77,6 +77,10 @@ export default function TweetsList() {
         data-testid="explore-feed-render-tweet-list"
       >
         {renderCategries}
+        <div className="flex flex-col items-center justify-center py-8 px-4">
+          <p className="text-gray-500 dark:text-gray-400 text-lg font-medium"></p>
+          <div className="mt-2 h-1 w-24 bg-linear-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent rounded-full"></div>
+        </div>
       </div>
     </>
   );

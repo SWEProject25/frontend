@@ -52,7 +52,8 @@ export default function Tweets() {
       loadMore={() => hasNextPage && fetchNextPage()}
       hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
       hasInitialData={hasInitialData}
-      showNoMoreData={false}
+      // showNoMoreData={false}
+      noMoreDataMessage=""
     >
       <div className="flex flex-col w-full">{renderTweets} </div>
     </InfiniteScroll>

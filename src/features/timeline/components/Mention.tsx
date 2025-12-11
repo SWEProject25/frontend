@@ -181,8 +181,9 @@ export default function Mention() {
             hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
             hasInitialData={hasInitialData}
             noDataMessage="no such profile"
-            noMoreDataMessage="no more profiles"
-            showNoMoreData={false}
+            // noMoreDataMessage="no more profiles"
+            // showNoMoreData={false}
+            noMoreDataMessage=""
           >
             {renderProfiles}
           </InfiniteScroll>
