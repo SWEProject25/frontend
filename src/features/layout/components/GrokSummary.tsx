@@ -94,12 +94,11 @@ function SummaryButton({ setOpened }: { setOpened: (val: boolean) => void }) {
   return (
     <button
       className="fixed bottom-20 right-8 z-50 w-14 h-14 bg-black rounded-2xl flex items-center justify-center border border-gray-600 hover:bg-[#101a2b]"
-      style={{
-        boxShadow: '0 0 14px 1px rgba(220,220,220,0.40)',
-      }}
       onClick={() => setOpened(true)}
     >
-      <GrokIcon className="w-8 h-8" />
+      <div className="flex items-center justify-center">
+        <GrokIcon className="w-8 h-8" />
+      </div>
     </button>
   );
 }
