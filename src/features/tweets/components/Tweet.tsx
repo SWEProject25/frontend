@@ -176,9 +176,19 @@ export default function Tweet({
 
   const summary = useGetTweetSummary(dataViewd.postId);
   function handleFetchSummary() {
+    if (!dataViewd?.text) {
+      setTweetSummary('No summary available');
+      setSummaryOpened(true);
+      setSummaryTweet(dataViewd);
+      return;
+    }
     summary.refetch().then((res) => {
       if (res?.data) {
         setTweetSummary(res.data.data);
+        setSummaryOpened(true);
+        setSummaryTweet(dataViewd);
+      } else {
+        setTweetSummary('No summary available');
         setSummaryOpened(true);
         setSummaryTweet(dataViewd);
       }

@@ -156,9 +156,19 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
   const setSummaryTweet = useTweetStore((store) => store.setSummaryTweet);
   const summary = useGetTweetSummary(id);
   function handleFetchSummary() {
+    if (!data?.text) {
+      setTweetSummary('No summary available');
+      setSummaryOpened(true);
+      setSummaryTweet(data);
+      return;
+    }
     summary.refetch().then((res) => {
       if (res?.data) {
         setTweetSummary(res.data.data);
+        setSummaryOpened(true);
+        setSummaryTweet(data);
+      } else {
+        setTweetSummary('No summary available');
         setSummaryOpened(true);
         setSummaryTweet(data);
       }
