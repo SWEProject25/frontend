@@ -57,11 +57,11 @@ export const getTweetDropdownItems = ({
           },
         ]
       : []),
-    {
-      key: 'lists',
-      label: 'Add/remove from Lists',
-      icon: <AddtoList />,
-    },
+    // {
+    //   key: 'lists',
+    //   label: 'Add/remove from Lists',
+    //   icon: <AddtoList />,
+    // },
     {
       key: 'mute',
       label: isMuted ? `Unmute ${username}` : `Mute ${username}`,
@@ -72,32 +72,30 @@ export const getTweetDropdownItems = ({
       label: isBlocked ? `Unblock ${username}` : `Block ${username}`,
       icon: <BlockIcon />,
     },
-    {
-      key: 'engagement',
-      label: 'View post engagements',
-      icon: <EngagementsIcon />,
-    },
-    {
-      key: 'embed',
-      label: 'Embed post',
-      icon: <EmbedIcon />,
-    },
-    {
-      key: 'report',
-      label: 'Report post',
-      icon: <ReportIcon />,
-    },
-    {
-      key: 'community_note',
-      label: 'Request Community Note',
-      icon: <RequestCommunityIcon />,
-    },
+    // {
+    //   key: 'engagement',
+    //   label: 'View post engagements',
+    //   icon: <EngagementsIcon />,
+    // },
+    // {
+    //   key: 'embed',
+    //   label: 'Embed post',
+    //   icon: <EmbedIcon />,
+    // },
+    // {
+    //   key: 'report',
+    //   label: 'Report post',
+    //   icon: <ReportIcon />,
+    // },
+    // {
+    //   key: 'community_note',
+    //   label: 'Request Community Note',
+    //   icon: <RequestCommunityIcon />,
+    // },
   ];
   let displayedItems = items;
   if (myTweet)
-    displayedItems = items.filter((item) =>
-      ['lists', 'engagement', 'embed', 'community_note'].includes(item.key)
-    );
+    displayedItems = items.filter((item) => ['delete'].includes(item.key));
   return displayedItems;
 };
 
@@ -107,11 +105,11 @@ export const getShareDropdownItems = () => [
     label: 'copy link',
     icon: <CopyLinkIcon />,
   },
-  {
-    key: 'send_via_message',
-    label: 'Send via Direct Message',
-    icon: <SendViaMsgICon />,
-  },
+  // {
+  //   key: 'send_via_message',
+  //   label: 'Send via Direct Message',
+  //   icon: <SendViaMsgICon />,
+  // },
 ];
 
 export const getRepostDropdownItems = ({

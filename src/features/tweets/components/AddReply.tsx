@@ -4,7 +4,7 @@ import SubTweet from './SubTweet';
 export default function AddReply() {
   const tweet = useTweetStore((store) => store.currentTweet);
   const content = {
-    text: tweet?.text,
+    text: tweet?.isRepost ? tweet?.originalPostData?.text : tweet?.text,
     media: [],
   };
   return (

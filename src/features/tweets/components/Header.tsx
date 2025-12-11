@@ -22,13 +22,13 @@ function Header() {
         </h1>
       </div>
       <div className="flex items-center gap-2">
-        <button
+        {/* <button
           data-testid="tweet-reply-button"
           className={`px-3.5 py-1 rounded-full font-semibold text-sm transition cursor-pointer 'bg-black text-white border border-gray-700 hover:bg-[#0a0a0a]`}
         >
           Reply
-        </button>
-        <Action icon={<FilterIcon />} color="gray" />
+        </button> */}
+        {/* <Action icon={<FilterIcon />} color="gray" /> */}
       </div>
     </div>
   );

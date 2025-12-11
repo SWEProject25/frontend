@@ -16,6 +16,7 @@ import {
 import XModal from '@/components/ui/hoc/XModal';
 import AddReply from './AddReply';
 import SharePostModal from './SharePostModal';
+import AddQuote from './AddQuote';
 type stats = {
   postId: number;
   isRepost: boolean;
@@ -33,11 +34,11 @@ type stats = {
 export default function Actions({
   stats,
   onOpened,
-  replyClick,
+  modalClick,
 }: {
   stats: stats;
   onOpened?: (opened: boolean) => void;
-  replyClick?: () => void;
+  modalClick?: () => void;
 }) {
   const router = useRouter();
   const shareDropdownItems = getShareDropdownItems();
@@ -48,8 +49,9 @@ export default function Actions({
     isRepostedByMe: stats.isRepostedByMe,
     isLikedByMe: stats.isLikedByMe,
   });
-  const [isOpen, setIsOpen] = useState(false);
+  const [isReplyOpen, setIsReplyOpen] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [isQuoteOpen, setIsQuoteOpen] = useState(false);
   const toggleLikeTweet = useToggleLikeTweet(
     stats.postId,
     stats.isRepost,
@@ -90,7 +92,8 @@ export default function Actions({
         handleRetweet();
         break;
       case 'quote_post':
-        // Implement quote post functionality here
+        setIsQuoteOpen(true);
+        if (modalClick) modalClick();
         break;
       default:
         break;
@@ -106,13 +109,13 @@ export default function Actions({
             label={actionsMeta[0].label}
             color={actionsMeta[0].color}
             onClick={() => {
-              setIsOpen(true);
-              if (replyClick) replyClick();
+              setIsReplyOpen(true);
+              if (modalClick) modalClick();
             }}
           />
           <XModal
-            isOpen={isOpen}
-            onClose={() => setIsOpen(false)}
+            isOpen={isReplyOpen}
+            onClose={() => setIsReplyOpen(false)}
             size="xl"
             title="Add Reply"
             showCloseButton={true}
@@ -135,6 +138,16 @@ export default function Actions({
             stopPropagation={false}
           />
         </DropDown>
+        <XModal
+          isOpen={isQuoteOpen}
+          onClose={() => setIsQuoteOpen(false)}
+          size="xl"
+          title="Add Quote"
+          showCloseButton={true}
+          showLogo={false}
+        >
+          <AddQuote />
+        </XModal>
         <Action
           icon={
             stats.isLikedByMe ? (
