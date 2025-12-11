@@ -1,5 +1,6 @@
-export const FOR_YOU_TAB = 'forYou';
-export const TRENDING_TAB = 'general';
+// export const FOR_YOU_TAB = 'personalized';
+export const FOR_YOU_TAB = 'general';
+export const TRENDING_TAB = 'general1';
 export const TOP_TAB = 'top';
 export const LATEST_TAB = 'latest';
 export const NEWS_TAB = 'news';
@@ -13,6 +14,11 @@ export const exploreTabs = [
   { title: 'Entertainment', value: ENTERTAINMENT_TAB },
 ];
 export const searchTabs = [
+  { title: 'Top', value: TOP_TAB },
+  { title: 'Latest', value: LATEST_TAB },
+];
+
+export const InterestTabs = [
   { title: 'Top', value: TOP_TAB },
   { title: 'Latest', value: LATEST_TAB },
 ];

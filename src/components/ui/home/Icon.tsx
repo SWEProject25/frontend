@@ -33,7 +33,7 @@ export default function Icon({
     <div
       data-testid={dataTestId}
       onClick={onClick}
-      className={`${center && 'self-center'} relative flex items-center justify-center ${width} ${height}  ${!disabled && 'hover:cursor-pointer'} rounded-full  hover:${hoverColor}`}
+      className={`${center && 'self-center'} relative flex items-center justify-center ${width} ${height}  ${!disabled && 'hover:cursor-pointer'} rounded-full  hover:${hoverColor} transition-colors`}
     >
       <svg
         viewBox={`0 0 ${viewBox} ${viewBox}`}

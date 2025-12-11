@@ -25,12 +25,14 @@ export const getTweetDropdownItems = ({
   isMuted = false,
   isBlocked = false,
   myTweet = false,
+  inProfile = false,
 }: {
   username?: string;
   isFollowed?: boolean;
   isMuted?: boolean;
   isBlocked?: boolean;
   myTweet?: boolean;
+  inProfile?: boolean;
 }) => {
   const items = [
     // Only include delete if byMe is true

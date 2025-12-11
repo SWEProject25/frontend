@@ -45,7 +45,7 @@ export default function WhatIsHappening() {
             ))}
           </div>
           <Link
-            href="/explore"
+            href="/explore/tabs/for-you"
             className="text-blue-400 hover:underline mt-3 text-sm block"
           >
             Show more

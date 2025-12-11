@@ -106,6 +106,8 @@ export default function MediaTweets() {
       hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
       hasInitialData={hasInitialData}
       noDataMessage="No Media"
+      // showNoMoreData={false}
+      noMoreDataMessage=""
     >
       <div className="grid grid-cols-3  p-1 gap-2 w-full">{renderMedia} </div>
     </InfiniteScroll>
