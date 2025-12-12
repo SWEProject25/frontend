@@ -1,4 +1,4 @@
-import { Home, Search, Bell, Mail } from 'lucide-react';
+import { Home, Search, Bell, Mail, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { NotificationBadge } from '@/features/notifications/components/NotificationBadge';
 import { MessageBadge } from '@/features/messages/components/MessageBadge';
@@ -14,6 +14,7 @@ export default function MobileBottomBar() {
       active: false,
     },
     { icon: Mail, label: 'Messages', href: '/messages', active: false },
+    { icon: Settings, label: 'Settings', href: '/settings', active: false },
   ];
 
   return (

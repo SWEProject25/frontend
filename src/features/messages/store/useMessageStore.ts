@@ -16,6 +16,7 @@ type Conversation = {
   user2Id: number;
   createdAt: string;
   unseenCount?: number;
+  isBlocked?: boolean; // True if either user blocked the other
   id?: number;
   user?: {
     id: number;

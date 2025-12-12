@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { onboardingApi } from '../services/onboardingApi';
 import {
   UpdateDateOfBirthDto,
@@ -11,6 +11,7 @@ import {
 } from '../types/api';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import { authApi } from '@/features/authentication/services/authApi';
+import { EXPLORE_QUERY_KEYS } from '@/features/explore/hooks/exploreQueries';
 
 // Query keys
 export const ONBOARDING_QUERY_KEYS = {
@@ -67,6 +68,7 @@ export const useUpdateDateOfBirth = () => {
 export const useUpdateInterests = () => {
   const setUser = useAuthStore((state) => state.setUser);
   const user = useAuthStore((state) => state.user);
+  const queryClient = useQueryClient();
 
   return useMutation<UpdateInterestsResponseDto, Error, UpdateInterestsDto>({
     mutationFn: onboardingApi.updateInterests,
@@ -87,6 +89,11 @@ export const useUpdateInterests = () => {
       }
       // Clear the cached user to force fresh fetch on next getCurrentUser call
       authApi.clearUserCache();
+
+      // Invalidate explore feed to immediately show personalized content based on interests
+      queryClient.invalidateQueries({
+        queryKey: EXPLORE_QUERY_KEYS.EXPLORE_FEED_FOR_YOU,
+      });
     },
   });
 };

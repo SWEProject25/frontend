@@ -166,6 +166,8 @@ export const useTimelineFeed = () => {
     getNextPageParam: (lastPage, pages) =>
       lastPage.data.posts.length ? pages.length + 1 : undefined,
     staleTime: Infinity,
+    // Show loading state while refetching to avoid flash of empty content
+    refetchOnMount: 'always',
   });
 };
 export const useSearchProfile = (searchUser: string) => {

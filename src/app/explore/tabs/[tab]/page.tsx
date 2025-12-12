@@ -8,17 +8,20 @@ import React, { useEffect } from 'react';
 export default function Page({ params }: { params: Promise<{ tab: string }> }) {
   const { tab } = React.use(params);
   const { selectTab, setSearchQuery } = useActions();
+
   useEffect(
     function () {
       setSearchQuery('');
+      // Select the appropriate tab based on URL parameter
+      if (exploreTabs.filter((tabs) => tabs.value === tab).length) {
+        selectTab(tab);
+      } else {
+        selectTab(FOR_YOU_TAB);
+      }
     },
-    [setSearchQuery]
+    [tab, setSearchQuery, selectTab]
   );
 
-  if (exploreTabs.filter((tabs) => tabs.value === tab).length) selectTab(tab);
-  else {
-    selectTab(FOR_YOU_TAB);
-  }
   return (
     <>
       <Header />

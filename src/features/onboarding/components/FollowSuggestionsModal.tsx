@@ -7,6 +7,8 @@ import UserCard from '@/components/ui/UserCard';
 import { useSuggestedUsers } from '../hooks/useOnboarding';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import { authApi } from '@/features/authentication/services/authApi';
+import { useQueryClient } from '@tanstack/react-query';
+import { TIMELINE_QUERY_KEYS } from '@/features/timeline/hooks/timelineQueries';
 
 interface FollowSuggestionsModalProps {
   isOpen: boolean;
@@ -22,6 +24,7 @@ export default function FollowSuggestionsModal({
   const [followedUsers, setFollowedUsers] = useState<Set<number>>(new Set());
   const setUser = useAuthStore((state) => state.setUser);
   const user = useAuthStore((state) => state.user);
+  const queryClient = useQueryClient();
 
   // Fetch suggested users with pagination params - only when modal is open
   const {
@@ -53,6 +56,16 @@ export default function FollowSuggestionsModal({
       });
       // Clear the cached user to force fresh fetch on next getCurrentUser call
       authApi.clearUserCache();
+
+      // Refetch timeline feeds immediately to show posts from newly followed users
+      // Using refetchQueries ensures proper loading state during data fetch
+      queryClient.refetchQueries({
+        queryKey: TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
+      });
+      queryClient.refetchQueries({
+        queryKey: TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
+      });
+
       onComplete();
     }
   };

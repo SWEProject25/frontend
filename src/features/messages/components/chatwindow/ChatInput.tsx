@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Image as ImageIcon, Smile, Send, Ban } from 'lucide-react';
+import { Smile, Send, Ban } from 'lucide-react';
 import EmojiPicker from './EmojiPicker';
 
 interface ChatInputProps {
   message: string;
-  error: string | null;
   isBlocked?: boolean;
   onMessageChange: (value: string) => void;
   onSend: () => void;
@@ -14,7 +13,6 @@ interface ChatInputProps {
 
 export default function ChatInput({
   message,
-  error,
   isBlocked = false,
   onMessageChange,
   onSend,
@@ -52,10 +50,13 @@ export default function ChatInput({
         id="chat-input-wrapper"
         className="shrink-0 bg-black border-t border-gray-800 p-4"
       >
-        <div className="flex items-center justify-center gap-2 bg-gray-900 rounded-lg px-4 py-3 text-gray-400">
-          <Ban className="w-5 h-5" />
-          <span className="text-sm">
-            You cannot send messages to this user because you have blocked them.
+        <div className="flex flex-col items-center justify-center gap-2 bg-gray-900 rounded-lg px-4 py-3 text-center">
+          <div className="flex items-center gap-2 text-gray-400">
+            <Ban className="w-5 h-5" />
+            <span className="text-sm font-semibold">Messaging is blocked</span>
+          </div>
+          <span className="text-xs text-gray-500">
+            You and this user cannot send messages to each other.
           </span>
         </div>
       </div>
