@@ -42,6 +42,8 @@ export {
   LikeNotificationIcon,
   RepostNotificationIcon,
   ReplyNotificationIcon,
+  QuoteNotificationIcon,
+  MentionNotificationIcon,
   FollowNotificationIcon,
   DMNotificationIcon,
   ErrorNotificationIcon,
