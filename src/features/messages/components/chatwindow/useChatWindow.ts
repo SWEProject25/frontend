@@ -78,8 +78,10 @@ export function useChatWindow(conversationId?: string) {
     return conversation.user?.id;
   }, [conversation, currentUserId]);
 
-  // Check if the other user is blocked
-  const { isBlocked } = useIsUserBlocked(otherUserId);
+  // Check if blocked - use isBlocked from conversation (true if either user blocked the other)
+  // Fallback to checking if current user blocked them
+  const { isBlocked: currentUserBlockedThem } = useIsUserBlocked(otherUserId);
+  const isBlocked = conversation?.isBlocked === true || currentUserBlockedThem;
 
   // Get typing users for current conversation (exclude current user)
   const otherUsersTyping = useMemo(() => {

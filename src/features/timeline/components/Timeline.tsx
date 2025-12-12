@@ -169,7 +169,7 @@ export default function Timeline() {
                     name={user.name}
                     size="xs"
                     position="relative"
-                    className="border-1 border-primary-hover"
+                    className="border border-primary-hover"
                   />
                 </div>
               ))}

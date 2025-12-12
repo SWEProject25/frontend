@@ -9,8 +9,10 @@ import SearchProfile from '@/features/timeline/components/SearchProfile';
 
 export default function RightSidebar({
   hasSearch = true,
+  hideWhatIsHappening = false,
 }: {
   hasSearch?: boolean;
+  hideWhatIsHappening?: boolean;
 }) {
   return (
     <aside className="hidden lg:flex sticky right-0 top-0 w-full h-screen flex-col gap-4 px-4 pt-1 bg-black overflow-y-auto overflow-x-hidden">
@@ -19,7 +21,7 @@ export default function RightSidebar({
           <SearchProfile />
         </div>
       )}
-      <WhatIsHappening />
+      {!hideWhatIsHappening && <WhatIsHappening />}
       <WhoToFollow />
       <Footer />
     </aside>

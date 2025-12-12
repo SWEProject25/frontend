@@ -7,12 +7,13 @@ import { useEffect } from 'react';
 
 export default function Page() {
   const { selectTab, setSearchQuery } = useActions();
-  selectTab(FOR_YOU_TAB);
+
   useEffect(
     function () {
       setSearchQuery('');
+      selectTab(FOR_YOU_TAB);
     },
-    [setSearchQuery]
+    [setSearchQuery, selectTab]
   );
 
   return (
