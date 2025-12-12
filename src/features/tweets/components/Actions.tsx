@@ -17,11 +17,8 @@ import XModal from '@/components/ui/hoc/XModal';
 import AddReply from './AddReply';
 import SharePostModal from './SharePostModal';
 import AddQuote from './AddQuote';
-<<<<<<< HEAD
 import { toast } from 'react-hot-toast';
-import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
-=======
->>>>>>> origin/task-mention-in-add-tweet
+//import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 import { ADD_TWEET } from '@/features/timeline/constants/tweetConstants';
 import { useActions } from '@/features/timeline/store/useTimelineStore';
 type stats = {
