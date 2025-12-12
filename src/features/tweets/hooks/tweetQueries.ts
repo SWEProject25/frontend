@@ -42,6 +42,7 @@ export const useTweetById = (tweetId: number) => {
     staleTime: 0,
     retry: 1,
     refetchOnMount: true,
+    throwOnError: false, // Allow error to be returned in hook
   });
 };
 
@@ -196,6 +197,7 @@ export const useGetTweetSummary = (tweetId: number) => {
   return useQuery<TweetSummaryDto, Error>({
     queryKey: TWEET_QUERY_KEYS.getTweetSummary(tweetId),
     queryFn: () => tweetApi.getTweetSummary(tweetId),
+    enabled: false,
     staleTime: 0,
     retry: 1,
   });

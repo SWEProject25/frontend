@@ -13,11 +13,9 @@ import {
   TimelineFeed,
   TimelineFeedDtoResponse,
 } from '../types/api';
-import { useActions } from '../store/useAddTweetStore';
-import { useMention } from '../store/useMentionStore';
 
 import toasterMessage from '@/components/ui/home/ToasterMessage';
-import { useMediaActions } from '@/features/media/store/useMedia';
+
 import {
   useFetchAvatars,
   useNewTweets,
@@ -31,6 +29,7 @@ import { TIMELINE_ENDPOINTS } from '../constants/api';
 import { useAuth } from '@/features/authentication/hooks';
 import { Search } from 'lucide-react';
 import { profileApi, ProfileResponseDto } from '@/features/profile';
+import { useAddPostContext } from '../store/AddPostContext';
 export const TIMELINE_QUERY_KEYS = {
   ADD_TWEET: ['tweet'] as const,
   TIMELINE_FEED_FOR_YOU: ['timeline', 'forYou'] as const,
@@ -42,9 +41,11 @@ export const TIMELINE_QUERY_KEYS = {
   VALID_USER: (username: string) => ['mention', username] as const,
 };
 export const useAddTweet = () => {
-  const { onSuccess, startSending, seterror } = useActions();
+  const selectors = useAddPostContext();
+
+  const { onSuccess, startSending, seterror, clearMedia, clearEmoji } =
+    selectors.useActions();
   const queryClient = useQueryClient();
-  const { clearMedia } = useMediaActions();
   const user = useAuth().user;
   return useMutation<AddTweetResponse, Error, FormData>({
     mutationFn: async (tweetData) => {
@@ -69,9 +70,10 @@ export const useAddTweet = () => {
       // queryClient.invalidateQueries({ queryKey: [''] });
       onSuccess();
       clearMedia();
+      clearEmoji();
       const newTweet: TimelineFeed = {
         ...data.data,
-        originalPostData: undefined,
+        // originalPostData: undefined,
       };
       toasterMessage(
         'Your post was sent.',

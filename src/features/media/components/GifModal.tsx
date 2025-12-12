@@ -2,12 +2,7 @@
 import XModal from '@/components/ui/hoc/XModal';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import {
-  useGifACtions,
-  useGifsSearch,
-  useGifVisibility,
-} from '../store/useGif';
-import useMedia, { useMediaActions } from '@/features/media/store/useMedia';
+
 import { gifApi } from '../services/gifAPi';
 import { gifs } from '../constants/data';
 import { CATERGORIES } from '../constants/api';
@@ -19,19 +14,22 @@ import { Loader } from '@/components/generic';
 import React, { useState } from 'react';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import GifData from '../types/components';
+import { useAddPostContext } from '@/features/timeline/store/AddPostContext';
 export default function GifModal() {
+  const selectors = useAddPostContext();
+
   const router = useRouter();
-  const { close } = useGifACtions();
-  const isOpen = useGifVisibility();
+  const { close } = selectors.useActions();
+  const isOpen = selectors.useGifVisibility();
   const handleClose = () => {
     close();
     setSearch('');
-    router.back();
+    // router.back();
   };
 
-  const { setSearch } = useGifACtions();
-  const { addGifs } = useMediaActions();
-  const search = useGifsSearch();
+  const { setSearch } = selectors.useActions();
+  const { addGifs } = selectors.useActions();
+  const search = selectors.useGifsSearch();
   function handleClickGif(gif: GifData) {
     addGifs(gif);
     handleClose();
@@ -50,8 +48,8 @@ export default function GifModal() {
     isFetchingNextPage,
     hasNextPage,
   } = useSearchGif();
-  console.log(searchGif);
-  const pages = searchGif?.pages.flat();
+  console.log(searchGif, hasNextPage);
+  const pages = searchGif?.pages;
 
   const renderSearchedGifs = pages?.map((group, i) => (
     <React.Fragment key={i}>
@@ -86,7 +84,7 @@ export default function GifModal() {
       padding={false}
     >
       <>
-        <div className=" flex p-1">
+        <div className="flex p-1 sticky top-0 z-10 bg-black">
           <div className="flex justify-center items-center">
             <Icon
               color="text-white"
@@ -112,7 +110,7 @@ export default function GifModal() {
         ) : status === 'pending' ? (
           <Loader />
         ) : search === '' ? (
-          <div className="p-1 grid grid-cols-2 gap-1 grid-rows-4  inset-0 py-1 w-full h-full max-h-[650px] ">
+          <div className="p-1 grid grid-cols-2 gap-1 grid-rows-4  inset-0 py-1 w-full h-full h-[600px] ">
             {gifs?.map((gif, indx) => (
               <div
                 key={gif.id + indx}
@@ -158,6 +156,7 @@ export default function GifModal() {
                 loadMore={() => hasNextPage && fetchNextPage()}
                 hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
                 hasInitialData={hasInitialData}
+                threshold={0}
               >
                 <div
                   className="flex flex-wrap gap-2 w-full"

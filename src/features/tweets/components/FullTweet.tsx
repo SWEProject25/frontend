@@ -26,6 +26,9 @@ import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import { useTweetStore } from '../store/tweetStore';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import { useAuth } from '@/features/authentication/hooks';
+import { toast } from 'react-hot-toast';
+import AddTweet from '@/features/timeline/components/AddTweet';
+import { ADD_TWEET } from '@/features/timeline/constants/tweetConstants';
 function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
   const router = useRouter();
   const [showBlockModal, setShowBlockModal] = useState(false);
@@ -137,6 +140,14 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
       router.push('/home');
     } catch (error) {
       // Handle error, optionally show error notification
+      toast.error('This tweet has already been deleted before.', {
+        duration: 3000,
+        position: 'bottom-center',
+        style: {
+          background: '#2e7ad6ff',
+          color: '#FFFFFF',
+        },
+      });
     } finally {
       setIsDeleteLoading(false);
     }
@@ -161,9 +172,19 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
   const setSummaryTweet = useTweetStore((store) => store.setSummaryTweet);
   const summary = useGetTweetSummary(id);
   function handleFetchSummary() {
+    if (!data?.text) {
+      setTweetSummary('No summary available');
+      setSummaryOpened(true);
+      setSummaryTweet(data);
+      return;
+    }
     summary.refetch().then((res) => {
       if (res?.data) {
         setTweetSummary(res.data.data);
+        setSummaryOpened(true);
+        setSummaryTweet(data);
+      } else {
+        setTweetSummary('No summary available');
         setSummaryOpened(true);
         setSummaryTweet(data);
       }
@@ -203,6 +224,7 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
         username: data.originalPostData.username,
         isVerified: data.originalPostData.verified ?? false,
         date: data.originalPostData.date,
+        isDeleted: data.originalPostData.isDeleted || false,
       }
     : undefined;
 
@@ -268,6 +290,9 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
           />
           <div className="border-b border-gray-700 mt-3" />
         </div>
+      </div>
+      <div>
+        <AddTweet type={ADD_TWEET.REPLY} />
       </div>
       <div>
         {isError ? (

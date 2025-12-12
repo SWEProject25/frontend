@@ -1,6 +1,6 @@
 // export const FOR_YOU_TAB = 'personalized';
-export const FOR_YOU_TAB = 'general';
-export const TRENDING_TAB = 'general1';
+export const FOR_YOU_TAB = 'personalized';
+export const TRENDING_TAB = 'general';
 export const TOP_TAB = 'top';
 export const LATEST_TAB = 'latest';
 export const NEWS_TAB = 'news';

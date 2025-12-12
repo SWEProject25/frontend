@@ -163,7 +163,7 @@ function updateTweet(
   tweet: TimelineFeed,
   userId: number
 ): TimelineFeed {
-  let updatedTweet = tweet;
+  let updatedTweet = { ...tweet };
   switch (type) {
     case OPTIMISTIC_TYPES.LIKE:
       if (tweet.isRepost) {

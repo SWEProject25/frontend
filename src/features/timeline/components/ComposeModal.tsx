@@ -3,21 +3,18 @@ import XModal from '@/components/ui/hoc/XModal';
 import TweetFooter from './TweetFooter';
 import ProfileLogo from '../../../components/ui/home/ProfileLogo';
 import TweetText from './TweetText';
-import TweetReplySettings from './TweetReplySettings';
-import Poll from './Poll';
-import React, { useEffect, useRef } from 'react';
+
+import React, { useEffect, useMemo, useRef } from 'react';
 import TweetOptionsBar from './TweetOptionsBar';
-import TweetSubmitSection from './TweetSubmitSection';
-import ScheduledTweetTime from './schedule/ScheduledTweetTime';
-import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
-import useScheduleStore from '../store/useScheduleStore';
+
 import MediaPreview from '@/features/media/components/MediaPreview';
-import usePollStore from '../store/usePollStore';
-import useMedia from '@/features/media/store/useMedia';
-import { useMenuName } from '@/components/ui/home/XMenu';
-import { GROK_MENU, REPLY_MENU } from '../constants/menuName';
+
 import Mention from './Mention';
 import AddPostSection from './AddPostSection';
+import {
+  createAddTweetSelectors,
+  createAddTweetStore,
+} from '../store/useAddPostStore';
 
 interface ComposeModalProps {
   isOpen: boolean;
@@ -25,25 +22,23 @@ interface ComposeModalProps {
 }
 
 export default function ComposeModal({ isOpen, onClose }: ComposeModalProps) {
-  const scheduledTime = useAddTweetStore((state) => state.scheduledTime);
-  const isSending = useAddTweetStore((state) => state.isSending);
-  const setTweetText = useAddTweetStore((state) => state.setTweetText);
-  const open = useScheduleStore((state) => state.open);
-  const clearMedia = useMedia((state) => state.actions.clearMedia);
+  const useStore = useMemo(() => createAddTweetStore(), []);
+  const selectors = useMemo(
+    () => createAddTweetSelectors(useStore),
+    [useStore]
+  );
+  const isSending = selectors.useIsSending();
+
+  const { clearMedia, setTweetText } = selectors.useActions();
   const ref = useRef<HTMLDivElement>(null);
-  const textRef = useRef<null | HTMLDivElement>(null);
   const wasSendingRef = useRef(false);
 
-  const hasText =
-    useAddTweetStore((state) => state.tweetText).length > 0 || false;
-  const isopenPoll = usePollStore((state) => state.isOpen) || false;
-  const hasmMedia = useMedia((state) => state.media).length > 0;
-  const menuName = useMenuName();
-  const isOpenMenu = menuName === GROK_MENU || menuName === REPLY_MENU;
+  const hasText = selectors.useTweetText().length > 0 || false;
+  const hasmMedia = selectors.useMedia().length > 0;
 
   useEffect(() => {
     const unloadCallback = (event: BeforeUnloadEvent) => {
-      if (hasText || isopenPoll || hasmMedia || isOpenMenu) {
+      if (hasText || hasmMedia) {
         console.log(event);
         event.preventDefault();
         return '';
@@ -52,7 +47,7 @@ export default function ComposeModal({ isOpen, onClose }: ComposeModalProps) {
 
     window.addEventListener('beforeunload', unloadCallback);
     return () => window.removeEventListener('beforeunload', unloadCallback);
-  }, [hasText, isopenPoll, hasmMedia, isOpenMenu]);
+  }, [hasText, hasmMedia]);
 
   // Track when sending starts
   useEffect(() => {
@@ -128,17 +123,7 @@ export default function ComposeModal({ isOpen, onClose }: ComposeModalProps) {
           </div>
           <div className="flex flex-1 flex-col min-w-0">
             <div className="flex flex-col mb-3 max-h-[50vh] overflow-y-auto">
-              {scheduledTime && (
-                <button
-                  data-testid="scheduled-tweet-time-button"
-                  onClick={open}
-                  aria-label="Scheduled Tweet Time"
-                  className="cursor-pointer hover:underline hover:underline-offset-1 hover:decoration-text-inactive mb-2"
-                >
-                  {/* <ScheduledTweetTime /> */}
-                </button>
-              )}
-              <TweetText divRef={textRef} />
+              <TweetText />
 
               <div className="mt-2">
                 {/* <Poll /> */}

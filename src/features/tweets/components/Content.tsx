@@ -73,11 +73,16 @@ export default function Content({
     }
   };
 
-  // Function to render text with hashtags styled
-  const renderTextWithHashtags = (text: string) => {
-    const parts = text.split(/(#\w+)/g);
+  // Function to render text with hashtags and mentions styled
+  const renderTextWithHashtagsAndMentions = (
+    text: string,
+    mentions?: mention[]
+  ) => {
+    // Split by both hashtags and @mentions
+    const parts = text.split(/(@[^\s]+|#[^\s]+)/g);
 
     return parts.map((part, index) => {
+      // Handle hashtags
       if (part.startsWith('#')) {
         return (
           <span
@@ -85,14 +90,33 @@ export default function Content({
             className="text-blue-400 hover:underline cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
-
               router.push(`/search?q=${encodeURIComponent(part)}`);
-            }} // here put link to hashtag page
+            }}
           >
             {part}
           </span>
         );
       }
+
+      // Handle mentions
+      if (part.startsWith('@')) {
+        const username = part.substring(1); // Remove @ symbol
+        const mention = mentions?.find((m) => m.username === username);
+
+        if (mention) {
+          return (
+            <Link
+              key={index}
+              href={`/${mention.username}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-blue-400 hover:underline"
+            >
+              {part}
+            </Link>
+          );
+        }
+      }
+
       return <span key={index}>{part}</span>;
     });
   };
@@ -214,7 +238,7 @@ export default function Content({
                   >
                     <Image
                       fill
-                      src={item.url}
+                      src={media[idx + 1].url}
                       alt={`Tweet image ${idx + 2}`}
                       className="w-full h-full object-cover"
                     />
@@ -282,26 +306,15 @@ export default function Content({
         wordBreak: 'break-word',
       }}
     >
-      {/* Render mentions inline with text */}
+      {/* Render text with inline mentions and hashtags */}
       <div className="text-gray-200 text-left">
-        {content.mentions && content.mentions.length > 0 && (
-          <span className="inline-flex flex-wrap gap-1 mr-1">
-            {content.mentions.map((mention, index) => (
-              <Link
-                key={index}
-                href={`/${mention.username}`}
-                onClick={(e) => e.stopPropagation()}
-                className="text-blue-400 hover:underline text-sm"
-              >
-                @{mention.username}
-              </Link>
-            ))}
-          </span>
-        )}
         {content.text && (
           <span data-testid="tweet-text" className="inline">
-            {renderTextWithHashtags(content.text)}
+            {renderTextWithHashtagsAndMentions(content.text, content.mentions)}
           </span>
+        )}
+        {!content.text && isInModal && (
+          <span className="text-gray-500">[No text content]</span>
         )}
       </div>
 
@@ -390,4 +403,4 @@ export default function Content({
   );
 }
 
-// new hi
+// 241
