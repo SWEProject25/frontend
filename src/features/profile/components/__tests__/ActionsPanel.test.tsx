@@ -67,6 +67,7 @@ const mockUserData = {
   userId: 123,
   bio: 'Software Developer',
   isFollowed: false,
+  isFollowingMe: false,
   isMuted: false,
   isBlocked: false,
   isBeenBlocked: false,
