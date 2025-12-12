@@ -23,6 +23,30 @@ export interface NotificationActor {
 }
 
 /**
+ * Post data structure for notifications
+ */
+export interface NotificationPost {
+  userId: number;
+  username: string;
+  verified: boolean;
+  name: string;
+  avatar: string | null;
+  postId: number;
+  date: string | Record<string, never>; // Can be string or empty object from Firebase
+  likesCount: number;
+  retweetsCount: number;
+  commentsCount: number;
+  isLikedByMe: boolean;
+  isFollowedByMe: boolean;
+  isRepostedByMe: boolean;
+  text: string;
+  media: any[];
+  isRepost: boolean;
+  isQuote: boolean;
+  originalPostData?: NotificationPost; // For quote posts
+}
+
+/**
  * Base Notification Interface
  */
 export interface Notification {
@@ -40,7 +64,10 @@ export interface Notification {
   postPreviewText?: string;
 
   // Quote-specific fields
-  quoteId?: number;
+  quotePostId?: number;
+
+  // Full post data (for REPLY and QUOTE notifications)
+  post?: NotificationPost;
 
   // DM-specific fields
   conversationId?: number;
@@ -92,10 +119,32 @@ export type NotificationFilter = 'all' | 'verified' | 'mentions';
 
 /**
  * Firebase real-time notification event
+ * Matches the exact structure sent from backend via Firestore
  */
 export interface FirebaseNotificationEvent {
-  notificationId: string;
+  id: string;
   type: NotificationType;
+  recipientId: number;
+  actor: NotificationActor;
+  isRead: boolean;
   createdAt: string;
-  actorId: number;
+
+  // Post-related fields (for LIKE, REPOST, MENTION, REPLY, QUOTE)
+  postId?: number;
+  postPreviewText?: string;
+
+  // Reply-specific fields
+  replyId?: number;
+  threadPostId?: number;
+
+  // Quote-specific fields
+  quotePostId?: number;
+
+  // Full post data (included in REPLY, QUOTE, and MENTION notifications)
+  post?: NotificationPost;
+
+  // DM-specific fields
+  conversationId?: number;
+  messageId?: string;
+  messagePreview?: string;
 }
