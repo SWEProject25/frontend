@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import QuoteTweet from './QuoteTweet';
-import Icon from '@/components/ui/home/Icon';
+import ImageModal from '@/components/generic/ImageModal';
 import { useRouter } from 'next/navigation';
 
 type MediaItem = {
@@ -106,16 +106,29 @@ export default function Content({
       return (
         <div className="w-full rounded-2xl overflow-hidden">
           {media[0].type.toLowerCase() === 'image' ? (
-            <img
-              src={media[0].url}
-              alt="Tweet image"
+            <div
               className={`${fullWidth ? 'w-full' : 'max-w-full'} h-auto object-cover rounded-2xl cursor-pointer`}
-              style={{ maxHeight: '80vh', display: 'block' }}
+              style={{
+                maxHeight: '80vh',
+                display: 'block',
+                position: 'relative',
+                minHeight: '200px',
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 openModal(0, e);
               }}
-            />
+            >
+              <Image
+                src={media[0].url}
+                alt="Tweet image"
+                fill
+                className="object-cover rounded-2xl"
+                style={{ objectFit: 'cover' }}
+                sizes="(max-width: 768px) 100vw, 700px"
+                priority
+              />
+            </div>
           ) : (
             <video
               controls
@@ -314,78 +327,16 @@ export default function Content({
       )}
 
       {/* Image Modal */}
-      {isModalOpen && (
-        <div
-          className="fixed inset-0 z-[9999] bg-black flex items-center justify-center"
-          onClick={closeModal}
-        >
-          {/* Close button */}
-          <button
-            className="absolute top-4 left-4 text-white text-2xl hover:bg-white/10 rounded-full w-10 h-10 flex items-center justify-center z-[10000]"
-            onClick={closeModal}
-          >
-            ×
-          </button>
-
-          {/* Image counter */}
-          {media.length > 1 && (
-            <div className="absolute top-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm z-[10000]">
-              {selectedImageIndex + 1} / {media.length}
-            </div>
-          )}
-
-          {/* Navigation arrows */}
-          {media.length > 1 && selectedImageIndex > 0 && (
-            <button
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-[10000] w-12 h-12 flex items-center justify-center bg-black/60 hover:bg-black/80 cursor-pointer text-white rounded-full"
-              onClick={prevImage}
-              aria-label="Previous image"
-            >
-              <Icon
-                disabled={true}
-                color="text-white"
-                path="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"
-              />
-            </button>
-          )}
-
-          {media.length > 1 && selectedImageIndex < media.length - 1 && (
-            <button
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-[10000] w-12 h-12 flex items-center justify-center bg-black/60 hover:bg-black/80 cursor-pointer text-white rounded-full"
-              onClick={nextImage}
-              aria-label="Next image"
-            >
-              <Icon
-                disabled={true}
-                color="text-white"
-                path="M12.957 4.54L20.414 12l-7.457 7.46-1.414-1.42L16.586 13H3v-2h13.586l-5.043-5.04 1.414-1.42z"
-              />
-            </button>
-          )}
-
-          {/* Image container */}
-          <div
-            className="max-w-[95vw] max-h-[95vh] flex items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {media[selectedImageIndex]?.type.toLowerCase() === 'image' ? (
-              <img
-                src={media[selectedImageIndex]?.url}
-                alt={`Image ${selectedImageIndex + 1}`}
-                className="max-w-full max-h-[95vh] object-contain"
-                onClick={(e) => e.stopPropagation()}
-              />
-            ) : (
-              <video
-                controls
-                className="max-w-full max-h-[95vh] object-contain"
-                src={media[selectedImageIndex]?.url}
-                onClick={(e) => e.stopPropagation()}
-              />
-            )}
-          </div>
-        </div>
-      )}
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        media={media}
+        currentIndex={selectedImageIndex}
+        onNext={nextImage}
+        onPrev={prevImage}
+        showNavigation={true}
+        showCounter={true}
+      />
     </div>
   );
 }

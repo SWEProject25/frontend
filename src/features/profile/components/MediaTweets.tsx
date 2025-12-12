@@ -20,7 +20,6 @@ export default function MediaTweets() {
     media: MediaFeed
   ) {
     const video = e.currentTarget as HTMLVideoElement;
-    if (!video) return;
     setVideoDuration((videos) => [
       ...videos,
       {
