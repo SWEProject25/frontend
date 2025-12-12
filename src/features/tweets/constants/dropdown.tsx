@@ -107,11 +107,11 @@ export const getShareDropdownItems = () => [
     label: 'copy link',
     icon: <CopyLinkIcon />,
   },
-  // {
-  //   key: 'send_via_message',
-  //   label: 'Send via Direct Message',
-  //   icon: <SendViaMsgICon />,
-  // },
+  {
+    key: 'send_via_message',
+    label: 'Send via Direct Message',
+    icon: <SendViaMsgICon />,
+  },
 ];
 
 export const getRepostDropdownItems = ({

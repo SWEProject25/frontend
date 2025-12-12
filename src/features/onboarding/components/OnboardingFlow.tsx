@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import DateOfBirthModal from './DateOfBirthModal';
 import InterestsModal from './InterestsModal';
@@ -13,9 +15,12 @@ interface OnboardingFlowProps {
 }
 
 export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
   const isLoading = useAuthStore((state) => state.isLoading);
   const [currentStep, setCurrentStep] = useState<OnboardingStep>(null);
+  const hasCompletedOnboardingRef = useRef(false);
 
   // Determine which step to show based on user state
   useEffect(() => {
@@ -39,6 +44,8 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
       return;
     }
 
+    const prevStep = currentStep;
+
     // Check onboarding status and determine next step
     // Priority: birthDate -> interests -> followSuggestions
     if (!onboardingStatus.hasCompletedBirthDate) {
@@ -51,8 +58,19 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
       // All onboarding steps completed
       setCurrentStep(null);
       onComplete?.();
+
+      // Only invalidate suggested users cache if we just completed onboarding
+      // This prevents invalidating on every render when onboarding is already complete
+      if (
+        prevStep === 'followSuggestions' &&
+        !hasCompletedOnboardingRef.current
+      ) {
+        hasCompletedOnboardingRef.current = true;
+        // Invalidate suggested users to refresh the "Who to follow" list
+        queryClient.invalidateQueries({ queryKey: ['suggestedUsers'] });
+      }
     }
-  }, [user, isLoading, onComplete]);
+  }, [user, isLoading, onComplete, router, currentStep, queryClient]);
 
   // Empty handlers - useEffect automatically determines next step based on user state
   const handleDateOfBirthComplete = () => {};

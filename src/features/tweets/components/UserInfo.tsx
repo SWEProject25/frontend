@@ -54,7 +54,7 @@ export default function UserInfo({
   const usernameCardShow = cardShow && (showUsernameCard || cardUsernameHover);
   return (
     <div className={containerClass} data-testid="tweet-user-info">
-      <div className="relative flex-shrink min-w-0">
+      <div className="relative shrink min-w-0">
         <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span
             data-testid="tweet-user-name"
@@ -82,7 +82,7 @@ export default function UserInfo({
             <span className="flex items-center gap-0.5">
               <span className="truncate">{data.name}</span>
               {data.verified && (
-                <VerifiedIcon className="w-4.5 h-4.5 text-blue-400 flex-shrink-0" />
+                <VerifiedIcon className="w-4.5 h-4.5 text-blue-400 shrink-0" />
               )}
             </span>
           </span>
@@ -116,7 +116,7 @@ export default function UserInfo({
           </div>
         )}
       </div>
-      <div className="relative flex-shrink min-w-0">
+      <div className="relative shrink min-w-0">
         <Link href={`/${data.username}`} onClick={(e) => e.stopPropagation()}>
           <span
             data-testid="tweet-user-username"
