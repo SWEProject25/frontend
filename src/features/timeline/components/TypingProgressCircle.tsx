@@ -1,14 +1,16 @@
 'use client';
 
-import { useTweetText } from '@/features/timeline/store/useAddTweetStore';
 import {
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
   MAX_RED_PROGRESS_STEPS,
 } from '@/features/timeline/constants/tweetConstants';
+import { useAddPostContext } from '../store/AddPostContext';
 
 export default function TypingProgressCircle() {
-  const tweetText = useTweetText();
+  const selectors = useAddPostContext();
+
+  const tweetText = selectors.useTweetText();
   const progressRadius = tweetText.length < MAX_TWEET_LENGTH ? 10 : 13;
   const circumCircle = progressRadius * 2 * Math.PI;
   const progress =

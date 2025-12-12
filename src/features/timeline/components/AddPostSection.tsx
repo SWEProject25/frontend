@@ -1,19 +1,18 @@
 'use client';
 
-import {
-  useMentions,
-  useTweetText,
-} from '@/features/timeline/store/useAddTweetStore';
 import { MAX_ALLOWABLE_TWEET_LENGTH } from '@/features/timeline/constants/tweetConstants';
 import { useAddTweet } from '../hooks/timelineQueries';
 import { LOCAL_MEDIA } from '@/features/media/constants/mediaConstants';
 import { TweetFormDataKeys } from '../types/api';
 import TweetSubmitSection from './TweetSubmitSection';
-import { useMedia } from '@/features/media/store/useMedia';
+import { useAddPostContext } from '../store/AddPostContext';
+
 export default function AddPostSection() {
-  const tweetText = useTweetText();
-  const media = useMedia();
-  const mentions = useMentions();
+  const selectors = useAddPostContext();
+
+  const tweetText = selectors.useTweetText();
+  const media = selectors.useMedia();
+  const mentions = selectors.useMentions();
 
   const mutate = useAddTweet();
 

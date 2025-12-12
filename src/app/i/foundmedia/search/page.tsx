@@ -1,13 +1,13 @@
 'use client';
 import GifModal from '@/features/media/components/GifModal';
-import { useGifACtions } from '@/features/media/store/useGif';
+
 import Timeline from '@/features/timeline/components/Timeline';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Loader from '@/components/generic/Loader';
 import LayoutWrapper from '@/features/layout/components/LayoutWrapper';
 export default function Page() {
-  const { open } = useGifACtions();
+  // const { open } = useGifACtions();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   useEffect(

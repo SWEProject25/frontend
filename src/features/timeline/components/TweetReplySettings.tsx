@@ -2,22 +2,20 @@
 import React from 'react';
 
 import Icon from '../../../components/ui/home/Icon';
-import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 import XMenu from '@/components/ui/home/XMenu';
 
 import { onClose } from '@/components/ui/home/XMenu';
 import { options } from '../constants/replySettingsOptions';
 import { REPLY_MENU } from '../constants/menuName';
+import { useAddPostContext } from '../store/AddPostContext';
 
 const PANEL_HEIGHT = 332;
 
 export default function TweetReplySettings() {
-  const selectedReplyOption = useAddTweetStore(
-    (state) => state.selectedReplyOption
-  );
-  const updateReplyOption = useAddTweetStore(
-    (state) => state.updateReplyOption
-  );
+  const selectors = useAddPostContext();
+
+  const selectedReplyOption = selectors.useSelectedReplyOption();
+  const { updateReplyOption } = selectors.useActions();
 
   if (!selectedReplyOption) return null;
   return (

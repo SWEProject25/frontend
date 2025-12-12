@@ -3,7 +3,7 @@ import { mediaType } from '../types/components';
 import { EXTERNAL_GIF, LOCAL_MEDIA } from '../constants/mediaConstants';
 import Video from './Video';
 import Icon from '@/components/ui/home/Icon';
-import { useMediaActions } from '../store/useMedia';
+import { useAddPostContext } from '@/features/timeline/store/AddPostContext';
 export default function MediaItem({
   full,
   id,
@@ -15,7 +15,9 @@ export default function MediaItem({
   id: string;
   onClick: () => void;
 }) {
-  const { removeMedia } = useMediaActions();
+  const selectors = useAddPostContext();
+
+  const { removeMedia } = selectors.useActions();
   console.log(media);
   return (
     <div className="flex flex-col ">

@@ -4,13 +4,26 @@ import Icon from '../../../components/ui/home/Icon';
 import TweetImages from './TweetImages';
 import { MAX_MEDIA_NUM } from '@/features/media/constants/mediaConstants';
 import { useRouter } from 'next/navigation';
-import { useGifACtions, useGifVisibility } from '@/features/media/store/useGif';
 import Emoji from '@/features/media/components/Emoji';
+<<<<<<< HEAD
 import { useMedia } from '@/features/media/store/useMedia';
 export default function TweetOptionsBar() {
   const { open: openGif, close: closeGif } = useGifACtions();
   const isGifOpen = useGifVisibility();
   const media = useMedia();
+=======
+import { useAddPostContext } from '../store/AddPostContext';
+export default function TweetOptionsBar({
+  showGif = true,
+}: {
+  showGif?: boolean;
+}) {
+  const selectors = useAddPostContext();
+
+  const { open: openGif, close: closeGif } = selectors.useActions();
+  const isGifOpen = selectors.useGifVisibility();
+  const media = selectors.useMedia();
+>>>>>>> origin/task-mention-in-add-tweet
   const router = useRouter();
 
   const handleOpenGif = () => {
@@ -20,7 +33,7 @@ export default function TweetOptionsBar() {
         router.replace('home', { scroll: false });
       } else {
         openGif();
-        router.push('i/foundmedia/search', { scroll: false });
+        // router.push('i/foundmedia/search', { scroll: false });
       }
     }
   };

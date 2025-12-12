@@ -2,18 +2,19 @@
 import Icon from '@/components/ui/home/Icon';
 import XMenu from '@/components/ui/home/XMenu';
 import { EMOJI_MENU } from '@/features/timeline/constants/menuName';
-import { useTweetText } from '@/features/timeline/store/useAddTweetStore';
 import EmojiPicker, {
   EmojiClickData,
   EmojiStyle,
   Theme,
 } from 'emoji-picker-react';
-import { useMediaActions } from '../store/useMedia';
+import { useAddPostContext } from '@/features/timeline/store/AddPostContext';
 const PANEL_HEIGHT = 400;
 
 export default function Emoji() {
-  const tweetText = useTweetText();
-  const { setEmoji } = useMediaActions();
+  const selectors = useAddPostContext();
+
+  const tweetText = selectors.useTweetText();
+  const { setEmoji } = selectors.useActions();
 
   function hanldePickEmoji(emojiData: EmojiClickData) {
     console.log(emojiData.emoji);

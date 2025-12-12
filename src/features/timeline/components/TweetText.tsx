@@ -1,23 +1,12 @@
 'use client';
-import {
-  useMention,
-  useActions,
-  useIsOpen,
-  useMentionIsDone,
-} from '@/features/timeline/store/useMentionStore';
-import {
-  useActions as useAddTweetActions,
-  useIsSuccess,
-  useTweetPlaceHolder,
-  useTweetText,
-} from '@/features/timeline/store/useAddTweetStore';
+
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import {
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
 } from '@/features/timeline/constants/tweetConstants';
-import { useEmoji, useMediaActions } from '@/features/media/store/useMedia';
 import { useCheckValidUser } from '../hooks/timelineQueries';
+import { useAddPostContext } from '../store/AddPostContext';
 
 const startRedText = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
 function getCurrCursorPos(div: HTMLDivElement) {
@@ -52,23 +41,31 @@ export type notMentionType = mentionType & {
   span: HTMLSpanElement;
 };
 export default function TweetText() {
-  const { setTweetText } = useAddTweetActions();
+  const selectors = useAddPostContext();
+
   const divRef = useRef<null | HTMLDivElement>(null);
 
-  const placeHolder = useTweetPlaceHolder();
-  const isSuccess = useIsSuccess();
+  const placeHolder = selectors.usePlaceHolder();
+  const isSuccess = selectors.useIsSuccess();
   const spanRef1 = useRef<null | HTMLSpanElement>(null);
   const [spanText1, setSpanText1] = useState(placeHolder);
   const [spanText2, setSpanText2] = useState('');
-  const mention = useMention();
-  const mentionIsDone = useMentionIsDone();
-  const { setMention, setIsOpen, setIsDone, setKeyDown } = useActions();
-  const { clearEmoji } = useMediaActions();
-  const { setMentions } = useAddTweetActions();
+  const mention = selectors.useMention();
+  const mentionIsDone = selectors.useMentionIsDone();
+  const {
+    setMention,
+    setIsOpen,
+    setIsDone,
+    setKeyDown,
+    setTweetText,
+    clearEmoji,
+    setMentions,
+  } = selectors.useActions();
+
   const spanMention = useRef<null | HTMLSpanElement>(null);
   const completedMentions = useRef<mentionType[]>([]);
   const cursorPos = useRef<number>(0);
-  const firstTweetText = useTweetText();
+  const firstTweetText = selectors.useTweetText();
   const notMentions = useRef<notMentionType[]>([]);
   const [checkValidUsers, setCheckValidUsers] = useState<Set<string>>(
     new Set()
@@ -79,7 +76,7 @@ export default function TweetText() {
     (men) => `${men.username}-${men.indx}` === lastKey
   );
   const { data } = useCheckValidUser(lastMention?.username.slice(1) ?? '');
-  const isOpen = useIsOpen();
+  const isOpen = selectors.useIsOpen();
   console.log(notMentions.current);
   console.log(completedMentions.current);
   console.log(checkValidUsers);
@@ -148,7 +145,7 @@ export default function TweetText() {
     [checkValidUsers, data, lastKey]
   );
 
-  const emoji = useEmoji();
+  const emoji = selectors.useEmoji();
   const handleChangeText = useCallback(
     (text: string, lastData: string = '') => {
       const lastMatch = text.match(
@@ -345,12 +342,9 @@ export default function TweetText() {
     ]
   );
 
-  useEffect(
-    function () {
-      setSpanText1(placeHolder);
-    },
-    [placeHolder]
-  );
+  useEffect(function () {
+    setSpanText1(placeHolder);
+  }, []);
   useEffect(
     function () {
       if (mentionIsDone && mention && divRef.current) {

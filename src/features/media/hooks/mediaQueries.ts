@@ -6,8 +6,8 @@ import {
 import { gifApi } from '../services/gifAPi';
 import { getQueryClient } from '@/lib/getQueryClient';
 import { GifResponse } from '../types/api';
-import { useGifsSearch } from '../store/useGif';
-import { GIF_ENDPOINTS } from '../constants/api';
+
+import { useAddPostContext } from '@/features/timeline/store/AddPostContext';
 
 export const GIF_QUERY_KEYS = {
   SEARCH_CATEGORY: ['category', 'gif'] as const,
@@ -29,7 +29,9 @@ export const prefetchSearchCategories = () => {
 };
 
 export const useSearchGif = () => {
-  const search = useGifsSearch();
+  const selectors = useAddPostContext();
+
+  const search = selectors.useGifsSearch();
   const query = useInfiniteQuery<
     GifResponse,
     Error,
@@ -38,10 +40,26 @@ export const useSearchGif = () => {
     number
   >({
     queryKey: GIF_QUERY_KEYS.SEARCH_GIF(search),
-    queryFn: ({ pageParam }) => gifApi.searchGif(search, pageParam, 10),
+    queryFn: ({ pageParam }) => {
+      console.log('Fetching page:', pageParam);
+      return gifApi.searchGif(search, pageParam, 20);
+    },
     initialPageParam: 0,
-    getNextPageParam: (lastPage, pages) =>
-      lastPage.pagination.count ? pages.length : undefined,
+    enabled: !!search,
+    getNextPageParam: (lastPage, pages) => {
+      const { offset, count, total_count } = lastPage.pagination;
+      console.log('Pagination info:', {
+        offset,
+        count,
+        total_count,
+        pagesLength: pages.length,
+      });
+      // Check if there are more results to fetch
+      const hasMore = offset + count < total_count;
+      const nextPage = hasMore ? pages.length : undefined;
+      console.log('Next page:', nextPage);
+      return nextPage;
+    },
   });
   if (!search)
     return {

@@ -30,12 +30,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  gifModal,
-  scheduleModal,
 }: {
   children: React.ReactNode;
-  gifModal: React.ReactNode;
-  scheduleModal: React.ReactNode;
 }) {
   return (
     <html lang="en" className={inter.variable}>
@@ -43,11 +39,7 @@ export default function RootLayout({
         <div className="flex justify-center min-h-screen w-full">
           {/* <MSWProvider> */}
           <Providers>
-            <>
-              {children}
-              {gifModal}
-              {scheduleModal}
-            </>
+            <>{children}</>
             <ReactQueryDevtools initialIsOpen={false} />
           </Providers>
           {/* <Providers>{modal}</Providers> */}
