@@ -1,5 +1,5 @@
 'use client';
-import { create } from 'zustand';
+import { create, UseBoundStore, StoreApi } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { mentionType } from '../components/TweetText';
 import { ADD_TWEET } from '../constants/tweetConstants';
@@ -25,6 +25,11 @@ interface AddPostState {
 
   placeHolder: string;
 
+  isGifOpen: boolean;
+  search: string;
+
+  parentId: number;
+  selectedReplyOption: number;
   actions: {
     startSending: () => void;
     setTweetText: (text: string) => void;
@@ -44,100 +49,130 @@ interface AddPostState {
     setKeyDown: (key: string) => void;
 
     setPlaceHolder: (holder: string) => void;
+
+    open: () => void;
+    close: () => void;
+    setSearch: (text: string) => void;
+    setParentId: (id: number) => void;
+    updateReplyOption: (option: number) => void;
   };
 }
 
-const useAddPostStore = create<AddPostState>()(
-  devtools((set) => ({
-    tweetText: '',
-    isSending: false,
-    error: '',
-    isSuccess: false,
-    mentions: [],
-    media: [],
-    emoji: '',
+export function createAddTweetStore() {
+  return create<AddPostState>()(
+    devtools((set) => ({
+      tweetText: '',
+      isSending: false,
+      error: '',
+      isSuccess: false,
+      mentions: [],
+      media: [],
+      emoji: '',
 
-    mention: '',
-    isOpen: false,
-    mentionIsdone: '',
-    currentKey: '',
+      mention: '',
+      isOpen: false,
+      mentionIsdone: '',
+      currentKey: '',
 
-    placeHolder: "What's happening?",
+      placeHolder: "What's happening?",
 
-    actions: {
-      addMedia: (newMedia) =>
-        set((state) => {
-          const mediaWithIndx: mediaType[] = newMedia.map((med, ind) => ({
-            id: `${med.lastModified}${new Date().getTime()}${med.name}${ind}`,
-            type: LOCAL_MEDIA,
-            data: med,
-          }));
-          return { media: [...state.media, ...mediaWithIndx] };
-        }),
-      removeMedia: (id) =>
-        set((state) => {
-          const newMedia = state.media.filter((med) => med.id !== id);
-          return { media: newMedia };
-        }),
-      setEmoji: (emoji) => set({ emoji: emoji }),
-      clearMedia: () => set({ media: [] }),
-      clearEmoji: () => set({ emoji: '' }),
+      isGifOpen: false,
+      search: '',
 
-      addGifs: (gif) =>
-        set((state) => {
-          const mediaWithGif: mediaType = {
-            id: gif.id + `${new Date().getTime()}`,
-            type: EXTERNAL_GIF,
-            data: gif,
-          };
-          return {
-            media: [...state.media, mediaWithGif],
-          };
-        }),
+      parentId: -1,
+      selectedReplyOption: -1,
+      actions: {
+        addMedia: (newMedia) =>
+          set((state) => {
+            const mediaWithIndx: mediaType[] = newMedia.map((med, ind) => ({
+              id: `${med.lastModified}${new Date().getTime()}${med.name}${ind}`,
+              type: LOCAL_MEDIA,
+              data: med,
+            }));
+            return { media: [...state.media, ...mediaWithIndx] };
+          }),
+        removeMedia: (id) =>
+          set((state) => {
+            const newMedia = state.media.filter((med) => med.id !== id);
+            return { media: newMedia };
+          }),
+        setEmoji: (emoji) => set({ emoji: emoji }),
+        clearMedia: () => set({ media: [] }),
+        clearEmoji: () => set({ emoji: '' }),
 
-      setTweetText: (text) => set({ tweetText: text }),
-      startSending: () => set({ isSending: true, error: '', isSuccess: false }),
-      setMentions: (currMentions) => set({ mentions: currMentions }),
-      onSuccess: () =>
-        set((state) => ({
-          isSending: false,
-          isSuccess: true,
-          error: '',
-          tweetText: '',
-          mentoins: [],
-        })),
-      seterror: (message) =>
-        set({ isSending: false, error: message, isSuccess: false }),
+        addGifs: (gif) =>
+          set((state) => {
+            const mediaWithGif: mediaType = {
+              id: gif.id + `${new Date().getTime()}`,
+              type: EXTERNAL_GIF,
+              data: gif,
+            };
+            return {
+              media: [...state.media, mediaWithGif],
+            };
+          }),
 
-      setMention: (text) => set({ mention: text }),
-      setIsOpen: (isOpen) => set({ isOpen: isOpen }),
-      setIsDone: (isDone) => set({ mentionIsdone: isDone }),
-      setKeyDown: (key) => set({ currentKey: key }),
+        setTweetText: (text) => set({ tweetText: text }),
+        startSending: () =>
+          set({ isSending: true, error: '', isSuccess: false }),
+        setMentions: (currMentions) => set({ mentions: currMentions }),
+        onSuccess: () =>
+          set({
+            isSending: false,
+            isSuccess: true,
+            error: '',
+            tweetText: '',
+            mentions: [],
+            mention: '',
+            media: [],
+            emoji: '',
+            isOpen: false,
+            mentionIsdone: '',
+            currentKey: '',
 
-      setPlaceHolder: (holder) => set({ placeHolder: holder }),
-    },
-  }))
-);
+            placeHolder: "What's happening?",
+          }),
+        seterror: (message) =>
+          set({ isSending: false, error: message, isSuccess: false }),
 
-export default useAddPostStore;
-export const usePostActions = () => useAddPostStore((state) => state.actions);
-export const usePostMentions = () => useAddPostStore((state) => state.mentions);
-export const usePostIsSending = () =>
-  useAddPostStore((state) => state.isSending);
-export const usePostIsSuccess = () =>
-  useAddPostStore((state) => state.isSuccess);
-export const usePostError = () => useAddPostStore((state) => state.error);
-export const usePostTweetText = () =>
-  useAddPostStore((state) => state.tweetText);
-export const usePostMedia = () => useAddPostStore((state) => state.media);
-export const usePostEmoji = () => useAddPostStore((state) => state.emoji);
+        setMention: (text) => set({ mention: text }),
+        setIsOpen: (isOpen) => set({ isOpen: isOpen }),
+        setIsDone: (isDone) => set({ mentionIsdone: isDone }),
+        setKeyDown: (key) => set({ currentKey: key }),
 
-export const usePostMention = () => useAddPostStore((state) => state.mention);
-export const usePostCurrentKey = () =>
-  useAddPostStore((state) => state.currentKey);
-export const usePostMentionIsDone = () =>
-  useAddPostStore((state) => state.mentionIsdone);
-export const usePostIsOpen = () => useAddPostStore((state) => state.isOpen);
+        setPlaceHolder: (holder) => set({ placeHolder: holder }),
 
-export const usePostPlaceHolder = () =>
-  useAddPostStore((state) => state.placeHolder);
+        open: () => set({ isGifOpen: true }),
+        close: () => set({ isGifOpen: false }),
+        setSearch: (text) => set({ search: text }),
+
+        setParentId: (id) => set({ parentId: id }),
+        updateReplyOption: (option) => set({ selectedReplyOption: option }),
+      },
+    }))
+  );
+}
+export function createAddTweetSelectors(
+  useStore: UseBoundStore<StoreApi<AddPostState>>
+) {
+  return {
+    useActions: () => useStore((state) => state.actions),
+    useMentions: () => useStore((state) => state.mentions),
+    useIsSending: () => useStore((state) => state.isSending),
+    useIsSuccess: () => useStore((state) => state.isSuccess),
+    useError: () => useStore((state) => state.error),
+    useTweetText: () => useStore((state) => state.tweetText),
+    useMedia: () => useStore((state) => state.media),
+    useEmoji: () => useStore((state) => state.emoji),
+    useMention: () => useStore((state) => state.mention),
+    useCurrentKey: () => useStore((state) => state.currentKey),
+    useMentionIsDone: () => useStore((state) => state.mentionIsdone),
+    useIsOpen: () => useStore((state) => state.isOpen),
+    usePlaceHolder: () => useStore((state) => state.placeHolder),
+    useGifVisibility: () => useStore((state) => state.isGifOpen),
+    useGifsSearch: () => useStore((state) => state.search),
+    useParentId: () => useStore((state) => state.parentId),
+    useSelectedReplyOption: () =>
+      useStore((state) => state.selectedReplyOption),
+  };
+}

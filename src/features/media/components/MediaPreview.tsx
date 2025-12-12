@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 
 import Icon from '@/components/ui/home/Icon';
 import MediaItem from './MediaItem';
-import { useMedia } from '../store/useMedia';
+import { useAddPostContext } from '@/features/timeline/store/AddPostContext';
 
 export default function MediaPreview() {
-  const media = useMedia();
+  const selectors = useAddPostContext();
+
+  const media = selectors.useMedia();
 
   const [currentIndex, setCurrentIndex] = useState(0);
 

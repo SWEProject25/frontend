@@ -4,13 +4,14 @@ import Icon from '../../../components/ui/home/Icon';
 import TweetImages from './TweetImages';
 import { MAX_MEDIA_NUM } from '@/features/media/constants/mediaConstants';
 import { useRouter } from 'next/navigation';
-import { useGifACtions, useGifVisibility } from '@/features/media/store/useGif';
 import Emoji from '@/features/media/components/Emoji';
-import { useMedia } from '@/features/media/store/useMedia';
+import { useAddPostContext } from '../store/AddPostContext';
 export default function TweetOptionsBar() {
-  const { open: openGif, close: closeGif } = useGifACtions();
-  const isGifOpen = useGifVisibility();
-  const media = useMedia();
+  const selectors = useAddPostContext();
+
+  const { open: openGif, close: closeGif } = selectors.useActions();
+  const isGifOpen = selectors.useGifVisibility();
+  const media = selectors.useMedia();
   const router = useRouter();
 
   const handleOpenGif = () => {
@@ -20,7 +21,7 @@ export default function TweetOptionsBar() {
         router.replace('home', { scroll: false });
       } else {
         openGif();
-        router.push('i/foundmedia/search', { scroll: false });
+        // router.push('i/foundmedia/search', { scroll: false });
       }
     }
   };

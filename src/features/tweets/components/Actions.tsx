@@ -17,9 +17,8 @@ import XModal from '@/components/ui/hoc/XModal';
 import AddReply from './AddReply';
 import SharePostModal from './SharePostModal';
 import AddQuote from './AddQuote';
-import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 import { ADD_TWEET } from '@/features/timeline/constants/tweetConstants';
-import { useReplyQuoteActions } from '@/features/timeline/store/useAddReplyQuoteStore';
+import { useActions } from '@/features/timeline/store/useTimelineStore';
 type stats = {
   postId: number;
   isRepost: boolean;
@@ -44,10 +43,7 @@ export default function Actions({
   modalClick?: () => void;
 }) {
   const router = useRouter();
-  const setPostType = useAddTweetStore((state) => state.actions.setPostType);
-  const { setParentId } = useReplyQuoteActions();
-  const { clear } = useReplyQuoteActions();
-
+  const { setParentId, setPostType } = useActions();
   const shareDropdownItems = getShareDropdownItems();
   const repostDropdownItems = getRepostDropdownItems({
     isRepostedByMe: stats.isRepostedByMe,
@@ -106,6 +102,7 @@ export default function Actions({
       case 'quote_post':
         setPostType(ADD_TWEET.QUOTE);
         setParentId(stats.postId);
+        console.log(stats.postId);
         setIsQuoteOpen(true);
 
         if (modalClick) modalClick();
@@ -138,8 +135,8 @@ export default function Actions({
             isOpen={isReplyOpen}
             onClose={() => {
               setIsReplyOpen(false);
-              setPostType(ADD_TWEET.POST);
-              clear();
+              // setPostType(ADD_TWEET.POST);
+              // clear();
             }}
             size="xl"
             title="Add Reply"
@@ -168,7 +165,7 @@ export default function Actions({
           isOpen={isQuoteOpen}
           onClose={() => {
             setPostType(ADD_TWEET.POST);
-            clear();
+            // clear();
             setIsQuoteOpen(false);
           }}
           size="xl"

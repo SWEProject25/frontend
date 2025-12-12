@@ -1,10 +1,4 @@
 'use client';
-import {
-  useMention,
-  useActions,
-  useIsOpen,
-  useCurrentKey,
-} from '@/features/timeline/store/useMentionStore';
 
 import { useSearchProfile } from '../hooks/timelineQueries';
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,13 +7,16 @@ import UserCard from '@/components/ui/UserCard';
 import toasterMessage from '@/components/ui/home/ToasterMessage';
 import { Loader } from '@/components/generic';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
+import { useAddPostContext } from '../store/AddPostContext';
 export default function Mention() {
-  const mention = useMention();
+  const selectors = useAddPostContext();
+  const mention = selectors.useMention();
   const [selectedTab, setSelectedTab] = useState(-1);
 
-  const { setMention, setIsOpen, setIsDone, setKeyDown } = useActions();
-  const currentKey = useCurrentKey();
-  const isOpen = useIsOpen();
+  const { setMention, setIsOpen, setIsDone, setKeyDown } =
+    selectors.useActions();
+  const currentKey = selectors.useCurrentKey();
+  const isOpen = selectors.useIsOpen();
   const {
     data: profiles,
     error,
