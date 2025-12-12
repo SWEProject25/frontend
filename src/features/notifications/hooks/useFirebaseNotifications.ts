@@ -73,18 +73,107 @@ export const useFirebaseNotifications = ({
    */
   const handleNewNotification = useCallback(
     async (event: FirebaseNotificationEvent) => {
-      // Call custom callback if provided
-      onNewNotification?.(event);
+      console.log('\n🔥 ═══════════════════════════════════════════════════');
+      console.log('🔔 New Firebase Notification Received!');
+      console.log('═══════════════════════════════════════════════════');
+      console.log('📋 Notification Details:');
+      console.log('   ID:', event.id);
+      console.log('   Type:', event.type);
+      console.log('   Recipient ID:', event.recipientId);
+      console.log(
+        '   Actor:',
+        event.actor.displayName,
+        `(@${event.actor.username})`
+      );
+      console.log('   Actor ID:', event.actor.id);
+      console.log('   Created At:', event.createdAt);
+      console.log('   Is Read:', event.isRead);
 
-      // Optimistically increment the count immediately
+      // Log type-specific fields
+      if (event.postId) {
+        console.log('   Post ID:', event.postId);
+      }
+      if (event.postPreviewText) {
+        console.log(
+          '   Post Preview:',
+          event.postPreviewText.substring(0, 50) + '...'
+        );
+      }
+      if (event.replyId) {
+        console.log('   Reply ID:', event.replyId);
+        console.log('   Thread Post ID:', event.threadPostId);
+      }
+      if (event.quotePostId) {
+        console.log('   Quote Post ID:', event.quotePostId);
+      }
+      if (event.post) {
+        console.log('   Post Data:', {
+          postId: event.post.postId,
+          text: event.post.text?.substring(0, 50) + '...',
+          isQuote: event.post.isQuote,
+          hasOriginalData: !!event.post.originalPostData,
+        });
+      }
+      if (event.conversationId || event.messageId) {
+        console.log('   Conversation ID:', event.conversationId);
+        console.log('   Message ID:', event.messageId);
+      }
+
+      console.log('   Full Event:', JSON.stringify(event, null, 2));
+      console.log('═══════════════════════════════════════════════════\n');
+
+      // Call custom callback if provided
+      if (onNewNotification) {
+        console.log('📞 Calling custom notification handler...');
+        onNewNotification?.(event);
+      }
+
+      // 1. Add the new notification to the list cache optimistically
+      console.log('📥 Adding notification to cache...');
+      queryClient.setQueriesData<any>(
+        { queryKey: ['notifications', 'list'] },
+        (oldData: any) => {
+          if (!oldData) {
+            console.log('   ⚠️  No existing notification data in cache');
+            return oldData;
+          }
+
+          console.log(
+            '   ✅ Found existing notification data, prepending new notification'
+          );
+
+          // Add the new notification to the first page
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any, index: number) => {
+              if (index === 0) {
+                // Add to the first page
+                return {
+                  ...page,
+                  data: [event, ...page.data],
+                  metadata: {
+                    ...page.metadata,
+                    totalItems: page.metadata.totalItems + 1,
+                  },
+                };
+              }
+              return page;
+            }),
+          };
+        }
+      );
+
+      // 2. Optimistically increment the count
+      console.log('📈 Updating unread count optimistically...');
       optimisticallyIncrementCount(event.type);
 
-      // If this is a DM notification, invalidate message-related queries
-      // This ensures the messages system syncs when WebSocket is not active
+      // 3. If this is a DM notification, invalidate message-related queries
       if (event.type === 'DM') {
-        console.log(
-          '📬 DM notification received via Firebase - syncing messages'
-        );
+        console.log('📬 DM notification detected - triggering message sync');
+        console.log('   Invalidating queries:');
+        console.log('   - notifications/list (DM)');
+        console.log('   - messages/conversations');
+        console.log('   - messages/unseen/total');
 
         // Invalidate DM notification queries to trigger refetch
         queryClient.invalidateQueries({
@@ -101,10 +190,12 @@ export const useFirebaseNotifications = ({
           queryKey: ['messages', 'unseen', 'total'],
         });
 
-        // Note: Per-conversation unseen counts will be invalidated when
-        // useSyncDMNotifications runs and fetches the conversations
+        console.log('✅ Message queries invalidated');
       }
 
+      console.log(
+        '✨ Notification processing complete - UI should update immediately!\n'
+      );
       // NOTE: We do NOT invalidate the main unread count query here
       // The polling system (refetchInterval in useUnreadCount) will
       // fetch the real count from the server every 30 seconds
@@ -127,8 +218,18 @@ export const useFirebaseNotifications = ({
    * Subscribe to Firebase notifications for real-time updates
    */
   useEffect(() => {
+    console.log('🔧 useFirebaseNotifications: Effect triggered', {
+      enabled,
+      userId,
+      hasUnsubscribe: !!unsubscribeRef.current,
+    });
+
     // Don't subscribe if disabled or no user
     if (!enabled || !userId) {
+      console.log('⏸️  Firebase notifications disabled:', {
+        enabled,
+        userId,
+      });
       return;
     }
 
@@ -140,6 +241,8 @@ export const useFirebaseNotifications = ({
       return;
     }
 
+    console.log('🚀 Attempting to subscribe to Firebase notifications...');
+
     // Subscribe to notifications
     try {
       unsubscribeRef.current = subscribeToNotifications(
@@ -147,6 +250,7 @@ export const useFirebaseNotifications = ({
         handleNewNotification,
         handleError
       );
+      console.log('✅ Firebase subscription setup complete');
     } catch (error) {
       console.error('❌ Error subscribing to notifications:', error);
       handleError(error instanceof Error ? error : new Error('Unknown error'));
@@ -155,6 +259,7 @@ export const useFirebaseNotifications = ({
     // Cleanup on unmount
     return () => {
       if (unsubscribeRef.current) {
+        console.log('🧹 Cleaning up Firebase subscription');
         unsubscribeRef.current();
         unsubscribeRef.current = null;
       }

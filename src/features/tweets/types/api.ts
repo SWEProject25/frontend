@@ -98,3 +98,18 @@ export interface LikersResponseDto {
   message: string;
   data: Liker[];
 }
+
+export interface Reposter {
+  id: number;
+  username: string;
+  email: string;
+  name: string;
+  profileImageUrl: string | null;
+  is_verified: boolean;
+}
+
+export interface RepostersResponseDto {
+  status: string;
+  message: string;
+  data: Reposter[];
+}

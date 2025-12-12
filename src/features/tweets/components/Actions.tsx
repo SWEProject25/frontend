@@ -86,6 +86,11 @@ export default function Actions({
       router.push(`/home/${stats.postId}/likers`);
     }
   }
+  function handleRetweetCountClick() {
+    if (stats.retweetsCount > 0) {
+      router.push(`/home/${stats.postId}/reposters`);
+    }
+  }
   function onSelect(key: string) {
     switch (key) {
       case 'copy_link':
@@ -155,6 +160,7 @@ export default function Actions({
             label={actionsMeta[1].label}
             color={actionsMeta[1].color}
             isColored={stats.isRepostedByMe}
+            onCountClick={handleRetweetCountClick}
             stopPropagation={false}
           />
         </DropDown>

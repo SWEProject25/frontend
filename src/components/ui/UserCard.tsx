@@ -5,7 +5,7 @@ import FollowBtn from '@/components/generic/buttons/FollowBtn';
 import BlockBtn from '@/components/generic/buttons/BlockBtn';
 import MuteBtn from '@/components/generic/buttons/MuteBtn';
 import { VerifiedIcon } from '@/components/ui/icons/BrandIcons';
-import { LikeIconFilled } from '@/components/ui/icons/UIIcons';
+import { LikeIconFilled, RetweetIcon } from '@/components/ui/icons/UIIcons';
 import Icon from './home/Icon';
 
 export interface UserCardProps {
@@ -19,7 +19,7 @@ export interface UserCardProps {
   isFollowingMe?: boolean;
   isBlocked?: boolean;
   isMuted?: boolean;
-  actionType?: 'follow' | 'block' | 'mute' | 'like';
+  actionType?: 'follow' | 'block' | 'mute' | 'like' | 'repost';
   className?: string;
   onFollowChange?: (userId: number, isFollowed: boolean) => void;
   linkTo?: string;
@@ -105,6 +105,10 @@ export default function UserCard({
           ) : actionType === 'like' ? (
             <div className="p-2">
               <LikeIconFilled className="w-5 h-5 text-rose-400" />
+            </div>
+          ) : actionType === 'repost' ? (
+            <div className="p-2">
+              <RetweetIcon className="w-5 h-5 text-green-500" />
             </div>
           ) : (
             <FollowBtn
