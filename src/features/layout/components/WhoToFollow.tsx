@@ -6,16 +6,20 @@ import { useSuggestedUsers } from '../hooks/useSuggestedUsers';
 import Loader from '@/components/generic/Loader';
 
 export default function WhoToFollow() {
+  // Fetch suggested users with excludeFollowed=true (backend filters out followed users)
   const { data: suggestedUsersResponse, isLoading } = useSuggestedUsers(5);
 
   const suggestedUsers = suggestedUsersResponse?.data?.users || [];
 
+  // Map users to UserCard format
+  // Note: Backend already filters out followed users via excludeFollowed=true parameter
+  // isFollowed is set to false since these are users we don't follow
   const suggestions = suggestedUsers.map((user) => ({
     name: user.profile.name,
     id: user.id,
     handle: `@${user.username}`,
     verified: user.isVerified,
-    isFollowed: false,
+    isFollowed: false, // Always false - backend only returns unfollowed users
     avatarUrl: user.profile.profileImageUrl ?? undefined,
     bio: user.profile.bio ?? undefined,
   }));
@@ -28,7 +32,7 @@ export default function WhoToFollow() {
         <div className="flex justify-center py-4">
           <Loader />
         </div>
-      ) : (
+      ) : suggestions.length > 0 ? (
         <>
           <div className="space-y-3">
             {suggestions.map((user) => (
@@ -46,6 +50,10 @@ export default function WhoToFollow() {
             ))}
           </div>
         </>
+      ) : (
+        <div className="text-text-secondary text-sm text-center py-4">
+          No suggestions available
+        </div>
       )}
     </div>
   );

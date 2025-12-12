@@ -4,6 +4,19 @@ export { EyeIcon, EyeSlashIcon, ChevronDownIcon } from './FormIcons';
 // Social Icons
 export { GoogleIcon, AppleIcon, FacebookIcon, GitHubIcon } from './SocialIcons';
 
+// Navigation Icons
+export {
+  HomeIcon,
+  ExploreIcon,
+  NotificationsIcon,
+  MessagesIcon as MessagesNavIcon,
+  ProfileIcon,
+  SettingsIcon as SettingsNavIcon,
+  BookmarkIcon,
+  CommunitiesIcon,
+  MoreIcon as MoreNavIcon,
+} from './NavigationIcons';
+
 // UI Icons
 export {
   CheckIcon,

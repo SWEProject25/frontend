@@ -2,11 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTrendingHashtags } from '../hooks/useTrendingHashtags';
 import XLoader from '@/components/generic/XLoader';
 
 export default function WhatIsHappening() {
   const { data: hashtagsResponse, isLoading } = useTrendingHashtags(5);
+  const router = useRouter();
 
   const trendingHashtags = Array.isArray(hashtagsResponse?.data?.trending)
     ? hashtagsResponse.data.trending
@@ -16,7 +18,15 @@ export default function WhatIsHappening() {
     category: hashtagsResponse?.metadata?.category || 'Trending',
     hashtag: hashtag.tag.startsWith('#') ? hashtag.tag : `#${hashtag.tag}`,
     posts: `${hashtag.totalPosts.toLocaleString()} posts`,
+    rawTag: hashtag.tag,
   }));
+
+  const handleTrendClick = (tag: string) => {
+    const params = new URLSearchParams({
+      q: tag,
+    });
+    router.push(`/search?${params}`);
+  };
 
   return (
     <div className="bg-black rounded-2xl p-4 border border-gray-700">
@@ -35,6 +45,7 @@ export default function WhatIsHappening() {
               <div
                 key={i}
                 className="hover:bg-[#1D1F23] p-2 rounded-xl cursor-pointer transition-colors"
+                onClick={() => handleTrendClick(trend.rawTag)}
               >
                 <p className="text-gray-500 text-sm">{trend.category}</p>
                 <p className="font-bold text-white text-sm">{trend.hashtag}</p>
@@ -45,7 +56,7 @@ export default function WhatIsHappening() {
             ))}
           </div>
           <Link
-            href="/explore/tabs/for-you"
+            href="/explore/tabs/general"
             className="text-blue-400 hover:underline mt-3 text-sm block"
           >
             Show more

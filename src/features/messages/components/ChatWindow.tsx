@@ -91,7 +91,6 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
 
       <ChatInput
         message={message}
-        error={error}
         onMessageChange={setMessage}
         onSend={handleSendMessage}
         onKeyPress={handleKeyPress}

@@ -48,7 +48,7 @@ export default function ProfileMenu() {
               <p className="text-gray-400 text-sm">@{user.username}</p>
             </div>
           </div>
-          <MoreHorizontal className="text-white hidden min-[1400px]:block" />
+          <MoreHorizontal className="text-white ml-2 hidden min-[1400px]:block" />
         </div>
       </XMenu.Button>
       <XMenu.List
