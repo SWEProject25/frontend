@@ -217,10 +217,32 @@ export const useGetLikersByTweetId = (tweetId: number) => {
   });
 };
 
-export const useDeleteTweet = (tweetId: number) => {
+export const useDeleteTweet = (
+  tweetId: number,
+  isRepost: boolean,
+  userId: number,
+  parentId?: number,
+  type: string = 'POST'
+) => {
   const queryClient = useQueryClient();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
+  const user = useAuth().user?.id;
   return useMutation({
     mutationFn: () => tweetApi.deleteTweet(tweetId),
+    onMutate: () => {
+      return onMutate(
+        OPTIMISTIC_TYPES.DELETE,
+        userId,
+        tweetId,
+        isRepost,
+        type,
+        parentId
+      );
+    },
+    onError: (error, variables, onMutateResult) => {
+      handleErrorOptimisticTweet(onMutateResult);
+    },
+
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.deleteTweet(tweetId),

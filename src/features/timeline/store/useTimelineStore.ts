@@ -12,11 +12,19 @@ interface TimelineState {
   searchUser: string;
   searchIsOpen: boolean;
   newTweets: TimelineFeed[];
+  tabsScroll: number[];
+  fetchAvatars: boolean;
+  popUpAvatars: { avatar: string | null; name: string }[];
   actions: {
     selectTab: (value: string) => void;
     setSearchUser: (user: string) => void;
     setNewTweets: (tweets: TimelineFeed[]) => void;
     setSearchIsOpen: (isOpen: boolean) => void;
+    setPopUpAvatars: (
+      avatars: { avatar: string | null; name: string }[]
+    ) => void;
+    setFetchAvatars: (fetch: boolean) => void;
+    setTabsScroll: (scroll: number[]) => void;
   };
 }
 const useTimelineStore = create<TimelineState>()(
@@ -25,11 +33,17 @@ const useTimelineStore = create<TimelineState>()(
     searchUser: '',
     searchIsOpen: false,
     newTweets: [],
+    popUpAvatars: [],
+    fetchAvatars: false,
+    tabsScroll: [0, 0],
     actions: {
       selectTab: (value) => set({ selectedTab: value }),
       setSearchUser: (user) => set({ searchUser: user }),
       setNewTweets: (tweets) => set({ newTweets: tweets }),
       setSearchIsOpen: (isOpen) => set({ searchIsOpen: isOpen }),
+      setPopUpAvatars: (avatars) => set({ popUpAvatars: [...avatars] }),
+      setFetchAvatars: (fetch) => set({ fetchAvatars: fetch }),
+      setTabsScroll: (scroll) => set({ tabsScroll: scroll }),
     },
   }))
 );
@@ -58,3 +72,11 @@ export const useSearchAction = () => {
 export const useSearchIsopen = () =>
   useTimelineStore((state) => state.searchIsOpen);
 export const useNewTweets = () => useTimelineStore((state) => state.newTweets);
+
+export const usePopUpAvatars = () =>
+  useTimelineStore((state) => state.popUpAvatars);
+
+export const useFetchAvatars = () =>
+  useTimelineStore((state) => state.fetchAvatars);
+export const useTabsScroll = () =>
+  useTimelineStore((state) => state.tabsScroll);
