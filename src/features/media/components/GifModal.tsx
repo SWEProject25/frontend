@@ -7,7 +7,7 @@ import {
   useGifsSearch,
   useGifVisibility,
 } from '../store/useGif';
-import useMedia, { useMediaActions } from '@/features/media/store/useMedia';
+import { useMediaActions } from '@/features/media/store/useMedia';
 import { gifApi } from '../services/gifAPi';
 import { gifs } from '../constants/data';
 import { CATERGORIES } from '../constants/api';

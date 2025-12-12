@@ -44,7 +44,7 @@ export const TIMELINE_QUERY_KEYS = {
 export const useAddTweet = () => {
   const { onSuccess, startSending, seterror } = useActions();
   const queryClient = useQueryClient();
-  const { clearMedia } = useMediaActions();
+  const { clearMedia, clearEmoji } = useMediaActions();
   const user = useAuth().user;
   return useMutation<AddTweetResponse, Error, FormData>({
     mutationFn: async (tweetData) => {
@@ -69,6 +69,7 @@ export const useAddTweet = () => {
       // queryClient.invalidateQueries({ queryKey: [''] });
       onSuccess();
       clearMedia();
+      clearEmoji();
       const newTweet: TimelineFeed = {
         ...data.data,
         originalPostData: undefined,

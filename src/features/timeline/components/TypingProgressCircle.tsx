@@ -1,6 +1,6 @@
 'use client';
 
-import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
+import { useTweetText } from '@/features/timeline/store/useAddTweetStore';
 import {
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
@@ -8,7 +8,7 @@ import {
 } from '@/features/timeline/constants/tweetConstants';
 
 export default function TypingProgressCircle() {
-  const tweetText = useAddTweetStore((state) => state.tweetText);
+  const tweetText = useTweetText();
   const progressRadius = tweetText.length < MAX_TWEET_LENGTH ? 10 : 13;
   const circumCircle = progressRadius * 2 * Math.PI;
   const progress =

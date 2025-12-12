@@ -2,7 +2,7 @@
 import Icon from '@/components/ui/home/Icon';
 import XMenu from '@/components/ui/home/XMenu';
 import { EMOJI_MENU } from '@/features/timeline/constants/menuName';
-import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
+import { useTweetText } from '@/features/timeline/store/useAddTweetStore';
 import EmojiPicker, {
   EmojiClickData,
   EmojiStyle,
@@ -12,7 +12,7 @@ import { useMediaActions } from '../store/useMedia';
 const PANEL_HEIGHT = 400;
 
 export default function Emoji() {
-  const tweetText = useAddTweetStore((state) => state.tweetText);
+  const tweetText = useTweetText();
   const { setEmoji } = useMediaActions();
 
   function hanldePickEmoji(emojiData: EmojiClickData) {

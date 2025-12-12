@@ -9,3 +9,8 @@ export {
   MAX_RED_PROGRESS_STEPS,
   MAX_ALLOWABLE_TWEET_LENGTH,
 };
+export const ADD_TWEET = {
+  POST: 'POST' as const,
+  REPLY: 'REPLY' as const,
+  QUOTE: 'QUOTE' as const,
+};

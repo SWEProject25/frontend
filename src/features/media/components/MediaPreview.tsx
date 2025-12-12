@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import useMedia from '../store/useMedia';
 
 import Icon from '@/components/ui/home/Icon';
 import MediaItem from './MediaItem';
+import { useMedia } from '../store/useMedia';
 
 export default function MediaPreview() {
-  const media = useMedia((state) => state.media);
-
-  // const gifs = useMedia((state) => state.gifs);
+  const media = useMedia();
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -77,32 +75,6 @@ export default function MediaPreview() {
           </div>
         )}
       </div>
-      {/* <div className="px-3 flex items-center gap-x-4 text-base">
-        <button
-          data-testid={`Tag-people`}
-          className="hover:underline cursor-pointer flex items-center"
-        >
-          <Icon
-            size="w-3.5 h-3.5"
-            disabled={true}
-            color="text-text-inactive"
-            path="M5.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C15.318 13.65 13.838 13 12 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46zM12 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM8 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4z"
-          />
-          <span className="  text-text-inactive text-xs">Tag people</span>
-        </button>
-        <button
-          data-testid={`Add-descriptions`}
-          className=" hover:underline cursor-pointer flex items-center"
-        >
-          <Icon
-            size="w-3.5 h-3.5"
-            disabled={true}
-            color="text-text-inactive"
-            path="M3 4.5C3 3.12 4.12 2 5.5 2h13C19.88 2 21 3.12 21 4.5v15c0 1.38-1.12 2.5-2.5 2.5h-13C4.12 22 3 20.88 3 19.5v-15zM5.5 4c-.28 0-.5.22-.5.5v15c0 .28.22.5.5.5h13c.28 0 .5-.22.5-.5v-15c0-.28-.22-.5-.5-.5h-13zM16 10H8V8h8v2zm-8 2h8v2H8v-2z"
-          />
-          <span className="  text-text-inactive text-xs">Add descriptions</span>
-        </button>
-      </div> */}
     </div>
   );
 }

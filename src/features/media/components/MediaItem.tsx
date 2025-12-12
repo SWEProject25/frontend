@@ -1,9 +1,9 @@
 import Image from 'next/image';
-import useMedia from '../store/useMedia';
 import { mediaType } from '../types/components';
 import { EXTERNAL_GIF, LOCAL_MEDIA } from '../constants/mediaConstants';
 import Video from './Video';
 import Icon from '@/components/ui/home/Icon';
+import { useMediaActions } from '../store/useMedia';
 export default function MediaItem({
   full,
   id,
@@ -15,7 +15,7 @@ export default function MediaItem({
   id: string;
   onClick: () => void;
 }) {
-  const removeMedia = useMedia((state) => state.removeMedia);
+  const { removeMedia } = useMediaActions();
   console.log(media);
   return (
     <div className="flex flex-col ">

@@ -2,50 +2,39 @@
 import TweetFooter from './TweetFooter';
 import ProfileLogo from '../../../components/ui/home/ProfileLogo';
 import TweetText from './TweetText';
-import TweetReplySettings from './TweetReplySettings';
-import Poll from './Poll';
 import React, { useEffect, useRef } from 'react';
 import TweetOptionsBar from './TweetOptionsBar';
-import TweetSubmitSection from './TweetSubmitSection';
-import ScheduledTweetTime from './schedule/ScheduledTweetTime';
-import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
-import useScheduleStore from '../store/useScheduleStore';
+import {
+  useError,
+  useIsSending,
+  useTweetText,
+} from '@/features/timeline/store/useAddTweetStore';
 import MediaPreview from '@/features/media/components/MediaPreview';
-import usePollStore from '../store/usePollStore';
-import useMedia from '@/features/media/store/useMedia';
-import { useMenuName } from '@/components/ui/home/XMenu';
-import { GROK_MENU, REPLY_MENU } from '../constants/menuName';
 import Mention from './Mention';
 import AddPostSection from './AddPostSection';
-export default function AddTweet() {
-  const scheduledTime = useAddTweetStore((state) => state.scheduledTime);
-  const isSending = useAddTweetStore((state) => state.isSending);
-  // const error = useAddTweetStore((state) => state.error);
-
-  const open = useScheduleStore((state) => state.open);
+import ReplyQuoteSections from './ReplyQuoteSection';
+import { ADD_TWEET } from '../constants/tweetConstants';
+import { useMedia } from '@/features/media/store/useMedia';
+export default function AddTweet({ type }: { type: string }) {
+  const isSending = useIsSending();
+  // const error = useError();
 
   const ref = useRef<HTMLDivElement>(null);
-  const textRef = useRef<null | HTMLDivElement>(null);
 
-  const hasText =
-    useAddTweetStore((state) => state.tweetText).length > 0 || false;
-  const isopenPoll = usePollStore((state) => state.isOpen) || false;
-  const hasmMedia = useMedia((state) => state.media).length > 0;
-  const menuName = useMenuName();
-  const isOpenMenu = menuName === GROK_MENU || menuName === REPLY_MENU;
+  const hasText = useTweetText().length > 0 || false;
+  const hasmMedia = useMedia().length > 0;
   useEffect(() => {
     const unloadCallback = (event: BeforeUnloadEvent) => {
-      if (hasText || isopenPoll || hasmMedia || isOpenMenu) {
+      if (hasText || hasmMedia) {
         console.log(event);
         event.preventDefault();
-        // event.returnValue = '';
         return '';
       }
     };
 
     window.addEventListener('beforeunload', unloadCallback);
     return () => window.removeEventListener('beforeunload', unloadCallback);
-  }, [hasText, isopenPoll, hasmMedia, isOpenMenu]);
+  }, [hasText, hasmMedia]);
 
   return (
     <div
@@ -85,17 +74,7 @@ export default function AddTweet() {
         </div>
         <div className="flex flex-1 flex-col gap-1 ">
           <div className="flex flex-col pt-1 pb-1 max-h-[calc(100vh-9rem)] overflow-y-auto">
-            {scheduledTime && (
-              <button
-                data-testid="scheduled-tweet-time-button"
-                onClick={open}
-                aria-label="Scheduled Tweet Time"
-                className="cursor-pointer hover:underline hover:underline-offset-1 hover:decoration-text-inactive"
-              >
-                {/* <ScheduledTweetTime /> */}
-              </button>
-            )}
-            <TweetText divRef={textRef} />
+            <TweetText />
 
             <div>
               {/* <Poll /> */}
@@ -108,7 +87,11 @@ export default function AddTweet() {
               <Mention />
               <TweetFooter>
                 <TweetOptionsBar />
-                <AddPostSection />
+                {type === ADD_TWEET.POST ? (
+                  <AddPostSection />
+                ) : (
+                  <ReplyQuoteSections label={type} />
+                )}
               </TweetFooter>
             </div>
           )}
