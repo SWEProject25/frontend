@@ -7,6 +7,8 @@ import {
   LikeNotificationIcon,
   RepostNotificationIcon,
   ReplyNotificationIcon,
+  QuoteNotificationIcon,
+  MentionNotificationIcon,
   FollowNotificationIcon,
   DMNotificationIcon,
 } from '@/components/ui/icons';
@@ -60,11 +62,21 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           </div>
         );
       case NotificationType.REPLY:
-      case NotificationType.QUOTE:
-      case NotificationType.MENTION:
         return (
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
             <ReplyNotificationIcon className="text-primary" />
+          </div>
+        );
+      case NotificationType.QUOTE:
+        return (
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-100 dark:bg-cyan-900/30">
+            <QuoteNotificationIcon className="text-cyan-600 dark:text-cyan-400" />
+          </div>
+        );
+      case NotificationType.MENTION:
+        return (
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30">
+            <MentionNotificationIcon className="text-indigo-600 dark:text-indigo-400" />
           </div>
         );
       case NotificationType.FOLLOW:
@@ -98,11 +110,16 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           : notification.messageId
             ? `/messages/${notification.messageId}`
             : '/messages';
+      case NotificationType.REPLY:
+        // Navigate to the reply post
+        return `/home/${notification.replyId}`;
+      case NotificationType.QUOTE:
+        // Navigate to the quote post
+        return `/home/${notification.quotePostId}`;
       case NotificationType.LIKE:
       case NotificationType.REPOST:
-      case NotificationType.QUOTE:
-      case NotificationType.REPLY:
       case NotificationType.MENTION:
+        // Navigate to the original post
         return `/home/${notification.postId}`;
       default:
         return '#';
@@ -179,12 +196,78 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             {notification.type === NotificationType.DM && 'sent you a message'}
           </p>
 
-          {/* Post preview (for post-related notifications) */}
-          {notification.postPreviewText && (
-            <div className="mt-2 rounded border border-border p-3 text-[15px] text-secondary">
-              <p className="line-clamp-3">{notification.postPreviewText}</p>
-            </div>
-          )}
+          {/* Reply content */}
+          {notification.type === NotificationType.REPLY &&
+            notification.post && (
+              <div className="mt-2 space-y-2">
+                {/* The reply text */}
+                <div className="rounded-lg bg-muted p-3">
+                  <p className="text-[15px] text-foreground line-clamp-4">
+                    {notification.post.text}
+                  </p>
+                  {notification.post.media &&
+                    notification.post.media.length > 0 && (
+                      <p className="mt-2 text-xs text-secondary">
+                        📷 {notification.post.media.length} media{' '}
+                        {notification.post.media.length > 1 ? 'items' : 'item'}
+                      </p>
+                    )}
+                </div>
+                {/* Original post preview */}
+                {notification.postPreviewText && (
+                  <div className="rounded border border-border p-3 text-[15px] text-secondary">
+                    <p className="line-clamp-2">
+                      Replying to: {notification.postPreviewText}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+          {/* Quote content */}
+          {notification.type === NotificationType.QUOTE &&
+            notification.post && (
+              <div className="mt-2 space-y-2">
+                {/* The quote text */}
+                <div className="rounded-lg bg-muted p-3">
+                  <p className="text-[15px] text-foreground line-clamp-4">
+                    {notification.post.text}
+                  </p>
+                  {notification.post.media &&
+                    notification.post.media.length > 0 && (
+                      <p className="mt-2 text-xs text-secondary">
+                        📷 {notification.post.media.length} media{' '}
+                        {notification.post.media.length > 1 ? 'items' : 'item'}
+                      </p>
+                    )}
+                </div>
+                {/* Quoted post preview */}
+                {notification.post.originalPostData && (
+                  <div className="ml-2 rounded border border-border p-3">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span className="text-[13px] font-semibold text-foreground">
+                        {notification.post.originalPostData.name}
+                      </span>
+                      <span className="text-[13px] text-secondary">
+                        @{notification.post.originalPostData.username}
+                      </span>
+                    </div>
+                    <p className="text-[15px] text-secondary line-clamp-3">
+                      {notification.post.originalPostData.text}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+          {/* Post preview (for LIKE, REPOST, MENTION notifications) */}
+          {notification.postPreviewText &&
+            notification.type !== NotificationType.REPLY &&
+            notification.type !== NotificationType.QUOTE && (
+              <div className="mt-2 rounded border border-border p-3 text-[15px] text-secondary">
+                <p className="line-clamp-3">{notification.postPreviewText}</p>
+              </div>
+            )}
 
           {/* Message preview (for DM notifications) */}
           {notification.messagePreview &&

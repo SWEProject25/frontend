@@ -11,6 +11,7 @@ import {
   ReplyDto,
   TweetResponseDto,
   LikersResponseDto,
+  RepostersResponseDto,
   TweetSummaryDto,
 } from '../types/api';
 import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
@@ -29,6 +30,8 @@ export const TWEET_QUERY_KEYS = {
   deleteTweet: (tweetId: number) => ['tweet', 'delete', tweetId] as const,
   getLikersByTweetId: (tweetId: number) =>
     ['tweet', 'likers', tweetId] as const,
+  getRepostersByTweetId: (tweetId: number) =>
+    ['tweet', 'reposters', tweetId] as const,
 };
 
 // Hook: Get tweet by ID
@@ -219,10 +222,52 @@ export const useGetLikersByTweetId = (tweetId: number) => {
   });
 };
 
-export const useDeleteTweet = (tweetId: number) => {
+// Hook: Get reposters by tweet ID
+export const useGetRepostersByTweetId = (tweetId: number) => {
+  return useInfiniteQuery<
+    RepostersResponseDto,
+    Error,
+    InfiniteData<RepostersResponseDto, number>,
+    any,
+    number
+  >({
+    queryKey: TWEET_QUERY_KEYS.getRepostersByTweetId(tweetId),
+    queryFn: ({ pageParam }) =>
+      tweetApi.getRepostersByTweetId(tweetId, pageParam, 10),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.data.length >= 10 ? pages.length + 1 : undefined,
+    staleTime: 0,
+    retry: 1,
+  });
+};
+
+export const useDeleteTweet = (
+  tweetId: number,
+  isRepost: boolean,
+  userId: number,
+  parentId?: number,
+  type: string = 'POST'
+) => {
   const queryClient = useQueryClient();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
+  const user = useAuth().user?.id;
   return useMutation({
     mutationFn: () => tweetApi.deleteTweet(tweetId),
+    onMutate: () => {
+      return onMutate(
+        OPTIMISTIC_TYPES.DELETE,
+        userId,
+        tweetId,
+        isRepost,
+        type,
+        parentId
+      );
+    },
+    onError: (error, variables, onMutateResult) => {
+      handleErrorOptimisticTweet(onMutateResult);
+    },
+
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.deleteTweet(tweetId),

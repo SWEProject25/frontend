@@ -22,7 +22,6 @@ export const useNotifications = (params?: GetNotificationsParams) => {
     queryKey: NOTIFICATION_QUERY_KEYS.LIST(params),
     queryFn: async ({ pageParam = NOTIFICATION_DEFAULTS.INITIAL_PAGE }) => {
       try {
-        console.log('🔄 Fetching notifications from API:', params);
         const response = await notificationsApi.getNotifications({
           ...params,
           page: pageParam as number,
@@ -101,7 +100,10 @@ export const useMarkAsRead = () => {
     Notification,
     Error,
     string,
-    { previousNotifications?: InfiniteData<GetNotificationsResponse> }
+    {
+      previousNotifications?: InfiniteData<GetNotificationsResponse>;
+      previousUnreadCount?: number;
+    }
   >({
     mutationFn: async (notificationId: string) => {
       try {
@@ -126,7 +128,24 @@ export const useMarkAsRead = () => {
         InfiniteData<GetNotificationsResponse>
       >(NOTIFICATION_QUERY_KEYS.LIST());
 
-      // Optimistically update notification list
+      // Snapshot previous unread count
+      const previousUnreadCount = queryClient.getQueryData<number>(
+        NOTIFICATION_QUERY_KEYS.UNREAD_COUNT
+      );
+
+      // Find the notification to get its type (for filtered counts)
+      let notificationType: string | null = null;
+      if (previousNotifications?.pages) {
+        for (const page of previousNotifications.pages) {
+          const notification = page.data.find((n) => n.id === notificationId);
+          if (notification) {
+            notificationType = notification.type;
+            break;
+          }
+        }
+      }
+
+      // Optimistically update notification list - mark as read
       queryClient.setQueriesData<InfiniteData<GetNotificationsResponse>>(
         { queryKey: NOTIFICATION_QUERY_KEYS.ALL },
         (old) => {
@@ -146,25 +165,53 @@ export const useMarkAsRead = () => {
         }
       );
 
-      // Optimistically update unread count
+      // Optimistically update main unread count
       queryClient.setQueryData<number>(
         NOTIFICATION_QUERY_KEYS.UNREAD_COUNT,
-        (old) => (old ? Math.max(0, old - 1) : 0)
+        (old) => {
+          const newCount = old ? Math.max(0, old - 1) : 0;
+          return newCount;
+        }
       );
 
-      return { previousNotifications };
+      // Also update filtered counts if we know the notification type
+      if (notificationType) {
+        if (notificationType === 'DM') {
+          // Decrement DM count
+          queryClient.setQueryData<number>(
+            [...NOTIFICATION_QUERY_KEYS.UNREAD_COUNT, { include: 'DM' }],
+            (old) => (old ? Math.max(0, old - 1) : 0)
+          );
+        } else {
+          // Decrement non-DM count
+          queryClient.setQueryData<number>(
+            [...NOTIFICATION_QUERY_KEYS.UNREAD_COUNT, { exclude: 'DM' }],
+            (old) => (old ? Math.max(0, old - 1) : 0)
+          );
+        }
+      }
+
+      return { previousNotifications, previousUnreadCount };
     },
     onError: (error, notificationId, context) => {
-      // Revert on error
+      // Revert notification list on error
       if (context?.previousNotifications) {
         queryClient.setQueryData(
           NOTIFICATION_QUERY_KEYS.LIST(),
           context.previousNotifications
         );
       }
+
+      // Revert unread count on error
+      if (context?.previousUnreadCount !== undefined) {
+        queryClient.setQueryData(
+          NOTIFICATION_QUERY_KEYS.UNREAD_COUNT,
+          context.previousUnreadCount
+        );
+      }
     },
     onSuccess: () => {
-      // Invalidate to ensure consistency
+      // Invalidate to ensure consistency with server
       queryClient.invalidateQueries({
         queryKey: NOTIFICATION_QUERY_KEYS.UNREAD_COUNT,
       });

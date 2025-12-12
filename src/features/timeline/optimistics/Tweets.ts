@@ -41,7 +41,11 @@ function updateTweetInInfiniteData(
 ): FeedType {
   let tweetIndx = 0;
   const maxIndx = Tweets.length - 1;
-  if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
+  if (
+    type === OPTIMISTIC_TYPES.BLOCK ||
+    type === OPTIMISTIC_TYPES.MUTE ||
+    type === OPTIMISTIC_TYPES.DELETE
+  ) {
     return {
       ...data,
       pages: data.pages.map((page, pageIndx) => {
@@ -106,7 +110,11 @@ function updateTweetPersonalizedInterestsData(
 ): ExplorePersonalizedFeedDtoResponse {
   let tweetIndx = 0;
   const maxIndx = Tweets.length - 1;
-  if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
+  if (
+    type === OPTIMISTIC_TYPES.BLOCK ||
+    type === OPTIMISTIC_TYPES.MUTE ||
+    type === OPTIMISTIC_TYPES.DELETE
+  ) {
     const newFeed = Object.keys(data.data).reduce(
       (acc, category) => {
         if (!pages.includes(category)) acc[category] = data.data[category];
@@ -236,6 +244,7 @@ function updateTweet(
 
     case OPTIMISTIC_TYPES.BLOCK:
     case OPTIMISTIC_TYPES.MUTE:
+    case OPTIMISTIC_TYPES.DELETE:
       // happens in updateTweetInInfiniteData with shouldRemove flag
       return tweet;
 
@@ -253,6 +262,7 @@ function handleOldTweets(
   switch (type) {
     case OPTIMISTIC_TYPES.LIKE:
     case OPTIMISTIC_TYPES.REPOST:
+    case OPTIMISTIC_TYPES.DELETE:
       const oldTweets = feed.pages.flatMap((page, indx) =>
         page.data.posts?.filter((post) => {
           if (post.isRepost && post.originalPostData) {
@@ -300,6 +310,7 @@ function handleOldInterestsTweets(
   switch (type) {
     case OPTIMISTIC_TYPES.LIKE:
     case OPTIMISTIC_TYPES.REPOST:
+    case OPTIMISTIC_TYPES.DELETE:
       const oldTweets: TimelineFeed[] = [];
       Object.keys(feed.data).map((category) =>
         feed.data[category].forEach((post, i) => {
@@ -474,6 +485,7 @@ export function useOptimisticTweet() {
           type,
           userId,
           queryKey,
+          myProfile?.id,
           tweetId,
           isRepost
         );
@@ -482,6 +494,7 @@ export function useOptimisticTweet() {
           type,
           userId,
           queryKey,
+          myProfile?.id,
           tweetId,
           isRepost
         );
@@ -500,6 +513,7 @@ export function useOptimisticTweet() {
     type: string,
     userId: number,
     queryKey: typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_FOR_YOU,
+    myId: number | undefined,
     tweetId?: number,
     isRepost?: boolean
   ): Promise<{
@@ -520,7 +534,11 @@ export function useOptimisticTweet() {
 
       if (oldTweets) {
         let timelineFeed: ExplorePersonalizedFeedDtoResponse;
-        if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
+        if (
+          type === OPTIMISTIC_TYPES.BLOCK ||
+          type === OPTIMISTIC_TYPES.MUTE ||
+          type === OPTIMISTIC_TYPES.DELETE
+        ) {
           timelineFeed = updateTweetPersonalizedInterestsData(
             previousFeed,
             pages,
@@ -538,6 +556,26 @@ export function useOptimisticTweet() {
             newTweets,
             type
           );
+          if (type === OPTIMISTIC_TYPES.REPOST) {
+            const tweets = oldTweets.filter((tweet) => {
+              if (
+                tweet.userId === myId &&
+                tweet.originalPostData?.isRepostedByMe === true
+              ) {
+                return true;
+              } else return false;
+            });
+            if (tweets.length > 0) {
+              console.log(tweets);
+              const myTweet = tweets[0];
+              timelineFeed = updateTweetPersonalizedInterestsData(
+                timelineFeed,
+                pages,
+                oldTweets,
+                OPTIMISTIC_TYPES.DELETE
+              );
+            }
+          }
         }
 
         queryClient.setQueryData<ExplorePersonalizedFeedDtoResponse>(
@@ -545,7 +583,11 @@ export function useOptimisticTweet() {
           timelineFeed
         );
 
-        if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
+        if (
+          type === OPTIMISTIC_TYPES.BLOCK ||
+          type === OPTIMISTIC_TYPES.MUTE ||
+          type === OPTIMISTIC_TYPES.DELETE
+        ) {
           if (
             currentTweet &&
             (currentTweet.userId === userId ||
@@ -582,6 +624,7 @@ export function useOptimisticTweet() {
     type: string,
     userId: number,
     queryKey: QueryKeyType,
+    myId: number | undefined,
     tweetId?: number,
     isRepost?: boolean
   ): Promise<{
@@ -601,7 +644,11 @@ export function useOptimisticTweet() {
 
       if (oldTweets) {
         let timelineFeed: FeedType;
-        if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
+        if (
+          type === OPTIMISTIC_TYPES.BLOCK ||
+          type === OPTIMISTIC_TYPES.MUTE ||
+          type === OPTIMISTIC_TYPES.DELETE
+        ) {
           timelineFeed = updateTweetInInfiniteData(
             previousFeed,
             pages,
@@ -619,11 +666,35 @@ export function useOptimisticTweet() {
             newTweets,
             type
           );
+          if (type === OPTIMISTIC_TYPES.REPOST) {
+            const tweets = oldTweets.filter((tweet) => {
+              if (
+                tweet.userId === myId &&
+                tweet.originalPostData?.isRepostedByMe === true
+              ) {
+                return true;
+              } else return false;
+            });
+            if (tweets.length > 0) {
+              console.log(tweets);
+              const myTweet = tweets[0];
+              timelineFeed = updateTweetInInfiniteData(
+                timelineFeed,
+                pages,
+                oldTweets,
+                OPTIMISTIC_TYPES.DELETE
+              );
+            }
+          }
         }
 
         queryClient.setQueryData<FeedType>(queryKey, timelineFeed);
 
-        if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
+        if (
+          type === OPTIMISTIC_TYPES.BLOCK ||
+          type === OPTIMISTIC_TYPES.MUTE ||
+          type === OPTIMISTIC_TYPES.DELETE
+        ) {
           if (
             currentTweet &&
             (currentTweet.userId === userId ||

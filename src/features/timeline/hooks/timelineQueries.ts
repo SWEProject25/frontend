@@ -19,6 +19,8 @@ import { useMention } from '../store/useMentionStore';
 import toasterMessage from '@/components/ui/home/ToasterMessage';
 import { useMediaActions } from '@/features/media/store/useMedia';
 import {
+  useFetchAvatars,
+  useNewTweets,
   useSearch,
   useSearchIsopen,
   useSearchUser,
@@ -32,7 +34,9 @@ import { profileApi, ProfileResponseDto } from '@/features/profile';
 export const TIMELINE_QUERY_KEYS = {
   ADD_TWEET: ['tweet'] as const,
   TIMELINE_FEED_FOR_YOU: ['timeline', 'forYou'] as const,
+  TIMELINE_FEED_FOR_YOU_POPUP: ['timeline', 'forYou', 'popup'] as const,
   TIMELINE_FEED_FOLLOWING: ['timeline', 'following'] as const,
+  TIMELINE_FEED_FOLLOWING_POPUP: ['timeline', 'following', 'popup'] as const,
   PROFILE_SEARCH: (username: string) => ['profile', username] as const,
   HASHTAG_SEARCH: (hashtag: string) => ['hashtag', hashtag] as const,
   VALID_USER: (username: string) => ['mention', username] as const,
@@ -65,11 +69,16 @@ export const useAddTweet = () => {
       // queryClient.invalidateQueries({ queryKey: [''] });
       onSuccess();
       clearMedia();
-      toasterMessage('Your post was sent.');
       const newTweet: TimelineFeed = {
         ...data.data,
         originalPostData: undefined,
       };
+      toasterMessage(
+        'Your post was sent.',
+        'bottom-center',
+        'success',
+        `/home/${newTweet.postId}`
+      );
 
       queryClient.setQueryData<InfiniteData<TimelineFeedDtoResponse, number>>(
         TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
@@ -201,5 +210,38 @@ export const useCheckValidUser = (username: string) => {
     queryFn: () => profileApi.getProfileByUsername(username),
     enabled: username.length > 0,
     retry: 1,
+  });
+};
+export const useAvatarsPopUp = () => {
+  const selectedTab = useSelectedTab();
+  const newTweets = useNewTweets();
+  const isPopUpVisible = useFetchAvatars();
+  let queryKey,
+    queryEndPoint:
+      | typeof TIMELINE_ENDPOINTS.TIMELINE_FEED_FLLOWING
+      | typeof TIMELINE_ENDPOINTS.TIMELINE_FEED_FOR_YOU;
+  if (selectedTab === FOLLOWING_TAB) {
+    queryKey = TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING_POPUP;
+    queryEndPoint = TIMELINE_ENDPOINTS.TIMELINE_FEED_FLLOWING;
+  } else {
+    queryKey = TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU_POPUP;
+    queryEndPoint = TIMELINE_ENDPOINTS.TIMELINE_FEED_FOR_YOU;
+  }
+  return useInfiniteQuery<
+    TimelineFeedDtoResponse,
+    Error,
+    InfiniteData<TimelineFeedDtoResponse, number>,
+    | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU_POPUP
+    | typeof TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING_POPUP,
+    number
+  >({
+    enabled: isPopUpVisible,
+    // enabled: isPopUpVisible && newTweets.length === 0,
+    queryKey: queryKey,
+    queryFn: ({ pageParam }) =>
+      timelineApi.getTimelineFeed(pageParam, queryEndPoint, 3),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) => undefined,
+    staleTime: 0,
   });
 };
