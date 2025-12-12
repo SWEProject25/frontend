@@ -117,7 +117,13 @@ export default function Tweet({
       }
     : undefined;
 
-  const deleteTweetMutation = useDeleteTweet(dataViewd.postId);
+  const deleteTweetMutation = useDeleteTweet(
+    dataViewd.postId,
+    actionsStats.isRepost,
+    actionsStats.userId,
+    actionsStats.parentId,
+    actionsStats.type
+  );
   const handleDropdownAction = async (key: string) => {
     switch (key) {
       case 'follow':

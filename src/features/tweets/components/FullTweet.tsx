@@ -82,7 +82,12 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
       ))}
     </React.Fragment>
   ));
-  const deleteTweetMutation = useDeleteTweet(data?.postId || -1);
+  const deleteTweetMutation = useDeleteTweet(
+    data?.postId || -1,
+    data?.isRepost ?? false,
+    data?.userId ?? -1,
+    data?.parentId
+  );
   const hasInitialData = pages ? pages[0].data.posts.length > 0 : false;
 
   const handleDropdownAction = async (key: string) => {

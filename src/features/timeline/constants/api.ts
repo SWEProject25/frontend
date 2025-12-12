@@ -15,4 +15,5 @@ export const OPTIMISTIC_TYPES = {
   REPOST: 'repost',
   BLOCK: 'block',
   MUTE: 'mute',
+  DELETE: 'delete',
 } as const;
