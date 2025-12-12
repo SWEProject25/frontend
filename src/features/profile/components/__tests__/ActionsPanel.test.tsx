@@ -3,10 +3,29 @@ import { render, screen, waitFor } from '@/test/test-utils';
 import userEvent from '@testing-library/user-event';
 import ActionsPanel from '../ActionsPanel';
 
+// Hoisted mocks - must be declared with vi.hoisted
+const {
+  mockPush,
+  mockFetchConversations,
+  mockCreateConversation,
+  mockMuteUser,
+  mockUnmuteUser,
+  mockBlockUser,
+  mockUnblockUser,
+} = vi.hoisted(() => ({
+  mockPush: vi.fn(),
+  mockFetchConversations: vi.fn(),
+  mockCreateConversation: vi.fn(),
+  mockMuteUser: vi.fn(),
+  mockUnmuteUser: vi.fn(),
+  mockBlockUser: vi.fn(),
+  mockUnblockUser: vi.fn(),
+}));
+
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: vi.fn(),
+    push: mockPush,
     back: vi.fn(),
     forward: vi.fn(),
     refresh: vi.fn(),
@@ -23,6 +42,12 @@ vi.mock('../hooks', () => ({
     handleSaveProfile: vi.fn(),
     isUpdating: false,
   }),
+}));
+
+// Mock messages API
+vi.mock('@/features/messages/api/messages', () => ({
+  fetchConversations: mockFetchConversations,
+  createConversation: mockCreateConversation,
 }));
 
 vi.mock('@/components/generic/EditProfileModal', () => ({
@@ -54,10 +79,10 @@ vi.mock('@/components/generic/buttons/BlockBtn', () => ({
 
 vi.mock('@/hooks/useInteractions', () => ({
   useInteractions: () => ({
-    muteUser: vi.fn(),
-    unmuteUser: vi.fn(),
-    blockUser: vi.fn(),
-    unblockUser: vi.fn(),
+    muteUser: mockMuteUser,
+    unmuteUser: mockUnmuteUser,
+    blockUser: mockBlockUser,
+    unblockUser: mockUnblockUser,
   }),
 }));
 
@@ -79,6 +104,19 @@ const mockUserData = {
 };
 
 describe('ActionsPanel', () => {
+  beforeEach(() => {
+    mockPush.mockClear();
+    mockFetchConversations.mockClear();
+    mockCreateConversation.mockClear();
+    mockMuteUser.mockClear();
+    mockUnmuteUser.mockClear();
+    mockBlockUser.mockClear();
+    mockUnblockUser.mockClear();
+    // Set default implementations
+    mockFetchConversations.mockResolvedValue([]);
+    mockCreateConversation.mockResolvedValue({ data: { id: 'default-id' } });
+  });
+
   describe('Own Profile', () => {
     it('should render actions panel container', () => {
       render(<ActionsPanel isOwnProfile={true} userData={mockUserData} />);
@@ -199,58 +237,275 @@ describe('ActionsPanel', () => {
   });
 
   describe('Message Button Functionality', () => {
-    const mockPush = vi.fn();
-    const mockFetchConversations = vi.fn();
-    const mockCreateConversation = vi.fn();
-
-    beforeEach(() => {
-      mockPush.mockClear();
-      mockFetchConversations.mockClear();
-      mockCreateConversation.mockClear();
-    });
-
-    it('should handle message button click', async () => {
+    it('should navigate to existing conversation when found by user.id', async () => {
       const user = userEvent.setup();
+      const existingConversation = {
+        id: 'conv-123',
+        user: { id: 123 },
+      };
+      mockFetchConversations.mockResolvedValue([existingConversation]);
+
       render(<ActionsPanel isOwnProfile={false} userData={mockUserData} />);
 
       const messageButton = screen.getByTestId('profile-message-button');
-      expect(messageButton).toBeInTheDocument();
-      expect(messageButton).toBeEnabled();
-
       await user.click(messageButton);
-      // After clicking, button may be disabled while creating conversation
+
       await waitFor(() => {
-        expect(messageButton).toBeDisabled();
+        expect(mockFetchConversations).toHaveBeenCalled();
+        expect(mockPush).toHaveBeenCalledWith('/messages/conv-123');
       });
     });
 
-    it('should disable message button while creating conversation', async () => {
+    it('should navigate to existing conversation when found by user1Id', async () => {
       const user = userEvent.setup();
+      const existingConversation = {
+        conversationId: 'conv-456',
+        user1Id: 123,
+      };
+      mockFetchConversations.mockResolvedValue([existingConversation]);
+
       render(<ActionsPanel isOwnProfile={false} userData={mockUserData} />);
 
       const messageButton = screen.getByTestId('profile-message-button');
       await user.click(messageButton);
 
-      // The button may show loading state
-      // This tests the onClick handler is working
+      await waitFor(() => {
+        expect(mockFetchConversations).toHaveBeenCalled();
+        expect(mockPush).toHaveBeenCalledWith('/messages/conv-456');
+      });
     });
 
-    it('should render More icon button', () => {
-      render(<ActionsPanel isOwnProfile={false} userData={mockUserData} />);
-
-      const moreButton = screen.getByTestId('profile-more-button');
-      expect(moreButton).toBeInTheDocument();
-    });
-
-    it('should handle More button click', async () => {
+    it('should navigate to existing conversation when found by user2Id', async () => {
       const user = userEvent.setup();
+      const existingConversation = {
+        id: 'conv-789',
+        user2Id: 123,
+      };
+      mockFetchConversations.mockResolvedValue([existingConversation]);
+
       render(<ActionsPanel isOwnProfile={false} userData={mockUserData} />);
+
+      const messageButton = screen.getByTestId('profile-message-button');
+      await user.click(messageButton);
+
+      await waitFor(() => {
+        expect(mockFetchConversations).toHaveBeenCalled();
+        expect(mockPush).toHaveBeenCalledWith('/messages/conv-789');
+      });
+    });
+
+    it('should create new conversation when no existing conversation found', async () => {
+      const user = userEvent.setup();
+      mockFetchConversations.mockResolvedValue([]);
+      mockCreateConversation.mockResolvedValue({
+        data: { id: 'new-conv-123' },
+      });
+
+      render(<ActionsPanel isOwnProfile={false} userData={mockUserData} />);
+
+      const messageButton = screen.getByTestId('profile-message-button');
+      await user.click(messageButton);
+
+      await waitFor(() => {
+        expect(mockFetchConversations).toHaveBeenCalled();
+        expect(mockCreateConversation).toHaveBeenCalledWith(123);
+        expect(mockPush).toHaveBeenCalledWith('/messages/new-conv-123');
+      });
+    });
+
+    it('should handle conversationId in different response structures', async () => {
+      const user = userEvent.setup();
+      mockFetchConversations.mockResolvedValue([]);
+      mockCreateConversation.mockResolvedValue({
+        data: { conversationId: 'conv-xyz' },
+      });
+
+      render(<ActionsPanel isOwnProfile={false} userData={mockUserData} />);
+
+      const messageButton = screen.getByTestId('profile-message-button');
+      await user.click(messageButton);
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/messages/conv-xyz');
+      });
+    });
+
+    it('should navigate to /messages on error', async () => {
+      const user = userEvent.setup();
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+      mockFetchConversations.mockRejectedValue(new Error('Network error'));
+
+      render(<ActionsPanel isOwnProfile={false} userData={mockUserData} />);
+
+      const messageButton = screen.getByTestId('profile-message-button');
+      await user.click(messageButton);
+
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          'Error handling conversation:',
+          expect.any(Error)
+        );
+        expect(mockPush).toHaveBeenCalledWith('/messages');
+      });
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should not do anything if already creating conversation', async () => {
+      const user = userEvent.setup();
+      mockFetchConversations.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve([]), 100);
+          })
+      );
+
+      render(<ActionsPanel isOwnProfile={false} userData={mockUserData} />);
+
+      const messageButton = screen.getByTestId('profile-message-button');
+
+      // Click twice rapidly
+      await user.click(messageButton);
+      await user.click(messageButton);
+
+      // Should only call fetchConversations once
+      await waitFor(() => {
+        expect(mockFetchConversations).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe('Dropdown Actions - Mute/Unmute', () => {
+    it('should call muteUser when mute is clicked on unmuted user', async () => {
+      const user = userEvent.setup();
+      const unmutedUser = { ...mockUserData, isMuted: false };
+      render(<ActionsPanel isOwnProfile={false} userData={unmutedUser} />);
 
       const moreButton = screen.getByTestId('profile-more-button');
       await user.click(moreButton);
 
-      // More button should be clickable
-      expect(moreButton).toBeEnabled();
+      // Find and click the mute option
+      const muteOption = screen.getByText(/Mute/i);
+      await user.click(muteOption);
+
+      await waitFor(() => {
+        expect(mockMuteUser).toHaveBeenCalledWith(123);
+      });
+    });
+
+    it('should call unmuteUser when mute is clicked on muted user', async () => {
+      const user = userEvent.setup();
+      const mutedUser = { ...mockUserData, isMuted: true };
+      render(<ActionsPanel isOwnProfile={false} userData={mutedUser} />);
+
+      const moreButton = screen.getByTestId('profile-more-button');
+      await user.click(moreButton);
+
+      // Find and click the unmute option
+      const unmuteOption = screen.getByText(/Unmute/i);
+      await user.click(unmuteOption);
+
+      await waitFor(() => {
+        expect(mockUnmuteUser).toHaveBeenCalledWith(123);
+      });
+    });
+  });
+
+  describe('Dropdown Actions - Block/Unblock Confirmation', () => {
+    it('should show block confirmation modal when block is clicked', async () => {
+      const user = userEvent.setup();
+      const unblockedUser = { ...mockUserData, isBlocked: false };
+      render(<ActionsPanel isOwnProfile={false} userData={unblockedUser} />);
+
+      const moreButton = screen.getByTestId('profile-more-button');
+      await user.click(moreButton);
+
+      // Find and click the block option
+      const blockOption = screen.getByText(/Block/i);
+      await user.click(blockOption);
+
+      await waitFor(() => {
+        expect(screen.getByText('Block user?')).toBeInTheDocument();
+      });
+    });
+
+    it('should show unblock confirmation modal when unblock is clicked', async () => {
+      const user = userEvent.setup();
+      const blockedUser = { ...mockUserData, isBlocked: true };
+      render(<ActionsPanel isOwnProfile={false} userData={blockedUser} />);
+
+      const moreButton = screen.getByTestId('profile-more-button');
+      await user.click(moreButton);
+
+      // Find and click the unblock option
+      const unblockOption = screen.getByText(/Unblock/i);
+      await user.click(unblockOption);
+
+      await waitFor(() => {
+        expect(screen.getByText('Unblock user?')).toBeInTheDocument();
+      });
+    });
+
+    it('should call blockUser when block is confirmed', async () => {
+      const user = userEvent.setup();
+      const unblockedUser = { ...mockUserData, isBlocked: false };
+      render(<ActionsPanel isOwnProfile={false} userData={unblockedUser} />);
+
+      const moreButton = screen.getByTestId('profile-more-button');
+      await user.click(moreButton);
+
+      const blockOption = screen.getByText(/Block/i);
+      await user.click(blockOption);
+
+      // Confirm the block
+      const confirmButton = screen.getByText('Block');
+      await user.click(confirmButton);
+
+      await waitFor(() => {
+        expect(mockBlockUser).toHaveBeenCalledWith(123);
+      });
+    });
+
+    it('should call unblockUser when unblock is confirmed', async () => {
+      const user = userEvent.setup();
+      const blockedUser = { ...mockUserData, isBlocked: true };
+      render(<ActionsPanel isOwnProfile={false} userData={blockedUser} />);
+
+      const moreButton = screen.getByTestId('profile-more-button');
+      await user.click(moreButton);
+
+      const unblockOption = screen.getByText(/Unblock/i);
+      await user.click(unblockOption);
+
+      // Confirm the unblock
+      const confirmButton = screen.getByText('Unblock');
+      await user.click(confirmButton);
+
+      await waitFor(() => {
+        expect(mockUnblockUser).toHaveBeenCalledWith(123);
+      });
+    });
+
+    it('should close modal when cancel is clicked', async () => {
+      const user = userEvent.setup();
+      const unblockedUser = { ...mockUserData, isBlocked: false };
+      render(<ActionsPanel isOwnProfile={false} userData={unblockedUser} />);
+
+      const moreButton = screen.getByTestId('profile-more-button');
+      await user.click(moreButton);
+
+      const blockOption = screen.getByText(/Block/i);
+      await user.click(blockOption);
+
+      // Cancel the block
+      const cancelButton = screen.getByText('Cancel');
+      await user.click(cancelButton);
+
+      await waitFor(() => {
+        expect(screen.queryByText('Block user?')).not.toBeInTheDocument();
+      });
     });
   });
 
