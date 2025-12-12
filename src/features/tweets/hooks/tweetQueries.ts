@@ -39,6 +39,7 @@ export const useTweetById = (tweetId: number) => {
     staleTime: 0,
     retry: 1,
     refetchOnMount: true,
+    throwOnError: false, // Allow error to be returned in hook
   });
 };
 
@@ -58,22 +59,22 @@ export const useToggleLikeTweet = (
     mutationFn: () => tweetApi.toggleLikeTweet(tweetId),
     onMutate: () => {
       // Optimistically update cache before mutation
-      queryClient.setQueryData(
-        TWEET_QUERY_KEYS.tweetById(tweetId),
-        (old: any) => {
-          if (!old) return old;
-          return {
-            ...old,
-            data: {
-              ...old.data,
-              isLikedByMe: !old.data.isLikedByMe,
-              likesCount: old.data.isLikedByMe
-                ? old.data.likesCount - 1
-                : old.data.likesCount + 1,
-            },
-          };
-        }
-      );
+      // queryClient.setQueryData(
+      //   TWEET_QUERY_KEYS.tweetById(tweetId),
+      //   (old: any) => {
+      //     if (!old) return old;
+      //     return {
+      //       ...old,
+      //       data: {
+      //         ...old.data,
+      //         isLikedByMe: !old.data.isLikedByMe,
+      //         likesCount: old.data.isLikedByMe
+      //           ? old.data.likesCount - 1
+      //           : old.data.likesCount + 1,
+      //       },
+      //     };
+      //   }
+      // );
       return onMutate(
         OPTIMISTIC_TYPES.LIKE,
         userId,

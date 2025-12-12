@@ -9,10 +9,17 @@ function Page() {
   const id = Number(useParams()?.['full-tweet']);
   const tweetQuery = useTweetById(id);
   const tweet = tweetQuery.data?.data[0] || null;
+  const isError = tweetQuery.isError;
 
   // if (tweetQuery.isLoading) {
   //   return <Loader />;
   // }
+  if (isError)
+    return (
+      <div className="flex justify-center items-center h-32">
+        This Tweet not found, may be deleted.
+      </div>
+    );
 
   return (
     <>
