@@ -30,11 +30,17 @@ export default function Tweet({
     ? data?.originalPostData?.userId === myId
     : data.userId === myId;
 
+  const dataViewd = data.isRepost
+    ? data.originalPostData
+      ? data.originalPostData
+      : data
+    : data;
+
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
-    username: data.username,
-    isFollowed: data.isFollowedByMe,
-    isMuted: data.isMutedByMe || false,
-    isBlocked: data.isBlockedByMe || false,
+    username: dataViewd.username,
+    isFollowed: dataViewd.isFollowedByMe,
+    isMuted: dataViewd.isMutedByMe || false,
+    isBlocked: dataViewd.isBlockedByMe || false,
     myTweet: myTweet,
   });
 
@@ -56,12 +62,6 @@ export default function Tweet({
     unblockUser,
     isBlockLoading,
   } = useInteractions();
-
-  const dataViewd = data.isRepost
-    ? data.originalPostData
-      ? data.originalPostData
-      : data
-    : data;
 
   // const byMe = userId === dataViewd.userId;
   // const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
@@ -100,20 +100,29 @@ export default function Tweet({
     isRepostedByMe: dataViewd.isRepostedByMe,
   };
 
-  const quoteData = data.originalPostData
+  const isQuote =
+    data.isQuote ||
+    (data.isRepost && data.originalPostData?.originalPostData !== undefined);
+  const quoteTweetData = data.isQuote
+    ? data.originalPostData
+    : data.isRepost && data.originalPostData?.originalPostData !== undefined
+      ? data.originalPostData.originalPostData
+      : undefined;
+  const quoteData = quoteTweetData
     ? {
-        postId: data.originalPostData.postId,
-        userId: data.originalPostData.userId,
+        postId: quoteTweetData.postId,
+        userId: quoteTweetData.userId,
         tweetContent: {
-          text: data.originalPostData.text,
-          media: data.originalPostData.media,
-          mentions: data.originalPostData.mentions || [],
+          text: quoteTweetData.text,
+          media: quoteTweetData.media,
+          mentions: quoteTweetData.mentions || [],
         },
-        avatar: data.originalPostData.avatar ?? null,
-        name: data.originalPostData.name,
-        username: data.originalPostData.username,
-        isVerified: data.originalPostData.verified ?? false,
-        date: data.originalPostData.date,
+        avatar: quoteTweetData.avatar ?? null,
+        name: quoteTweetData.name,
+        username: quoteTweetData.username,
+        isVerified: quoteTweetData.verified ?? false,
+        date: quoteTweetData.date,
+        isDeleted: quoteTweetData.isDeleted || false,
       }
     : undefined;
 
@@ -272,7 +281,7 @@ export default function Tweet({
               )}
             </div>
           </div>
-          <Content content={content} isQuote={data.isQuote} data={quoteData} />
+          <Content content={content} isQuote={isQuote} data={quoteData} />
           <Actions
             stats={actionsStats}
             onOpened={setHovered}

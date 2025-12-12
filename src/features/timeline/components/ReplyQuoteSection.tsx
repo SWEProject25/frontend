@@ -36,6 +36,7 @@ export default function ReplyQuoteSections({ label }: { label: string }) {
         console.log(gifFile);
         tweetFormData.append('media', gifFile);
       }
+      console.log('media appended');
     }
     console.log(tweetFormData.getAll('media'));
     console.log(media);

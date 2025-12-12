@@ -213,6 +213,7 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
         username: data.originalPostData.username,
         isVerified: data.originalPostData.verified ?? false,
         date: data.originalPostData.date,
+        isDeleted: data.originalPostData.isDeleted || false,
       }
     : undefined;
 
