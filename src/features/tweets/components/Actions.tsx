@@ -79,6 +79,10 @@ export default function Actions({
         toast.error('Sorry, that post has been deleted', {
           duration: 3000,
           position: 'bottom-center',
+          style: {
+            background: '#2e7ad6ff',
+            color: '#FFFFFF',
+          },
         });
         console.error(error);
       },
@@ -90,6 +94,10 @@ export default function Actions({
         toast.error('Sorry, that post has been deleted', {
           duration: 3000,
           position: 'bottom-center',
+          style: {
+            background: '#2e7ad6ff',
+            color: '#FFFFFF',
+          },
         });
       },
     });

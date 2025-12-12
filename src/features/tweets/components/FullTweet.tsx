@@ -26,6 +26,9 @@ import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import { useTweetStore } from '../store/tweetStore';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import { useAuth } from '@/features/authentication/hooks';
+import { toast } from 'react-hot-toast';
+import AddTweet from '@/features/timeline/components/AddTweet';
+import { ADD_TWEET } from '@/features/timeline/constants/tweetConstants';
 function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
   const router = useRouter();
   const [showBlockModal, setShowBlockModal] = useState(false);
@@ -137,6 +140,14 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
       router.push('/home');
     } catch (error) {
       // Handle error, optionally show error notification
+      toast.error('This tweet has already been deleted before.', {
+        duration: 3000,
+        position: 'bottom-center',
+        style: {
+          background: '#2e7ad6ff',
+          color: '#FFFFFF',
+        },
+      });
     } finally {
       setIsDeleteLoading(false);
     }
@@ -279,6 +290,9 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
           />
           <div className="border-b border-gray-700 mt-3" />
         </div>
+      </div>
+      <div>
+        <AddTweet type={ADD_TWEET.REPLY} />
       </div>
       <div>
         {isError ? (

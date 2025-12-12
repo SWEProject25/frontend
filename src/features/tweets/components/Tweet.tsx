@@ -18,6 +18,7 @@ import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Link from 'next/link';
 import { useAuth } from '@/features/authentication/hooks';
 import { useDeleteTweet, useGetTweetSummary } from '../hooks/tweetQueries';
+import toast from 'react-hot-toast';
 export default function Tweet({
   data,
   inProfile = false,
@@ -170,6 +171,14 @@ export default function Tweet({
       // Optionally, you can add a success notification here
     } catch (error) {
       // Handle error, optionally show error notification
+      toast.error('This tweet has already been deleted before.', {
+        duration: 3000,
+        position: 'bottom-center',
+        style: {
+          background: '#2e7ad6ff',
+          color: '#FFFFFF',
+        },
+      });
     } finally {
       setIsDeleteLoading(false);
     }
