@@ -1,5 +1,4 @@
 'use client';
-import useMedia from '@/features/media/store/useMedia';
 import Icon from '../../../components/ui/home/Icon';
 
 import TweetImages from './TweetImages';
@@ -7,20 +6,21 @@ import { MAX_MEDIA_NUM } from '@/features/media/constants/mediaConstants';
 import { useRouter } from 'next/navigation';
 import { useGifACtions, useGifVisibility } from '@/features/media/store/useGif';
 import Emoji from '@/features/media/components/Emoji';
+import { useMedia } from '@/features/media/store/useMedia';
 export default function TweetOptionsBar() {
   const { open: openGif, close: closeGif } = useGifACtions();
   const isGifOpen = useGifVisibility();
-  const media = useMedia((state) => state.media);
+  const media = useMedia();
   const router = useRouter();
 
   const handleOpenGif = () => {
     if (media.length !== MAX_MEDIA_NUM) {
       if (isGifOpen) {
         closeGif();
-        router.replace('home');
+        router.replace('home', { scroll: false });
       } else {
         openGif();
-        router.push('i/foundmedia/search');
+        router.push('i/foundmedia/search', { scroll: false });
       }
     }
   };

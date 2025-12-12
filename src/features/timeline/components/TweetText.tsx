@@ -1,18 +1,22 @@
 'use client';
-import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 import {
   useMention,
   useActions,
   useIsOpen,
   useMentionIsDone,
 } from '@/features/timeline/store/useMentionStore';
-import { useActions as useAddTweetActions } from '@/features/timeline/store/useAddTweetStore';
+import {
+  useActions as useAddTweetActions,
+  useIsSuccess,
+  useTweetPlaceHolder,
+  useTweetText,
+} from '@/features/timeline/store/useAddTweetStore';
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import {
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
 } from '@/features/timeline/constants/tweetConstants';
-import { useEmoji } from '@/features/media/store/useMedia';
+import { useEmoji, useMediaActions } from '@/features/media/store/useMedia';
 import { useCheckValidUser } from '../hooks/timelineQueries';
 
 const startRedText = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
@@ -26,7 +30,6 @@ function getCurrCursorPos(div: HTMLDivElement) {
   range.setEnd(selection.anchorNode, selection.anchorOffset);
   return range.toString().length;
 }
-
 function setCartAtEnd(div: HTMLDivElement) {
   div.focus();
   const range = document.createRange();
@@ -48,38 +51,77 @@ export type notMentionType = mentionType & {
   username: string;
   span: HTMLSpanElement;
 };
-export default function TweetText({
-  divRef,
-}: {
-  divRef: RefObject<null | HTMLDivElement>;
-}) {
-  const setTweetText = useAddTweetStore((state) => state.setTweetText);
-  const isSuccess = useAddTweetStore((state) => state.isSuccess);
+export default function TweetText() {
+  const { setTweetText } = useAddTweetActions();
+  const divRef = useRef<null | HTMLDivElement>(null);
+
+  const placeHolder = useTweetPlaceHolder();
+  const isSuccess = useIsSuccess();
   const spanRef1 = useRef<null | HTMLSpanElement>(null);
-  const [spanText1, setSpanText1] = useState("What's happening?");
+  const [spanText1, setSpanText1] = useState(placeHolder);
   const [spanText2, setSpanText2] = useState('');
   const mention = useMention();
   const mentionIsDone = useMentionIsDone();
   const { setMention, setIsOpen, setIsDone, setKeyDown } = useActions();
+  const { clearEmoji } = useMediaActions();
   const { setMentions } = useAddTweetActions();
   const spanMention = useRef<null | HTMLSpanElement>(null);
   const completedMentions = useRef<mentionType[]>([]);
-
+  const cursorPos = useRef<number>(0);
+  const firstTweetText = useTweetText();
   const notMentions = useRef<notMentionType[]>([]);
-  const [checkValidUsers, setCheckValidUsers] = useState(-1);
-  const { data } = useCheckValidUser(
-    notMentions.current[checkValidUsers]?.username.slice(1) ?? ''
+  const [checkValidUsers, setCheckValidUsers] = useState<Set<string>>(
+    new Set()
   );
+  const lastKey = Array.from(checkValidUsers)[checkValidUsers.size - 1];
+
+  const lastMention = notMentions.current.find(
+    (men) => `${men.username}-${men.indx}` === lastKey
+  );
+  const { data } = useCheckValidUser(lastMention?.username.slice(1) ?? '');
   const isOpen = useIsOpen();
   console.log(notMentions.current);
   console.log(completedMentions.current);
+  console.log(checkValidUsers);
+  useEffect(function () {
+    if (firstTweetText) {
+      if (divRef.current) {
+        // completedMentions.current = [];
+        notMentions.current = [];
+        setCheckValidUsers(new Set());
+        divRef.current.textContent = firstTweetText;
+        setCartAtEnd(divRef.current);
+        handleChangeText(firstTweetText);
+      }
+    }
+  }, []);
+  useEffect(function () {
+    function handelCusror() {
+      if (divRef.current && divRef.current === document.activeElement) {
+        cursorPos.current = getCurrCursorPos(divRef.current);
+        console.log(cursorPos.current);
+        console.log('em');
+      }
+      console.log('SAsa');
+    }
+    document.addEventListener('mousedown', handelCusror);
+    return () => document.removeEventListener('mousedown', handelCusror);
+  }, []);
+
   useEffect(
     function () {
-      if (data?.data) {
+      console.log('dattttttttta155', data);
+      if (data?.data && lastKey) {
         console.log(notMentions.current);
 
+        console.log('dattttttttta1', data);
+
         console.log('dattttttttta0', data);
-        const mention = notMentions.current[checkValidUsers];
+        const mention = notMentions.current.find(
+          (men) => `${men.username}-${men.indx}` === lastKey
+        );
+        if (mention === undefined) return;
+
         const span = mention.span;
         span.className = 'text-primary-hover';
         span.setAttribute('data-mention', 'completed');
@@ -90,15 +132,20 @@ export default function TweetText({
           id: data.data.User.id,
         });
         notMentions.current = notMentions.current.filter(
-          (men, indx) => indx !== checkValidUsers
+          (men) => `${men.username}-${men.indx}` !== lastKey
         );
-        span.textContent = mention.username;
 
+        setCheckValidUsers((check) => {
+          const set = new Set(check);
+          set.delete(lastKey);
+          return set;
+        });
+        span.textContent = mention.username;
         console.log(notMentions.current);
         console.log(completedMentions.current);
       }
     },
-    [checkValidUsers, data]
+    [checkValidUsers, data, lastKey]
   );
 
   const emoji = useEmoji();
@@ -113,9 +160,9 @@ export default function TweetText({
 
       if (spanRef1.current) {
         if (text.length === 0) {
-          setSpanText1("What's happening?");
+          setSpanText1(placeHolder);
           spanRef1.current.style.color = 'var(--color-text-inactive)';
-          spanRef1.current.innerHTML = "What's happening?";
+          spanRef1.current.innerHTML = placeHolder;
           setMention('');
           setIsDone('');
           completedMentions.current = [];
@@ -221,8 +268,9 @@ export default function TweetText({
           } else {
             span.className = 'text-active';
             console.log(notMentions.current);
+            const mentionKey = `${mentionText}-${mentionIndex}`;
             const notCompleted = notMentions.current.some(
-              (ment) => ment.username === mentionText
+              (ment) => `${ment.username}-${ment.indx}` === mentionKey
             );
             if (!notCompleted) {
               notMentions.current.push({
@@ -232,7 +280,12 @@ export default function TweetText({
                 indx: mentionIndex,
                 id: mentionIndex,
               });
-              setCheckValidUsers(notMentions.current.length - 1);
+              console.log(notMentions);
+              setCheckValidUsers((check) => {
+                const set = new Set(check);
+                set.add(mentionKey);
+                return set;
+              });
               console.log('enterre');
             }
             spanRef1.current.appendChild(span);
@@ -288,12 +341,16 @@ export default function TweetText({
       setIsOpen,
       divRef,
       setKeyDown,
+      placeHolder,
     ]
   );
 
-  useEffect(function () {
-    setSpanText1("What's happening?");
-  }, []);
+  useEffect(
+    function () {
+      setSpanText1(placeHolder);
+    },
+    [placeHolder]
+  );
   useEffect(
     function () {
       if (mentionIsDone && mention && divRef.current) {
@@ -358,10 +415,10 @@ export default function TweetText({
   useEffect(
     function () {
       if (isSuccess) {
-        setSpanText1("What's happening?");
+        setSpanText1(placeHolder);
         if (spanRef1.current) {
           spanRef1.current.style.color = 'var(--color-text-inactive)';
-          spanRef1.current.innerHTML = "What's happening?";
+          spanRef1.current.innerHTML = placeHolder;
         }
         setSpanText2('');
         if (divRef.current) divRef.current.innerText = '';
@@ -383,18 +440,25 @@ export default function TweetText({
       setMention,
       setMentions,
       setKeyDown,
+      placeHolder,
     ]
   );
   useEffect(
     function () {
       if (emoji) {
         if (divRef.current) {
-          divRef.current.innerText = divRef.current.innerText + emoji;
+          // divRef.current.innerText = divRef.current.innerText + emoji;
+          // const pos = getCurrCursorPos(divRef.current)
+          divRef.current.innerText =
+            divRef.current.innerText.slice(0, cursorPos.current) +
+            emoji +
+            divRef.current.innerText.slice(cursorPos.current);
           handleChangeText(divRef.current.innerText);
+          clearEmoji();
         }
       }
     },
-    [emoji, divRef, handleChangeText]
+    [emoji, divRef, handleChangeText, clearEmoji]
   );
 
   function handleInput(e: React.ChangeEvent<HTMLDivElement>) {

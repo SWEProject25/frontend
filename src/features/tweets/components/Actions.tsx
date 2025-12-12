@@ -17,6 +17,9 @@ import XModal from '@/components/ui/hoc/XModal';
 import AddReply from './AddReply';
 import SharePostModal from './SharePostModal';
 import AddQuote from './AddQuote';
+import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
+import { ADD_TWEET } from '@/features/timeline/constants/tweetConstants';
+import { useReplyQuoteActions } from '@/features/timeline/store/useAddReplyQuoteStore';
 type stats = {
   postId: number;
   isRepost: boolean;
@@ -41,6 +44,10 @@ export default function Actions({
   modalClick?: () => void;
 }) {
   const router = useRouter();
+  const setPostType = useAddTweetStore((state) => state.actions.setPostType);
+  const { setParentId } = useReplyQuoteActions();
+  const { clear } = useReplyQuoteActions();
+
   const shareDropdownItems = getShareDropdownItems();
   const repostDropdownItems = getRepostDropdownItems({
     isRepostedByMe: stats.isRepostedByMe,
@@ -92,7 +99,10 @@ export default function Actions({
         handleRetweet();
         break;
       case 'quote_post':
+        setPostType(ADD_TWEET.QUOTE);
+        setParentId(stats.postId);
         setIsQuoteOpen(true);
+
         if (modalClick) modalClick();
         break;
       default:
@@ -101,7 +111,10 @@ export default function Actions({
   }
   return (
     <div className="w-full my-.5 relative" data-testid="tweet-actions">
-      <div className="flex justify-between items-center w-full mt-3 text-gray-500 text-sm">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="flex justify-between items-center w-full mt-3 text-gray-500 text-sm"
+      >
         <>
           <Action
             icon={actionsMeta[0].icon}
@@ -109,13 +122,20 @@ export default function Actions({
             label={actionsMeta[0].label}
             color={actionsMeta[0].color}
             onClick={() => {
+              setPostType(ADD_TWEET.REPLY);
+              console.log(stats.postId);
+              setParentId(stats.postId);
               setIsReplyOpen(true);
               if (modalClick) modalClick();
             }}
           />
           <XModal
             isOpen={isReplyOpen}
-            onClose={() => setIsReplyOpen(false)}
+            onClose={() => {
+              setIsReplyOpen(false);
+              setPostType(ADD_TWEET.POST);
+              clear();
+            }}
             size="xl"
             title="Add Reply"
             showCloseButton={true}
@@ -140,7 +160,11 @@ export default function Actions({
         </DropDown>
         <XModal
           isOpen={isQuoteOpen}
-          onClose={() => setIsQuoteOpen(false)}
+          onClose={() => {
+            setPostType(ADD_TWEET.POST);
+            clear();
+            setIsQuoteOpen(false);
+          }}
           size="xl"
           title="Add Quote"
           showCloseButton={true}

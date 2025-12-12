@@ -1,19 +1,22 @@
 'use client';
 
-import useAddTweetStore, {
+import {
   useMentions,
+  useTweetText,
 } from '@/features/timeline/store/useAddTweetStore';
 import { MAX_ALLOWABLE_TWEET_LENGTH } from '@/features/timeline/constants/tweetConstants';
 import { useAddTweet } from '../hooks/timelineQueries';
-import useMedia from '@/features/media/store/useMedia';
 import { LOCAL_MEDIA } from '@/features/media/constants/mediaConstants';
 import { TweetFormDataKeys } from '../types/api';
 import TweetSubmitSection from './TweetSubmitSection';
-export default function ReplyQuoteSections() {
-  const tweetText = useAddTweetStore((state) => state.tweetText);
-  const media = useMedia((state) => state.media);
-  const mentions = useMentions();
+import { useMedia } from '@/features/media/store/useMedia';
+import { useReplyQuoteParentId } from '../store/useAddReplyQuoteStore';
 
+export default function ReplyQuoteSections({ label }: { label: string }) {
+  const tweetText = useTweetText();
+  const media = useMedia();
+  const mentions = useMentions();
+  const parentId = useReplyQuoteParentId();
   const mutate = useAddTweet();
 
   const enableAddTweet =
@@ -47,7 +50,8 @@ export default function ReplyQuoteSections() {
     if (tweetText.trim().length !== 0) {
       tweetFormData.append(TweetFormDataKeys.CONTENT, tweetText);
     }
-    tweetFormData.append(TweetFormDataKeys.TYPE, 'POST');
+    tweetFormData.append(TweetFormDataKeys.TYPE, label);
+    tweetFormData.append(TweetFormDataKeys.PARENT_ID, `${parentId}`);
 
     mutate.mutate(tweetFormData);
   }
@@ -57,7 +61,7 @@ export default function ReplyQuoteSections() {
       handleAddTweet={handleAddTweet}
       enableAddTweet={enableAddTweet}
       enableSection={enableSection}
-      label="Post"
+      label={label}
     />
   );
 }

@@ -3,7 +3,7 @@ import Icon from '../../../components/ui/home/Icon';
 import XMenu from '@/components/ui/home/XMenu';
 
 import { onClose } from '@/components/ui/home/XMenu';
-import useAddTweetStore from '../store/useAddTweetStore';
+import { useTweetText } from '../store/useAddTweetStore';
 import { options } from '../constants/grokOptions';
 import { useState } from 'react';
 import { GROK_MENU } from '../constants/menuName';
@@ -11,8 +11,7 @@ const PANEL_HEIGHT = 88;
 export default function GrokMenu() {
   const [grokOption, setgrokOption] = useState(0);
 
-  const canEnhanceTweet =
-    useAddTweetStore((state) => state.tweetText).length > 0;
+  const canEnhanceTweet = useTweetText().length > 0;
   return (
     <XMenu>
       <XMenu.Button name={GROK_MENU} panelHeight={PANEL_HEIGHT}>
