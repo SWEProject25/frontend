@@ -16,7 +16,7 @@ export default function ReplyQuoteSections({ label }: { label: string }) {
   const mentions = selectors.useMentions();
   const parentId = useParentId();
   console.log(parentId);
-  const mutate = useAddTweet();
+  const mutate = useAddTweet(label);
 
   const enableAddTweet =
     tweetText.trim().length !== 0

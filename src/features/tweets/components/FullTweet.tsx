@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Content from './Content';
 import Actions from './Actions';
@@ -29,12 +29,36 @@ import { useAuth } from '@/features/authentication/hooks';
 import { toast } from 'react-hot-toast';
 import AddTweet from '@/features/timeline/components/AddTweet';
 import { ADD_TWEET } from '@/features/timeline/constants/tweetConstants';
+import { useActions } from '@/features/timeline/store/useTimelineStore';
+import { useRealTimeTweets } from '@/features/timeline/hooks/useRealTimeTweets';
 function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
   const router = useRouter();
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
     null
   );
+  const { setParentId, setPostType } = useActions();
+  useEffect(
+    function () {
+      if (data) setParentId(data.postId);
+    },
+    [data, setParentId]
+  );
+
+  const { joinPost, leavePost, usePostUpdates } = useRealTimeTweets();
+  usePostUpdates(data ? data.postId : null, data ? data.userId : -1);
+  useEffect(
+    function () {
+      if (data) {
+        joinPost(data.postId);
+      }
+      return () => {
+        if (data) leavePost(data.postId);
+      };
+    },
+    [data, joinPost, leavePost]
+  );
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const userId = useAuthStore((store) => store.user?.id);

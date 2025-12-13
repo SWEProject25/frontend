@@ -25,11 +25,13 @@ import {
   useSelectedTab,
 } from '../store/useTimelineStore';
 import { FOLLOWING_TAB } from '../constants/menuName';
-import { TIMELINE_ENDPOINTS } from '../constants/api';
+import { OPTIMISTIC_TYPES, TIMELINE_ENDPOINTS } from '../constants/api';
 import { useAuth } from '@/features/authentication/hooks';
 import { Search } from 'lucide-react';
 import { profileApi, ProfileResponseDto } from '@/features/profile';
 import { useAddPostContext } from '../store/AddPostContext';
+import { useOptimisticTweet } from '../optimistics/Tweets';
+import { ADD_TWEET } from '../constants/tweetConstants';
 export const TIMELINE_QUERY_KEYS = {
   ADD_TWEET: ['tweet'] as const,
   TIMELINE_FEED_FOR_YOU: ['timeline', 'forYou'] as const,
@@ -40,8 +42,9 @@ export const TIMELINE_QUERY_KEYS = {
   HASHTAG_SEARCH: (hashtag: string) => ['hashtag', hashtag] as const,
   VALID_USER: (username: string) => ['mention', username] as const,
 };
-export const useAddTweet = () => {
+export const useAddTweet = (label = 'Post') => {
   const selectors = useAddPostContext();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
   const { onSuccess, startSending, seterror, clearMedia, clearEmoji } =
     selectors.useActions();
@@ -67,7 +70,17 @@ export const useAddTweet = () => {
       }
     },
     onSuccess: (data) => {
-      // queryClient.invalidateQueries({ queryKey: [''] });
+      // // queryClient.invalidateQueries({ queryKey: [''] });
+      // if (label === ADD_TWEET.QUOTE) {
+      //   onMutate(
+      //     OPTIMISTIC_TYPES.Quote,
+      //     data.data.originalPostData?.userId ?? data.data.userId,
+      //     data.data.originalPostData?.postId,
+      //     false,
+      //     data.data.originalPostData?.type,
+      //     data.data.originalPostData?.parentId
+      //   );
+      // }
       onSuccess();
       clearMedia();
       clearEmoji();
