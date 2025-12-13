@@ -10,6 +10,7 @@ import { useProfile } from '../hooks';
 import { useRouter } from 'next/navigation';
 import { createConversation } from '@/features/messages/api/messages';
 import { fetchConversations } from '@/features/messages/api/messages';
+import { useMessageStore } from '@/features/messages/store/useMessageStore';
 import { getProfileDropdownItems } from '../constants/dropdown';
 import { useInteractions } from '@/hooks/useInteractions';
 
@@ -47,6 +48,7 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
   const { muteUser, unmuteUser, blockUser, unblockUser, isBlockLoading } =
     useInteractions();
   const router = useRouter();
+  const setConversations = useMessageStore((s) => s.setConversations);
 
   const handleEditProfileClick = () => {
     setIsModalOpen(true);
@@ -117,6 +119,23 @@ const ActionsPanel: React.FC<ActionsPanelProps> = ({
         result?.conversationId;
 
       if (conversationId) {
+        // Wait a moment for the backend to fully create the conversation
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        // Refresh conversations list to get the full user details
+        const updatedConversations = await fetchConversations();
+
+        // Update the message store with the new conversations
+        if (Array.isArray(updatedConversations)) {
+          const normalizedConversations = updatedConversations.map(
+            (conv: any) => ({
+              ...conv,
+              id: conv.id || conv.conversationId,
+            })
+          );
+          setConversations(normalizedConversations);
+        }
+
         router.push(`/messages/${conversationId}`);
       }
     } catch (error) {

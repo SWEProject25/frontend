@@ -27,6 +27,7 @@ export default function SubTweet({
         username: tweet.originalPostData.username,
         isVerified: tweet.originalPostData.verified ?? false,
         date: tweet.originalPostData.date,
+        isDeleted: tweet.originalPostData.isDeleted || false,
       }
     : undefined;
   const data = tweet?.isRepost ? tweet?.originalPostData : tweet;

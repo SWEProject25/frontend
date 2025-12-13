@@ -13,11 +13,9 @@ import {
   TimelineFeed,
   TimelineFeedDtoResponse,
 } from '../types/api';
-import { useActions } from '../store/useAddTweetStore';
-import { useMention } from '../store/useMentionStore';
 
 import toasterMessage from '@/components/ui/home/ToasterMessage';
-import { useMediaActions } from '@/features/media/store/useMedia';
+
 import {
   useFetchAvatars,
   useNewTweets,
@@ -27,10 +25,13 @@ import {
   useSelectedTab,
 } from '../store/useTimelineStore';
 import { FOLLOWING_TAB } from '../constants/menuName';
-import { TIMELINE_ENDPOINTS } from '../constants/api';
+import { OPTIMISTIC_TYPES, TIMELINE_ENDPOINTS } from '../constants/api';
 import { useAuth } from '@/features/authentication/hooks';
 import { Search } from 'lucide-react';
 import { profileApi, ProfileResponseDto } from '@/features/profile';
+import { useAddPostContext } from '../store/AddPostContext';
+import { useOptimisticTweet } from '../optimistics/Tweets';
+import { ADD_TWEET } from '../constants/tweetConstants';
 export const TIMELINE_QUERY_KEYS = {
   ADD_TWEET: ['tweet'] as const,
   TIMELINE_FEED_FOR_YOU: ['timeline', 'forYou'] as const,
@@ -41,10 +42,13 @@ export const TIMELINE_QUERY_KEYS = {
   HASHTAG_SEARCH: (hashtag: string) => ['hashtag', hashtag] as const,
   VALID_USER: (username: string) => ['mention', username] as const,
 };
-export const useAddTweet = () => {
-  const { onSuccess, startSending, seterror } = useActions();
+export const useAddTweet = (label = 'Post') => {
+  const selectors = useAddPostContext();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
+
+  const { onSuccess, startSending, seterror, clearMedia, clearEmoji } =
+    selectors.useActions();
   const queryClient = useQueryClient();
-  const { clearMedia } = useMediaActions();
   const user = useAuth().user;
   return useMutation<AddTweetResponse, Error, FormData>({
     mutationFn: async (tweetData) => {
@@ -66,12 +70,23 @@ export const useAddTweet = () => {
       }
     },
     onSuccess: (data) => {
-      // queryClient.invalidateQueries({ queryKey: [''] });
+      // // queryClient.invalidateQueries({ queryKey: [''] });
+      // if (label === ADD_TWEET.QUOTE) {
+      //   onMutate(
+      //     OPTIMISTIC_TYPES.Quote,
+      //     data.data.originalPostData?.userId ?? data.data.userId,
+      //     data.data.originalPostData?.postId,
+      //     false,
+      //     data.data.originalPostData?.type,
+      //     data.data.originalPostData?.parentId
+      //   );
+      // }
       onSuccess();
       clearMedia();
+      clearEmoji();
       const newTweet: TimelineFeed = {
         ...data.data,
-        originalPostData: undefined,
+        // originalPostData: undefined,
       };
       toasterMessage(
         'Your post was sent.',
@@ -164,6 +179,8 @@ export const useTimelineFeed = () => {
     getNextPageParam: (lastPage, pages) =>
       lastPage.data.posts.length ? pages.length + 1 : undefined,
     staleTime: Infinity,
+    // Show loading state while refetching to avoid flash of empty content
+    refetchOnMount: 'always',
   });
 };
 export const useSearchProfile = (searchUser: string) => {

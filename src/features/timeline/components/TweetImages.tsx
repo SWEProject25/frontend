@@ -1,19 +1,21 @@
 'use client';
 import Icon from '@/components/ui/home/Icon';
 import React from 'react';
-import useMedia from '@/features/media/store/useMedia';
 import {
   MAX_MEDIA_NUM,
   MAX_MEDIA_SIZE,
 } from '@/features/media/constants/mediaConstants';
 import toasterMessage from '@/components/ui/home/ToasterMessage';
 import { MEDIA_TYPES } from '@/features/media/constants/mediaTypes';
+import { useAddPostContext } from '../store/AddPostContext';
 
 //  accept=".jfif,.pjp,.jpg,.jpeg,.pjpeg,.png,.webp,.gif,.m4v,.mp4,.mov"
 
 export default function TweetImages() {
-  const addMedia = useMedia((state) => state.addMedia);
-  const media = useMedia((state) => state.media);
+  const selectors = useAddPostContext();
+
+  const { addMedia } = selectors.useActions();
+  const media = selectors.useMedia();
   // const size = images.reduce((size, img) => size + img.size, 0);
   const mediaNum = media.length;
   // const [error, setError] = useState(false);

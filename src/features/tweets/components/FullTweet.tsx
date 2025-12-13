@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Content from './Content';
 import Actions from './Actions';
@@ -26,12 +26,39 @@ import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import { useTweetStore } from '../store/tweetStore';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import { useAuth } from '@/features/authentication/hooks';
+import { toast } from 'react-hot-toast';
+import AddTweet from '@/features/timeline/components/AddTweet';
+import { ADD_TWEET } from '@/features/timeline/constants/tweetConstants';
+import { useActions } from '@/features/timeline/store/useTimelineStore';
+import { useRealTimeTweets } from '@/features/timeline/hooks/useRealTimeTweets';
 function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
   const router = useRouter();
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
     null
   );
+  const { setParentId, setPostType } = useActions();
+  useEffect(
+    function () {
+      if (data) setParentId(data.postId);
+    },
+    [data, setParentId]
+  );
+
+  const { joinPost, leavePost, usePostUpdates } = useRealTimeTweets();
+  usePostUpdates(data ? data.postId : null, data ? data.userId : -1);
+  useEffect(
+    function () {
+      if (data) {
+        joinPost(data.postId);
+      }
+      return () => {
+        if (data) leavePost(data.postId);
+      };
+    },
+    [data, joinPost, leavePost]
+  );
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const userId = useAuthStore((store) => store.user?.id);
@@ -137,6 +164,14 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
       router.push('/home');
     } catch (error) {
       // Handle error, optionally show error notification
+      toast.error('This tweet has already been deleted before.', {
+        duration: 3000,
+        position: 'bottom-center',
+        style: {
+          background: '#2e7ad6ff',
+          color: '#FFFFFF',
+        },
+      });
     } finally {
       setIsDeleteLoading(false);
     }
@@ -161,9 +196,19 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
   const setSummaryTweet = useTweetStore((store) => store.setSummaryTweet);
   const summary = useGetTweetSummary(id);
   function handleFetchSummary() {
+    if (!data?.text) {
+      setTweetSummary('No summary available');
+      setSummaryOpened(true);
+      setSummaryTweet(data);
+      return;
+    }
     summary.refetch().then((res) => {
       if (res?.data) {
         setTweetSummary(res.data.data);
+        setSummaryOpened(true);
+        setSummaryTweet(data);
+      } else {
+        setTweetSummary('No summary available');
         setSummaryOpened(true);
         setSummaryTweet(data);
       }
@@ -203,6 +248,7 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
         username: data.originalPostData.username,
         isVerified: data.originalPostData.verified ?? false,
         date: data.originalPostData.date,
+        isDeleted: data.originalPostData.isDeleted || false,
       }
     : undefined;
 
@@ -268,6 +314,9 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
           />
           <div className="border-b border-gray-700 mt-3" />
         </div>
+      </div>
+      <div>
+        <AddTweet type={ADD_TWEET.REPLY} />
       </div>
       <div>
         {isError ? (

@@ -20,10 +20,11 @@ import AddTweet from '../components/AddTweet';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import useAddTweetStore from '../store/useAddTweetStore';
 // import { options } from '../constants/replySettingsOptions';
-import useMedia from '@/features/media/store/useMedia';
+import useMediaStore from '@/features/media/store/useMedia';
 import { useAddTweet } from '../hooks/timelineQueries';
 import { image1, image2, image3, image4, image5, tweet } from '../mocks/data';
 import {
+  ADD_TWEET,
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
 } from '../constants/tweetConstants';
@@ -33,6 +34,14 @@ import { vi, beforeAll } from 'vitest';
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
 }));
+
+vi.mock('../store/useAddTweetStore.ts', async () => {
+  const actualModule = await vi.importActual<
+    typeof import('../store/useAddTweetStore')
+  >('../store/useAddTweetStore.ts');
+  return actualModule;
+});
+
 beforeAll(() => {
   process.env.NEXT_PUBLIC_API_BASE_URL = 'localhost/500';
   process.env.NEXT_PUBLIC_API_VERSION = 'v1.0';
@@ -187,7 +196,7 @@ describe('test add tweet component', () => {
 describe('send post', () => {
   it('test try to add empty tweet', () => {
     global.fetch = vi.fn();
-    const { getByTestId } = render(<AddTweet />, { wrapper });
+    const { getByTestId } = render(<AddTweet type="Post" />, { wrapper });
     const { result } = renderHook(() => useAddTweetStore(), { wrapper });
     console.log(result.current.isSending);
     const submitButton = getByTestId('button-Post');
@@ -214,10 +223,10 @@ describe('send post', () => {
     global.URL.createObjectURL = vi.fn();
   });
   it('try to send post with only media and clear media after post ( which is valid :) )', async () => {
-    const { getByTestId, queryByTestId } = render(<AddTweet />, {
+    const { getByTestId, queryByTestId } = render(<AddTweet type="Post" />, {
       wrapper,
     });
-    const { result } = renderHook(() => useMedia(), { wrapper });
+    const { result } = renderHook(() => useMediaStore(), { wrapper });
     const mediaInput = getByTestId('media-import');
     expect(mediaInput).toBeInTheDocument();
 
@@ -244,11 +253,11 @@ describe('send post', () => {
   });
 
   it('try to send post with media exceeded 4 items)', async () => {
-    const { getByTestId, queryByTestId } = render(<AddTweet />, {
+    const { getByTestId, queryByTestId } = render(<AddTweet type="Post" />, {
       wrapper,
     });
 
-    const { result } = renderHook(() => useMedia(), { wrapper });
+    const { result } = renderHook(() => useMediaStore(), { wrapper });
     renderHook(() => useAddTweet(), { wrapper });
     const mediaInput = getByTestId('media-import');
     expect(mediaInput).toBeInTheDocument();
@@ -266,11 +275,11 @@ describe('send post', () => {
     await waitFor(() => expect(global.fetch).not.toHaveBeenCalled());
   });
   it('send post with media and text', async () => {
-    const { getByTestId, queryByTestId } = render(<AddTweet />, {
+    const { getByTestId, queryByTestId } = render(<AddTweet type="Post" />, {
       wrapper,
     });
 
-    const { result } = renderHook(() => useMedia(), { wrapper });
+    const { result } = renderHook(() => useMediaStore(), { wrapper });
     const { result: resultText } = renderHook(() => useAddTweetStore(), {
       wrapper,
     });
@@ -312,7 +321,7 @@ describe('send post', () => {
           }),
       })
     );
-    const { getByTestId } = render(<AddTweet />, {
+    const { getByTestId } = render(<AddTweet type="Post" />, {
       wrapper,
     });
     const { result } = renderHook(() => useAddTweetStore(), { wrapper });

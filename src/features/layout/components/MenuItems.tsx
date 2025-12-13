@@ -1,21 +1,18 @@
 'use client';
 
-import {
-  Home,
-  Search,
-  Bell,
-  Mail,
-  Bookmark,
-  Users,
-  User,
-  MoreHorizontal,
-  Settings,
-} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import { NotificationBadge } from '@/features/notifications/components';
 import { MessageBadge } from '@/features/messages/components/MessageBadge';
+import {
+  HomeIcon,
+  ExploreIcon,
+  NotificationsIcon,
+  MessagesNavIcon,
+  ProfileIcon,
+  SettingsNavIcon,
+} from '@/components/ui/icons';
 
 export default function MenuItems() {
   const pathname = usePathname();
@@ -23,38 +20,38 @@ export default function MenuItems() {
 
   const menuItems = [
     {
-      icon: Home,
+      icon: HomeIcon,
       label: 'Home',
       href: '/home',
       hideOnShortScreen: false,
     },
     {
-      icon: Search,
+      icon: ExploreIcon,
       label: 'Explore',
       href: '/explore',
       hideOnShortScreen: false,
     },
     {
-      icon: Bell,
+      icon: NotificationsIcon,
       label: 'Notifications',
       href: '/notifications',
       hideOnShortScreen: false,
     },
     {
-      icon: Mail,
+      icon: MessagesNavIcon,
       label: 'Messages',
       href: '/messages',
       hideOnShortScreen: false,
     },
 
     {
-      icon: User,
+      icon: ProfileIcon,
       label: 'Profile',
       href: `/${user?.username}`,
       hideOnShortScreen: false,
     },
     {
-      icon: Settings,
+      icon: SettingsNavIcon,
       label: 'Settings',
       href: '/settings',
       hideOnShortScreen: true,
@@ -80,7 +77,7 @@ export default function MenuItems() {
           >
             <div className="relative">
               <item.icon
-                strokeWidth={isActive ? 3 : 2}
+                filled={isActive}
                 className="w-7 h-7 text-text-active shrink-0"
               />
               {/* Show notification badge on Bell icon */}

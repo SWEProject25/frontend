@@ -1,6 +1,8 @@
+import AddTweet from '@/features/timeline/components/AddTweet';
 import { useTweetStore } from '../store/tweetStore';
 import QuoteTweet from './QuoteTweet';
 import SubTweet from './SubTweet';
+import { ADD_TWEET } from '@/features/timeline/constants/tweetConstants';
 
 export default function AddQuote() {
   const tweet = useTweetStore((store) => store.currentTweet);
@@ -28,7 +30,12 @@ export default function AddQuote() {
     : undefined;
   return (
     <div className="p-4" data-testid="add-reply-component">
-      {tweet && quoteData && <QuoteTweet {...quoteData} />}
+      {tweet && quoteData && (
+        <>
+          <QuoteTweet {...quoteData} />
+          <AddTweet type={ADD_TWEET.QUOTE} />
+        </>
+      )}
     </div>
   );
 }

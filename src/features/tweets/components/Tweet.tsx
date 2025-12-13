@@ -1,5 +1,5 @@
 'use client';
-import React, { use, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import Content from './Content';
 import Actions from './Actions';
 import UserInfo from './UserInfo';
@@ -18,6 +18,10 @@ import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Link from 'next/link';
 import { useAuth } from '@/features/authentication/hooks';
 import { useDeleteTweet, useGetTweetSummary } from '../hooks/tweetQueries';
+import useOnScreen from '@/features/timeline/hooks/useOnScreen';
+import { useActions } from '@/features/timeline/store/useTimelineStore';
+import { useRealTimeTweets } from '@/features/timeline/hooks/useRealTimeTweets';
+import toast from 'react-hot-toast';
 export default function Tweet({
   data,
   inProfile = false,
@@ -30,11 +34,17 @@ export default function Tweet({
     ? data?.originalPostData?.userId === myId
     : data.userId === myId;
 
+  const dataViewd = data.isRepost
+    ? data.originalPostData
+      ? data.originalPostData
+      : data
+    : data;
+
   const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
-    username: data.username,
-    isFollowed: data.isFollowedByMe,
-    isMuted: data.isMutedByMe || false,
-    isBlocked: data.isBlockedByMe || false,
+    username: dataViewd.username,
+    isFollowed: dataViewd.isFollowedByMe,
+    isMuted: dataViewd.isMutedByMe || false,
+    isBlocked: dataViewd.isBlockedByMe || false,
     myTweet: myTweet,
   });
 
@@ -57,12 +67,57 @@ export default function Tweet({
     isBlockLoading,
   } = useInteractions();
 
-  const dataViewd = data.isRepost
-    ? data.originalPostData
-      ? data.originalPostData
-      : data
-    : data;
+  const [ref, isVisible] = useOnScreen({ threshold: 0.5 });
+  const previousState = useRef<boolean>(false);
+  const { addVisibleTweet, removeVisibleTweet } = useActions();
+  const { joinPost, leavePost, usePostUpdates } = useRealTimeTweets();
+  usePostUpdates(
+    previousState ? dataViewd.postId : null,
+    data.userId,
+    dataViewd.type,
+    data.parentId
+  );
 
+  useEffect(
+    function () {
+      if (isVisible) {
+        if (!previousState.current) {
+          addVisibleTweet(data);
+          // console.log(dataViewd.postId, data, 'enter');
+          joinPost(dataViewd.postId, (resp) => {
+            if (resp?.status === 'success') {
+              console.log('Join post response:', resp);
+            } else {
+              console.warn('Join post response:', resp);
+            }
+          });
+        }
+        previousState.current = true;
+      } else {
+        if (previousState.current) {
+          removeVisibleTweet(data);
+          // console.log(dataViewd.postId, data, 'leave');
+          leavePost(dataViewd.postId, (resp) => {
+            if (resp?.status === 'success') {
+              console.log('Leave post response:', resp);
+            } else {
+              console.warn('Leave post response:', resp);
+            }
+          });
+        }
+        previousState.current = false;
+      }
+    },
+    [
+      isVisible,
+      dataViewd.postId,
+      data,
+      addVisibleTweet,
+      removeVisibleTweet,
+      joinPost,
+      leavePost,
+    ]
+  );
   // const byMe = userId === dataViewd.userId;
   // const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
   //   username: dataViewd.username,
@@ -100,20 +155,29 @@ export default function Tweet({
     isRepostedByMe: dataViewd.isRepostedByMe,
   };
 
-  const quoteData = data.originalPostData
+  const isQuote =
+    data.isQuote ||
+    (data.isRepost && data.originalPostData?.originalPostData !== undefined);
+  const quoteTweetData = data.isQuote
+    ? data.originalPostData
+    : data.isRepost && data.originalPostData?.originalPostData !== undefined
+      ? data.originalPostData.originalPostData
+      : undefined;
+  const quoteData = quoteTweetData
     ? {
-        postId: data.originalPostData.postId,
-        userId: data.originalPostData.userId,
+        postId: quoteTweetData.postId,
+        userId: quoteTweetData.userId,
         tweetContent: {
-          text: data.originalPostData.text,
-          media: data.originalPostData.media,
-          mentions: data.originalPostData.mentions || [],
+          text: quoteTweetData.text,
+          media: quoteTweetData.media,
+          mentions: quoteTweetData.mentions || [],
         },
-        avatar: data.originalPostData.avatar ?? null,
-        name: data.originalPostData.name,
-        username: data.originalPostData.username,
-        isVerified: data.originalPostData.verified ?? false,
-        date: data.originalPostData.date,
+        avatar: quoteTweetData.avatar ?? null,
+        name: quoteTweetData.name,
+        username: quoteTweetData.username,
+        isVerified: quoteTweetData.verified ?? false,
+        date: quoteTweetData.date,
+        isDeleted: quoteTweetData.isDeleted || false,
       }
     : undefined;
 
@@ -161,6 +225,14 @@ export default function Tweet({
       // Optionally, you can add a success notification here
     } catch (error) {
       // Handle error, optionally show error notification
+      toast.error('This tweet has already been deleted before.', {
+        duration: 3000,
+        position: 'bottom-center',
+        style: {
+          background: '#2e7ad6ff',
+          color: '#FFFFFF',
+        },
+      });
     } finally {
       setIsDeleteLoading(false);
     }
@@ -182,9 +254,19 @@ export default function Tweet({
 
   const summary = useGetTweetSummary(dataViewd.postId);
   function handleFetchSummary() {
+    if (!dataViewd?.text) {
+      setTweetSummary('No summary available');
+      setSummaryOpened(true);
+      setSummaryTweet(dataViewd);
+      return;
+    }
     summary.refetch().then((res) => {
       if (res?.data) {
         setTweetSummary(res.data.data);
+        setSummaryOpened(true);
+        setSummaryTweet(dataViewd);
+      } else {
+        setTweetSummary('No summary available');
         setSummaryOpened(true);
         setSummaryTweet(dataViewd);
       }
@@ -193,6 +275,7 @@ export default function Tweet({
 
   return (
     <div
+      ref={ref}
       data-testid={`tweet-${dataViewd.postId}`}
       onClick={() => {
         //setCurrentTweet(data);
@@ -262,7 +345,7 @@ export default function Tweet({
               )}
             </div>
           </div>
-          <Content content={content} isQuote={data.isQuote} data={quoteData} />
+          <Content content={content} isQuote={isQuote} data={quoteData} />
           <Actions
             stats={actionsStats}
             onOpened={setHovered}

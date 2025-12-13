@@ -16,6 +16,7 @@ export default function TweetList() {
     error,
     isError,
     isLoading,
+    isFetching,
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
@@ -38,9 +39,13 @@ export default function TweetList() {
   ));
 
   const hasInitialData = pages ? pages[0].data.posts.length > 0 : false;
+
+  // Show loader when initially loading OR when refetching without data
+  const shouldShowLoader = isLoading || (isFetching && !hasInitialData);
+
   return isError ? (
     <>{toasterMessage(error.message, 'bottom-center', 'error')}</>
-  ) : isLoading ? (
+  ) : shouldShowLoader ? (
     <div
       className="flex justify-center items-center h-64 mx-4"
       data-testid="tweet-list-loading"

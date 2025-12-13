@@ -18,6 +18,7 @@ import { TIMELINE_QUERY_KEYS, useAvatarsPopUp } from '../hooks/timelineQueries';
 import { FOR_YOU_TAB } from '../constants/menuName';
 import { useEffect, useRef } from 'react';
 import { TimelineFeedDtoResponse } from '../types/api';
+import { ADD_TWEET } from '../constants/tweetConstants';
 
 export default function Timeline() {
   const avatars = usePopUpAvatars();
@@ -109,7 +110,7 @@ export default function Timeline() {
         data-testid="timeline-content"
       >
         <div ref={topRef}>
-          <AddTweet />
+          <AddTweet type={ADD_TWEET.POST} />
         </div>
         {/* <ShowTweets /> */}
         {/* <TweetFeed /> */}
@@ -121,32 +122,6 @@ export default function Timeline() {
             onClick={() => {
               window.scrollTo({ top: 0, behavior: 'smooth' });
               queryClient.refetchQueries({ queryKey: queryKey });
-              // queryClient.setQueryData<
-              //   InfiniteData<TimelineFeedDtoResponse, number>
-              // >(queryKey, (old) => {
-              //   if (!old) return;
-              //   const oldTweets = old.pages[0].data.posts.map(tweet=>{tweet.postId});
-              //   const newPosts = newTweets.filter((tweet) =>
-              //     oldTweets.includes(tweet)
-              //   );
-              //   const updated = {
-              //     ...old,
-              //     pages: old.pages.map((page, ind) => {
-              //       if (ind === 0) {
-              //         return {
-              //           ...page,
-              //           data: {
-              //             ...page.data,
-              //             posts: [...newTweets, ...page.data.posts],
-              //           },
-              //         };
-              //       }
-              //       return page;
-              //     }),
-              //   };
-
-              //   return updated;
-              // });
               setPopUpAvatars([]);
               setNewTweets([]);
               setFetchAvatars(false);
@@ -169,7 +144,7 @@ export default function Timeline() {
                     name={user.name}
                     size="xs"
                     position="relative"
-                    className="border-1 border-primary-hover"
+                    className="border border-primary-hover"
                   />
                 </div>
               ))}

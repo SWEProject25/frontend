@@ -78,8 +78,10 @@ export function useChatWindow(conversationId?: string) {
     return conversation.user?.id;
   }, [conversation, currentUserId]);
 
-  // Check if the other user is blocked
-  const { isBlocked } = useIsUserBlocked(otherUserId);
+  // Check if blocked - use isBlocked from conversation (true if either user blocked the other)
+  // Fallback to checking if current user blocked them
+  const { isBlocked: currentUserBlockedThem } = useIsUserBlocked(otherUserId);
+  const isBlocked = conversation?.isBlocked === true || currentUserBlockedThem;
 
   // Get typing users for current conversation (exclude current user)
   const otherUsersTyping = useMemo(() => {
@@ -143,17 +145,23 @@ export function useChatWindow(conversationId?: string) {
             if (unseenMessages.length > 0 && currentUserId) {
               markSeen(numId, currentUserId, (resp) => {
                 if (resp?.status !== 'success') {
-                  console.warn('⚠️ Failed to mark messages as seen:', resp);
+                  console.warn(' Failed to mark messages as seen:', resp);
                 }
               });
             }
           } else {
-            setMessagesForConversation(numId, []);
+            // Don't clear messages if response is empty - keep cached messages
+            // This preserves conversation history when user is blocked
+            const existingMessages = allMessages[numId];
+            if (!existingMessages || existingMessages.length === 0) {
+              setMessagesForConversation(numId, []);
+            }
           }
         } catch (fetchError: any) {
           if (cancelled) return;
-          console.warn('⚠️ Could not fetch messages:', fetchError.message);
-          setMessagesForConversation(numId, []);
+
+          // Don't clear messages on error - keep cached messages
+          // This preserves conversation history when backend returns error (e.g., blocked user)
         }
       } catch (err) {
         if (cancelled) return;

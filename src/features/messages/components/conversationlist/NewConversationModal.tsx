@@ -56,7 +56,7 @@ export default function NewConversationModal({
       onClick={onClose}
     >
       <div
-        className="bg-gray-950 rounded-2xl w-full max-w-md mx-4 border border-gray-800 max-h-[80vh] flex flex-col"
+        className="bg-black rounded-2xl w-full max-w-md mx-4 border border-gray-800 max-h-[80vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -125,7 +125,7 @@ export default function NewConversationModal({
                   id={`following-user-${followedUser.id}`}
                   onClick={() => handleUserSelect(followedUser.id)}
                   disabled={loading}
-                  className="w-full rounded-2xl p-4 hover:bg-gray-800 transition-colors flex items-center gap-3 border-b border-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full rounded-2xl p-4 hover:bg-gray-800 transition-colors flex items-center gap-3  disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Avatar
                     avatarImage={followedUser.profileImageUrl ?? null}
