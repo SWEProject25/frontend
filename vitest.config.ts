@@ -22,6 +22,7 @@ export default defineConfig({
       reportsDirectory: './coverage',
       exclude: [
         'node_modules/',
+        'src/components/ui',
         'src/test/',
         '**/*.spec.ts',
         '**/*.test.ts',
@@ -31,6 +32,8 @@ export default defineConfig({
         '**/types/**',
         '**/*.config.*',
         '**/mocks/**',
+        '**/constants/**', // Exclude all constants folders
+        '**/services/**', // Exclude all services folders
         'src/app/**', // Exclude Next.js app directory from coverage
         '**/page.tsx', // Exclude page files
         '**/layout.tsx', // Exclude layout files

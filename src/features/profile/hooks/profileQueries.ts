@@ -329,7 +329,7 @@ export const useProfileByUsername = (
   username: string,
   enabled: boolean = true
 ) => {
-  const { setCurrentProfile, setLoading, setError } = useProfileStore();
+  const { setLoading, setError } = useProfileStore();
 
   return useQuery<ProfileResponseDto, Error>({
     queryKey: PROFILE_QUERY_KEYS.profileByUsername(username),
