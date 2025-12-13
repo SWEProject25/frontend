@@ -17,3 +17,17 @@ export const OPTIMISTIC_TYPES = {
   MUTE: 'mute',
   DELETE: 'delete',
 } as const;
+
+export const REAL_TIME_TWEETS_SOCKET_EVENTS = {
+  JOIN_POST: 'joinPost',
+  LEAVE_POST: 'leavePost',
+
+  LIKE_UPDATE: 'likeUpdate',
+  REPOST_UPDATE: 'repostUpdate',
+  COMMENT_UPDATE: 'commentUpdate',
+
+  CONNECT: 'connect',
+  DISCONNECT: 'disconnect',
+  CONNECT_ERROR: 'connect_error',
+  ERROR: 'error',
+};

@@ -1,5 +1,5 @@
 'use client';
-import React, { use, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import Content from './Content';
 import Actions from './Actions';
 import UserInfo from './UserInfo';
@@ -18,6 +18,9 @@ import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Link from 'next/link';
 import { useAuth } from '@/features/authentication/hooks';
 import { useDeleteTweet, useGetTweetSummary } from '../hooks/tweetQueries';
+import useOnScreen from '@/features/timeline/hooks/useOnScreen';
+import { useActions } from '@/features/timeline/store/useTimelineStore';
+import { useRealTimeTweets } from '@/features/timeline/hooks/useRealTimeTweets';
 export default function Tweet({
   data,
   inProfile = false,
@@ -63,6 +66,52 @@ export default function Tweet({
       : data
     : data;
 
+  const [ref, isVisible] = useOnScreen({ threshold: 0.5 });
+  const previousState = useRef<boolean>(false);
+  const { addVisibleTweet, removeVisibleTweet } = useActions();
+  const { joinPost, leavePost, usePostUpdates } = useRealTimeTweets();
+  usePostUpdates(previousState ? dataViewd.postId : null, data.userId);
+
+  useEffect(
+    function () {
+      if (isVisible) {
+        if (!previousState.current) {
+          addVisibleTweet(data);
+          // console.log(dataViewd.postId, data, 'enter');
+          joinPost(dataViewd.postId, (resp) => {
+            if (resp?.status === 'success') {
+              console.log('Join post response:', resp);
+            } else {
+              console.warn('Join post response:', resp);
+            }
+          });
+        }
+        previousState.current = true;
+      } else {
+        if (previousState.current) {
+          removeVisibleTweet(data);
+          // console.log(dataViewd.postId, data, 'leave');
+          leavePost(dataViewd.postId, (resp) => {
+            if (resp?.status === 'success') {
+              console.log('Leave post response:', resp);
+            } else {
+              console.warn('Leave post response:', resp);
+            }
+          });
+        }
+        previousState.current = false;
+      }
+    },
+    [
+      isVisible,
+      dataViewd.postId,
+      data,
+      addVisibleTweet,
+      removeVisibleTweet,
+      joinPost,
+      leavePost,
+    ]
+  );
   // const byMe = userId === dataViewd.userId;
   // const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
   //   username: dataViewd.username,
@@ -193,6 +242,7 @@ export default function Tweet({
 
   return (
     <div
+      ref={ref}
       data-testid={`tweet-${dataViewd.postId}`}
       onClick={() => {
         //setCurrentTweet(data);
