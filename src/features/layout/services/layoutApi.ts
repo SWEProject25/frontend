@@ -68,8 +68,20 @@ export const layoutApi = {
         credentials: 'include',
       }
     );
+    console.log('Fetched suggested users from API');
+    
+    const data = await handleResponse<SuggestedUsersResponseDto>(response);
+    
+    // Add is_followed_by_me flag with default value of 0 (false)
+    if (data.data) {
+      data.data.users = data.data.users.map((user) => ({
+        ...user,
+        is_followed_by_me: user.is_followed_by_me ?? false,
+      }));
+    }
+    console.log(data);
 
-    return handleResponse<SuggestedUsersResponseDto>(response);
+    return data;
   },
 
   // Get trending hashtags

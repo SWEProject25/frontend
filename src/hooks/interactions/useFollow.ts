@@ -58,6 +58,10 @@ export const useFollowUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['tweet'],
       });
+      // Invalidate suggested users to update follow status
+      queryClient.invalidateQueries({
+        queryKey: ['layout', 'suggested-users'],
+      });
     },
     networkMode: 'always',
   });
@@ -147,6 +151,10 @@ export const useUnfollowUser = () => {
       // Invalidate all tweet queries to update full tweet page
       queryClient.invalidateQueries({
         queryKey: ['tweet'],
+      });
+      // Invalidate suggested users to update follow status
+      queryClient.invalidateQueries({
+        queryKey: ['layout', 'suggested-users'],
       });
     },
     networkMode: 'always',

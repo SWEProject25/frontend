@@ -15,7 +15,7 @@ export default function WhoToFollow() {
     id: user.id,
     handle: `@${user.username}`,
     verified: user.isVerified,
-    isFollowed: false,
+    isFollowed: user.is_followed_by_me,
     avatarUrl: user.profile.profileImageUrl ?? undefined,
     bio: user.profile.bio ?? undefined,
   }));
