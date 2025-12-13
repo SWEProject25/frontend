@@ -277,7 +277,6 @@ export function useRealTimeTweet() {
     tweetId: number,
     userId: number,
     count: number,
-    isRepost?: boolean,
     postType: string = 'POST',
     parentId: number = -1
   ): Promise<{
@@ -287,17 +286,25 @@ export function useRealTimeTweet() {
     }[];
     oldTweet: TimelineFeed | undefined;
   }> => {
-    if (tweetId)
+    if (tweetId) {
       queryClient.setQueryData(
         TWEET_QUERY_KEYS.tweetById(tweetId),
         (old: any) => {
           if (!old) return old;
+          const updatedTweet = updateTweet(type, old.data[0], count);
           return {
             ...old,
-            data: updateTweet(type, old.data, userId),
+            data: [updatedTweet],
           };
         }
       );
+    }
+    if (type === OPTIMISTIC_TYPES.REPLY) {
+      queryClient.invalidateQueries({
+        queryKey: TWEET_QUERY_KEYS.getRepliesByTweetId(tweetId),
+      });
+      console.log('ds');
+    }
 
     const tabsFeeds: {
       queryKey: QueryKeyType;

@@ -17,6 +17,8 @@ import XModal from '@/components/ui/hoc/XModal';
 import AddReply from './AddReply';
 import SharePostModal from './SharePostModal';
 import AddQuote from './AddQuote';
+import { toast } from 'react-hot-toast';
+//import useAddTweetStore from '@/features/timeline/store/useAddTweetStore';
 import { ADD_TWEET } from '@/features/timeline/constants/tweetConstants';
 import { useActions } from '@/features/timeline/store/useTimelineStore';
 type stats = {
@@ -72,10 +74,33 @@ export default function Actions({
     stats.type
   );
   function handleLike() {
-    toggleLikeTweet.mutate();
+    toggleLikeTweet.mutate(undefined, {
+      onError: (error: any) => {
+        toast.error('Sorry, that post has been deleted', {
+          duration: 3000,
+          position: 'bottom-center',
+          style: {
+            background: '#2e7ad6ff',
+            color: '#FFFFFF',
+          },
+        });
+        console.error(error);
+      },
+    });
   }
   function handleRetweet() {
-    toggleRepostTweet.mutate();
+    toggleRepostTweet.mutate(undefined, {
+      onError: (error: any) => {
+        toast.error('Sorry, that post has been deleted', {
+          duration: 3000,
+          position: 'bottom-center',
+          style: {
+            background: '#2e7ad6ff',
+            color: '#FFFFFF',
+          },
+        });
+      },
+    });
   }
   function handleLikeCountClick() {
     if (stats.likesCount > 0) {

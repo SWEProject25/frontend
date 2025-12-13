@@ -47,6 +47,9 @@ export interface TimelineTweet {
   parentId?: number;
   mentions: Mention[];
   media: Media[];
+  isQuote?: boolean;
+  originalPostData?: TimelineTweet;
+  isDeleted?: boolean;
   // created_at?: string;
   // user_id?: number;
   // post_id?: number;

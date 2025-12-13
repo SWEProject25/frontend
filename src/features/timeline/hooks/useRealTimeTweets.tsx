@@ -50,87 +50,152 @@ export const useRealTimeTweets = () => {
     }
   }, []);
 
-  const usePostUpdates = (postId: number | null, userId: number) => {
-    usePostLike(postId, userId);
-    usePostReplies(postId, userId);
-    usePostReposts(postId, userId);
+  const usePostUpdates = (
+    postId: number | null,
+    userId: number,
+    type = 'Post',
+    parentId = -1
+  ) => {
+    usePostLike(postId, userId, type, parentId);
+    usePostReplies(postId, userId, type, parentId);
+    usePostReposts(postId, userId, type, parentId);
   };
-  const usePostLike = (postId: number | null, userId: number) => {
+  const usePostLike = (
+    postId: number | null,
+    userId: number,
+    type = 'Post',
+    parentId = -1
+  ) => {
     const { onMutate } = useRealTimeTweet();
 
     useEffect(() => {
       if (!postId) return;
-      const socket = getSocket();
-      if (!socket.connected) {
+
+      try {
+        const socket = getSocket();
+        if (!socket.connected) {
+          console.warn(
+            'Socket not connected, cannot listen to post like:',
+            postId
+          );
+          return;
+        }
+        const onLike = (data: { postId: number; count: number }) => {
+          console.log(data, 'Likkkkkkkeeeeeeee', type);
+          if (postId === data.postId)
+            onMutate(
+              OPTIMISTIC_TYPES.LIKE,
+              postId,
+              userId,
+              data.count,
+              type,
+              parentId
+            );
+        };
+        socket.on(REAL_TIME_TWEETS_SOCKET_EVENTS.LIKE_UPDATE, onLike);
+
+        return () => {
+          socket.off(REAL_TIME_TWEETS_SOCKET_EVENTS.LIKE_UPDATE, onLike);
+        };
+      } catch (err) {
         console.warn(
-          'Socket not connected, cannot listen to post like:',
+          'Socket not initialized, cannot listen to post like:',
           postId
         );
-        return;
       }
-      const onLike = (data: { postId: number; count: number }) => {
-        console.log(data, 'Likkkkkkkeeeeeeee');
-        if (postId === data.postId)
-          onMutate(OPTIMISTIC_TYPES.LIKE, postId, userId, data.count);
-      };
-      socket.on(REAL_TIME_TWEETS_SOCKET_EVENTS.LIKE_UPDATE, onLike);
-
-      return () => {
-        socket.off(REAL_TIME_TWEETS_SOCKET_EVENTS.LIKE_UPDATE, onLike);
-      };
-    }, [postId, userId, onMutate]);
+    }, [postId, userId, onMutate, type, parentId]);
   };
 
-  const usePostReplies = (postId: number | null, userId: number) => {
+  const usePostReplies = (
+    postId: number | null,
+    userId: number,
+    type = 'Post',
+    parentId = -1
+  ) => {
     const { onMutate } = useRealTimeTweet();
 
     useEffect(() => {
       if (!postId) return;
-      const socket = getSocket();
-      if (!socket.connected) {
+
+      try {
+        const socket = getSocket();
+        if (!socket.connected) {
+          console.warn(
+            'Socket not connected, cannot listen to post Reply:',
+            postId
+          );
+          return;
+        }
+        const onComment = (data: { postId: number; count: number }) => {
+          console.log(data, 'COmmment');
+          if (postId === data.postId)
+            onMutate(
+              OPTIMISTIC_TYPES.REPLY,
+              postId,
+              userId,
+              data.count,
+              type,
+              parentId
+            );
+        };
+        socket.on(REAL_TIME_TWEETS_SOCKET_EVENTS.COMMENT_UPDATE, onComment);
+
+        return () => {
+          socket.off(REAL_TIME_TWEETS_SOCKET_EVENTS.COMMENT_UPDATE, onComment);
+        };
+      } catch (err) {
         console.warn(
-          'Socket not connected, cannot listen to post Reply:',
+          'Socket not initialized, cannot listen to post reply:',
           postId
         );
-        return;
       }
-      const onComment = (data: { postId: number; count: number }) => {
-        console.log(data, 'COmmment');
-        if (postId === data.postId)
-          onMutate(OPTIMISTIC_TYPES.REPLY, postId, userId, data.count);
-      };
-      socket.on(REAL_TIME_TWEETS_SOCKET_EVENTS.COMMENT_UPDATE, onComment);
-
-      return () => {
-        socket.off(REAL_TIME_TWEETS_SOCKET_EVENTS.COMMENT_UPDATE, onComment);
-      };
-    }, [postId, userId, onMutate]);
+    }, [postId, userId, onMutate, type, parentId]);
   };
 
-  const usePostReposts = (postId: number | null, userId: number) => {
+  const usePostReposts = (
+    postId: number | null,
+    userId: number,
+    type = 'Post',
+    parentId = -1
+  ) => {
     const { onMutate } = useRealTimeTweet();
 
     useEffect(() => {
       if (!postId) return;
-      const socket = getSocket();
-      if (!socket.connected) {
+
+      try {
+        const socket = getSocket();
+        if (!socket.connected) {
+          console.warn(
+            'Socket not connected, cannot listen to post repost:',
+            postId
+          );
+          return;
+        }
+        const onRepost = (data: { postId: number; count: number }) => {
+          console.log(data, 'reposssst');
+          if (postId === data.postId)
+            onMutate(
+              OPTIMISTIC_TYPES.REPOST,
+              postId,
+              userId,
+              data.count,
+              type,
+              parentId
+            );
+        };
+        socket.on(REAL_TIME_TWEETS_SOCKET_EVENTS.REPOST_UPDATE, onRepost);
+
+        return () => {
+          socket.off(REAL_TIME_TWEETS_SOCKET_EVENTS.REPOST_UPDATE, onRepost);
+        };
+      } catch (err) {
         console.warn(
-          'Socket not connected, cannot listen to post repost:',
+          'Socket not initialized, cannot listen to post repost:',
           postId
         );
-        return;
       }
-      const onLike = (data: { postId: number; count: number }) => {
-        console.log(data, 'reposssst');
-        if (postId === data.postId)
-          onMutate(OPTIMISTIC_TYPES.REPOST, postId, userId, data.count);
-      };
-      socket.on(REAL_TIME_TWEETS_SOCKET_EVENTS.REPOST_UPDATE, onLike);
-
-      return () => {
-        socket.off(REAL_TIME_TWEETS_SOCKET_EVENTS.REPOST_UPDATE, onLike);
-      };
-    }, [postId, userId, onMutate]);
+    }, [postId, userId, onMutate, type, parentId]);
   };
   return {
     joinPost,

@@ -163,7 +163,7 @@ function updateTweet(
   tweet: TimelineFeed,
   userId: number
 ): TimelineFeed {
-  let updatedTweet = tweet;
+  let updatedTweet = { ...tweet };
   switch (type) {
     case OPTIMISTIC_TYPES.LIKE:
       if (tweet.isRepost) {
@@ -211,6 +211,24 @@ function updateTweet(
             ? tweet.retweetsCount - 1
             : tweet.retweetsCount + 1,
           isRepostedByMe: !tweet.isRepostedByMe,
+        };
+      return updatedTweet;
+
+    case OPTIMISTIC_TYPES.Quote:
+      if (tweet.isRepost) {
+        const original = tweet.originalPostData;
+        let updatedOriginal = original;
+        if (original) {
+          updatedOriginal = {
+            ...original,
+            retweetsCount: original.retweetsCount + 1,
+          };
+        }
+        updatedTweet = { ...tweet, originalPostData: updatedOriginal };
+      } else
+        updatedTweet = {
+          ...tweet,
+          retweetsCount: tweet.retweetsCount + 1,
         };
       return updatedTweet;
 
@@ -262,6 +280,7 @@ function handleOldTweets(
   switch (type) {
     case OPTIMISTIC_TYPES.LIKE:
     case OPTIMISTIC_TYPES.REPOST:
+    case OPTIMISTIC_TYPES.Quote:
     case OPTIMISTIC_TYPES.DELETE:
       const oldTweets = feed.pages.flatMap((page, indx) =>
         page.data.posts?.filter((post) => {
@@ -310,6 +329,7 @@ function handleOldInterestsTweets(
   switch (type) {
     case OPTIMISTIC_TYPES.LIKE:
     case OPTIMISTIC_TYPES.REPOST:
+    case OPTIMISTIC_TYPES.Quote:
     case OPTIMISTIC_TYPES.DELETE:
       const oldTweets: TimelineFeed[] = [];
       Object.keys(feed.data).map((category) =>
