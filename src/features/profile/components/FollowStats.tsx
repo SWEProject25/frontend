@@ -41,10 +41,9 @@ const FollowStats = ({
       return `Followed by ${names[0]}`;
     } else if (totalFollowersYouKnow === 2) {
       return `Followed by ${names[0]} and ${names[1]}`;
-    } else if (remaining > 0) {
-      return `Followed by ${names[0]}, ${names[1]} and ${remaining} ${remaining === 1 ? 'other you follow' : 'others you follow'}`;
     }
-    return '';
+    // totalFollowersYouKnow > 2
+    return `Followed by ${names[0]}, ${names[1]} and ${remaining} ${remaining === 1 ? 'other you follow' : 'others you follow'}`;
   };
 
   return (

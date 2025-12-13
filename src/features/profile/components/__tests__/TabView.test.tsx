@@ -4,6 +4,25 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import TabView from '../TabView';
 import { ProfileProvider } from '@/app/[username]/ProfileProvider';
 
+const mockUseProfileContext = vi.fn();
+
+// Mock BlockedByUserNotice
+vi.mock('../BlockedByUserNotice', () => ({
+  default: ({ username }: any) => (
+    <div data-testid="blocked-notice">Blocked by {username}</div>
+  ),
+}));
+
+// Mock Tweets
+vi.mock('../Tweets', () => ({
+  default: () => <div data-testid="tweets">Tweets</div>,
+}));
+
+// Mock MediaTweets
+vi.mock('../MediaTweets', () => ({
+  default: () => <div data-testid="media-tweets">Media Tweets</div>,
+}));
+
 // Mock the profile store
 vi.mock('../store/profileStore', () => ({
   useActions: () => ({
@@ -35,9 +54,10 @@ vi.mock('@/features/authentication/store/authStore', () => ({
     return selector ? selector(state) : state;
   }),
 }));
+
 vi.mock('@/app/[username]/ProfileProvider', () => ({
   ProfileProvider: ({ children }: any) => <>{children}</>,
-  useProfileContext: () => ({ profile: { User: { id: 1 } } }),
+  useProfileContext: () => mockUseProfileContext(),
 }));
 
 const queryClient = new QueryClient({
@@ -55,6 +75,12 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 describe('TabView', () => {
+  beforeEach(() => {
+    mockUseProfileContext.mockReturnValue({
+      profile: { User: { id: 1 } },
+    });
+  });
+
   it('should render tab view container', () => {
     const { container } = render(<TabView />, { wrapper });
     expect(
@@ -65,5 +91,19 @@ describe('TabView', () => {
   it('should render tabs component', () => {
     render(<TabView />, { wrapper });
     expect(screen.getByTestId('tabs')).toBeInTheDocument();
+  });
+
+  it('should show BlockedByUserNotice when profile.is_been_blocked is true', () => {
+    mockUseProfileContext.mockReturnValue({
+      profile: {
+        User: { id: 2, username: 'blockeduser' },
+        is_been_blocked: true,
+      },
+    });
+
+    render(<TabView />, { wrapper });
+
+    expect(screen.getByTestId('blocked-notice')).toBeInTheDocument();
+    expect(screen.getByText('Blocked by blockeduser')).toBeInTheDocument();
   });
 });
