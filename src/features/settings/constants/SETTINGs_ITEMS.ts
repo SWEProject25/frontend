@@ -49,13 +49,6 @@ export const SETTINGS_ITEMS: SettingsOption[] = [
           },
         ],
       },
-      // {
-      //   id: 'download-archive',
-      //   label: 'Download an archive of your data',
-      //   description:
-      //   'Get insights into the type of information stored for your account.',
-      //   path: '/settings/account/download',
-      // },
     ],
   },
   {
@@ -70,24 +63,6 @@ export const SETTINGS_ITEMS: SettingsOption[] = [
         description: 'Change your password at any time.',
         path: '/settings/security_and_account_access/password',
       },
-      // {
-      //   id: 'security-overview',
-      //   label: 'Security',
-      //   description: 'Manage your account security settings.',
-      //   path: '/settings/security_and_account_access',
-      // },
-      // {
-      //   id: 'two-factor',
-      //   label: 'Two-factor authentication',
-      //   description: 'Manage two-factor authentication options.',
-      //   path: '/settings/security_and_account_access/two_factor',
-      // },
-      // {
-      //   id: 'connected-apps',
-      //   label: 'Apps and sessions',
-      //   description: 'See information about when you logged into your account.',
-      //   path: '/settings/security_and_account_access/sessions',
-      // },
     ],
   },
   {
@@ -96,19 +71,6 @@ export const SETTINGS_ITEMS: SettingsOption[] = [
     description: 'Manage what information you see and share',
     path: '/settings/privacy_and_safety',
     subOptions: [
-      // {
-      //   id: 'audience',
-      //   label: 'Audience and tagging',
-      //   description:
-      //     'Manage what information you allow other people on X to see.',
-      //   path: '/settings/privacy_and_safety',
-      // },
-      // {
-      //   id: 'content-preferences',
-      //   label: 'Content you see',
-      //   description: 'Decide what you see on X based on your preferences.',
-      //   path: '/settings/privacy_and_safety/content',
-      // },
       {
         id: 'mute-block',
         label: 'Mute and block',
@@ -130,38 +92,6 @@ export const SETTINGS_ITEMS: SettingsOption[] = [
           },
         ],
       },
-      // {
-      //   id: 'direct-messages',
-      //   label: 'Direct messages',
-      //   description: 'Manage who can message you directly.',
-      //   path: '/settings/privacy_and_safety/direct_messages',
-      // },
-    ],
-  },
-  {
-    id: 'notifications',
-    label: 'Notifications',
-    description: 'Select the kinds of notifications you get',
-    path: '/settings/notifications',
-    subOptions: [
-      // {
-      //   id: 'filters',
-      //   label: 'Filters',
-      //   description: 'Choose the notifications you want to see.',
-      //   path: '/settings/notifications',
-      // },
-      // {
-      //   id: 'preferences',
-      //   label: 'Preferences',
-      //   description: 'Select your preferences by notification type.',
-      //   path: '/settings/notifications/preferences',
-      // },
-      // {
-      //   id: 'push-notifications',
-      //   label: 'Push notifications',
-      //   description: 'Manage push notifications on web and mobile.',
-      //   path: '/settings/notifications/push',
-      // },
     ],
   },
 ];

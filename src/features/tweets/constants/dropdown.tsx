@@ -4,6 +4,7 @@ import {
   UnfollowIcon,
   AddtoList,
   MuteIcon,
+  UnMuteIcon,
   BlockIcon,
   EngagementsIcon,
   EmbedIcon,
@@ -13,7 +14,7 @@ import {
   SendViaMsgICon,
   QuoteIcon,
   DeleteIcon,
-} from '@/components/ui/icons/DropDownIcons';
+} from '@/components/ui/icons/';
 import { RetweetIcon } from '@/components/ui/icons/UIIcons';
 
 /**
@@ -67,7 +68,7 @@ export const getTweetDropdownItems = ({
     {
       key: 'mute',
       label: isMuted ? `Unmute ${username}` : `Mute ${username}`,
-      icon: <MuteIcon />,
+      icon: isMuted ? <UnMuteIcon /> : <MuteIcon />,
     },
     {
       key: 'block',
