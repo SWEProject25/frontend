@@ -108,6 +108,7 @@ export default function SettingsList({ options }: SettingsListProps) {
             value={searchQuery}
             onChange={setSearchQuery}
             data-testid="settings-search-input"
+            autoComplete="off"
           />
         </div>
 
