@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { useSettings } from '../hooks/useSettings';
+import { useSettings } from '../useSettings';
 
 describe('useSettings', () => {
   it('should initialize with default settings', () => {

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import AccountSettings from '../components/AccountSettings';
+import AccountSettings from '../AccountSettings';
 
 describe('AccountSettings', () => {
   it('should render account settings component', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { settingsUtils } from '../utils';
+import { settingsUtils } from '..';
 
 describe('settingsUtils', () => {
   describe('validateEmail', () => {
