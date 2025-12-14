@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import PrivacySettings from '../components/PrivacySettings';
+import PrivacySettings from '../PrivacySettings';
 
 describe('PrivacySettings', () => {
   it('should render privacy settings component', () => {
