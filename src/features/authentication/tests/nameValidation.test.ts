@@ -93,5 +93,20 @@ describe('Name Validation', () => {
       expect(validateName("O'Brien")).toBeUndefined();
       expect(validateName('Jean-Paul')).toBeUndefined();
     });
+
+    it('should return error for names with numbers', () => {
+      expect(validateName('John123')).toBe(NAME_ERROR_MESSAGES.NO_NUMBERS);
+      expect(validateName('John Doe 3')).toBe(NAME_ERROR_MESSAGES.NO_NUMBERS);
+      expect(validateName('123 John')).toBe(NAME_ERROR_MESSAGES.NO_NUMBERS);
+      expect(validateName('Jo3hn')).toBe(NAME_ERROR_MESSAGES.NO_NUMBERS);
+      expect(validateName('User123')).toBe(NAME_ERROR_MESSAGES.NO_NUMBERS);
+    });
+
+    it('should validate in correct order: ASCII > Numbers > Format', () => {
+      // Emoji with number - should fail on ASCII first
+      expect(validateName('John😀123')).toBe(NAME_ERROR_MESSAGES.ASCII_ONLY);
+      // Number with too short - should fail on number first
+      expect(validateName('J1')).toBe(NAME_ERROR_MESSAGES.NO_NUMBERS);
+    });
   });
 });
