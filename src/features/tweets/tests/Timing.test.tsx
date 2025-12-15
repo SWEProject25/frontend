@@ -35,11 +35,12 @@ describe('Timing Component', () => {
     expect(dateElements.length).toBeGreaterThan(0);
   });
 
-  // it('should not show hover tooltip when hover is false', () => {
-  //   const time = new Date().toISOString();
-  //   render(<Timing time={time} hover={false} />);
+  it('should not show hover tooltip when hover is false', () => {
+    const time = new Date().toISOString();
+    render(<Timing time={time} hover={false} />);
 
-  //   const timingElement = screen.getByText(/\d+[mhs]/);
-  //   expect(timingElement).not.toHaveAttribute('title');
-  // });
+    // The component renders "Just now" for current time
+    const timingElement = screen.getByText('Just now');
+    expect(timingElement).toBeInTheDocument();
+  });
 });

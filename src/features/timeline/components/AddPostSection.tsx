@@ -40,7 +40,7 @@ export default function AddPostSection() {
     console.log(tweetFormData.getAll('media'));
     console.log(media);
     console.log(mentions);
-    const mentionsId = mentions.map((mention) => mention.id + 1);
+    const mentionsId = mentions.map((mention) => mention.id);
 
     const allMentions = mentionsId.join(',');
     tweetFormData.append(TweetFormDataKeys.MENTIONS, allMentions);

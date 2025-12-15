@@ -792,8 +792,9 @@ describe('profileQueries', () => {
       );
     });
     it('should throw error when profile User.id is missing', async () => {
-      const { useProfileContext } =
-        await import('@/app/[username]/ProfileProvider');
+      const { useProfileContext } = await import(
+        '@/app/[username]/ProfileProvider'
+      );
       vi.mocked(useProfileContext).mockReturnValue({
         profile: null as any,
         isLoading: false,
