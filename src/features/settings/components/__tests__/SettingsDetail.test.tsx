@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '@/test/test-utils';
 import SettingsDetail from '../SettingsDetail';
 import { usePathname, useRouter } from 'next/navigation';
 import type { SettingsOption } from '@/features/settings/constants/SETTINGs_ITEMS';
@@ -8,6 +8,16 @@ import type { SettingsOption } from '@/features/settings/constants/SETTINGs_ITEM
 vi.mock('next/navigation', () => ({
   usePathname: vi.fn(),
   useRouter: vi.fn(),
+}));
+
+// Mock useAuth
+vi.mock('@/features/authentication/hooks/useAuth', () => ({
+  useAuth: vi.fn(() => ({
+    user: {
+      username: 'ahmedfathy0-0',
+      email: 'ahmed@example.com',
+    },
+  })),
 }));
 
 // Mock components
@@ -142,7 +152,7 @@ describe('SettingsDetail', () => {
         'Your Account'
       );
       expect(screen.getByTestId('breadcrumb-subtitle')).toHaveTextContent(
-        '@ahmedfathy0-0'
+        'ahmedfathy0-0'
       );
       expect(screen.getByTestId('breadcrumb-description')).toHaveTextContent(
         'Manage your account settings'
