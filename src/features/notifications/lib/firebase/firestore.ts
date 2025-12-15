@@ -58,13 +58,6 @@ export const subscribeToNotifications = (
           if (changeType === 'added') {
             const data = docData as FirebaseNotificationEvent;
 
-            if (data.type === 'DM') {
-              console.log(
-                `⏭️ Firebase: Skipping DM notification (handled by Messages tab)`
-              );
-              return;
-            }
-
             console.log(
               `✅ Firebase: Processing new notification (Type: ${data.type})`
             );

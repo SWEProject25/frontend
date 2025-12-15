@@ -128,7 +128,18 @@ export const useFirebaseNotifications = ({
         onNewNotification?.(event);
       }
 
-      // 1. Add the new notification to the list cache optimistically
+      // Handle DM notifications specially - only invalidate message queries
+      if (event.type === 'DM') {
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'conversations'],
+        });
+        // Invalidate total unseen message count
+        queryClient.invalidateQueries({
+          queryKey: ['messages', 'unseen', 'total'],
+        });
+        return; // Skip adding to notification list and incrementing notification count
+      }
+      // 1. Add the new notification to the list cache optimistically (non-DM only)
       console.log('📥 Adding notification to cache...');
       queryClient.setQueriesData<any>(
         { queryKey: ['notifications', 'list'] },
@@ -163,35 +174,9 @@ export const useFirebaseNotifications = ({
         }
       );
 
-      // 2. Optimistically increment the count
+      // 2. Optimistically increment the count (non-DM only)
       console.log('📈 Updating unread count optimistically...');
       optimisticallyIncrementCount(event.type);
-
-      // 3. If this is a DM notification, invalidate message-related queries
-      if (event.type === 'DM') {
-        console.log('📬 DM notification detected - triggering message sync');
-        console.log('   Invalidating queries:');
-        console.log('   - notifications/list (DM)');
-        console.log('   - messages/conversations');
-        console.log('   - messages/unseen/total');
-
-        // Invalidate DM notification queries to trigger refetch
-        queryClient.invalidateQueries({
-          queryKey: ['notifications', 'list', { include: 'DM' }],
-        });
-
-        // Invalidate message queries to ensure conversations and counts update
-        queryClient.invalidateQueries({
-          queryKey: ['messages', 'conversations'],
-        });
-
-        // Invalidate total unseen message count
-        queryClient.invalidateQueries({
-          queryKey: ['messages', 'unseen', 'total'],
-        });
-
-        console.log('✅ Message queries invalidated');
-      }
 
       console.log(
         '✨ Notification processing complete - UI should update immediately!\n'
