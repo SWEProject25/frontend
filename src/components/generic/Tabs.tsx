@@ -7,11 +7,11 @@ interface TabItem {
 }
 
 interface TabsProps {
-  tabs: TabItem[];
-  selectedValue: string | number;
-  onClick: (value: string) => void;
-  height: string;
-  'data-testid'?: string;
+  readonly tabs: TabItem[];
+  readonly selectedValue: string | number;
+  readonly onClick: (value: string) => void;
+  readonly height: string;
+  readonly 'data-testid'?: string;
 }
 
 export default function Tabs({
