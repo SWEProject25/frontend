@@ -30,7 +30,7 @@ export default function LayoutWrapper({
       {showMobileBottomBar && (
         <div className="sm:hidden">
           <MobileBottomBar />
-          <MobilePostButton />
+          {showRightSidebar && <MobilePostButton />}
         </div>
       )}
 
