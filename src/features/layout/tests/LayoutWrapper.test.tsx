@@ -2,8 +2,151 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/test/test-utils';
 import LayoutWrapper from '../components/LayoutWrapper';
 
-it('always passes', () => {
-  expect(true).toBe(true);
+vi.mock('../components/LeftSidebar', () => ({
+  default: () => <div data-testid="left-sidebar">Left Sidebar</div>,
+}));
+
+vi.mock('../components/RightSidebar', () => ({
+  default: () => <div data-testid="right-sidebar">Right Sidebar</div>,
+}));
+
+vi.mock('../components/MobileBottomBar', () => ({
+  default: () => <div data-testid="mobile-bottom-bar">Mobile Bottom Bar</div>,
+}));
+
+vi.mock('../components/GrokSummary', () => ({
+  default: () => <div data-testid="grok-summary">Grok Summary</div>,
+}));
+
+describe('LayoutWrapper', () => {
+  it('should render children content', () => {
+    render(
+      <LayoutWrapper>
+        <div>Test Content</div>
+      </LayoutWrapper>
+    );
+
+    expect(screen.getByText('Test Content')).toBeInTheDocument();
+  });
+
+  it('should render left sidebar', () => {
+    render(
+      <LayoutWrapper>
+        <div>Content</div>
+      </LayoutWrapper>
+    );
+
+    expect(screen.getByTestId('left-sidebar')).toBeInTheDocument();
+  });
+
+  it('should render right sidebar by default', () => {
+    render(
+      <LayoutWrapper>
+        <div>Content</div>
+      </LayoutWrapper>
+    );
+
+    expect(screen.getByTestId('right-sidebar')).toBeInTheDocument();
+  });
+
+  it('should have proper layout when showRightSidebar is false', () => {
+    const { container } = render(
+      <LayoutWrapper showRightSidebar={false}>
+        <div>Content</div>
+      </LayoutWrapper>
+    );
+
+    expect(container).toBeInTheDocument();
+  });
+
+  it('should render mobile bottom bar by default', () => {
+    render(
+      <LayoutWrapper>
+        <div>Content</div>
+      </LayoutWrapper>
+    );
+
+    expect(screen.getByTestId('mobile-bottom-bar')).toBeInTheDocument();
+  });
+
+  it('should hide mobile bottom bar when showMobileBottomBar is false', () => {
+    render(
+      <LayoutWrapper showMobileBottomBar={false}>
+        <div>Content</div>
+      </LayoutWrapper>
+    );
+
+    expect(screen.queryByTestId('mobile-bottom-bar')).not.toBeInTheDocument();
+  });
+
+  it('should render GrokSummary when showRightSidebar is true', () => {
+    render(
+      <LayoutWrapper showRightSidebar={true}>
+        <div>Content</div>
+      </LayoutWrapper>
+    );
+
+    expect(screen.getByTestId('grok-summary')).toBeInTheDocument();
+  });
+
+  it('should hide GrokSummary when showRightSidebar is false', () => {
+    render(
+      <LayoutWrapper showRightSidebar={false}>
+        <div>Content</div>
+      </LayoutWrapper>
+    );
+
+    expect(screen.queryByTestId('grok-summary')).not.toBeInTheDocument();
+  });
+
+  it('should pass hasSearch prop to RightSidebar', () => {
+    const { rerender } = render(
+      <LayoutWrapper hasSearch={true}>
+        <div>Content</div>
+      </LayoutWrapper>
+    );
+
+    expect(screen.getByTestId('right-sidebar')).toBeInTheDocument();
+
+    rerender(
+      <LayoutWrapper hasSearch={false}>
+        <div>Content</div>
+      </LayoutWrapper>
+    );
+
+    expect(screen.getByTestId('right-sidebar')).toBeInTheDocument();
+  });
+
+  it('should render main content area with proper styling', () => {
+    const { container } = render(
+      <LayoutWrapper>
+        <div>Content</div>
+      </LayoutWrapper>
+    );
+
+    const mainElement = container.querySelector('main');
+    expect(mainElement).toBeInTheDocument();
+    expect(mainElement).toHaveClass(
+      'flex',
+      'flex-1',
+      'flex-row',
+      'min-h-screen'
+    );
+  });
+
+  it('should render multiple children', () => {
+    render(
+      <LayoutWrapper>
+        <div>First Child</div>
+        <div>Second Child</div>
+        <div>Third Child</div>
+      </LayoutWrapper>
+    );
+
+    expect(screen.getByText('First Child')).toBeInTheDocument();
+    expect(screen.getByText('Second Child')).toBeInTheDocument();
+    expect(screen.getByText('Third Child')).toBeInTheDocument();
+  });
 });
 
 // vi.mock('../LeftSidebar', () => ({

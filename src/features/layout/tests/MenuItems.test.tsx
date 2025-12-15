@@ -1,8 +1,98 @@
-import { describe, it, expect } from 'vitest';
-// import { render, screen } from '@/test/test-utils';
-// import MenuItems from '../components/MenuItems';
-it('always passes', () => {
-  expect(true).toBe(true);
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@/test/test-utils';
+import MenuItems from '../components/MenuItems';
+import { useAuthStore } from '@/features/authentication/store/authStore';
+import { usePathname } from 'next/navigation';
+
+vi.mock('next/navigation', () => ({
+  usePathname: vi.fn(),
+}));
+
+vi.mock('@/features/authentication/store/authStore');
+
+vi.mock('@/features/notifications/components', () => ({
+  NotificationBadge: () => <div data-testid="notification-badge">Badge</div>,
+}));
+
+vi.mock('@/features/messages/components/MessageBadge', () => ({
+  MessageBadge: () => <div data-testid="message-badge">Badge</div>,
+}));
+
+describe('MenuItems', () => {
+  beforeEach(() => {
+    vi.mocked(usePathname).mockReturnValue('/home');
+    vi.mocked(useAuthStore).mockReturnValue({
+      user: { username: 'testuser', id: 1 },
+    } as any);
+  });
+
+  it('should render all menu items', () => {
+    render(<MenuItems />);
+
+    expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Explore')).toBeInTheDocument();
+    expect(screen.getByText('Notifications')).toBeInTheDocument();
+    expect(screen.getByText('Messages')).toBeInTheDocument();
+    expect(screen.getByText('Profile')).toBeInTheDocument();
+  });
+
+  it('should render as a nav element', () => {
+    const { container } = render(<MenuItems />);
+    const nav = container.querySelector('nav');
+
+    expect(nav).toBeInTheDocument();
+  });
+
+  it('should render notification badge', () => {
+    render(<MenuItems />);
+
+    expect(screen.getByTestId('notification-badge')).toBeInTheDocument();
+  });
+
+  it('should render message badge', () => {
+    render(<MenuItems />);
+
+    expect(screen.getByTestId('message-badge')).toBeInTheDocument();
+  });
+
+  it('should highlight active menu item based on pathname', () => {
+    vi.mocked(usePathname).mockReturnValue('/notifications');
+
+    const { container } = render(<MenuItems />);
+    const links = container.querySelectorAll('a');
+    const notificationsLink = Array.from(links).find(
+      (link) => link.getAttribute('href') === '/notifications'
+    );
+
+    expect(notificationsLink).toBeInTheDocument();
+  });
+
+  it('should render profile link', () => {
+    vi.mocked(useAuthStore).mockReturnValue({
+      user: { username: 'johndoe', id: 1 },
+    } as any);
+
+    render(<MenuItems />);
+
+    expect(screen.getByText('Profile')).toBeInTheDocument();
+  });
+
+  it('should handle no user gracefully', () => {
+    vi.mocked(useAuthStore).mockReturnValue({
+      user: null,
+    } as any);
+
+    render(<MenuItems />);
+
+    expect(screen.getByText('Home')).toBeInTheDocument();
+  });
+
+  it('should render correct number of visible menu items', () => {
+    const { container } = render(<MenuItems />);
+    const links = container.querySelectorAll('a');
+
+    expect(links.length).toBeGreaterThan(0);
+  });
 });
 // describe('MenuItems', () => {
 //   it('should render all menu items', () => {

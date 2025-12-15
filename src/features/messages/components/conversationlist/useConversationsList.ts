@@ -98,7 +98,6 @@ export function useConversationsList(
           setConversations(normalizedConversations);
         }
       } catch (err) {
-        console.error('Error loading conversations:', err);
         setError('Failed to load conversations');
       } finally {
         setLoading(false);
@@ -153,7 +152,6 @@ export function useConversationsList(
         setNewUserId('');
       }
     } catch (err: unknown) {
-      console.error('Error creating conversation:', err);
       alert(
         err instanceof Error ? err.message : 'Failed to create conversation.'
       );
@@ -165,14 +163,37 @@ export function useConversationsList(
   const formatTimestamp = useCallback((dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const hours = Math.floor(diff / (1000 * 60 * 60));
 
-    if (hours < 1) return 'Just now';
-    if (hours < 24) return `${hours}h`;
-    const days = Math.floor(hours / 24);
-    if (days < 7) return `${days}d`;
-    return date.toLocaleDateString();
+    // Get start of today (midnight)
+    const todayStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    const yesterdayStart = new Date(todayStart);
+    yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+
+    // Check if message is from today
+    if (date >= todayStart) {
+      // Format time as "3:45 PM"
+      return date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      });
+    }
+
+    // Check if message is from yesterday
+    if (date >= yesterdayStart && date < todayStart) {
+      return 'Yesterday';
+    }
+
+    // For older messages, show full date
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
   }, []);
 
   const getConversationDisplay = useCallback(
