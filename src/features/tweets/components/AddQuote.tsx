@@ -29,11 +29,15 @@ export default function AddQuote() {
       }
     : undefined;
   return (
-    <div className="p-4" data-testid="add-reply-component">
+    <div className="pt-10 px-2" data-testid="add-reply-component">
       {tweet && quoteData && (
         <>
-          <QuoteTweet {...quoteData} />
-          <AddTweet type={ADD_TWEET.QUOTE} />
+          {/* <QuoteTweet {...quoteData} /> */}
+          <AddTweet
+            type={ADD_TWEET.QUOTE}
+            showBorder={false}
+            data={quoteData}
+          />
         </>
       )}
     </div>

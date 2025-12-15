@@ -8,7 +8,7 @@ interface XModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | 'm';
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
   overlayColor?: string;
@@ -61,12 +61,14 @@ export default function XModal({
 
   const sizeClasses = {
     sm: 'sm:max-w-sm sm:max-h-[300px]',
+    m: 'sm:max-w-sm sm:max-h-[400px] min-h-[300px] min-w-[350px]',
     md: 'sm:max-w-md sm:max-h-[400px]',
     lg: 'sm:max-w-lg sm:max-h-[500px]',
     xl: 'sm:max-w-xl sm:max-h-[600px]',
     '2xl': 'sm:h-[427.5px] sm:w-[600px]',
     '3xl': 'sm:h-[427.5px] sm:w-[630px]',
-    '4xl': 'sm:min-h-[427.5px] sm:max-h-[85vh] sm:w-[600px]',
+    '4xl':
+      'sm:min-h-[250.5px] sm:max-h-[85vh] sm:w-[600px] max-h-[600px] max-w-[600px]',
   };
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {

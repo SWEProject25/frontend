@@ -38,13 +38,13 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
     null
   );
   const { setParentId, setPostType } = useActions();
+  const hasJoinedRef = useRef<number | null>(null);
   useEffect(
     function () {
       if (data) setParentId(data.postId);
     },
     [data, setParentId]
   );
-
   const { joinPost, leavePost, usePostUpdates } = useRealTimeTweets();
   usePostUpdates(data ? data.postId : null, data ? data.userId : -1);
   useEffect(
@@ -316,13 +316,15 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
         </div>
       </div>
       <div>
-        <AddTweet type={ADD_TWEET.REPLY} />
+        <AddTweet type={ADD_TWEET.REPLY} id={data.postId} />
       </div>
       <div>
         {isError ? (
           <div>Error {error.message}</div>
         ) : isLoading ? (
-          <Loader />
+          <div className="flex  mt-3 justify-center">
+            <Loader />
+          </div>
         ) : (
           <>
             <InfiniteScroll

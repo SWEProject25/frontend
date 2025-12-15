@@ -1,6 +1,6 @@
 'use client';
 import Tabs from '@/components/generic/Tabs';
-import { userTabs, myTabs, MEDIA_TAB } from '../constants/tabs';
+import { userTabs, myTabs, MEDIA_TAB, REPLIES_TAB } from '../constants/tabs';
 import {
   useActions,
   useProfileStore,
@@ -11,6 +11,8 @@ import Tweets from './Tweets';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import MediaTweets from './MediaTweets';
 import { useProfileContext } from '@/app/[username]/ProfileProvider';
+import Reply from '@/features/timeline/components/Reply';
+import RepliesList from './RepliesList';
 
 const TabView = () => {
   const selectedTab = useSelectedTab();
@@ -33,7 +35,15 @@ const TabView = () => {
         <BlockedByUserNotice username={profile.User.username} />
       )}
       {profile?.User &&
-        (selectedTab !== MEDIA_TAB ? <Tweets /> : <MediaTweets />)}
+        (selectedTab !== MEDIA_TAB ? (
+          selectedTab === REPLIES_TAB ? (
+            <RepliesList />
+          ) : (
+            <Tweets />
+          )
+        ) : (
+          <MediaTweets />
+        ))}
     </div>
   );
 };

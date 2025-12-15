@@ -232,9 +232,19 @@ export const profileApi = {
     );
     const data = await handleResponse<ProfileFeedDtoResponse>(response);
 
+    // return {
+    //   ...data,
+    //   data: { posts: data.data },
+    // };
     return {
       ...data,
-      data: { posts: data.data },
+      data: {
+        ...data.data,
+        posts: data.data.map((post) => ({
+          ...post,
+          postId: post.postId ?? post.originalPostData?.postId,
+        })),
+      },
     };
   },
 
@@ -258,36 +268,21 @@ export const profileApi = {
 
     // return handleResponse<ProfileFeedDtoResponse>(response);
     const data = await handleResponse<ProfileFeedDtoResponse>(response);
-
-    return {
-      ...data,
-      data: { posts: data.data },
-    };
+    console.log(data);
     // return {
     //   ...data,
-    //   data: {
-    //     ...data.data,
-    //     posts: data.data.map((post) => ({
-    //       ...post,
-    //       username: profile.User.username,
-    //       name: profile.name,
-    //       userId: post.userId ?? post.user_id,
-    //       postId: post.postId ?? post.post_id,
-
-    //       date: post.date ?? post.created_at,
-    //       isLikedByMe: post.isLikedByMe ?? post.originalPostData?.isLikedByMe,
-    //       isFollowedByMe:
-    //         post.isFollowedByMe ?? post.originalPostData?.isFollowedByMe,
-    //       isRepostedByMe:
-    //         post.isRepostedByMe ?? post.originalPostData?.isRepostedByMe,
-    //       retweetsCount:
-    //         post.retweetsCount ?? post.originalPostData?.retweetsCount,
-    //       likesCount: post.likesCount ?? post.originalPostData?.likesCount,
-    //       commentsCount:
-    //         post.commentsCount ?? post.originalPostData?.commentsCount,
-    //     })),
-    //   },
+    //   data: { posts: data.data },
     // };
+    return {
+      ...data,
+      data: {
+        ...data.data,
+        posts: data.data.map((post) => ({
+          ...post,
+          postId: post.postId ?? post.originalPostData?.postId,
+        })),
+      },
+    };
   },
 
   async getProfileLikesFeed(
@@ -308,9 +303,19 @@ export const profileApi = {
     );
     const data = await handleResponse<ProfileFeedDtoResponse>(response);
 
+    // return {
+    //   ...data,
+    //   data: { posts: data.data },
+    // };
     return {
       ...data,
-      data: { posts: data.data },
+      data: {
+        ...data.data,
+        posts: data.data.map((post) => ({
+          ...post,
+          postId: post.postId ?? post.originalPostData?.postId,
+        })),
+      },
     };
   },
 

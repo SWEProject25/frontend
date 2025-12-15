@@ -40,12 +40,12 @@ export type notMentionType = mentionType & {
   username: string;
   span: HTMLSpanElement;
 };
-export default function TweetText() {
+export default function TweetText({ placeHolder }: { placeHolder: string }) {
   const selectors = useAddPostContext();
-
+  console.log(placeHolder);
   const divRef = useRef<null | HTMLDivElement>(null);
 
-  const placeHolder = selectors.usePlaceHolder();
+  // const placeHolder = selectors.usePlaceHolder();
   const isSuccess = selectors.useIsSuccess();
   const spanRef1 = useRef<null | HTMLSpanElement>(null);
   const [spanText1, setSpanText1] = useState(placeHolder);
@@ -342,9 +342,12 @@ export default function TweetText() {
     ]
   );
 
-  useEffect(function () {
-    setSpanText1(placeHolder);
-  }, []);
+  useEffect(
+    function () {
+      setSpanText1(placeHolder);
+    },
+    [placeHolder]
+  );
   useEffect(
     function () {
       if (mentionIsDone && mention && divRef.current) {
