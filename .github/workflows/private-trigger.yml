@@ -9,11 +9,38 @@ on:
 jobs:
   test-and-build:
     runs-on: self-hosted
+    env:
+      DEVOPS_OWNER: karimzakzouk
+      DEVOPS_REPO: helm
+      DEVOPS_BRANCH: main
+      REPO_NAME: ${{ github.event.repository.name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Required for SonarCloud
+          fetch-depth: 0
+
+      - name: Install unzip (if missing)
+        run: |
+          if ! command -v unzip &> /dev/null; then
+            sudo apt-get update && sudo apt-get install -y unzip
+          fi
+
+      - name: Clone devops repo
+        run: |
+          git clone -q https://${{ secrets.PAT_GITHUB }}@github.com/${DEVOPS_OWNER}/${DEVOPS_REPO}.git devops
+          cd devops
+          git checkout -q ${DEVOPS_BRANCH}
+
+      - name: Copy SonarQube properties
+        run: |
+          if [ -f "devops/${REPO_NAME}/sonar-project.properties" ]; then
+            echo "Copying sonar-project.properties from devops/${REPO_NAME}/"
+            cp devops/${REPO_NAME}/sonar-project.properties ./sonar-project.properties
+          else
+            echo "Warning: sonar-project.properties not found in devops/${REPO_NAME}/"
+            exit 1
+          fi
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -26,15 +53,22 @@ jobs:
       - name: Run tests
         run: npm test -- --coverage
         continue-on-error: true
-      
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          
+
       - name: Build project
         run: npm run build
+
+      - name: Cleanup devops repo
+        if: always()
+        run: |
+          if [ -d "devops" ]; then
+            rm -rf devops
+          fi
 
   trigger-public-workflow:
     needs: test-and-build
