@@ -462,7 +462,7 @@ describe('useAuth Hooks', () => {
 
       await act(async () => {
         await result.current.changePassword({
-          currentPassword: 'old',
+          oldPassword: 'old',
           newPassword: 'new',
         });
       });

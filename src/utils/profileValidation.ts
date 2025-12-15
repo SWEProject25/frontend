@@ -42,6 +42,17 @@ export const validateDisplayName = (name: string): ValidationResult => {
     };
   }
 
+  // Validate name format: only letters (any language), accent marks, spaces, hyphens, or apostrophes
+  // Reject emojis, numbers, or punctuation
+  const namePattern = /^[\p{L}\p{M}' -]+$/u;
+  if (!namePattern.test(trimmed)) {
+    return {
+      isValid: false,
+      error:
+        'Name should only contain letters (from any language), accent marks, spaces, hyphens, or apostrophes',
+    };
+  }
+
   // Check if only emojis (no alphanumeric characters)
   // This regex matches if there are NO letters, numbers, or common punctuation
   const hasAlphanumeric = /[a-zA-Z0-9]/.test(trimmed);
