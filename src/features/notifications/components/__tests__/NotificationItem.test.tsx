@@ -254,7 +254,7 @@ describe('NotificationItem', () => {
         fireEvent.click(notificationElement.parentElement);
       }
 
-      expect(mockPush).toHaveBeenCalledWith('/home/456');
+      expect(mockPush).toHaveBeenCalledWith('/home/456?parentId=123');
     });
 
     it('should navigate to quote post for QUOTE notifications', () => {
