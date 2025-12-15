@@ -70,11 +70,11 @@ export default function Tweet({
   } = useInteractions();
 
   const [ref, isVisible] = useOnScreen({ threshold: 0.5 });
-  const previousState = useRef<boolean>(false);
+  const hasJoined = useRef<number | null>(null);
   const { addVisibleTweet, removeVisibleTweet } = useActions();
   const { joinPost, leavePost, usePostUpdates } = useRealTimeTweets();
   usePostUpdates(
-    previousState ? dataViewd.postId : null,
+    isVisible ? dataViewd.postId : null,
     data.userId,
     dataViewd.type,
     data.parentId
@@ -83,28 +83,27 @@ export default function Tweet({
   useEffect(
     function () {
       if (isVisible) {
-        if (!previousState.current) {
-          // addVisibleTweet(data);
-          // console.log(dataViewd.postId, data, 'enter');
+        if (hasJoined.current !== dataViewd.postId) {
           joinPost(dataViewd.postId, (resp) => {
             if (resp?.status === 'success') {
-              previousState.current = true;
-
               console.log('Join post response:', resp);
+              hasJoined.current = dataViewd.postId;
             } else {
               console.warn('Join post response:', resp);
             }
           });
+        } else {
+          console.log('kk', data.text);
         }
       } else {
-        if (previousState.current) {
-          // removeVisibleTweet(data);
-          // console.log(dataViewd.postId, data, 'leave');
+        console.log('not visible', data.text);
+        if (hasJoined.current === dataViewd.postId) {
+          console.log('not visible leave', data.text);
+
           leavePost(dataViewd.postId, (resp) => {
             if (resp?.status === 'success') {
-              previousState.current = false;
-
               console.log('Leave post response:', resp);
+              hasJoined.current = null;
             } else {
               console.warn('Leave post response:', resp);
             }
@@ -112,14 +111,7 @@ export default function Tweet({
         }
       }
     },
-    [
-      isVisible,
-      dataViewd.postId,
-      addVisibleTweet,
-      removeVisibleTweet,
-      joinPost,
-      leavePost,
-    ]
+    [dataViewd.postId, addVisibleTweet, removeVisibleTweet, joinPost, leavePost]
   );
 
   // const byMe = userId === dataViewd.userId;
