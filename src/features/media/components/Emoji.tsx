@@ -8,12 +8,14 @@ import EmojiPicker, {
   Theme,
 } from 'emoji-picker-react';
 import { useAddPostContext } from '@/features/timeline/store/AddPostContext';
+import { useId } from 'react';
 const PANEL_HEIGHT = 400;
 
 export default function Emoji() {
+  const menuId = useId();
+  const menuName = `${EMOJI_MENU}-${menuId}`;
   const selectors = useAddPostContext();
 
-  const tweetText = selectors.useTweetText();
   const { setEmoji } = selectors.useActions();
 
   function hanldePickEmoji(emojiData: EmojiClickData) {
@@ -22,7 +24,7 @@ export default function Emoji() {
   }
   return (
     <XMenu>
-      <XMenu.Button name={EMOJI_MENU} panelHeight={PANEL_HEIGHT}>
+      <XMenu.Button name={menuName} panelHeight={PANEL_HEIGHT}>
         <Icon
           data-testid="tweet-option-emoji"
           title="Emoji"
@@ -32,7 +34,7 @@ export default function Emoji() {
       <XMenu.List
         height="h-[400px]"
         width="w-[320px]"
-        name={EMOJI_MENU}
+        name={menuName}
         preventScroll={true}
       >
         <EmojiPicker

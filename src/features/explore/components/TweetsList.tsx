@@ -1,6 +1,6 @@
 'use client';
 
-import { useExploreFeed, useExplorePosts } from '../hooks/exploreQueries';
+import { useExplorePosts } from '../hooks/exploreQueries';
 import React from 'react';
 import Tweet from '@/features/tweets/components/Tweet';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';

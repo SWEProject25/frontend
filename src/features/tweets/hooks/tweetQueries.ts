@@ -19,6 +19,7 @@ import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
 import { tweet } from '@/features/timeline/mocks/data';
 import { PROFILE_QUERY_KEYS } from '@/features/profile';
 import { useAuth } from '@/features/authentication/hooks';
+import { clearReplyStore } from '@/features/timeline/store/replyRegistry';
 // Query keys
 export const TWEET_QUERY_KEYS = {
   tweetById: (tweetId: number) => ['tweet', 'id', tweetId] as const,
@@ -78,14 +79,7 @@ export const useToggleLikeTweet = (
       //     };
       //   }
       // );
-      return onMutate(
-        OPTIMISTIC_TYPES.LIKE,
-        userId,
-        tweetId,
-        isRepost,
-        type,
-        parentId
-      );
+      return onMutate(OPTIMISTIC_TYPES.LIKE, userId, tweetId, type, parentId);
     },
     onError: (error, variables, onMutateResult) => {
       handleErrorOptimisticTweet(onMutateResult);
@@ -98,7 +92,7 @@ export const useToggleLikeTweet = (
         queryKey: TWEET_QUERY_KEYS.tweetById(tweetId),
       });
       if (user) {
-        queryClient.invalidateQueries({
+        queryClient.refetchQueries({
           queryKey: PROFILE_QUERY_KEYS.profileLikes(user),
         });
       }
@@ -140,14 +134,7 @@ export const useToggleRepostTweet = (
       //     };
       //   }
       // );
-      return onMutate(
-        OPTIMISTIC_TYPES.REPOST,
-        userId,
-        tweetId,
-        isRepost,
-        type,
-        parentId
-      );
+      return onMutate(OPTIMISTIC_TYPES.REPOST, userId, tweetId, type, parentId);
     },
     onError: (error, variables, onMutateResult) => {
       handleErrorOptimisticTweet(onMutateResult);
@@ -160,14 +147,21 @@ export const useToggleRepostTweet = (
         queryKey: TWEET_QUERY_KEYS.tweetById(tweetId),
       });
 
-      if (user) {
-        queryClient.invalidateQueries({
+      if (user)
+        queryClient.refetchQueries({
           queryKey: PROFILE_QUERY_KEYS.profilePosts(user),
         });
-        queryClient.invalidateQueries({
-          queryKey: PROFILE_QUERY_KEYS.profileReplies(user),
-        });
-      }
+      // if (user) {
+      //   queryClient.refetchQueries({
+      //     queryKey: PROFILE_QUERY_KEYS.profilePosts(user),
+      //   });
+      //   queryClient.refetchQueries({
+      //     queryKey: PROFILE_QUERY_KEYS.profileReplies(user),
+      //   });
+      //   queryClient.refetchQueries({
+      //     queryKey: PROFILE_QUERY_KEYS.profileLikes(user),
+      //   });
+      // }
     },
     networkMode: 'always',
   });
@@ -252,17 +246,11 @@ export const useDeleteTweet = (
   const queryClient = useQueryClient();
   const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
   const user = useAuth().user?.id;
+
   return useMutation({
     mutationFn: () => tweetApi.deleteTweet(tweetId),
     onMutate: () => {
-      return onMutate(
-        OPTIMISTIC_TYPES.DELETE,
-        userId,
-        tweetId,
-        isRepost,
-        type,
-        parentId
-      );
+      return onMutate(OPTIMISTIC_TYPES.DELETE, userId, tweetId, type, parentId);
     },
     onError: (error, variables, onMutateResult) => {
       handleErrorOptimisticTweet(onMutateResult);
@@ -272,6 +260,18 @@ export const useDeleteTweet = (
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.deleteTweet(tweetId),
       });
+      clearReplyStore(tweetId);
+      // if (user) {
+      //   queryClient.refetchQueries({
+      //     queryKey: PROFILE_QUERY_KEYS.profilePosts(user),
+      //   });
+      //   queryClient.refetchQueries({
+      //     queryKey: PROFILE_QUERY_KEYS.profileReplies(user),
+      //   });
+      //   queryClient.refetchQueries({
+      //     queryKey: PROFILE_QUERY_KEYS.profileLikes(user),
+      //   });
+      // }
     },
     networkMode: 'always',
   });

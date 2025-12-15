@@ -15,6 +15,7 @@ import {
 
 import { usePathname, useRouter } from 'next/navigation';
 import Icon from '@/components/ui/home/Icon';
+import useDebounce from '../hooks/useDebounce';
 
 export default function SearchProfile() {
   const router = useRouter();
@@ -71,6 +72,7 @@ export default function SearchProfile() {
           behavior: 'smooth',
         });
     } else if (e.key === 'Enter') {
+      console.log(selectedTab);
       // e.preventDefault();
       let path = '';
       if (selectedTab === -1) {
@@ -81,7 +83,7 @@ export default function SearchProfile() {
         // setSearchExplore(search);
 
         path = `/search?q=${search}`;
-      } else if (selectedTab === endIndx) {
+      } else if (selectedTab === totalProfiles + 2) {
         // go to page with @string
 
         path = startWithMention ? `./${search.slice(1)}` : `./${search}`;
@@ -96,6 +98,7 @@ export default function SearchProfile() {
         path = `/search?q=%23${encodeURIComponent(searchQuery)}`;
       } else {
         // go to profile number selectedTab -1
+        console.log('path');
         if (pages) {
           const limit = pages[0].metadata.limit;
           const page = Math.floor((selectedTab - 2) / limit);
@@ -103,6 +106,7 @@ export default function SearchProfile() {
           const profile = pages[page].data[index];
 
           path = `/${profile.User.username}`;
+          console.log(path);
         }
       }
       if (erase) setSearch('');
@@ -113,6 +117,8 @@ export default function SearchProfile() {
   }
   const hasAnySpace = search.includes(' ');
   const hasSpace = search.trimStart().includes(' ');
+  const debouncedSearch = useDebounce(search, 300);
+
   const {
     data: profiles,
     error,
@@ -121,7 +127,7 @@ export default function SearchProfile() {
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
-  } = useSearchProfile(search);
+  } = useSearchProfile(debouncedSearch);
   const totalProfiles = profiles?.pages[0].metadata.total ?? 0;
   const { data: hashtag } = useSearchHashtag();
   const hashtagPages = hashtag?.pages.flat();

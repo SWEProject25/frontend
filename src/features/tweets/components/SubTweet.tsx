@@ -36,15 +36,20 @@ export default function SubTweet({
       className="flex w-full gap-2"
       style={{ maxWidth: '100%', overflow: 'hidden' }}
     >
-      <Avatar
-        avatarImage={data?.avatar ?? null}
-        name={data?.name}
-        size="sm"
-        position="relative"
-        className="border-0"
-      />
+      <div className="flex flex-col items-center">
+        <Avatar
+          avatarImage={data?.avatar ?? null}
+          name={data?.name}
+          size="sm"
+          position="relative"
+          className="border-0"
+        >
+          <div className="flex"></div>
+        </Avatar>
+        <div className="w-[3px] flex-1 bg-border mt-1" />
+      </div>
       <div
-        className="flex flex-col items-center flex-1"
+        className=" py-3  flex flex-col items-center flex-1"
         style={{
           width: '100%',
           maxWidth: '100%',

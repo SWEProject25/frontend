@@ -50,6 +50,9 @@ export interface TimelineTweet {
   isQuote?: boolean;
   originalPostData?: TimelineTweet;
   isDeleted?: boolean;
+  flagReply?: boolean;
+  isRepost?: boolean;
+
   // created_at?: string;
   // user_id?: number;
   // post_id?: number;
@@ -72,6 +75,7 @@ export interface TimelineFeedDtoResponse {
     posts: TimelineFeed[];
   };
 }
+
 export interface Profile {
   name: string;
   User: {

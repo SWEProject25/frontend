@@ -65,6 +65,9 @@ export const useBlockUser = () => {
       queryClient.invalidateQueries({
         queryKey: ['tweet'],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['layout', 'suggested-users'],
+      });
     },
     networkMode: 'always',
   });

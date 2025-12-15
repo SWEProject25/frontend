@@ -8,6 +8,7 @@ import toasterMessage from '@/components/ui/home/ToasterMessage';
 import { Loader } from '@/components/generic';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import { useAddPostContext } from '../store/AddPostContext';
+import useDebounce from '../hooks/useDebounce';
 export default function Mention() {
   const selectors = useAddPostContext();
   const mention = selectors.useMention();
@@ -17,6 +18,8 @@ export default function Mention() {
     selectors.useActions();
   const currentKey = selectors.useCurrentKey();
   const isOpen = selectors.useIsOpen();
+
+  const debouncedMention = useDebounce(mention, 300);
   const {
     data: profiles,
     error,
@@ -25,7 +28,7 @@ export default function Mention() {
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
-  } = useSearchProfile(mention);
+  } = useSearchProfile(debouncedMention);
   console.log(profiles, mention);
   const pages = profiles?.pages.flat();
   const divRef = useRef<HTMLDivElement | null>(null);

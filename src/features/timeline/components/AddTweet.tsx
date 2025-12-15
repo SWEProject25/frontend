@@ -17,22 +17,56 @@ import {
 } from '../store/useAddPostStore';
 import { AddPostStoreContext } from '../store/AddPostContext';
 import GifModal from '@/features/media/components/GifModal';
-export default function AddTweet({ type }: { type: string }) {
-  const useStore = useMemo(() => createAddTweetStore(), [type]);
-  const selectors = useMemo(
-    () => createAddTweetSelectors(useStore),
-    [useStore]
-  );
+import { timelineComposerSelectors } from '../store/useTimelineComposer';
+import { getAddReplyStore } from '../store/replyRegistry';
+import QuoteTweet, {
+  quoteProps,
+} from '@/features/tweets/components/QuoteTweet';
+import { useAuth } from '@/features/authentication/hooks';
+import { useActions } from '../store/useTimelineStore';
+
+interface AddTweetProps {
+  type: string;
+  persistent?: boolean;
+  id?: number;
+  data?: quoteProps;
+  showBorder?: boolean;
+  isMine?: boolean;
+}
+
+export default function AddTweet({
+  type,
+  persistent = false,
+  id = undefined,
+  data = undefined,
+  showBorder = true,
+  isMine = false,
+}: AddTweetProps) {
+  const useStore = useMemo(() => {
+    if (persistent) return null;
+    if (id) return getAddReplyStore(id);
+    return createAddTweetStore();
+  }, [persistent, id]);
+
+  const selectors = useMemo(() => {
+    if (persistent) return timelineComposerSelectors;
+    return createAddTweetSelectors(useStore!);
+  }, [useStore, persistent]);
 
   const isSending = selectors.useIsSending();
   const isOpen = selectors.useGifVisibility();
-
   // const error = useError();
-
+  const { setShowCheckModal } = useActions();
   const ref = useRef<HTMLDivElement>(null);
-
   const hasText = selectors.useTweetText().length > 0 || false;
   const hasmMedia = selectors.useMedia().length > 0;
+  useEffect(
+    function () {
+      if (hasText || hasmMedia) setShowCheckModal(true);
+      else setShowCheckModal(false);
+    },
+    [hasText, hasmMedia, setShowCheckModal]
+  );
   useEffect(() => {
     const unloadCallback = (event: BeforeUnloadEvent) => {
       if (hasText || hasmMedia) {
@@ -52,7 +86,7 @@ export default function AddTweet({ type }: { type: string }) {
         id="Add tweet"
         ref={ref}
         data-testid="add-tweet-container"
-        className=" relative flex flex-col items-start w-full border-b border-border "
+        className={` relative flex flex-col items-start w-full ${showBorder && 'border-b border-border'} `}
       >
         {/* {error && (
         <div className="flex w-full  p-1 bg-error-message rounded-xs h-8">
@@ -78,24 +112,39 @@ export default function AddTweet({ type }: { type: string }) {
         )}
         <div
           data-testid="add-tweet-content"
-          className=" relative flex  items-start w-full justify-center  border-b border-border px-4"
+          className={` relative flex  items-start w-full justify-center  ${showBorder && 'border-b border-border px-4'} `}
         >
           <div className="pt-1" data-testid="tweet-profile-logo">
             <ProfileLogo />
           </div>
           <div className="flex flex-1 flex-col gap-1 ">
             <div className="flex flex-col pt-1 pb-1 max-h-[calc(100vh-9rem)] overflow-y-auto">
-              <TweetText />
+              <TweetText
+                placeHolder={
+                  type === ADD_TWEET.POST
+                    ? "What's happening?"
+                    : type === ADD_TWEET.QUOTE
+                      ? 'Add a comment'
+                      : isMine
+                        ? 'Add another post'
+                        : 'Post your reply'
+                }
+              />
 
               <div>
                 {/* <Poll /> */}
                 <MediaPreview />
               </div>
             </div>
-            {!isSending && (
+            {!(isSending && type === ADD_TWEET.POST) && (
               <div>
                 {/* <TweetReplySettings /> */}
                 <Mention />
+                {type === ADD_TWEET.QUOTE && data !== undefined && (
+                  <div className="flex pb-3">
+                    <QuoteTweet {...data} />
+                  </div>
+                )}
                 <TweetFooter>
                   <TweetOptionsBar />
                   {type === ADD_TWEET.POST ? (
