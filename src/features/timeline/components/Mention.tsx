@@ -66,7 +66,7 @@ export default function Mention() {
             if (totalProfiles && pages) {
               //   setMention(pages[0].data[0].User.username + '');
               setIsDone(
-                pages[0].data[0].User.username + ' ' + pages[0].data[0].id
+                pages[0].data[0].User.username + ' ' + pages[0].data[0]
               );
 
               console.log(pages[0].data[0].User.username);
@@ -82,8 +82,8 @@ export default function Mention() {
               const profile = pages[page].data[index];
               console.log(profile);
               //   setMention(profile.User.username + '');
-              console.log(profile.User.username + ' ' + profile.id);
-              setIsDone(profile.User.username + ' ' + profile.id);
+              console.log(profile.User.username + ' ' + profile.user_id);
+              setIsDone(profile.User.username + ' ' + profile.user_id);
               console.log(profile.User.username);
               // set user name with profile
             }
@@ -122,7 +122,7 @@ export default function Mention() {
     <React.Fragment key={i}>
       {group.data.map((profile, indx) => (
         <div
-          key={profile.id}
+          key={profile.user_id}
           className={`flex w-full  ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3 ${selectedTab === i * group.metadata.limit + indx && 'bg-white/12'} hover:cursor-pointer hover:bg-white/12`}
           // className={`flex w-full ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3  hover:cursor-pointer hover:bg-white/12`}
           onClick={() => {
@@ -130,7 +130,7 @@ export default function Mention() {
             console.log(profile.User.username);
             setIsOpen(false);
             // setIsDone(true);
-            setIsDone(profile.User.username + ' ' + profile.id);
+            setIsDone(profile.User.username + ' ' + profile.user_id);
           }}
           // onKeyDown={(e: React.KeyboardEvent) => {
           //   e.preventDefault();
@@ -139,11 +139,12 @@ export default function Mention() {
         >
           <UserCard
             name={profile.name}
-            userId={profile.id}
+            userId={profile.user_id}
             handle={'@' + profile.User.username}
             verified={profile.User.is_verified}
             isFollowed={profile.is_followed_by_me}
             fontSize="text-base"
+            avatarUrl={profile.profile_image_url}
           ></UserCard>
         </div>
       ))}

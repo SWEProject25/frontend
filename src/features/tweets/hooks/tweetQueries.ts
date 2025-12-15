@@ -17,7 +17,7 @@ import {
 import { useOptimisticTweet } from '@/features/timeline/optimistics/Tweets';
 import { OPTIMISTIC_TYPES } from '@/features/timeline/constants/api';
 import { tweet } from '@/features/timeline/mocks/data';
-import { PROFILE_QUERY_KEYS } from '@/features/profile';
+import { PROFILE_QUERY_KEYS, useActions } from '@/features/profile';
 import { useAuth } from '@/features/authentication/hooks';
 import { clearReplyStore } from '@/features/timeline/store/replyRegistry';
 // Query keys
@@ -84,7 +84,7 @@ export const useToggleLikeTweet = (
     onError: (error, variables, onMutateResult) => {
       handleErrorOptimisticTweet(onMutateResult);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.toggleLikeTweet(tweetId),
       });
@@ -92,7 +92,7 @@ export const useToggleLikeTweet = (
         queryKey: TWEET_QUERY_KEYS.tweetById(tweetId),
       });
       if (user) {
-        queryClient.refetchQueries({
+        await queryClient.refetchQueries({
           queryKey: PROFILE_QUERY_KEYS.profileLikes(user),
         });
       }
@@ -139,7 +139,7 @@ export const useToggleRepostTweet = (
     onError: (error, variables, onMutateResult) => {
       handleErrorOptimisticTweet(onMutateResult);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: TWEET_QUERY_KEYS.toggleRepostTweet(tweetId),
       });
@@ -148,7 +148,7 @@ export const useToggleRepostTweet = (
       });
 
       if (user)
-        queryClient.refetchQueries({
+        await queryClient.refetchQueries({
           queryKey: PROFILE_QUERY_KEYS.profilePosts(user),
         });
       // if (user) {
@@ -246,7 +246,7 @@ export const useDeleteTweet = (
   const queryClient = useQueryClient();
   const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
   const user = useAuth().user?.id;
-
+  const { setBlockedFlag } = useActions();
   return useMutation({
     mutationFn: () => tweetApi.deleteTweet(tweetId),
     onMutate: () => {
@@ -254,6 +254,7 @@ export const useDeleteTweet = (
     },
     onError: (error, variables, onMutateResult) => {
       handleErrorOptimisticTweet(onMutateResult);
+      setBlockedFlag(false);
     },
 
     onSuccess: () => {

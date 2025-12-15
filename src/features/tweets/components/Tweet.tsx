@@ -26,10 +26,14 @@ export default function Tweet({
   data,
   inProfile = false,
   showBorder = true,
+  showColumn = false,
+  showUpperColumn = false,
 }: {
   data: TimelineFeed;
   inProfile?: boolean;
   showBorder?: boolean;
+  showColumn?: boolean;
+  showUpperColumn?: boolean;
 }) {
   const myId = useAuth().user?.id;
   const myTweet = data.isRepost
@@ -111,7 +115,14 @@ export default function Tweet({
         }
       }
     },
-    [dataViewd.postId, addVisibleTweet, removeVisibleTweet, joinPost, leavePost]
+    [
+      isVisible,
+      dataViewd.postId,
+      addVisibleTweet,
+      removeVisibleTweet,
+      joinPost,
+      leavePost,
+    ]
   );
 
   // const byMe = userId === dataViewd.userId;
@@ -277,7 +288,7 @@ export default function Tweet({
         //setCurrentTweet(data);
         router.push(`/home/${dataViewd.postId}`);
       }}
-      className={`block mx-auto w-full ${showBorder && 'border-b border-gray-700'} text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer p-4`}
+      className={`block mx-auto w-full ${showBorder && 'border-b border-gray-700'} text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer p-4 `}
       style={{ boxSizing: 'border-box', maxWidth: '100%' }}
     >
       {/* Show reposted by if present */}
@@ -298,7 +309,16 @@ export default function Tweet({
         </div>
       )}
       <div className="flex w-full gap-2">
-        <TweetAvatar data={user} onHoverCard={setHovered} />
+        <div className="flex flex-col items-center">
+          {showUpperColumn && (
+            <div className="w-[3px] bg-border mb-1 min-h-[8px]" />
+          )}
+          <TweetAvatar data={user} onHoverCard={setHovered} />
+          {showColumn && (
+            <div className="w-[3px] flex-1 bg-border mt-1 min-h-[16px]" />
+          )}
+        </div>
+
         <div
           className="flex flex-col items-center flex-1"
           style={{ width: '100%', maxWidth: '100%' }}
