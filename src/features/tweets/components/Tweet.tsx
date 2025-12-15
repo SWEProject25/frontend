@@ -8,7 +8,7 @@ import Action from './Action';
 import DropDown from './DropDown';
 import Timing from './Timing';
 import { useRouter } from 'next/navigation';
-import { TimelineFeed } from '@/features/timeline/types/api';
+import { TimelineFeed, TimelineTweet } from '@/features/timeline/types/api';
 import { useTweetStore } from '../store/tweetStore';
 import { DropIcon, RetweetIcon } from '@/components/ui/icons/UIIcons';
 import { GrokIcon } from '@/components/ui/icons/BrandIcons';
@@ -29,7 +29,7 @@ export default function Tweet({
   showColumn = false,
   showUpperColumn = false,
 }: {
-  data: TimelineFeed;
+  data: TimelineFeed | TimelineTweet;
   inProfile?: boolean;
   showBorder?: boolean;
   showColumn?: boolean;
@@ -149,8 +149,8 @@ export default function Tweet({
 
   const actionsStats = {
     postId: dataViewd.postId,
-    isRepost: data.isRepost,
-    isQuote: data.isQuote,
+    isRepost: data.isRepost || false,
+    isQuote: data.isQuote || false,
     userId: data.userId,
     likesCount: dataViewd.likesCount,
     type: data.type,
@@ -190,7 +190,7 @@ export default function Tweet({
 
   const deleteTweetMutation = useDeleteTweet(
     dataViewd.postId,
-    actionsStats.isRepost,
+    actionsStats.isRepost || false,
     actionsStats.userId,
     actionsStats.parentId,
     actionsStats.type

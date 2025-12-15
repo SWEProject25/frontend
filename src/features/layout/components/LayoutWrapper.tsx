@@ -33,7 +33,7 @@ export default function LayoutWrapper({
       )}
 
       <main className="flex flex-1 flex-row min-h-screen max-w-[1100px] w-full">
-        <div className="border-x-border border-x sm:w-[560px] w-full flex-1 min-w-0 overflow-hidden">
+        <div className="border-x-border border-x sm:w-[560px] w-full flex-1 min-w-0 overflow-visible">
           {children}
         </div>
 

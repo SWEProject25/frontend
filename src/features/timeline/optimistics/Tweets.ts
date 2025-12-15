@@ -614,6 +614,11 @@ export function useOptimisticTweet() {
   const search = useSearch();
   const path = usePathname();
   const isHome = path?.startsWith('/home');
+  const isFullTweet = path?.startsWith('/home/');
+
+  // Extract the tweet ID from the path (e.g., /home/123 -> 123)
+  const extractedId = isFullTweet && path ? parseInt(path.split('/')[2]) : -1;
+
   const isInterest = path?.startsWith('/explore/');
   const { setBlockedFlag } = useActions();
   const isProfile = path?.startsWith(`/${username}`);
@@ -632,18 +637,39 @@ export function useOptimisticTweet() {
     }[];
     oldTweet: TimelineFeed | undefined;
   }> => {
-    if (tweetId)
+    if (extractedId !== -1 && isFullTweet) {
       queryClient.setQueryData(
-        TWEET_QUERY_KEYS.tweetById(tweetId),
+        TWEET_QUERY_KEYS.tweetById(extractedId),
         (old: any) => {
           if (!old) return old;
+          console.log('isFullTweet', isFullTweet);
+          if (
+            isFullTweet &&
+            old?.data[0]?.originalPostData?.postId === tweetId
+          ) {
+            console.log('here');
+            const newOriginalData = updateTweet(
+              type,
+              old.data[0].originalPostData,
+              old.data[0].originalPostData.userId
+            );
+            return {
+              ...old,
+              data: [
+                {
+                  ...old.data[0],
+                  originalPostData: newOriginalData,
+                },
+              ],
+            };
+          }
           return {
             ...old,
             data: [updateTweet(type, old.data[0], userId)],
           };
         }
       );
-
+    }
     const tabsFeeds: {
       queryKey: QueryKeyType;
       previousFeed: FeedType | ExplorePersonalizedFeedDtoResponse | undefined;

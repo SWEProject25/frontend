@@ -66,7 +66,7 @@ export default function Mention() {
             if (totalProfiles && pages) {
               //   setMention(pages[0].data[0].User.username + '');
               setIsDone(
-                pages[0].data[0].User.username + ' ' + pages[0].data[0]
+                pages[0].data[0].User.username + ' ' + pages[0].data[0].user_id
               );
 
               console.log(pages[0].data[0].User.username);
