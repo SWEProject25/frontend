@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { useOTPResend } from '../hooks/useOTPResend';
-import { OTP_CONSTANTS } from '../constants';
 
 // Mock constants
 vi.mock('../constants', () => ({

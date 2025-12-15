@@ -1,12 +1,9 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import Icon from '@/components/ui/home/Icon';
 
-type MediaItem = {
-  url: string;
-  type: 'image' | 'video';
-};
+import Icon from '@/components/ui/home/Icon';
+import type { MediaItem } from '@/features/tweets/types';
 
 interface ImageModalProps {
   readonly isOpen: boolean;

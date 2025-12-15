@@ -9,6 +9,7 @@ import UserDetails from './UserDetails';
 import FollowStats from './FollowStats';
 import ImageModal from '@/components/generic/ImageModal';
 import { UserProfile } from '../types/api';
+import type { MediaItem } from '@/features/tweets/types';
 
 interface ProfileContainerProps {
   profileData: UserProfile;
@@ -50,12 +51,22 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
 
   const getModalMedia = () => {
     if (modalImageType === 'profile' && profileData.profile_image_url) {
-      return [{ url: profileData.profile_image_url, type: 'image' }];
+      return [
+        {
+          url: profileData.profile_image_url,
+          type: 'image',
+        } satisfies MediaItem,
+      ];
     }
     if (modalImageType === 'banner' && profileData.banner_image_url) {
-      return [{ url: profileData.banner_image_url, type: 'image' }];
+      return [
+        {
+          url: profileData.banner_image_url,
+          type: 'image',
+        } satisfies MediaItem,
+      ];
     }
-    return [];
+    return [] as MediaItem[];
   };
 
   return (

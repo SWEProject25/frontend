@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 interface IconOptions {
   path: string;

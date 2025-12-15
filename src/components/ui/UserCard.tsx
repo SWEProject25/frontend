@@ -6,7 +6,6 @@ import BlockBtn from '@/components/generic/buttons/BlockBtn';
 import MuteBtn from '@/components/generic/buttons/MuteBtn';
 import { VerifiedIcon } from '@/components/ui/icons/BrandIcons';
 import { LikeIconFilled, RetweetIcon } from '@/components/ui/icons/UIIcons';
-import Icon from './home/Icon';
 
 export interface UserCardProps {
   name: string;

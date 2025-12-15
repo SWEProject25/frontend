@@ -28,6 +28,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
    * Uses optimistic updates instead of invalidating queries
    */
   const handleNewNotification = (event: FirebaseNotificationEvent) => {
+    // reference the param to avoid "defined but never used" diagnostics
+    void event;
+
     // Play notification sound
     playNotificationSound();
 

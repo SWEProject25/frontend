@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { generateCaptchaText, validateCaptcha } from '../captchaUtils';
 import { CAPTCHA_CONSTANTS } from '@/components/ui/forms/constants';
 

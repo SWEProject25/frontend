@@ -17,10 +17,12 @@ function Page() {
       </div>
     );
 
+  const isReply = tweet?.type === 'REPLY';
+
   return (
-    <>
-      <FullTweet data={tweet} id={id} />
-    </>
+    <div className="overflow-visible">
+      <FullTweet data={tweet} id={id} isReply={isReply} />
+    </div>
   );
 }
 

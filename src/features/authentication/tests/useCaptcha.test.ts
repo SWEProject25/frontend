@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useCaptcha } from '../hooks/useCaptcha';
 import { authApi } from '../services/authApi';
-import { RECAPTCHA_CONFIG } from '../constants';
 
 // Mock authApi
 vi.mock('../services/authApi', () => ({

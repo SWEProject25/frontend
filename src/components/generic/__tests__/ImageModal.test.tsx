@@ -2,11 +2,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ImageModal from '../ImageModal';
 
-vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => (
-    <img src={src} alt={alt} data-testid="modal-image" />
-  ),
-}));
+vi.mock('next/image', () => {
+  // Mock a functional component named Image to match Next.js API
+  // and avoid the ESLint warning for <img>
+  // Accepts all props and renders a div for test purposes
+  // but with data-testid for assertions
+  return {
+    __esModule: true,
+    default: function Image(props: any) {
+      return <div data-testid="modal-image" {...props} />;
+    },
+  };
+});
 
 vi.mock('@/components/ui/home/Icon', () => ({
   default: ({ onClick, path }: { onClick?: () => void; path: string }) => (

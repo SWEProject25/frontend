@@ -31,7 +31,15 @@ import AddTweet from '@/features/timeline/components/AddTweet';
 import { ADD_TWEET } from '@/features/timeline/constants/tweetConstants';
 import { useActions } from '@/features/timeline/store/useTimelineStore';
 import { useRealTimeTweets } from '@/features/timeline/hooks/useRealTimeTweets';
-function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
+function FullTweet({
+  data,
+  id,
+  isReply,
+}: {
+  data: TimelineFeed | null;
+  id: number;
+  isReply: boolean;
+}) {
   const router = useRouter();
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [blockAction, setBlockAction] = useState<'block' | 'unblock' | null>(
@@ -270,8 +278,13 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
     isRepostedByMe: data.isRepostedByMe,
   };
   return (
-    <div>
-      <Header />
+    <div className="relative">
+      <div>
+        <Header />
+      </div>
+      {isReply && data.originalPostData && (
+        <Tweet data={data.originalPostData} />
+      )}
       <div className="mx-auto p-4 text-white relative ">
         <div className="flex items-start justify-between">
           <div className="flex space-x-3">

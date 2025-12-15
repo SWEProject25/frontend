@@ -7,7 +7,6 @@ let connectionFailed = false;
 export function initSocket() {
   // If connection previously failed, don't try again
   if (connectionFailed) {
-    console.warn('⚠️ WebSocket disabled due to previous connection failures');
     return null as any;
   }
 
@@ -22,16 +21,12 @@ export function initSocket() {
 
     // Track connection failures
     socket.on('connect_error', () => {
-      console.warn(
-        '🔴 WebSocket connection failed - disabling further attempts'
-      );
       connectionFailed = true;
       socket?.disconnect();
       socket = null;
     });
 
     socket.on('connect', () => {
-      console.log('✅ WebSocket connected');
       connectionFailed = false;
     });
   }
