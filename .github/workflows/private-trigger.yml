@@ -10,8 +10,8 @@ jobs:
   test-and-build:
     runs-on: self-hosted
     env:
-      DEVOPS_OWNER: karimzakzouk
-      DEVOPS_REPO: helm
+      DEVOPS_OWNER: SWEProject25
+      DEVOPS_REPO: devops
       DEVOPS_BRANCH: main
       REPO_NAME: ${{ github.event.repository.name }}
     steps:
