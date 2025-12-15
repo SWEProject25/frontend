@@ -79,7 +79,7 @@ function Action({
             data-testid={`${label ? label.toLowerCase().replace(/\s+/g, '-') + '-' : ''}count`}
             className={`text-xs transition-colors ${onCountClick ? 'cursor-pointer hover:underline' : ''} ${ACTION_COLOR_MAP[color]} ${isColored !== undefined ? (isColored === true ? ACTION_ACTIVE_MAP[color] : '') : ''}`}
           >
-            {count}
+            {count > 0 ? count : ''}
           </span>
         )}
       </div>
