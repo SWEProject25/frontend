@@ -12,6 +12,7 @@ import {
   MuteIcon,
 } from '@/components/ui/icons';
 import type { SettingsOption } from '@/features/settings/constants/SETTINGs_ITEMS';
+import { useAuth } from '@/features/authentication/hooks/useAuth';
 
 interface SettingsDetailProps {
   selectedOption: SettingsOption | null;
@@ -46,7 +47,7 @@ export default function SettingsDetail({
   const handleBack = () => {
     router.push('/settings');
   };
-
+  const { user } = useAuth();
   if (!selectedOption) {
     return (
       <div
@@ -66,7 +67,7 @@ export default function SettingsDetail({
       <div className="">
         <Breadcrumb
           title={selectedOption.label}
-          subtitle="@ahmedfathy0-0"
+          subtitle={user?.username}
           description={selectedOption.description}
           onBack={handleBack}
           data-testid="settings-detail-breadcrumb"

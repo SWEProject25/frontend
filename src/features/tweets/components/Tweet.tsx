@@ -188,7 +188,7 @@ export default function Tweet({
       }
     : undefined;
 
-  const deleteTweetMutation = useDeleteTweet(
+  const deleteTweetMutation: ReturnType<typeof useDeleteTweet> = useDeleteTweet(
     dataViewd.postId,
     actionsStats.isRepost || false,
     actionsStats.userId,

@@ -141,7 +141,12 @@ export default function UserInfo({
               }, leaveDelay);
             }}
           >
-            {data.username}
+            <span className="hidden xs:inline">{data.username}</span>
+            <span className="inline xs:hidden">
+              {data.username.length > 10
+                ? `${data.username.slice(0, 10)}...`
+                : data.username}
+            </span>
           </span>
         </Link>
         {usernameCardShow && (

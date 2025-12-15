@@ -108,7 +108,7 @@ describe('InterestsModal', () => {
 
       expect(screen.getByTestId('x-modal')).toBeInTheDocument();
       expect(
-        screen.getByText('What do you want to see on X?')
+        screen.getByText('What do you want to see on Hankers?')
       ).toBeInTheDocument();
     });
 
