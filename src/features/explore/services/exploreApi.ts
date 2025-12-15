@@ -151,7 +151,7 @@ export const exploreApi = {
             page: `${page}`,
             interests: `${interest}`,
             limit: `${limit}`,
-            order_by: `latest`,
+            sortBy: `latest`,
           });
     console.log(tab);
     const response = await fetch(

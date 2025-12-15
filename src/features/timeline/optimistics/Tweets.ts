@@ -54,10 +54,15 @@ function updateTweetInInfiniteData(
             ...page,
             data: {
               ...page.data,
-              posts: page.data.posts.filter((tweet) => {
+              posts: (page.data.posts || []).filter((tweet) => {
                 if (tweetIndx <= maxIndx) {
+                  const tweetId =
+                    tweet.postId ?? tweet.originalPostData?.postId;
+                  const newTweetId =
+                    Tweets[tweetIndx].postId ??
+                    Tweets[tweetIndx].originalPostData?.postId;
                   if (
-                    tweet.postId === Tweets[tweetIndx].postId &&
+                    tweetId === newTweetId &&
                     tweet.isRepost === Tweets[tweetIndx].isRepost &&
                     tweet.userId === Tweets[tweetIndx].userId
                   ) {
@@ -82,14 +87,20 @@ function updateTweetInInfiniteData(
             ...page,
             data: {
               ...page.data,
-              posts: page.data.posts.map((tweet) => {
-                if (
-                  tweetIndx <= maxIndx &&
-                  tweet.postId === Tweets[tweetIndx].postId &&
-                  tweet.isRepost === Tweets[tweetIndx].isRepost &&
-                  tweet.userId === Tweets[tweetIndx].userId
-                ) {
-                  return Tweets[tweetIndx++];
+              posts: (page.data.posts || []).map((tweet) => {
+                if (tweetIndx <= maxIndx) {
+                  const tweetId =
+                    tweet.postId ?? tweet.originalPostData?.postId;
+                  const newTweetId =
+                    Tweets[tweetIndx].postId ??
+                    Tweets[tweetIndx].originalPostData?.postId;
+                  if (
+                    tweetId === newTweetId &&
+                    tweet.isRepost === Tweets[tweetIndx].isRepost &&
+                    tweet.userId === Tweets[tweetIndx].userId
+                  ) {
+                    return Tweets[tweetIndx++];
+                  } else return tweet;
                 } else return tweet;
               }),
             },
@@ -121,8 +132,12 @@ function updateTweetPersonalizedInterestsData(
         else
           acc[category] = data.data[category].filter((tweet, i) => {
             if (tweetIndx <= maxIndx) {
+              const tweetId = tweet.postId ?? tweet.originalPostData?.postId;
+              const newTweetId =
+                Tweets[tweetIndx].postId ??
+                Tweets[tweetIndx].originalPostData?.postId;
               if (
-                tweet.postId === Tweets[tweetIndx].postId &&
+                tweetId === newTweetId &&
                 tweet.isRepost === Tweets[tweetIndx].isRepost &&
                 tweet.userId === Tweets[tweetIndx].userId
               ) {
@@ -142,13 +157,18 @@ function updateTweetPersonalizedInterestsData(
         if (!pages.includes(category)) acc[category] = data.data[category];
         else
           acc[category] = data.data[category].map((tweet, i) => {
-            if (
-              tweetIndx <= maxIndx &&
-              tweet.postId === Tweets[tweetIndx].postId &&
-              tweet.isRepost === Tweets[tweetIndx].isRepost &&
-              tweet.userId === Tweets[tweetIndx].userId
-            ) {
-              return Tweets[tweetIndx++];
+            if (tweetIndx <= maxIndx) {
+              const tweetId = tweet.postId ?? tweet.originalPostData?.postId;
+              const newTweetId =
+                Tweets[tweetIndx].postId ??
+                Tweets[tweetIndx].originalPostData?.postId;
+              if (
+                tweetId === newTweetId &&
+                tweet.isRepost === Tweets[tweetIndx].isRepost &&
+                tweet.userId === Tweets[tweetIndx].userId
+              ) {
+                return Tweets[tweetIndx++];
+              } else return tweet;
             } else return tweet;
           });
         return acc;
@@ -272,103 +292,111 @@ function updateTweet(
 }
 function handleOldTweets(
   type: string,
-  userId: number,
   feed: FeedType,
-  tweetId?: number
+  tweetId?: number,
+  userId?: number
 ): { oldTweets: TimelineFeed[] | undefined; pages: number[] } {
   const pages: number[] = [];
-  switch (type) {
-    case OPTIMISTIC_TYPES.LIKE:
-    case OPTIMISTIC_TYPES.REPOST:
-    case OPTIMISTIC_TYPES.Quote:
-    case OPTIMISTIC_TYPES.DELETE:
-      const oldTweets = feed.pages.flatMap((page, indx) =>
-        page.data.posts?.filter((post) => {
-          if (post.isRepost && post.originalPostData) {
-            if (post.originalPostData.postId === tweetId) {
+  try {
+    switch (type) {
+      case OPTIMISTIC_TYPES.LIKE:
+      case OPTIMISTIC_TYPES.REPOST:
+      case OPTIMISTIC_TYPES.Quote:
+      case OPTIMISTIC_TYPES.DELETE:
+        const oldTweets = feed.pages.flatMap((page, indx) =>
+          (page.data.posts || []).filter((post) => {
+            if (post.isRepost && post.originalPostData) {
+              if (post.originalPostData.postId === tweetId) {
+                if (!pages.includes(indx)) pages.push(indx);
+                return true;
+              } else return false;
+            } else {
+              if (post.postId === tweetId) {
+                if (!pages.includes(indx)) pages.push(indx);
+                return true;
+              } else return false;
+            }
+          })
+        );
+        return { oldTweets, pages };
+      case OPTIMISTIC_TYPES.FOLLOW:
+      case OPTIMISTIC_TYPES.BLOCK:
+      case OPTIMISTIC_TYPES.MUTE:
+        const tweets = feed.pages.flatMap((page, indx) =>
+          (page.data.posts || []).filter((post) => {
+            if (
+              post.userId === userId ||
+              post.originalPostData?.userId === userId
+            ) {
               if (!pages.includes(indx)) pages.push(indx);
               return true;
             } else return false;
-          } else {
-            if (post.postId === tweetId) {
-              if (!pages.includes(indx)) pages.push(indx);
-              return true;
-            } else return false;
-          }
-        })
-      );
-      return { oldTweets, pages };
-    case OPTIMISTIC_TYPES.FOLLOW:
-    case OPTIMISTIC_TYPES.BLOCK:
-    case OPTIMISTIC_TYPES.MUTE:
-      const tweets = feed.pages.flatMap((page, indx) =>
-        page.data.posts?.filter((post) => {
-          if (
-            post.userId === userId ||
-            post.originalPostData?.userId === userId
-          ) {
-            if (!pages.includes(indx)) pages.push(indx);
-            return true;
-          } else return false;
-        })
-      );
-      return { oldTweets: tweets, pages };
+          })
+        );
+        return { oldTweets: tweets, pages };
 
-    default:
-      return { oldTweets: undefined, pages };
+      default:
+        return { oldTweets: undefined, pages };
+    }
+  } catch (e) {
+    return { oldTweets: undefined, pages };
   }
 }
 
 function handleOldInterestsTweets(
   type: string,
-  userId: number,
   feed: ExplorePersonalizedFeedDtoResponse,
-  tweetId?: number
+  tweetId?: number,
+  userId?: number
 ): { oldTweets: TimelineFeed[] | undefined; pages: string[] } {
   const pages: string[] = [];
-  switch (type) {
-    case OPTIMISTIC_TYPES.LIKE:
-    case OPTIMISTIC_TYPES.REPOST:
-    case OPTIMISTIC_TYPES.Quote:
-    case OPTIMISTIC_TYPES.DELETE:
-      const oldTweets: TimelineFeed[] = [];
-      Object.keys(feed.data).map((category) =>
-        feed.data[category].forEach((post, i) => {
-          if (post.isRepost && post.originalPostData) {
-            if (post.originalPostData.postId === tweetId) {
-              if (!pages.includes(category)) pages.push(category);
-              oldTweets.push(feed.data[category][i]);
+  try {
+    switch (type) {
+      case OPTIMISTIC_TYPES.LIKE:
+      case OPTIMISTIC_TYPES.REPOST:
+      case OPTIMISTIC_TYPES.Quote:
+      case OPTIMISTIC_TYPES.DELETE:
+        const oldTweets: TimelineFeed[] = [];
+        Object.keys(feed.data).map((category) =>
+          feed.data[category].forEach((post, i) => {
+            if (post.isRepost && post.originalPostData) {
+              if (post.originalPostData.postId === tweetId) {
+                if (!pages.includes(category)) pages.push(category);
+                oldTweets.push(feed.data[category][i]);
+              }
+            } else {
+              if (post.postId === tweetId) {
+                if (!pages.includes(category)) pages.push(category);
+                oldTweets.push(feed.data[category][i]);
+              }
             }
-          } else {
-            if (post.postId === tweetId) {
+          })
+        );
+
+        return { oldTweets, pages };
+      case OPTIMISTIC_TYPES.FOLLOW:
+      case OPTIMISTIC_TYPES.BLOCK:
+      case OPTIMISTIC_TYPES.MUTE:
+        const tweets: TimelineFeed[] = [];
+        Object.keys(feed.data).map((category) =>
+          feed.data[category].forEach((post, i) => {
+            if (
+              post.userId === userId ||
+              post.originalPostData?.userId === userId
+            ) {
               if (!pages.includes(category)) pages.push(category);
-              oldTweets.push(feed.data[category][i]);
+              tweets.push(feed.data[category][i]);
             }
-          }
-        })
-      );
+          })
+        );
 
-      return { oldTweets, pages };
-    case OPTIMISTIC_TYPES.FOLLOW:
-    case OPTIMISTIC_TYPES.BLOCK:
-    case OPTIMISTIC_TYPES.MUTE:
-      const tweets: TimelineFeed[] = [];
-      Object.keys(feed.data).map((category) =>
-        feed.data[category].forEach((post, i) => {
-          if (
-            post.userId === userId ||
-            post.originalPostData?.userId === userId
-          ) {
-            if (!pages.includes(category)) pages.push(category);
-            tweets.push(feed.data[category][i]);
-          }
-        })
-      );
+        return { oldTweets: tweets, pages };
 
-      return { oldTweets: tweets, pages };
-
-    default:
-      return { oldTweets: undefined, pages };
+      default:
+        return { oldTweets: undefined, pages };
+    }
+  } catch (e) {
+    return { oldTweets: undefined, pages };
   }
 }
 
@@ -438,14 +466,11 @@ export function useOptimisticTweet() {
   const isInterest = path?.startsWith('/explore/');
   const isProfile = path?.startsWith(`/${username}`);
   const interest = useInterest();
-  const selectedInteretsTab = useSelectedInterestTab();
-  // console.log(path, username, user, profile, myProfile);
   const router = useRouter();
   const onMutate = async (
     type: string,
     userId: number,
     tweetId?: number,
-    isRepost?: boolean,
     postType: string = 'POST',
     parentId: number = -1
   ): Promise<{
@@ -482,7 +507,7 @@ export function useOptimisticTweet() {
         : postType.toLowerCase() === 'reply'
           ? TWEET_QUERY_KEYS.getRepliesByTweetId(parentId)
           : currTabQueryKey;
-    const queryKeys: QueryKeyType[] = [
+    let queryKeys: QueryKeyType[] = [
       TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOR_YOU,
       TIMELINE_QUERY_KEYS.TIMELINE_FEED_FOLLOWING,
       EXPLORE_QUERY_KEYS.EXPLORE_FEED_FOR_YOU,
@@ -494,8 +519,22 @@ export function useOptimisticTweet() {
       PROFILE_QUERY_KEYS.profileReplies(user),
       PROFILE_QUERY_KEYS.profilePosts(user),
       PROFILE_QUERY_KEYS.profileMentions(user),
-    ].filter((key) => JSON.stringify(key) !== JSON.stringify(currentKey));
-    queryKeys.unshift(currentKey);
+    ];
+    if (
+      (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) &&
+      user !== myProfile?.id &&
+      user !== -1
+    ) {
+      queryKeys.pop();
+      queryKeys.pop();
+      queryKeys.pop();
+      queryKeys.pop();
+    } else {
+      queryKeys = queryKeys.filter(
+        (key) => JSON.stringify(key) !== JSON.stringify(currentKey)
+      );
+      queryKeys.unshift(currentKey);
+    }
     // }
     console.log(queryKeys);
     for (const queryKey of queryKeys) {
@@ -506,8 +545,7 @@ export function useOptimisticTweet() {
           userId,
           queryKey,
           myProfile?.id,
-          tweetId,
-          isRepost
+          tweetId
         );
       } else
         result = await optimisticsTabs(
@@ -515,8 +553,7 @@ export function useOptimisticTweet() {
           userId,
           queryKey,
           myProfile?.id,
-          tweetId,
-          isRepost
+          tweetId
         );
 
       tabsFeeds.push({
@@ -534,8 +571,7 @@ export function useOptimisticTweet() {
     userId: number,
     queryKey: typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_FOR_YOU,
     myId: number | undefined,
-    tweetId?: number,
-    isRepost?: boolean
+    tweetId?: number
   ): Promise<{
     previousFeed: ExplorePersonalizedFeedDtoResponse | undefined;
     oldTweet: TimelineFeed | undefined;
@@ -547,9 +583,9 @@ export function useOptimisticTweet() {
     if (previousFeed) {
       const { oldTweets, pages } = handleOldInterestsTweets(
         type,
-        userId,
         previousFeed,
-        tweetId
+        tweetId,
+        userId
       );
 
       if (oldTweets) {
@@ -587,11 +623,10 @@ export function useOptimisticTweet() {
             });
             if (tweets.length > 0) {
               console.log(tweets);
-              const myTweet = tweets[0];
               timelineFeed = updateTweetPersonalizedInterestsData(
                 timelineFeed,
                 pages,
-                oldTweets,
+                tweets,
                 OPTIMISTIC_TYPES.DELETE
               );
             }
@@ -614,25 +649,6 @@ export function useOptimisticTweet() {
               currentTweet.originalPostData?.userId === userId)
           ) {
             router.push('/home');
-            setCurrentTweet(null);
-          }
-        } else {
-          if (
-            tweetId !== undefined &&
-            isRepost !== undefined &&
-            currentTweet?.postId === tweetId
-          ) {
-            oldTweet = oldTweets.find(
-              (post) =>
-                post.postId === tweetId &&
-                post.userId === userId &&
-                post.isRepost === isRepost
-            );
-            if (oldTweet) {
-              const newTweet = updateTweet(type, oldTweet, userId);
-              setCurrentTweet(newTweet);
-            } else {
-            }
           }
         }
       }
@@ -645,8 +661,7 @@ export function useOptimisticTweet() {
     userId: number,
     queryKey: QueryKeyType,
     myId: number | undefined,
-    tweetId?: number,
-    isRepost?: boolean
+    tweetId?: number
   ): Promise<{
     previousFeed: FeedType | undefined;
     oldTweet: TimelineFeed | undefined;
@@ -657,9 +672,9 @@ export function useOptimisticTweet() {
     if (previousFeed) {
       const { oldTweets, pages } = handleOldTweets(
         type,
-        userId,
         previousFeed,
-        tweetId
+        tweetId,
+        userId
       );
 
       if (oldTweets) {
@@ -697,11 +712,10 @@ export function useOptimisticTweet() {
             });
             if (tweets.length > 0) {
               console.log(tweets);
-              const myTweet = tweets[0];
               timelineFeed = updateTweetInInfiniteData(
                 timelineFeed,
                 pages,
-                oldTweets,
+                tweets,
                 OPTIMISTIC_TYPES.DELETE
               );
             }
@@ -721,25 +735,6 @@ export function useOptimisticTweet() {
               currentTweet.originalPostData?.userId === userId)
           ) {
             router.push('/home');
-            setCurrentTweet(null);
-          }
-        } else {
-          if (
-            tweetId !== undefined &&
-            isRepost !== undefined &&
-            currentTweet?.postId === tweetId
-          ) {
-            oldTweet = oldTweets.find(
-              (post) =>
-                post.postId === tweetId &&
-                post.userId === userId &&
-                post.isRepost === isRepost
-            );
-            if (oldTweet) {
-              const newTweet = updateTweet(type, oldTweet, userId);
-              setCurrentTweet(newTweet);
-            } else {
-            }
           }
         }
       }

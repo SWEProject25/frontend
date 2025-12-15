@@ -1,6 +1,6 @@
 'use client';
 import Icon from '@/components/ui/home/Icon';
-import React from 'react';
+import React, { useId } from 'react';
 import {
   MAX_MEDIA_NUM,
   MAX_MEDIA_SIZE,
@@ -12,6 +12,7 @@ import { useAddPostContext } from '../store/AddPostContext';
 //  accept=".jfif,.pjp,.jpg,.jpeg,.pjpeg,.png,.webp,.gif,.m4v,.mp4,.mov"
 
 export default function TweetImages() {
+  const inputId = useId();
   const selectors = useAddPostContext();
 
   const { addMedia } = selectors.useActions();
@@ -61,7 +62,7 @@ export default function TweetImages() {
   return (
     <div className="relative flex items-center justify-center">
       <label
-        htmlFor="media"
+        htmlFor={inputId}
         aria-label="Add media"
         className={
           mediaNum < MAX_MEDIA_NUM ? 'cursor-pointer' : 'pointer-events-none'
@@ -77,7 +78,7 @@ export default function TweetImages() {
         disabled={mediaNum === MAX_MEDIA_NUM}
         data-testid={`media-import`}
         type="file"
-        id="media"
+        id={inputId}
         multiple
         accept={MEDIA_TYPES.join(',')}
         className="hidden"

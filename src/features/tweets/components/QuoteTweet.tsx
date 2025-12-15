@@ -21,7 +21,7 @@ type TweetContent = {
   media?: MediaItem[];
   mentions?: mention[];
 };
-type quoteProps = {
+export type quoteProps = {
   postId: number;
   userId: number;
   tweetContent: TweetContent;
