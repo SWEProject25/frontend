@@ -109,7 +109,7 @@ export default function Timeline() {
         className="flex flex-col justify-items-center full-width relative"
         data-testid="timeline-content"
       >
-        <div ref={topRef}>
+        <div ref={topRef} className="sm:block hidden">
           <AddTweet type={ADD_TWEET.POST} persistent={true} />
         </div>
         {/* <ShowTweets /> */}

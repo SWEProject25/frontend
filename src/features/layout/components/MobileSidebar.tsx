@@ -74,24 +74,28 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
               </p>
             </div>
             <div className="flex items-center gap-4 text-sm">
-              <div
-                className="flex items-center gap-1"
+              <Link
+                href={`/${user?.username}/following`}
+                className="flex items-center gap-1 hover:underline"
                 data-testid="mobile-sidebar-following"
+                onClick={onClose}
               >
                 <span className="font-bold text-white">
                   {profile?.following_count ?? 0}
                 </span>
                 <span className="text-gray-400">Following</span>
-              </div>
-              <div
-                className="flex items-center gap-1"
+              </Link>
+              <Link
+                href={`/${user?.username}/followers`}
+                className="flex items-center gap-1 hover:underline"
                 data-testid="mobile-sidebar-followers"
+                onClick={onClose}
               >
                 <span className="font-bold text-white">
                   {profile?.followers_count ?? 0}
                 </span>
                 <span className="text-gray-400">Followers</span>
-              </div>
+              </Link>
             </div>
           </div>
 

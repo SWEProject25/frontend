@@ -59,11 +59,11 @@ export default function InterestsModal({
         {/* Header */}
         <div className="px-8 pt-5 pb-4">
           <h2 className="text-[31px] font-bold text-foreground mb-2 leading-9">
-            What do you want to see on X?
+            What do you want to see on Hankers?
           </h2>
           <p className="text-text-inactive text-[15px] leading-5">
-            Choose what you like, and we&apos;ll customise your X experience
-            with more of what you&apos;re interested in.
+            Choose what you like, and we&apos;ll customise your Hankers
+            experience with more of what you&apos;re interested in.
           </p>
         </div>
 

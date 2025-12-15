@@ -45,6 +45,7 @@ export {
   JoinDateIcon,
   CameraIcon,
   SettingsIcon,
+  PencilIcon,
 } from './UIIcons';
 
 // Brand Icons

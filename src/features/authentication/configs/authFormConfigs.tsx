@@ -75,7 +75,7 @@ export const authFormConfigs = {
   },
 
   signup: {
-    title: 'Join X today',
+    title: 'Join Hankers today',
     fields: [],
     socialProviders: [
       {

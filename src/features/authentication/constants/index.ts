@@ -1,7 +1,7 @@
 // Authentication feature constants
 export const FOOTER_LINKS = [
   'About',
-  'Download the X app',
+  'Download the Hankers app',
   'Grok',
   'Help Center',
   'Terms of Service',
