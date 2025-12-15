@@ -1,9 +1,22 @@
+'use client';
 import React from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Action from './Action';
 import { BackArrowIcon, FilterIcon } from '@/components/ui/icons/UIIcons';
+
 function Header() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const parentId = searchParams?.get('parentId');
+
   function handleBackClick() {
-    window.history.back();
+    // If parentId is provided (from notification), navigate to parent post
+    if (parentId) {
+      router.replace(`/home/${parentId}`);
+    } else {
+      // Otherwise, use browser back button
+      window.history.back();
+    }
   }
   return (
     <div

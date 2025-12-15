@@ -109,6 +109,11 @@ export const authFormConfigs = {
         required: true,
         maxLength: 50,
         showCharCount: true,
+        // Real-time validation enabled - shows specific error messages based on what's wrong
+        // (length, invalid characters, etc.) from validateName function
+        validation: {
+          enableRealTimeValidation: true,
+        },
       },
       {
         name: 'email',

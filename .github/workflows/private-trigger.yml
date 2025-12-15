@@ -58,7 +58,7 @@ jobs:
         run: npm run build
               # SonarQube scan - ONLY on push (not PR)
       - name: SonarQube Scan
-        if: github.event_name == 'push'
+        if: github.event_name != 'pull_request'
         uses: SonarSource/sonarqube-scan-action@v5.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

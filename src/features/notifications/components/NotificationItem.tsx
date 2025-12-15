@@ -111,8 +111,8 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             ? `/messages/${notification.messageId}`
             : '/messages';
       case NotificationType.REPLY:
-        // Navigate to the reply post
-        return `/home/${notification.replyId}`;
+        // Navigate to the reply post, with parent post ID as query param for back button
+        return `/home/${notification.replyId}?parentId=${notification.postId}`;
       case NotificationType.QUOTE:
         // Navigate to the quote post
         return `/home/${notification.quotePostId}`;
