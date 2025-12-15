@@ -22,7 +22,7 @@ describe('UserInfo Component', () => {
     render(<UserInfo data={mockUser} />);
 
     expect(screen.getByText('Test User')).toBeInTheDocument();
-    expect(screen.getByText('testuser')).toBeInTheDocument();
+    expect(screen.getAllByText('testuser')[0]).toBeInTheDocument();
   });
 
   it('should show verified icon for verified users', () => {

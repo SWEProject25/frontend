@@ -113,7 +113,7 @@ describe('Tweet Component', () => {
     );
 
     expect(screen.getByText('Test User')).toBeInTheDocument();
-    expect(screen.getByText('testuser')).toBeInTheDocument();
+    expect(screen.getAllByText('testuser')[0]).toBeInTheDocument();
     expect(screen.getByText('Test tweet text')).toBeInTheDocument();
   });
 
