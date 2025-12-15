@@ -20,14 +20,11 @@ import {
   useFetchAvatars,
   useNewTweets,
   useSearch,
-  useSearchIsopen,
-  useSearchUser,
   useSelectedTab,
 } from '../store/useTimelineStore';
 import { FOLLOWING_TAB } from '../constants/menuName';
-import { OPTIMISTIC_TYPES, TIMELINE_ENDPOINTS } from '../constants/api';
+import { TIMELINE_ENDPOINTS } from '../constants/api';
 import { useAuth } from '@/features/authentication/hooks';
-import { Search } from 'lucide-react';
 import {
   PROFILE_QUERY_KEYS,
   profileApi,
@@ -75,16 +72,6 @@ export const useAddTweet = (label: string) => {
       }
     },
     onSuccess: async (data) => {
-      // // queryClient.invalidateQueries({ queryKey: [''] });
-      // if (label === ADD_TWEET.QUOTE) {
-      //   onMutate(
-      //     OPTIMISTIC_TYPES.Quote,
-      //     data.data.originalPostData?.userId ?? data.data.userId,
-      //     data.data.originalPostData?.postId,
-      //     data.data.originalPostData?.type,
-      //     data.data.originalPostData?.parentId
-      //   );
-      // }
       console.log('app', user, label);
 
       if (user && label !== ADD_TWEET.REPLY) {
@@ -207,10 +194,6 @@ export const useTimelineFeed = () => {
   });
 };
 export const useSearchProfile = (searchUser: string) => {
-  // const search = useSearch();
-  // const isSearch = useSearchIsopen();
-  // const mention = useMention();
-  // const searchUser = isSearch ? search : mention;
   return useInfiniteQuery<
     ProfileSearchDtoResponse,
     Error,

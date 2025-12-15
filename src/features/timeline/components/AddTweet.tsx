@@ -86,7 +86,7 @@ export default function AddTweet({
         id="Add tweet"
         ref={ref}
         data-testid="add-tweet-container"
-        className={` relative flex flex-col items-start w-full ${showBorder && 'border-b border-border'} `}
+        className={` relative flex flex-col items-start w-full h-full flex-1  ${showBorder && 'border-b border-border'} `}
       >
         {/* {error && (
         <div className="flex w-full  p-1 bg-error-message rounded-xs h-8">
@@ -112,7 +112,7 @@ export default function AddTweet({
         )}
         <div
           data-testid="add-tweet-content"
-          className={` relative flex  items-start w-full justify-center  ${showBorder && 'border-b border-border px-4'} `}
+          className={` relative flex  items-start w-full justify-center flex-1  ${showBorder && 'border-b border-border px-4'} `}
         >
           <div className="pt-1" data-testid="tweet-profile-logo">
             <ProfileLogo />
