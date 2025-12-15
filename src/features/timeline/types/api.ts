@@ -83,7 +83,7 @@ export interface Profile {
     is_verified: boolean;
   };
   is_followed_by_me: boolean;
-  id: number;
+  user_id: number;
   profile_image_url: string;
 }
 export interface ProfileSearchDtoResponse {

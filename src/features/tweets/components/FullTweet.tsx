@@ -105,7 +105,10 @@ function FullTweet({ data, id }: { data: TimelineFeed | null; id: number }) {
   const renderReplys = pages?.map((group, i) => (
     <React.Fragment key={i}>
       {group.data.posts.map((reply, index) => (
-        <Tweet key={index} data={reply} />
+        <Tweet
+          key={`${reply.postId}-${reply.userId}-${reply.date}`}
+          data={reply}
+        />
       ))}
     </React.Fragment>
   ));

@@ -168,7 +168,7 @@ export default function SearchProfile() {
     <React.Fragment key={i}>
       {group.data.map((profile, indx) => (
         <div
-          key={profile.id}
+          key={profile.user_id}
           className={`flex w-full ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3 ${selectedTab === i * group.metadata.limit + (indx + 2) && 'bg-white/12'} hover:cursor-pointer hover:bg-white/12`}
           onClick={() => {
             setIsOpen(false);
@@ -179,11 +179,12 @@ export default function SearchProfile() {
         >
           <UserCard
             name={profile.name}
-            userId={profile.id}
+            userId={profile.user_id}
             handle={'@' + profile.User.username}
             verified={profile.User.is_verified}
             isFollowed={profile.is_followed_by_me}
             fontSize="text-base"
+            avatarUrl={profile.profile_image_url}
           ></UserCard>
         </div>
       ))}

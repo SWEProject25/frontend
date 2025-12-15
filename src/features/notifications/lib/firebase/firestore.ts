@@ -57,6 +57,7 @@ export const subscribeToNotifications = (
 
           if (changeType === 'added') {
             const data = docData as FirebaseNotificationEvent;
+
             console.log(
               `✅ Firebase: Processing new notification (Type: ${data.type})`
             );

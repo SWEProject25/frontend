@@ -8,7 +8,7 @@ on:
 
 jobs:
   test-and-build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     env:
       DEVOPS_OWNER: SWEProject25
       DEVOPS_REPO: devops
@@ -50,13 +50,17 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Clean Code
+        run: npx prettier --write .
+
       - name: Run tests
         run: npm test
         continue-on-error: true
 
       - name: Build project
-        run: npm run build
-              # SonarQube scan - ONLY on push (not PR)
+        run:
+          npm run build
+          # SonarQube scan - ONLY on push (not PR)
       - name: SonarQube Scan
         if: github.event_name != 'pull_request'
         uses: SonarSource/sonarqube-scan-action@v5.0.0
@@ -75,7 +79,7 @@ jobs:
     needs: test-and-build
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    steps:   
+    steps:
       - name: Trigger public repo workflow
         run: |
           curl -X POST \

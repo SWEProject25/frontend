@@ -25,6 +25,7 @@ export const formatDateRelative = (date: Date): string => {
   const year = date.getFullYear();
 
   if (seconds < TIME_CONSTANTS.SECONDS_IN_MINUTE) {
+    if (seconds <= 0) return 'Just now';
     return `${seconds}s`;
   } else if (seconds < TIME_CONSTANTS.SECONDS_IN_HOUR) {
     return `${Math.floor(seconds / TIME_CONSTANTS.SECONDS_IN_MINUTE)}m`;

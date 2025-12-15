@@ -21,7 +21,10 @@ import {
   useInterest,
   useSelectedInterestTab,
 } from '@/features/explore/store/useExploreStore';
-import { useSelectedTab as useProfileSelectedTab } from '@/features/profile/store/profileStore';
+import {
+  useActions,
+  useSelectedTab as useProfileSelectedTab,
+} from '@/features/profile/store/profileStore';
 import { LATEST_TAB, TOP_TAB } from '@/features/explore/constants/tabs';
 import { PROFILE_QUERY_KEYS, useProfileStore } from '@/features/profile';
 import { useAuth } from '@/features/authentication/hooks';
@@ -32,6 +35,7 @@ import {
   POSTS_TAB,
   REPLIES_TAB,
 } from '@/features/profile/constants/tabs';
+import { ADD_TWEET } from '../constants/tweetConstants';
 
 function updateTweetInInfiniteData(
   data: FeedType,
@@ -181,7 +185,8 @@ function updateTweetPersonalizedInterestsData(
 function updateTweet(
   type: string,
   tweet: TimelineFeed,
-  userId: number
+  userId: number,
+  tweetId?: number
 ): TimelineFeed {
   let updatedTweet = { ...tweet };
   switch (type) {
@@ -193,7 +198,9 @@ function updateTweet(
           updatedOriginal = {
             ...original,
             likesCount: original.isLikedByMe
-              ? original.likesCount - 1
+              ? original.likesCount - 1 < 0
+                ? 0
+                : original.likesCount - 1
               : original.likesCount + 1,
             isLikedByMe: !original.isLikedByMe,
           };
@@ -203,7 +210,9 @@ function updateTweet(
         updatedTweet = {
           ...tweet,
           likesCount: tweet.isLikedByMe
-            ? tweet.likesCount - 1
+            ? tweet.likesCount - 1 < 0
+              ? 0
+              : tweet.likesCount - 1
             : tweet.likesCount + 1,
           isLikedByMe: !tweet.isLikedByMe,
         };
@@ -218,7 +227,9 @@ function updateTweet(
           updatedOriginal = {
             ...original,
             retweetsCount: original.isRepostedByMe
-              ? original.retweetsCount - 1
+              ? original.retweetsCount - 1 < 0
+                ? 0
+                : original.retweetsCount - 1
               : original.retweetsCount + 1,
             isRepostedByMe: !original.isRepostedByMe,
           };
@@ -228,7 +239,9 @@ function updateTweet(
         updatedTweet = {
           ...tweet,
           retweetsCount: tweet.isRepostedByMe
-            ? tweet.retweetsCount - 1
+            ? tweet.retweetsCount - 1 < 0
+              ? 0
+              : tweet.retweetsCount - 1
             : tweet.retweetsCount + 1,
           isRepostedByMe: !tweet.isRepostedByMe,
         };
@@ -280,9 +293,13 @@ function updateTweet(
       updatedTweet = { ...newTweet, originalPostData: originalPostData };
       return updatedTweet;
 
+    // case OPTIMISTIC_TYPES.DELETE:
+    //   let newOriginalTweet: TimelineFeed = tweet;
+    //   let neworiginalPostData: TimelineTweet | undefined =
+    //     tweet.originalPostData;
+
     case OPTIMISTIC_TYPES.BLOCK:
     case OPTIMISTIC_TYPES.MUTE:
-    case OPTIMISTIC_TYPES.DELETE:
       // happens in updateTweetInInfiniteData with shouldRemove flag
       return tweet;
 
@@ -338,6 +355,140 @@ function handleOldTweets(
       default:
         return { oldTweets: undefined, pages };
     }
+  } catch (e) {
+    return { oldTweets: undefined, pages };
+  }
+}
+function handleDeleteTweets(
+  feed: FeedType,
+  tweetId?: number
+): { oldTweets: TimelineFeed[] | undefined; pages: number[] } {
+  const pages: number[] = [];
+  try {
+    const oldTweets = feed.pages.flatMap((page, indx) =>
+      (page.data.posts || []).map((post) => {
+        if (
+          (post?.isQuote || post?.type === ADD_TWEET.REPLY) &&
+          post.originalPostData
+        ) {
+          if (post.originalPostData.postId === tweetId) {
+            if (!pages.includes(indx)) pages.push(indx);
+            return {
+              ...post,
+              originalPostData: { ...post.originalPostData, isDeleted: true },
+            };
+          } else {
+            if (
+              (post.originalPostData?.isQuote ||
+                post.originalPostData?.type === ADD_TWEET.REPLY) &&
+              post.originalPostData?.originalPostData
+            ) {
+              if (post.originalPostData?.originalPostData?.postId === tweetId) {
+                if (!pages.includes(indx)) pages.push(indx);
+                return {
+                  ...post,
+                  originalPostData: {
+                    ...post.originalPostData,
+                    originalPostData: {
+                      ...post.originalPostData.originalPostData,
+                      isDeleted: true,
+                    },
+                  },
+                };
+              } else return post;
+            } else return post;
+          }
+        } else {
+          if (
+            post?.isRepost &&
+            post?.originalPostData &&
+            post?.originalPostData?.originalPostData &&
+            post.originalPostData?.originalPostData?.postId === tweetId
+          ) {
+            if (!pages.includes(indx)) pages.push(indx);
+            return {
+              ...post,
+              originalPostData: {
+                ...post.originalPostData,
+                originalPostData: {
+                  ...post.originalPostData.originalPostData,
+                  isDeleted: true,
+                },
+              },
+            };
+          } else return post;
+        }
+      })
+    );
+    return { oldTweets, pages };
+  } catch (e) {
+    return { oldTweets: undefined, pages };
+  }
+}
+function handleDeleteInterestsTweets(
+  feed: ExplorePersonalizedFeedDtoResponse,
+  tweetId?: number
+): { oldTweets: TimelineFeed[] | undefined; pages: string[] } {
+  const pages: string[] = [];
+  try {
+    const oldTweets: TimelineFeed[] = [];
+    Object.keys(feed.data).map((category) =>
+      feed.data[category].forEach((post, i) => {
+        if (
+          (post?.isQuote || post?.type === ADD_TWEET.REPLY) &&
+          post.originalPostData
+        ) {
+          if (post.originalPostData.postId === tweetId) {
+            if (!pages.includes(category)) pages.push(category);
+
+            oldTweets.push({
+              ...post,
+              originalPostData: { ...post.originalPostData, isDeleted: true },
+            });
+          } else {
+            if (
+              (post.originalPostData?.isQuote ||
+                post.originalPostData?.type === ADD_TWEET.REPLY) &&
+              post.originalPostData?.originalPostData
+            ) {
+              if (post.originalPostData?.originalPostData?.postId === tweetId) {
+                if (!pages.includes(category)) pages.push(category);
+                oldTweets.push({
+                  ...post,
+                  originalPostData: {
+                    ...post.originalPostData,
+                    originalPostData: {
+                      ...post.originalPostData.originalPostData,
+                      isDeleted: true,
+                    },
+                  },
+                });
+              }
+            }
+          }
+        } else {
+          if (
+            post?.isRepost &&
+            post?.originalPostData &&
+            post?.originalPostData?.originalPostData &&
+            post.originalPostData?.originalPostData?.postId === tweetId
+          ) {
+            if (!pages.includes(category)) pages.push(category);
+            oldTweets.push({
+              ...post,
+              originalPostData: {
+                ...post.originalPostData,
+                originalPostData: {
+                  ...post.originalPostData.originalPostData,
+                  isDeleted: true,
+                },
+              },
+            });
+          }
+        }
+      })
+    );
+    return { oldTweets, pages };
   } catch (e) {
     return { oldTweets: undefined, pages };
   }
@@ -464,6 +615,7 @@ export function useOptimisticTweet() {
   const path = usePathname();
   const isHome = path?.startsWith('/home');
   const isInterest = path?.startsWith('/explore/');
+  const { setBlockedFlag } = useActions();
   const isProfile = path?.startsWith(`/${username}`);
   const interest = useInterest();
   const router = useRouter();
@@ -487,7 +639,7 @@ export function useOptimisticTweet() {
           if (!old) return old;
           return {
             ...old,
-            data: updateTweet(type, old.data, userId),
+            data: [updateTweet(type, old.data[0], userId)],
           };
         }
       );
@@ -529,6 +681,7 @@ export function useOptimisticTweet() {
       queryKeys.pop();
       queryKeys.pop();
       queryKeys.pop();
+      setBlockedFlag(true);
     } else {
       queryKeys = queryKeys.filter(
         (key) => JSON.stringify(key) !== JSON.stringify(currentKey)
@@ -601,6 +754,22 @@ export function useOptimisticTweet() {
             oldTweets,
             type
           );
+          if (type === OPTIMISTIC_TYPES.DELETE) {
+            const { oldTweets: deletedOriginal, pages: deletedPages } =
+              handleDeleteInterestsTweets(timelineFeed, tweetId);
+            const newTweets: TimelineFeed[] = [];
+            if (deletedOriginal) {
+              deletedOriginal.forEach((tweet) => {
+                newTweets.push(updateTweet(type, tweet, userId, tweetId));
+              });
+              timelineFeed = updateTweetPersonalizedInterestsData(
+                timelineFeed,
+                deletedPages,
+                newTweets,
+                OPTIMISTIC_TYPES.LIKE
+              );
+            }
+          }
         } else {
           const newTweets: TimelineFeed[] = [];
           oldTweets.forEach((tweet) => {
@@ -638,11 +807,7 @@ export function useOptimisticTweet() {
           timelineFeed
         );
 
-        if (
-          type === OPTIMISTIC_TYPES.BLOCK ||
-          type === OPTIMISTIC_TYPES.MUTE ||
-          type === OPTIMISTIC_TYPES.DELETE
-        ) {
+        if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
           if (
             currentTweet &&
             (currentTweet.userId === userId ||
@@ -690,6 +855,23 @@ export function useOptimisticTweet() {
             oldTweets,
             type
           );
+
+          if (type === OPTIMISTIC_TYPES.DELETE) {
+            const { oldTweets: deletedOriginal, pages: deletedPages } =
+              handleDeleteTweets(timelineFeed, tweetId);
+            const newTweets: TimelineFeed[] = [];
+            if (deletedOriginal) {
+              deletedOriginal.forEach((tweet) => {
+                newTweets.push(updateTweet(type, tweet, userId, tweetId));
+              });
+              timelineFeed = updateTweetInInfiniteData(
+                timelineFeed,
+                deletedPages,
+                newTweets,
+                OPTIMISTIC_TYPES.LIKE
+              );
+            }
+          }
         } else {
           const newTweets: TimelineFeed[] = [];
           oldTweets.forEach((tweet) => {
@@ -724,11 +906,7 @@ export function useOptimisticTweet() {
 
         queryClient.setQueryData<FeedType>(queryKey, timelineFeed);
 
-        if (
-          type === OPTIMISTIC_TYPES.BLOCK ||
-          type === OPTIMISTIC_TYPES.MUTE ||
-          type === OPTIMISTIC_TYPES.DELETE
-        ) {
+        if (type === OPTIMISTIC_TYPES.BLOCK || type === OPTIMISTIC_TYPES.MUTE) {
           if (
             currentTweet &&
             (currentTweet.userId === userId ||
