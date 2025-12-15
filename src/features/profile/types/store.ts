@@ -14,5 +14,6 @@ export interface ProfileStore {
   clearProfile: () => void;
   actions: {
     selectTab: (tab: string) => void;
+    setBlockedFlag: (flag: boolean) => void;
   };
 }

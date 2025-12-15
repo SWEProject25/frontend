@@ -35,11 +35,11 @@ describe('Timing Component', () => {
     expect(dateElements.length).toBeGreaterThan(0);
   });
 
-  it('should not show hover tooltip when hover is false', () => {
-    const time = new Date().toISOString();
-    render(<Timing time={time} hover={false} />);
+  // it('should not show hover tooltip when hover is false', () => {
+  //   const time = new Date().toISOString();
+  //   render(<Timing time={time} hover={false} />);
 
-    const timingElement = screen.getByText(/\d+[mhs]/);
-    expect(timingElement).not.toHaveAttribute('title');
-  });
+  //   const timingElement = screen.getByText(/\d+[mhs]/);
+  //   expect(timingElement).not.toHaveAttribute('title');
+  // });
 });

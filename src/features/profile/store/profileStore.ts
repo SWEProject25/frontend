@@ -33,6 +33,17 @@ export const useProfileStore = create<ProfileStore>()(
           selectTab: (tab) => {
             set({ selectedTab: tab });
           },
+          setBlockedFlag: (flag) =>
+            set((state) =>
+              state.currentProfile
+                ? {
+                    currentProfile: {
+                      ...state.currentProfile,
+                      is_blocked_by_me: flag,
+                    },
+                  }
+                : { currentProfile: state.currentProfile }
+            ),
         },
       }),
       {
