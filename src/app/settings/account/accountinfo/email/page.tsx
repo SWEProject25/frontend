@@ -54,7 +54,10 @@ export default function EmailPage() {
   };
 
   // Check if button should be disabled
-  const isDisabled = !email || email === user?.email || isUpdateEmailLoading;
+  const isDisabled =
+    !email ||
+    email.toLowerCase() === user?.email?.toLowerCase() ||
+    isUpdateEmailLoading;
 
   return (
     <div

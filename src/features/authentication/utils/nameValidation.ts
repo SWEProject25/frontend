@@ -21,6 +21,12 @@ export const NAME_REGEX = /^[^\s].{1,48}[^\s]$/;
  */
 export const ASCII_ONLY_REGEX = /^[\u0020-\u007E]+$/;
 
+/**
+ * No numbers regex for name validation
+ * Prevents digits 0-9 in names
+ */
+export const NO_NUMBERS_REGEX = /^[^0-9]*$/;
+
 // ============================================================================
 // VALIDATION FUNCTIONS
 // ============================================================================
@@ -43,6 +49,11 @@ export function validateName(value: string): string | undefined {
   // Check for ASCII characters only (no emojis or Unicode)
   if (!ASCII_ONLY_REGEX.test(value)) {
     return 'Name must contain only ASCII characters (no emojis or special Unicode symbols).';
+  }
+
+  // Check for numbers
+  if (!NO_NUMBERS_REGEX.test(value)) {
+    return 'Name cannot contain numbers.';
   }
 
   // Check length and format
@@ -73,6 +84,7 @@ export const NAME_ERROR_MESSAGES = {
     "Name must be between 3 and 50 characters and can't start or end with spaces.",
   ASCII_ONLY:
     'Name must contain only ASCII characters (no emojis or special Unicode symbols).',
+  NO_NUMBERS: 'Name cannot contain numbers.',
   REQUIRED: 'Name is required',
 } as const;
 

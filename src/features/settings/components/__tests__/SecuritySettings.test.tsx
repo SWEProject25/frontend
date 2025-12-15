@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import SecuritySettings from '../components/SecuritySettings';
+import SecuritySettings from '../SecuritySettings';
 
 describe('SecuritySettings', () => {
   it('should render security settings component', () => {

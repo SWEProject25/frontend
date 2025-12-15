@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import NotificationSettings from '../components/NotificationSettings';
+import NotificationSettings from '../NotificationSettings';
 
 describe('NotificationSettings', () => {
   it('should render notification settings component', () => {

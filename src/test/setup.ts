@@ -15,6 +15,17 @@ process.env.NEXT_PUBLIC_AUTH_REGISTER_REDIRECT = '/';
 global.URL.createObjectURL = vi.fn(() => 'mock-url');
 global.URL.revokeObjectURL = vi.fn();
 
+// Mock IntersectionObserver for infinite scroll tests
+global.IntersectionObserver = class IntersectionObserver {
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  takeRecords() {
+    return [];
+  }
+  unobserve() {}
+} as any;
+
 // Start MSW server before all tests
 beforeAll(() => server.listen());
 
