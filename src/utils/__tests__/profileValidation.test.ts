@@ -12,7 +12,6 @@ describe('profileValidation', () => {
     it('should accept valid names', () => {
       expect(validateDisplayName('John Doe')).toEqual({ isValid: true });
       expect(validateDisplayName('Alice Smith')).toEqual({ isValid: true });
-      expect(validateDisplayName('Test User 123')).toEqual({ isValid: true });
     });
 
     it('should reject empty name', () => {
@@ -43,20 +42,28 @@ describe('profileValidation', () => {
       const result = validateDisplayName('😀😁😂');
       expect(result.isValid).toBe(false);
       expect(result.error).toBe(
-        'Name must contain at least one letter or number'
+        'Name should only contain letters (from any language), accent marks, spaces, hyphens, or apostrophes'
       );
     });
 
-    it('should accept name with emojis and alphanumeric characters', () => {
-      expect(validateDisplayName('John 😀')).toEqual({ isValid: true });
+    it('should reject name with emojis and alphanumeric characters', () => {
+      expect(validateDisplayName('John 😀')).toEqual({
+        isValid: false,
+        error:
+          'Name should only contain letters (from any language), accent marks, spaces, hyphens, or apostrophes',
+      });
     });
 
     it('should trim whitespace before validation', () => {
       expect(validateDisplayName('  John Doe  ')).toEqual({ isValid: true });
     });
 
-    it('should accept name at minimum length (5 chars)', () => {
-      expect(validateDisplayName('John5')).toEqual({ isValid: true });
+    it('should reject name with numbers', () => {
+      expect(validateDisplayName('John5')).toEqual({
+        isValid: false,
+        error:
+          'Name should only contain letters (from any language), accent marks, spaces, hyphens, or apostrophes',
+      });
     });
 
     it('should accept name at maximum length (30 chars)', () => {
