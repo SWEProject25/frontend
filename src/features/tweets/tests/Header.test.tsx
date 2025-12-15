@@ -6,6 +6,9 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({
     back: vi.fn(),
   }),
+  useSearchParams: () => ({
+    get: vi.fn(() => null),
+  }),
 }));
 
 describe('Header Component', () => {

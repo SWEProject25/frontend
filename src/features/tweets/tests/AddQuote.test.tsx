@@ -36,19 +36,24 @@ vi.mock('../store/tweetStore', () => ({
     }),
 }));
 
+vi.mock('@/features/timeline/store/useTimelineStore', () => ({
+  useParentId: () => 1,
+  usePostType: () => 'QUOTE',
+  useSelectedTab: () => 'for-you',
+  useShowCheckModal: () => false,
+  useActions: () => ({
+    setParentId: vi.fn(),
+    setPostType: vi.fn(),
+    setShowCheckModal: vi.fn(),
+  }),
+}));
+
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: vi.fn(),
   }),
-}));
-
-vi.mock('@/features/timeline/store/useTimelineStore', () => ({
-  useParentId: () => 1,
-  usePostType: () => 'QUOTE',
-  useActions: () => ({
-    setParentId: vi.fn(),
-    setPostType: vi.fn(),
-  }),
+  usePathname: () => '/home',
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 describe('AddQuote Component', () => {

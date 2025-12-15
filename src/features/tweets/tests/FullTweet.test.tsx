@@ -95,9 +95,12 @@ vi.mock('../store/tweetStore', () => ({
 vi.mock('@/features/timeline/store/useTimelineStore', () => ({
   useParentId: () => 1,
   usePostType: () => 'POST',
+  useSelectedTab: () => 'for-you',
+  useShowCheckModal: () => false,
   useActions: () => ({
     setParentId: vi.fn(),
     setPostType: vi.fn(),
+    setShowCheckModal: vi.fn(),
   }),
 }));
 

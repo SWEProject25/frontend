@@ -20,14 +20,10 @@ const mockProfileData = {
   },
 };
 
-const mockUseProfileByUserId = vi.fn(() => ({
-  data: { data: mockProfileData },
-  isLoading: false,
-  error: null,
-}));
+const mockUseProfileByUserId = vi.fn();
 
 vi.mock('@/features/profile/store/profileQueries', () => ({
-  useProfileByUserId: () => mockUseProfileByUserId(),
+  useProfileByUserId: (userId: number) => mockUseProfileByUserId(userId),
 }));
 
 vi.mock('@/features/profile/store/profileStore', () => ({
@@ -71,14 +67,34 @@ describe('ProfileCard Component', () => {
       },
     });
     vi.clearAllMocks();
+  });
+
+  it('should show loading state when data is loading', () => {
     mockUseProfileByUserId.mockReturnValue({
-      data: { data: mockProfileData },
-      isLoading: false,
+      data: null,
+      isLoading: true,
+      isError: false,
       error: null,
     });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ProfileCard userId={1} />
+      </QueryClientProvider>
+    );
+
+    const spinner = document.querySelector('.animate-spin');
+    expect(spinner).toBeInTheDocument();
   });
 
   it('should render profile card with user data', () => {
+    mockUseProfileByUserId.mockReturnValue({
+      data: { data: mockProfileData },
+      isLoading: false,
+      isError: false,
+      error: null,
+    });
+
     render(
       <QueryClientProvider client={queryClient}>
         <ProfileCard userId={1} />
@@ -91,29 +107,49 @@ describe('ProfileCard Component', () => {
   });
 
   it('should display follower and following counts', () => {
+    mockUseProfileByUserId.mockReturnValue({
+      data: { data: mockProfileData },
+      isLoading: false,
+      isError: false,
+      error: null,
+    });
+
     render(
       <QueryClientProvider client={queryClient}>
         <ProfileCard userId={1} />
       </QueryClientProvider>
     );
 
-    expect(screen.getByText(/100/)).toBeInTheDocument(); // followers
-    expect(screen.getByText(/50/)).toBeInTheDocument(); // following
+    expect(screen.getByText(/100/)).toBeInTheDocument();
+    expect(screen.getByText(/50/)).toBeInTheDocument();
   });
 
   it('should show verified badge for verified users', () => {
+    mockUseProfileByUserId.mockReturnValue({
+      data: { data: mockProfileData },
+      isLoading: false,
+      isError: false,
+      error: null,
+    });
+
     render(
       <QueryClientProvider client={queryClient}>
         <ProfileCard userId={1} />
       </QueryClientProvider>
     );
 
-    // Check for verified badge SVG or icon
     const verifiedIcon = document.querySelector('svg[viewBox="0 0 24 24"]');
     expect(verifiedIcon).toBeInTheDocument();
   });
 
   it('should render follow button', () => {
+    mockUseProfileByUserId.mockReturnValue({
+      data: { data: mockProfileData },
+      isLoading: false,
+      isError: false,
+      error: null,
+    });
+
     render(
       <QueryClientProvider client={queryClient}>
         <ProfileCard userId={1} />
@@ -123,22 +159,4 @@ describe('ProfileCard Component', () => {
     const followButton = screen.getByRole('button', { name: /follow/i });
     expect(followButton).toBeInTheDocument();
   });
-
-  // it('should show loading state', () => {
-  //   mockUseProfileByUserId.mockReturnValue({
-  //     data: { data: null },
-  //     isLoading: true,
-  //     error: null,
-  //   });
-
-  //   render(
-  //     <QueryClientProvider client={queryClient}>
-  //       <ProfileCard userId={1} />
-  //     </QueryClientProvider>
-  //   );
-
-  //   // Check for loading spinner
-  //   const spinner = document.querySelector('.animate-spin');
-  //   expect(spinner).toBeInTheDocument();
-  // });
 });

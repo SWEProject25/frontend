@@ -60,9 +60,12 @@ vi.mock('@/features/authentication/store/authStore', () => ({
 vi.mock('@/features/timeline/store/useTimelineStore', () => ({
   useParentId: () => 1,
   usePostType: () => 'REPLY',
+  useSelectedTab: () => 'for-you',
+  useShowCheckModal: () => false,
   useActions: () => ({
     setParentId: vi.fn(),
     setPostType: vi.fn(),
+    setShowCheckModal: vi.fn(),
   }),
 }));
 

@@ -7,6 +7,8 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: vi.fn(),
   }),
+  usePathname: () => '/home',
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 vi.mock('@/features/authentication/hooks', () => ({
@@ -53,6 +55,17 @@ vi.mock('../store/tweetStore', () => ({
       setSummaryOpened: vi.fn(),
       setSummaryTweet: vi.fn(),
     }),
+}));
+
+vi.mock('@/features/timeline/store/useTimelineStore', () => ({
+  useParentId: () => 1,
+  usePostType: () => 'POST',
+  useSelectedTab: () => 'for-you',
+  useShowCheckModal: () => false,
+  useActions: () => ({
+    setParentId: vi.fn(),
+    setPostType: vi.fn(),
+  }),
 }));
 
 const mockTweetData = {

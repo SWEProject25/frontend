@@ -17,6 +17,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('@/features/timeline/store/useTimelineStore', () => ({
+  useShowCheckModal: () => false,
   useActions: () => ({
     setParentId: vi.fn(),
     setPostType: vi.fn(),
