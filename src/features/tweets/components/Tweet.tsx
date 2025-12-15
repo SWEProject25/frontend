@@ -198,14 +198,14 @@ export default function Tweet({
   const handleDropdownAction = async (key: string) => {
     switch (key) {
       case 'follow':
-        if (data.isFollowedByMe) {
+        if (dataViewd.isFollowedByMe) {
           await unfollowUser(dataViewd.userId);
         } else {
           await followUser(dataViewd.userId);
         }
         break;
       case 'mute':
-        if (data.isMutedByMe) {
+        if (dataViewd.isMutedByMe) {
           await unmuteUser(dataViewd.userId);
         } else {
           await muteUser(dataViewd.userId);
