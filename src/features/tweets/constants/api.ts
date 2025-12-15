@@ -24,5 +24,5 @@ export const TWEET_ENDPOINTS = {
 
 export const TWEET_CONSTANTS = {
   DEFAULT_PAGE: 1,
-  DEFAULT_LIMIT: 2,
+  DEFAULT_LIMIT: 10,
 } as const;

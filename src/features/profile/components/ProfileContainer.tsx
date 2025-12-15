@@ -1,4 +1,5 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 import Cover from '@/components/generic/Cover';
 import Avatar from '@/components/generic/Avatar';
 import ActionsPanel from './ActionsPanel';
@@ -6,6 +7,7 @@ import UserInfo from './UserInfo';
 import Description from './Description';
 import UserDetails from './UserDetails';
 import FollowStats from './FollowStats';
+import ImageModal from '@/components/generic/ImageModal';
 import { UserProfile } from '../types/api';
 
 interface ProfileContainerProps {
@@ -14,6 +16,11 @@ interface ProfileContainerProps {
 }
 
 const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalImageType, setModalImageType] = useState<'profile' | 'banner'>(
+    'profile'
+  );
+
   const userData = {
     name: profileData.name,
     userId: profileData.User.id,
@@ -30,16 +37,47 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
     website: profileData.website,
     birthDate: profileData.birth_date,
   };
+
+  const openModal = (type: 'profile' | 'banner') => {
+    setModalImageType(type);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsModalOpen(false);
+  };
+
+  const getModalMedia = () => {
+    if (modalImageType === 'profile' && profileData.profile_image_url) {
+      return [{ url: profileData.profile_image_url, type: 'image' }];
+    }
+    if (modalImageType === 'banner' && profileData.banner_image_url) {
+      return [{ url: profileData.banner_image_url, type: 'image' }];
+    }
+    return [];
+  };
+
   return (
     <div
       className="flex flex-col w-full mx-auto relative"
       data-testid="profile-container"
     >
-      <Cover
-        coverImage={profileData.banner_image_url || ''}
-        data-testid="profile-cover"
-      />
-      <div className="absolute left-3 sm:left-4 top-[76px] sm:top-[134px] z-10">
+      <div
+        onClick={() => profileData.banner_image_url && openModal('banner')}
+        className={
+          profileData.banner_image_url ? 'cursor-pointer' : 'cursor-default'
+        }
+      >
+        <Cover
+          coverImage={profileData.banner_image_url || ''}
+          data-testid="profile-cover"
+        />
+      </div>
+      <div
+        className="absolute left-3 sm:left-4 top-[76px] sm:top-[134px] z-10"
+        onClick={() => profileData.profile_image_url && openModal('profile')}
+      >
         <Avatar
           data-testid="profile-avatar"
           avatarImage={profileData.profile_image_url}
@@ -69,6 +107,16 @@ const ProfileContainer = ({ profileData, isMine }: ProfileContainerProps) => {
           isMine={isMine}
         />
       </div>
+
+      {/* Image Modal */}
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        media={getModalMedia()}
+        currentIndex={0}
+        showNavigation={false}
+        showCounter={false}
+      />
     </div>
   );
 };

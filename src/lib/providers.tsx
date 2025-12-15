@@ -1,13 +1,21 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { defaultQueryOptions } from './config/query';
 import AuthInit from './AuthInit';
 import XLoader from '@/components/ui/XLoader';
 import { OnboardingFlow } from '@/features/onboarding';
 import { NotificationProvider } from '@/features/notifications/components';
+import { initSocket } from '@/features/messages/services/socket';
 
+function SocketProvider({ children }: { children: React.ReactNode }) {
+  useEffect(function () {
+    const socket = initSocket();
+    if (socket) console.log('Socket initialized at app level');
+  }, []);
+  return <>{children}</>;
+}
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
@@ -24,13 +32,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
       {!authResolved ? (
         <XLoader />
       ) : (
-        <>
+        <SocketProvider>
           {children}
           {/* Onboarding flow - shows modals when user needs to complete onboarding steps */}
           <OnboardingFlow />
           {/* Notification provider - handles real-time Firebase notifications */}
           <NotificationProvider />
-        </>
+        </SocketProvider>
       )}
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>

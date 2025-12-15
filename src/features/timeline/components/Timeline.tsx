@@ -83,14 +83,14 @@ export default function Timeline() {
             if (!interval.current)
               interval.current = setTimeout(
                 () => setFetchAvatars(true),
-                3000 * 60
+                1000 * 60
               );
           }
         });
       }
       const observer = new IntersectionObserver(handleIntersection, {
         root: null,
-        rootMargin: `${2000}px`,
+        rootMargin: `1000px`,
         threshold: 0,
       });
       observer.observe(element);
@@ -110,7 +110,7 @@ export default function Timeline() {
         data-testid="timeline-content"
       >
         <div ref={topRef}>
-          <AddTweet type={ADD_TWEET.POST} />
+          <AddTweet type={ADD_TWEET.POST} persistent={true} />
         </div>
         {/* <ShowTweets /> */}
         {/* <TweetFeed /> */}

@@ -14,6 +14,9 @@ export function useOTPStep(email: string) {
       const otpData: SendOTPDto = { email };
       await sendOTP(otpData);
       setIsOTPSent(true);
+    } catch (error) {
+      // Silently handle error - component can check isOTPSent state
+      console.error('Failed to send OTP:', error);
     } finally {
       setIsSendingOTP(false);
     }
@@ -25,6 +28,9 @@ export function useOTPStep(email: string) {
       const resendData: ResendOTPDto = { email };
       await resendOTP(resendData);
       setIsOTPSent(true);
+    } catch (error) {
+      // Silently handle error - component can check isOTPSent state
+      console.error('Failed to resend OTP:', error);
     } finally {
       setIsSendingOTP(false);
     }

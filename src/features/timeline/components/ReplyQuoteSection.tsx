@@ -1,6 +1,9 @@
 'use client';
 
-import { MAX_ALLOWABLE_TWEET_LENGTH } from '@/features/timeline/constants/tweetConstants';
+import {
+  ADD_TWEET,
+  MAX_ALLOWABLE_TWEET_LENGTH,
+} from '@/features/timeline/constants/tweetConstants';
 import { useAddTweet } from '../hooks/timelineQueries';
 import { LOCAL_MEDIA } from '@/features/media/constants/mediaConstants';
 import { TweetFormDataKeys } from '../types/api';
@@ -16,7 +19,7 @@ export default function ReplyQuoteSections({ label }: { label: string }) {
   const mentions = selectors.useMentions();
   const parentId = useParentId();
   console.log(parentId);
-  const mutate = useAddTweet();
+  const mutate = useAddTweet(label);
 
   const enableAddTweet =
     tweetText.trim().length !== 0
@@ -61,7 +64,7 @@ export default function ReplyQuoteSections({ label }: { label: string }) {
       handleAddTweet={handleAddTweet}
       enableAddTweet={enableAddTweet}
       enableSection={enableSection}
-      label={label}
+      label={label === ADD_TWEET.QUOTE ? 'Post' : 'Reply'}
     />
   );
 }

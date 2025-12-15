@@ -28,7 +28,8 @@ export default function Tweets() {
           data-testid={`${tweet.postId}${tweet.userId}${tweet.isRepost ? 1 : 0}${tweet.isQuote ? 1 : 0}`}
           data={tweet}
           inProfile={!isMine}
-          key={ind}
+          key={`${tweet.isRepost ? (tweet.originalPostData ? tweet.originalPostData.postId : tweet.postId) : tweet.postId}${tweet.userId}${tweet.isRepost ? 1 : 0}${tweet.date}`}
+          // key={i * 10 + ind}
         />
       ))}
     </React.Fragment>

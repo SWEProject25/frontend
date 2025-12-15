@@ -1,7 +1,22 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ProfileContainer from '../ProfileContainer';
+
+// Mock ImageModal
+vi.mock('@/components/generic/ImageModal', () => ({
+  default: ({ isOpen, media }: any) =>
+    isOpen ? (
+      <div data-testid="image-modal">
+        {media.map((m: any, i: number) => (
+          <div key={i} data-testid={`modal-media-${i}`}>
+            {m.url}
+          </div>
+        ))}
+      </div>
+    ) : null,
+}));
 
 // Mock child components
 vi.mock('../UserInfo', () => ({
@@ -117,5 +132,75 @@ describe('ProfileContainer', () => {
     const ownProfileProps = { ...defaultProps, isMine: true };
     render(<ProfileContainer {...ownProfileProps} />, { wrapper });
     expect(screen.getByTestId('profile-container')).toBeInTheDocument();
+  });
+
+  it('should open modal when clicking on banner image', async () => {
+    const user = userEvent.setup();
+    render(<ProfileContainer {...defaultProps} />, { wrapper });
+
+    const coverContainer = screen
+      .getByTestId('cover')
+      .closest('.cursor-pointer');
+    expect(coverContainer).toBeInTheDocument();
+
+    await user.click(coverContainer!);
+
+    const modal = screen.getByTestId('image-modal');
+    expect(modal).toBeInTheDocument();
+    expect(
+      screen.getByText(defaultProps.profileData.banner_image_url!)
+    ).toBeInTheDocument();
+  });
+
+  it('should open modal when clicking on profile avatar', async () => {
+    const user = userEvent.setup();
+    render(<ProfileContainer {...defaultProps} />, { wrapper });
+
+    const avatarContainer = screen.getByTestId('avatar').closest('div');
+    await user.click(avatarContainer!);
+
+    const modal = screen.getByTestId('image-modal');
+    expect(modal).toBeInTheDocument();
+    expect(
+      screen.getByText(defaultProps.profileData.profile_image_url!)
+    ).toBeInTheDocument();
+  });
+
+  it('should not open modal when banner image is null', async () => {
+    const user = userEvent.setup();
+    const propsWithoutBanner = {
+      ...defaultProps,
+      profileData: {
+        ...defaultProps.profileData,
+        banner_image_url: null,
+      },
+    };
+    render(<ProfileContainer {...propsWithoutBanner} />, { wrapper });
+
+    const coverContainer = screen
+      .getByTestId('cover')
+      .closest('.cursor-default');
+    expect(coverContainer).toBeInTheDocument();
+
+    await user.click(coverContainer!);
+
+    expect(screen.queryByTestId('image-modal')).not.toBeInTheDocument();
+  });
+
+  it('should not open modal when profile image is null', async () => {
+    const user = userEvent.setup();
+    const propsWithoutAvatar = {
+      ...defaultProps,
+      profileData: {
+        ...defaultProps.profileData,
+        profile_image_url: null,
+      },
+    };
+    render(<ProfileContainer {...propsWithoutAvatar} />, { wrapper });
+
+    const avatarContainer = screen.getByTestId('avatar').closest('div');
+    await user.click(avatarContainer!);
+
+    expect(screen.queryByTestId('image-modal')).not.toBeInTheDocument();
   });
 });

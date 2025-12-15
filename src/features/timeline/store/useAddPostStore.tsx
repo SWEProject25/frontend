@@ -9,7 +9,7 @@ import {
   LOCAL_MEDIA,
 } from '@/features/media/constants/mediaConstants';
 
-interface AddPostState {
+export interface AddPostState {
   tweetText: string;
   isSending: boolean;
   error: string;

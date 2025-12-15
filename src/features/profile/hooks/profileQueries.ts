@@ -329,7 +329,7 @@ export const useProfileByUsername = (
   username: string,
   enabled: boolean = true
 ) => {
-  const { setCurrentProfile, setLoading, setError } = useProfileStore();
+  const { setLoading, setError } = useProfileStore();
 
   return useQuery<ProfileResponseDto, Error>({
     queryKey: PROFILE_QUERY_KEYS.profileByUsername(username),
@@ -393,6 +393,7 @@ export const useProfileFeed = () => {
   console.log(profile?.User.id);
   mockState.user = profile;
   const profilePosts = useProfilePosts();
+  console.log(profilePosts.data);
   const profileMentionPosts = useProfileMention();
   const profileLikesPosts = useProfilelikes();
   const profileRepliesPosts = useProfileReplies();
@@ -520,6 +521,7 @@ const useProfilelikes = () => {
     initialPageParam: 1,
     getNextPageParam: (lastPage, pages) =>
       lastPage.data.posts.length ? pages.length + 1 : undefined,
+    // refetchOnMount: 'always',
     // staleTime: 0,
   });
 };

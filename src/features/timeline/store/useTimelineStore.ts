@@ -18,6 +18,8 @@ interface TimelineState {
   parentId: number;
   postType: string;
   popUpAvatars: { avatar: string | null; name: string }[];
+  showCheckModal: boolean;
+  visibleTweets: TimelineFeed[];
   actions: {
     selectTab: (value: string) => void;
     setSearchUser: (user: string) => void;
@@ -30,6 +32,9 @@ interface TimelineState {
     setTabsScroll: (scroll: number[]) => void;
     setParentId: (id: number) => void;
     setPostType: (type: string) => void;
+    addVisibleTweet: (tweet: TimelineFeed) => void;
+    removeVisibleTweet: (tweet: TimelineFeed) => void;
+    setShowCheckModal: (show: boolean) => void;
   };
 }
 const useTimelineStore = create<TimelineState>()(
@@ -43,7 +48,8 @@ const useTimelineStore = create<TimelineState>()(
     tabsScroll: [0, 0],
     parentId: -1,
     postType: ADD_TWEET.POST,
-
+    visibleTweets: [],
+    showCheckModal: true,
     actions: {
       selectTab: (value) => set({ selectedTab: value }),
       setSearchUser: (user) => set({ searchUser: user }),
@@ -54,6 +60,34 @@ const useTimelineStore = create<TimelineState>()(
       setTabsScroll: (scroll) => set({ tabsScroll: scroll }),
       setParentId: (id) => set({ parentId: id }),
       setPostType: (type) => set({ postType: type }),
+      addVisibleTweet: (tweet) =>
+        set((state) => ({
+          visibleTweets: [...state.visibleTweets, tweet],
+        })),
+
+      // removeVisibleTweet: (tweet) =>
+      //   set((state) => {
+      //     const newTweets = state.visibleTweets.filter(
+      //       (t) => t.postId === tweet.postId
+      //     );
+
+      //     return { visibleTweets: newTweets };
+      //   }),
+      removeVisibleTweet: (tweet) =>
+        set((state) => {
+          const newTweets = state.visibleTweets.filter((t) => {
+            if (t.isRepost && t.originalPostData && tweet.originalPostData) {
+              return (
+                t.originalPostData.postId === tweet.originalPostData?.postId &&
+                t.userId === tweet.userId
+              );
+            }
+            return t.postId === tweet.postId;
+          });
+
+          return { visibleTweets: newTweets };
+        }),
+      setShowCheckModal: (show) => set({ showCheckModal: show }),
     },
   }))
 );
@@ -92,3 +126,5 @@ export const useTabsScroll = () =>
   useTimelineStore((state) => state.tabsScroll);
 export const useParentId = () => useTimelineStore((state) => state.parentId);
 export const usePostType = () => useTimelineStore((state) => state.postType);
+export const useShowCheckModal = () =>
+  useTimelineStore((state) => state.showCheckModal);

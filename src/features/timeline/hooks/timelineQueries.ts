@@ -25,11 +25,18 @@ import {
   useSelectedTab,
 } from '../store/useTimelineStore';
 import { FOLLOWING_TAB } from '../constants/menuName';
-import { TIMELINE_ENDPOINTS } from '../constants/api';
+import { OPTIMISTIC_TYPES, TIMELINE_ENDPOINTS } from '../constants/api';
 import { useAuth } from '@/features/authentication/hooks';
 import { Search } from 'lucide-react';
-import { profileApi, ProfileResponseDto } from '@/features/profile';
+import {
+  PROFILE_QUERY_KEYS,
+  profileApi,
+  ProfileResponseDto,
+} from '@/features/profile';
 import { useAddPostContext } from '../store/AddPostContext';
+import { useOptimisticTweet } from '../optimistics/Tweets';
+import { ADD_TWEET } from '../constants/tweetConstants';
+import useDebounce from './useDebounce';
 export const TIMELINE_QUERY_KEYS = {
   ADD_TWEET: ['tweet'] as const,
   TIMELINE_FEED_FOR_YOU: ['timeline', 'forYou'] as const,
@@ -40,13 +47,14 @@ export const TIMELINE_QUERY_KEYS = {
   HASHTAG_SEARCH: (hashtag: string) => ['hashtag', hashtag] as const,
   VALID_USER: (username: string) => ['mention', username] as const,
 };
-export const useAddTweet = () => {
+export const useAddTweet = (label: string) => {
   const selectors = useAddPostContext();
+  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
   const { onSuccess, startSending, seterror, clearMedia, clearEmoji } =
     selectors.useActions();
   const queryClient = useQueryClient();
-  const user = useAuth().user;
+  const user = useAuth().user?.id;
   return useMutation<AddTweetResponse, Error, FormData>({
     mutationFn: async (tweetData) => {
       try {
@@ -66,13 +74,41 @@ export const useAddTweet = () => {
         throw error;
       }
     },
-    onSuccess: (data) => {
-      // queryClient.invalidateQueries({ queryKey: [''] });
+    onSuccess: async (data) => {
+      // // queryClient.invalidateQueries({ queryKey: [''] });
+      // if (label === ADD_TWEET.QUOTE) {
+      //   onMutate(
+      //     OPTIMISTIC_TYPES.Quote,
+      //     data.data.originalPostData?.userId ?? data.data.userId,
+      //     data.data.originalPostData?.postId,
+      //     data.data.originalPostData?.type,
+      //     data.data.originalPostData?.parentId
+      //   );
+      // }
+      console.log('app', user, label);
+
+      if (user && label !== ADD_TWEET.REPLY) {
+        console.log('quote');
+        await queryClient.refetchQueries({
+          queryKey: PROFILE_QUERY_KEYS.profilePosts(user),
+        });
+      }
+      if (user && label === ADD_TWEET.REPLY) {
+        await queryClient.refetchQueries({
+          queryKey: PROFILE_QUERY_KEYS.profileReplies(user),
+        });
+      }
+      if (user) {
+        await queryClient.refetchQueries({
+          queryKey: PROFILE_QUERY_KEYS.profileMedia(user),
+        });
+      }
       onSuccess();
       clearMedia();
       clearEmoji();
       const newTweet: TimelineFeed = {
         ...data.data,
+        flagReply: label === ADD_TWEET.REPLY,
         // originalPostData: undefined,
       };
       toasterMessage(
@@ -167,7 +203,7 @@ export const useTimelineFeed = () => {
       lastPage.data.posts.length ? pages.length + 1 : undefined,
     staleTime: Infinity,
     // Show loading state while refetching to avoid flash of empty content
-    refetchOnMount: 'always',
+    // refetchOnMount: 'always',
   });
 };
 export const useSearchProfile = (searchUser: string) => {
@@ -193,6 +229,8 @@ export const useSearchProfile = (searchUser: string) => {
 };
 export const useSearchHashtag = () => {
   const hashtag = useSearch().trimStart();
+  const debouncedHashtag = useDebounce(hashtag);
+
   return useInfiniteQuery<
     HashtagSearchDtoResponse,
     Error,
@@ -200,9 +238,10 @@ export const useSearchHashtag = () => {
     ReturnType<typeof TIMELINE_QUERY_KEYS.HASHTAG_SEARCH>,
     number
   >({
-    enabled: hashtag.trim() !== '',
-    queryKey: TIMELINE_QUERY_KEYS.HASHTAG_SEARCH(hashtag),
-    queryFn: ({ pageParam }) => timelineApi.searchHashtag(pageParam, hashtag),
+    enabled: debouncedHashtag.trim() !== '',
+    queryKey: TIMELINE_QUERY_KEYS.HASHTAG_SEARCH(debouncedHashtag),
+    queryFn: ({ pageParam }) =>
+      timelineApi.searchHashtag(pageParam, debouncedHashtag),
     initialPageParam: 1,
     getNextPageParam: (lastPage, pages) =>
       lastPage.data.posts.length ? pages.length + 1 : undefined,

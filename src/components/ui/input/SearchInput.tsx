@@ -17,6 +17,7 @@ export interface SearchInputProps {
   hoverColor?: string;
   spellCheck?: boolean;
   unFocus?: boolean;
+  autoComplete?: string;
 }
 
 export default function SearchInput({
@@ -33,6 +34,7 @@ export default function SearchInput({
   hoverColor = 'hover:bg-primary-hover',
   spellCheck = true,
   unFocus = false,
+  autoComplete = 'off',
 }: SearchInputProps) {
   const [internalValue, setInternalValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -91,6 +93,7 @@ export default function SearchInput({
         placeholder={placeholder}
         spellCheck={spellCheck}
         autoFocus={autoFocus}
+        autoComplete={autoComplete}
         data-testid="search-input"
         className="
           flex-1 bg-transparent

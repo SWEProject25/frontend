@@ -19,7 +19,7 @@ export default function WhoToFollow() {
     id: user.id,
     handle: `@${user.username}`,
     verified: user.isVerified,
-    isFollowed: false, // Always false - backend only returns unfollowed users
+    isFollowed: user.is_followed_by_me,
     avatarUrl: user.profile.profileImageUrl ?? undefined,
     bio: user.profile.bio ?? undefined,
   }));

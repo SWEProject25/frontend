@@ -15,6 +15,7 @@ export interface SuggestedUser {
   isVerified: boolean;
   profile: SuggestedUserProfile;
   followersCount: number;
+  is_followed_by_me: boolean;
 }
 
 export interface SuggestedUsersResponseDto {

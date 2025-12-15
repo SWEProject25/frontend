@@ -32,6 +32,7 @@ import { queries } from '@testing-library/dom';
 import { exploreApi } from '../services/exploreApi';
 import { EXPLORE_ENDPOINTS } from '../constants/api';
 import { TimelineFeedDtoResponse } from '@/features/timeline/types/api';
+import { usePathname } from 'next/navigation';
 export const EXPLORE_QUERY_KEYS = {
   EXPLORE_FEED_SEARCH_TOP: (query: string) =>
     ['explore', 'top', query] as const,
@@ -93,17 +94,6 @@ export const useExploreSearchFeed = () => {
       lastPage.data.posts.length ? pages.length + 1 : undefined,
   });
 };
-export const useExploreFeed = () => {
-  const selectedTab = useSelectedTab();
-  const postsFeed = useExplorePosts();
-  const trendingFeed = useTrendingFeed();
-
-  if (selectedTab !== FOR_YOU_TAB) {
-    return trendingFeed;
-  } else {
-    return postsFeed;
-  }
-};
 
 export const useExplorePosts = () => {
   const selectedTab = useSelectedTab();
@@ -123,6 +113,9 @@ export const useExplorePosts = () => {
 
 export const useTrendingFeed = () => {
   const selectedTab = useSelectedTab();
+  const path = usePathname();
+  const valid = path?.startsWith('/explore');
+  console.log(path, valid);
   let queryKey;
   let limit;
   switch (selectedTab) {
@@ -162,6 +155,7 @@ export const useTrendingFeed = () => {
     | typeof EXPLORE_QUERY_KEYS.EXPLORE_TRENDS_TRENDING
     | typeof EXPLORE_QUERY_KEYS.EXPLORE_TRENDS_ENTERTAINMENT
   >({
+    enabled: valid,
     queryKey: queryKey,
     queryFn: () => exploreApi.getTrendingFeed(selectedTab, limit),
   });

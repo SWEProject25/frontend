@@ -1,5 +1,5 @@
 'use client';
-import React, { use, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Content from './Content';
 import Actions from './Actions';
 import UserInfo from './UserInfo';
@@ -8,7 +8,7 @@ import Action from './Action';
 import DropDown from './DropDown';
 import Timing from './Timing';
 import { useRouter } from 'next/navigation';
-import { TimelineFeed, TimelineTweet } from '@/features/timeline/types/api';
+import { TimelineFeed } from '@/features/timeline/types/api';
 import { useTweetStore } from '../store/tweetStore';
 import { DropIcon, RetweetIcon } from '@/components/ui/icons/UIIcons';
 import { GrokIcon } from '@/components/ui/icons/BrandIcons';
@@ -18,13 +18,18 @@ import ConfirmModal from '@/components/ui/hoc/ConfirmModal';
 import Link from 'next/link';
 import { useAuth } from '@/features/authentication/hooks';
 import { useDeleteTweet, useGetTweetSummary } from '../hooks/tweetQueries';
+import useOnScreen from '@/features/timeline/hooks/useOnScreen';
+import { useRealTimeTweets } from '@/features/timeline/hooks/useRealTimeTweets';
 import toast from 'react-hot-toast';
+import { useActions } from '@/features/timeline/store/useTimelineStore';
 export default function Tweet({
   data,
   inProfile = false,
+  showBorder = true,
 }: {
   data: TimelineFeed;
   inProfile?: boolean;
+  showBorder?: boolean;
 }) {
   const myId = useAuth().user?.id;
   const myTweet = data.isRepost
@@ -63,6 +68,51 @@ export default function Tweet({
     unblockUser,
     isBlockLoading,
   } = useInteractions();
+
+  const [ref, isVisible] = useOnScreen({ threshold: 0.5 });
+  const hasJoined = useRef<number | null>(null);
+  const { addVisibleTweet, removeVisibleTweet } = useActions();
+  const { joinPost, leavePost, usePostUpdates } = useRealTimeTweets();
+  usePostUpdates(
+    isVisible ? dataViewd.postId : null,
+    data.userId,
+    dataViewd.type,
+    data.parentId
+  );
+
+  useEffect(
+    function () {
+      if (isVisible) {
+        if (hasJoined.current !== dataViewd.postId) {
+          joinPost(dataViewd.postId, (resp) => {
+            if (resp?.status === 'success') {
+              console.log('Join post response:', resp);
+              hasJoined.current = dataViewd.postId;
+            } else {
+              console.warn('Join post response:', resp);
+            }
+          });
+        } else {
+          console.log('kk', data.text);
+        }
+      } else {
+        console.log('not visible', data.text);
+        if (hasJoined.current === dataViewd.postId) {
+          console.log('not visible leave', data.text);
+
+          leavePost(dataViewd.postId, (resp) => {
+            if (resp?.status === 'success') {
+              console.log('Leave post response:', resp);
+              hasJoined.current = null;
+            } else {
+              console.warn('Leave post response:', resp);
+            }
+          });
+        }
+      }
+    },
+    [dataViewd.postId, addVisibleTweet, removeVisibleTweet, joinPost, leavePost]
+  );
 
   // const byMe = userId === dataViewd.userId;
   // const TWEET_DROPDOWN_ITEMS = getTweetDropdownItems({
@@ -221,12 +271,13 @@ export default function Tweet({
 
   return (
     <div
+      ref={ref}
       data-testid={`tweet-${dataViewd.postId}`}
       onClick={() => {
         //setCurrentTweet(data);
         router.push(`/home/${dataViewd.postId}`);
       }}
-      className={`block mx-auto w-full border-b border-gray-700 text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer p-4`}
+      className={`block mx-auto w-full ${showBorder && 'border-b border-gray-700'} text-white relative transition-colors ${!Hovered ? 'hover:bg-[#0a0a0a]' : ''} hover:cursor-pointer p-4`}
       style={{ boxSizing: 'border-box', maxWidth: '100%' }}
     >
       {/* Show reposted by if present */}
@@ -257,10 +308,23 @@ export default function Tweet({
             data-testid="tweet-header"
             style={{ maxWidth: '100%' }}
           >
-            <div className="flex items-center gap-1">
-              <UserInfo data={user} onHoverCard={setHovered} />
-              <span className="text-gray-500">.</span>
-              <Timing time={data.date} />
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1">
+                <UserInfo data={user} onHoverCard={setHovered} />
+                <span className="text-gray-500">.</span>
+                <Timing time={data.date} />
+              </div>
+              {(data?.flagReply ?? false) && (
+                <span className="text-text-inactive">
+                  Replying to
+                  <Link
+                    className="text-primary"
+                    href={`/home/${data.originalPostData?.username}`}
+                  >
+                    {`@` + data.originalPostData?.username}
+                  </Link>
+                </span>
+              )}
             </div>
             <div
               className="ml-2 flex items-center space-x-2 text-gray-500"
