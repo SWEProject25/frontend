@@ -1,8 +1,12 @@
 'use client';
-import React, { createContext, useContext, ReactNode } from 'react';
-import { use } from 'react';
-import { useProfileByUsername } from '@/features/profile/hooks';
-import { useMyProfile } from '@/features/profile/hooks';
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  use,
+  useMemo,
+} from 'react';
+import { useProfileByUsername, useMyProfile } from '@/features/profile/hooks';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import { UserProfile } from '@/features/profile/types/api';
 import Loader from '@/components/generic/Loader';
@@ -25,14 +29,14 @@ export const useProfileContext = () => {
 };
 
 interface ProfileProviderProps {
-  children: ReactNode;
-  params: Promise<{ username: string }>;
+  readonly children: ReactNode;
+  readonly params: Promise<{ username: string }>;
 }
 
 export function ProfileProvider({ children, params }: ProfileProviderProps) {
   const { username } = use(params);
   const currentUser = useAuthStore((s) => s.user);
-  const useMy = Boolean(currentUser && currentUser.username === username);
+  const useMy = Boolean(currentUser?.username === username);
 
   const myProfileQuery = useMyProfile();
   const {
@@ -48,6 +52,11 @@ export function ProfileProvider({ children, params }: ProfileProviderProps) {
   const isLoading = useMy ? myProfileQuery.isLoading : isLoadingByUsername;
 
   const error = useMy ? myProfileQuery.error : errorByUsername;
+
+  const contextValue = useMemo(
+    () => ({ profile, isLoading, error, username }),
+    [profile, isLoading, error, username]
+  );
 
   if (isLoading) {
     return (
@@ -71,7 +80,7 @@ export function ProfileProvider({ children, params }: ProfileProviderProps) {
   }
 
   return (
-    <ProfileContext.Provider value={{ profile, isLoading, error, username }}>
+    <ProfileContext.Provider value={contextValue}>
       {children}
     </ProfileContext.Provider>
   );
