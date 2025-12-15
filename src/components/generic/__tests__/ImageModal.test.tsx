@@ -128,8 +128,11 @@ describe('ImageModal Component', () => {
       />
     );
 
-    const image = screen.getByTestId('modal-image');
+    const image = screen.getByTestId('image-modal-image');
+    // The mock Image is a <div>, so check tag and attributes
+    expect(image.tagName).toBe('DIV');
     expect(image).toHaveAttribute('src', 'https://example.com/image2.jpg');
+    expect(image).toHaveAttribute('alt', 'Image 2');
   });
 
   it('should show navigation buttons when showNavigation is true and has multiple media', () => {

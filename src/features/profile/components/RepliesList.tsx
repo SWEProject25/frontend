@@ -1,6 +1,5 @@
 'use client';
 import { useProfileFeed } from '../hooks/profileQueries';
-import Tweet from '@/features/tweets/components/Tweet';
 import Loader from '@/components/generic/Loader';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import React from 'react';
