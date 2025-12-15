@@ -25,7 +25,7 @@ export default function ComposeModal({ isOpen, onClose }: ComposeModalProps) {
       showCloseButton={true}
       showLogo={false}
     >
-      <div className="pt-14 px-5">
+      <div className="pt-14 px-5 w-full h-full flex flex-col">
         <AddTweet type={ADD_TWEET.POST} />
       </div>
     </XModal>
