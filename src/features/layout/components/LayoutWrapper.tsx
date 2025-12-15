@@ -4,6 +4,7 @@ import RightSidebar from './RightSidebar';
 import MobileBottomBar from './MobileBottomBar';
 import { Toaster } from 'react-hot-toast';
 import GrokSummary from './GrokSummary';
+import MobilePostButton from './MobilePostButton';
 interface LayoutWrapperProps {
   children: React.ReactNode;
   showRightSidebar?: boolean;
@@ -29,6 +30,7 @@ export default function LayoutWrapper({
       {showMobileBottomBar && (
         <div className="sm:hidden">
           <MobileBottomBar />
+          <MobilePostButton />
         </div>
       )}
 
