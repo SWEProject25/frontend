@@ -46,7 +46,6 @@ export const TIMELINE_QUERY_KEYS = {
 };
 export const useAddTweet = (label: string) => {
   const selectors = useAddPostContext();
-  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
   const { onSuccess, startSending, seterror, clearMedia, clearEmoji } =
     selectors.useActions();
@@ -96,7 +95,6 @@ export const useAddTweet = (label: string) => {
       const newTweet: TimelineFeed = {
         ...data.data,
         flagReply: label === ADD_TWEET.REPLY,
-        // originalPostData: undefined,
       };
       toasterMessage(
         'Your post was sent.',
@@ -189,8 +187,6 @@ export const useTimelineFeed = () => {
     getNextPageParam: (lastPage, pages) =>
       lastPage.data.posts.length ? pages.length + 1 : undefined,
     staleTime: Infinity,
-    // Show loading state while refetching to avoid flash of empty content
-    // refetchOnMount: 'always',
   });
 };
 export const useSearchProfile = (searchUser: string) => {
@@ -240,7 +236,7 @@ export const useCheckValidUser = (username: string) => {
 };
 export const useAvatarsPopUp = () => {
   const selectedTab = useSelectedTab();
-  const newTweets = useNewTweets();
+
   const isPopUpVisible = useFetchAvatars();
   let queryKey,
     queryEndPoint:
@@ -262,7 +258,6 @@ export const useAvatarsPopUp = () => {
     number
   >({
     enabled: isPopUpVisible,
-    // enabled: isPopUpVisible && newTweets.length === 0,
     queryKey: queryKey,
     queryFn: ({ pageParam }) =>
       timelineApi.getTimelineFeed(pageParam, queryEndPoint, 3),

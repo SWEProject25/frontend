@@ -4,7 +4,6 @@ import Tabs from '@/components/generic/Tabs';
 import {
   useActions,
   useSearch,
-  useSearchExplore,
   useSelectedSearchTab,
 } from '../store/useExploreStore';
 import { searchTabs, TOP_TAB } from '../constants/tabs';

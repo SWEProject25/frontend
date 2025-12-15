@@ -2,7 +2,6 @@
 
 import { useSearchProfile } from '../hooks/timelineQueries';
 import React, { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import UserCard from '@/components/ui/UserCard';
 import toasterMessage from '@/components/ui/home/ToasterMessage';
 import { Loader } from '@/components/generic';
@@ -14,8 +13,7 @@ export default function Mention() {
   const mention = selectors.useMention();
   const [selectedTab, setSelectedTab] = useState(-1);
 
-  const { setMention, setIsOpen, setIsDone, setKeyDown } =
-    selectors.useActions();
+  const { setIsOpen, setIsDone, setKeyDown } = selectors.useActions();
   const currentKey = selectors.useCurrentKey();
   const isOpen = selectors.useIsOpen();
 
@@ -64,13 +62,11 @@ export default function Mention() {
         if (key === 'Enter') {
           if (selectedTab === -1) {
             if (totalProfiles && pages) {
-              //   setMention(pages[0].data[0].User.username + '');
               setIsDone(
                 pages[0].data[0].User.username + ' ' + pages[0].data[0].user_id
               );
 
               console.log(pages[0].data[0].User.username);
-              //set username with first one
             }
           } else {
             if (pages) {
@@ -81,15 +77,13 @@ export default function Mention() {
               console.log(page, index, selectedTab);
               const profile = pages[page].data[index];
               console.log(profile);
-              //   setMention(profile.User.username + '');
+
               console.log(profile.User.username + ' ' + profile.user_id);
               setIsDone(profile.User.username + ' ' + profile.user_id);
               console.log(profile.User.username);
-              // set user name with profile
             }
           }
           setIsOpen(false);
-          //   setIsDone(true);
         } else {
           if (key === 'reset') {
             setSelectedTab(-1);
@@ -124,18 +118,12 @@ export default function Mention() {
         <div
           key={profile.user_id}
           className={`flex w-full  ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3 ${selectedTab === i * group.metadata.limit + indx && 'bg-white/12'} hover:cursor-pointer hover:bg-white/12`}
-          // className={`flex w-full ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3  hover:cursor-pointer hover:bg-white/12`}
           onClick={() => {
-            // setMention(profile.User.username + '');
             console.log(profile.User.username);
             setIsOpen(false);
-            // setIsDone(true);
+
             setIsDone(profile.User.username + ' ' + profile.user_id);
           }}
-          // onKeyDown={(e: React.KeyboardEvent) => {
-          //   e.preventDefault();
-          //   handleKeyDown(e.key);
-          // }}
         >
           <UserCard
             name={profile.name}
@@ -182,8 +170,6 @@ export default function Mention() {
             hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
             hasInitialData={hasInitialData}
             noDataMessage="no such profile"
-            // noMoreDataMessage="no more profiles"
-            // showNoMoreData={false}
             noMoreDataMessage=""
           >
             {renderProfiles}

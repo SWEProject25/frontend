@@ -62,7 +62,6 @@ export default function Header() {
     setPopUpAvatars([]);
   }
 
-  //left-[calc(50%-300px)]
   return (
     <>
       <MobileSidebar

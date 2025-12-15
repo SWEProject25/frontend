@@ -4,7 +4,6 @@ import {
   REAL_TIME_TWEETS_SOCKET_EVENTS,
 } from '../constants/api';
 import { useCallback, useEffect } from 'react';
-import { useOptimisticTweet } from '../optimistics/Tweets';
 import { useRealTimeTweet } from '../optimistics/RealTimeTweet';
 
 export const useRealTimeTweets = () => {

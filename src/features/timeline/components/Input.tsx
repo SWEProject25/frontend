@@ -41,7 +41,6 @@ export default function Input({
           onChange={(e) => setValue(id, e.target.value)}
           maxLength={25}
           spellCheck={false}
-          // autoComplete="off"
           className="peer  w-full h-15 bg-transparent px-4 pt-4 text-base text-amber-50 outline-none transition-colors duration-150 border-1 border-solid border-text-inactive rounded-md focus:border-primary focus:border-3"
           aria-label={label}
         />
@@ -67,5 +66,3 @@ export default function Input({
     </div>
   );
 }
-//   peer-valid:h-[30px]  peer-valid:leading-[30px]  peer-valid:py-3   peer-valid:transform-[translate(-15px,-16px) scale(0.88]
-// absolute text-[1.6em] text-[#f0ffff]  my-5 bg-[#1c2841] ease-[0.2]

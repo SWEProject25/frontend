@@ -2,7 +2,6 @@ import React from 'react';
 import { TimelineFeed, TimelineTweet } from '../types/api';
 import { ADD_TWEET } from '../constants/tweetConstants';
 import Tweet from '@/features/tweets/components/Tweet';
-import { useTweetById } from '@/features/tweets/hooks/tweetQueries';
 import DeletedTweet from '@/features/tweets/components/DeletedTweet';
 
 export default function Reply({

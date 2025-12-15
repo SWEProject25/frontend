@@ -3,7 +3,7 @@
 import { useExplorePosts } from '../hooks/exploreQueries';
 import React from 'react';
 import Tweet from '@/features/tweets/components/Tweet';
-import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
+
 import Loader from '@/components/generic/Loader';
 import toasterMessage from '@/components/ui/home/ToasterMessage';
 import Icon from '@/components/ui/home/Icon';
@@ -33,7 +33,7 @@ export default function TweetsList() {
   const categries = Object.keys(data.data);
   const categoryPosts = data.data;
   console.log(categries, data, categoryPosts);
-  categries.forEach((category, i) => console.log(categoryPosts[category]));
+  categries.forEach((category) => console.log(categoryPosts[category]));
   const renderCategries = categries.map((category, i) => (
     <React.Fragment key={i}>
       <div

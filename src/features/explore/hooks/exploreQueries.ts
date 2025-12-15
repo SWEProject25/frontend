@@ -1,15 +1,11 @@
 import {
   InfiniteData,
   useInfiniteQuery,
-  useMutation,
   useQuery,
-  useQueryClient,
 } from '@tanstack/react-query';
 import {
-  useActions,
   useSearch,
   useSearchDate,
-  useSearchExplore,
   useSelectedInterestTab,
   useSelectedSearchTab,
   useSelectedTab,
@@ -17,7 +13,6 @@ import {
 import {
   ENTERTAINMENT_TAB,
   FOR_YOU_TAB,
-  LATEST_TAB,
   NEWS_TAB,
   SPORTS_TAB,
   TOP_TAB,
@@ -28,7 +23,6 @@ import {
   ExploreSearchFeedDtoResponse,
   ExploreTrendingFeedDtoResponse,
 } from '../types/api';
-import { queries } from '@testing-library/dom';
 import { exploreApi } from '../services/exploreApi';
 import { EXPLORE_ENDPOINTS } from '../constants/api';
 import { TimelineFeedDtoResponse } from '@/features/timeline/types/api';
@@ -56,8 +50,6 @@ export const useExploreSearchFeed = () => {
     search.trimStart().startsWith('#') &&
     !search.trimStart().includes(' ') &&
     !search.trimStart().slice(1).includes('#');
-  //   const { setSearchDate } = useActions();
-  //   if (selectedTab === LATEST_TAB) setSearchDate(new Date().toISOString());
   const type = isHash ? 'hashtag' : 'searchQuery';
   console.log(isHash);
   const queryKey:

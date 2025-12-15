@@ -37,7 +37,6 @@ export default function MediaPreview() {
           )}
           {/* Left or only image */}
           <MediaItem
-            full={media.length === 1}
             key={media[currentIndex].id}
             id={media[currentIndex].id}
             media={media[currentIndex]}
@@ -51,7 +50,6 @@ export default function MediaPreview() {
           <div className="relative">
             <MediaItem
               key={media[currentIndex + 1].id}
-              full={false}
               id={media[currentIndex + 1].id}
               media={media[currentIndex + 1]}
               onClick={() => {

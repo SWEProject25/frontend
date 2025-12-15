@@ -25,7 +25,6 @@ export default function TweetOptionsBar({
         router.replace('home', { scroll: false });
       } else {
         openGif();
-        // router.push('i/foundmedia/search', { scroll: false });
       }
     }
   };
