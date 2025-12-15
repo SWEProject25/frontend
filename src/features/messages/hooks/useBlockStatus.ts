@@ -25,11 +25,6 @@ export const useIsUserBlocked = (userId?: number) => {
   const isBlocked = useMemo(() => {
     // If there's an error, no user to check, or no data, default to false (allow messaging)
     if (isError || !userId || !blockedUsersData?.data) {
-      if (isError) {
-        console.warn(
-          'Failed to fetch blocked users, defaulting to allow messaging'
-        );
-      }
       return false;
     }
     const blocked = blockedUsersData.data.some(

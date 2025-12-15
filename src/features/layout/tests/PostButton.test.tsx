@@ -1,8 +1,83 @@
-import { describe, it, expect } from 'vitest';
-// import { render, screen } from '@/test/test-utils';
-// import PostButton from '../components/PostButton';
-it('always passes', () => {
-  expect(true).toBe(true);
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@/test/test-utils';
+import PostButton from '../components/PostButton';
+
+vi.mock('@/features/timeline/components/ComposeModal', () => ({
+  default: ({ isOpen, onClose }: any) =>
+    isOpen ? (
+      <div data-testid="compose-modal" onClick={onClose}>
+        Compose Modal
+      </div>
+    ) : null,
+}));
+
+describe('PostButton', () => {
+  it('should render a button element', () => {
+    render(<PostButton />);
+    const button = screen.getByRole('button');
+
+    expect(button).toBeInTheDocument();
+  });
+
+  it('should have correct base styling', () => {
+    render(<PostButton />);
+    const button = screen.getByRole('button');
+
+    expect(button).toHaveClass(
+      'bg-white',
+      'text-black',
+      'font-bold',
+      'rounded-full',
+      'transition-colors'
+    );
+  });
+
+  it('should render Plus icon', () => {
+    const { container } = render(<PostButton />);
+    const icon = container.querySelector('svg');
+
+    expect(icon).toBeInTheDocument();
+  });
+
+  it('should render "Post" text', () => {
+    render(<PostButton />);
+
+    expect(screen.getByText('Post')).toBeInTheDocument();
+  });
+
+  it('should open compose modal when clicked', () => {
+    render(<PostButton />);
+    const button = screen.getByRole('button');
+
+    fireEvent.click(button);
+
+    expect(screen.getByTestId('compose-modal')).toBeInTheDocument();
+  });
+
+  it('should close compose modal', () => {
+    render(<PostButton />);
+    const button = screen.getByRole('button');
+
+    fireEvent.click(button);
+    expect(screen.getByTestId('compose-modal')).toBeInTheDocument();
+
+    const modal = screen.getByTestId('compose-modal');
+    fireEvent.click(modal);
+
+    expect(screen.queryByTestId('compose-modal')).not.toBeInTheDocument();
+  });
+
+  it('should not render modal initially', () => {
+    render(<PostButton />);
+
+    expect(screen.queryByTestId('compose-modal')).not.toBeInTheDocument();
+  });
+
+  it('should have data-testid attribute', () => {
+    render(<PostButton />);
+
+    expect(screen.getByTestId('sidebar-post-button')).toBeInTheDocument();
+  });
 });
 // describe('PostButton', () => {
 //   it('should render a button element', () => {

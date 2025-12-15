@@ -1,9 +1,61 @@
 import { describe, it, expect, vi } from 'vitest';
-// import { render, screen } from '@/test/test-utils';
-// import LayoutWrapper from '../components/LayoutWrapper';
-// import LeftSidebar from '../components/LeftSidebar';
-it('always passes', () => {
-  expect(true).toBe(true);
+import { render, screen } from '@/test/test-utils';
+import LeftSidebar from '../components/LeftSidebar';
+
+vi.mock('../components/MenuItems', () => ({
+  default: () => <div data-testid="menu-items">Menu Items</div>,
+}));
+
+vi.mock('../components/ProfileSection', () => ({
+  default: () => <div data-testid="profile-section">Profile Section</div>,
+}));
+
+vi.mock('../components/PostButton', () => ({
+  default: () => <button data-testid="post-button">Post</button>,
+}));
+
+vi.mock('../components/Logo', () => ({
+  default: () => <div data-testid="logo">Logo</div>,
+}));
+
+describe('LeftSidebar', () => {
+  it('should render logo', () => {
+    render(<LeftSidebar />);
+
+    expect(screen.getByTestId('sidebar-logo')).toBeInTheDocument();
+  });
+
+  it('should render menu items', () => {
+    render(<LeftSidebar />);
+
+    expect(screen.getByTestId('menu-items')).toBeInTheDocument();
+  });
+
+  it('should render post button', () => {
+    render(<LeftSidebar />);
+
+    expect(screen.getByTestId('post-button')).toBeInTheDocument();
+  });
+
+  it('should render profile section', () => {
+    render(<LeftSidebar />);
+
+    expect(screen.getByTestId('profile-section')).toBeInTheDocument();
+  });
+
+  it('should render as aside element', () => {
+    const { container } = render(<LeftSidebar />);
+    const aside = container.querySelector('aside');
+
+    expect(aside).toBeInTheDocument();
+  });
+
+  it('should have proper layout structure', () => {
+    const { container } = render(<LeftSidebar />);
+    const aside = container.querySelector('aside');
+
+    expect(aside).toHaveClass('flex', 'flex-col');
+  });
 });
 
 // // Mock child components

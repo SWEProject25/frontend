@@ -41,10 +41,7 @@ export const useConversationUnseenSync = (conversationId: number) => {
         const count = await getConversationUnseenCount(conversationId);
         updateConversationUnseenCount(conversationId, count);
       } catch (error) {
-        console.error(
-          `Failed to fetch unseen count for conversation ${conversationId}:`,
-          error
-        );
+        // Failed to fetch unseen count
       }
     };
 
