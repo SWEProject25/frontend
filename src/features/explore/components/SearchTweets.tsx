@@ -59,7 +59,6 @@ export default function SearchTweets() {
         >
           {renderTweets}{' '}
         </div>
-        {/* <ul className="w-full">{renderTweets} </ul> */}
       </InfiniteScroll>
     </>
   );

@@ -3,15 +3,13 @@ import XModal from '@/components/ui/hoc/XModal';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-import { gifApi } from '../services/gifAPi';
-import { gifs } from '../constants/data';
 import { CATERGORIES } from '../constants/api';
 import Icon from '@/components/ui/home/Icon';
 import { SearchInput } from '@/components/ui/input';
 import { useSearchCategories, useSearchGif } from '../hooks/mediaQueries';
 import toasterMessage from '@/components/ui/home/ToasterMessage';
 import { Loader } from '@/components/generic';
-import React, { useState } from 'react';
+import React from 'react';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import GifData from '../types/components';
 import { useAddPostContext } from '@/features/timeline/store/AddPostContext';
@@ -24,7 +22,6 @@ export default function GifModal() {
   const handleClose = () => {
     close();
     setSearch('');
-    // router.back();
   };
 
   const { setSearch } = selectors.useActions();
@@ -124,8 +121,6 @@ export default function GifModal() {
                   fill
                   sizes="(min-width:640px) 50vw, 100vw"
                   className="object-cover  rounded-xl"
-                  // width={Number(gif.images.fixed_height_small.width)}
-                  // height={Number(gif.images.fixed_height_small.height)}
                 />
                 <span className=" px-2.5 font-bold text-2xl absolute bottom-5 w-3xs h-4">
                   {CATERGORIES[indx]}

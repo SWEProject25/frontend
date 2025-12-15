@@ -2,15 +2,12 @@ import Image from 'next/image';
 import { mediaType } from '../types/components';
 import { EXTERNAL_GIF, LOCAL_MEDIA } from '../constants/mediaConstants';
 import Video from './Video';
-import Icon from '@/components/ui/home/Icon';
 import { useAddPostContext } from '@/features/timeline/store/AddPostContext';
 export default function MediaItem({
-  full,
   id,
   media,
   onClick,
 }: {
-  full: boolean;
   media: mediaType;
   id: string;
   onClick: () => void;

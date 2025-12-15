@@ -13,11 +13,11 @@ import {
   usePopUpAvatars,
   useSelectedTab,
 } from '../store/useTimelineStore';
-import { InfiniteData, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { TIMELINE_QUERY_KEYS, useAvatarsPopUp } from '../hooks/timelineQueries';
 import { FOR_YOU_TAB } from '../constants/menuName';
 import { useEffect, useRef } from 'react';
-import { TimelineFeedDtoResponse } from '../types/api';
+
 import { ADD_TWEET } from '../constants/tweetConstants';
 
 export default function Timeline() {
@@ -112,8 +112,7 @@ export default function Timeline() {
         <div ref={topRef} className="sm:block hidden">
           <AddTweet type={ADD_TWEET.POST} persistent={true} />
         </div>
-        {/* <ShowTweets /> */}
-        {/* <TweetFeed /> */}
+
         <TweetList />
 
         {avatars.length > 0 && isPopUpVisible && (
@@ -153,8 +152,6 @@ export default function Timeline() {
             <span className="text-white text-base pl-0.5 "> Posted</span>
           </div>
         )}
-
-        {/* <Tweets /> */}
       </div>
     </div>
   );

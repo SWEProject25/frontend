@@ -1,6 +1,5 @@
 'use client';
 import Icon from '@/components/ui/home/Icon';
-import Search from '@/features/explore/components/SearchTweets';
 import SearchProfile from '@/features/timeline/components/SearchProfile';
 import { useRouter } from 'next/navigation';
 import React from 'react';

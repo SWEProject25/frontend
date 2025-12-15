@@ -65,14 +65,6 @@ const useTimelineStore = create<TimelineState>()(
           visibleTweets: [...state.visibleTweets, tweet],
         })),
 
-      // removeVisibleTweet: (tweet) =>
-      //   set((state) => {
-      //     const newTweets = state.visibleTweets.filter(
-      //       (t) => t.postId === tweet.postId
-      //     );
-
-      //     return { visibleTweets: newTweets };
-      //   }),
       removeVisibleTweet: (tweet) =>
         set((state) => {
           const newTweets = state.visibleTweets.filter((t) => {

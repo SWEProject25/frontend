@@ -1,5 +1,5 @@
 'use client';
-import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
+
 import { useTrendingFeed } from '../hooks/exploreQueries';
 import Trend from './Trend';
 import { Loader } from '@/components/generic';

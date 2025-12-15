@@ -134,7 +134,7 @@ function updateTweetPersonalizedInterestsData(
       (acc, category) => {
         if (!pages.includes(category)) acc[category] = data.data[category];
         else
-          acc[category] = data.data[category].filter((tweet, i) => {
+          acc[category] = data.data[category].filter((tweet) => {
             if (tweetIndx <= maxIndx) {
               const tweetId = tweet.postId ?? tweet.originalPostData?.postId;
               const newTweetId =
@@ -160,7 +160,7 @@ function updateTweetPersonalizedInterestsData(
       (acc, category) => {
         if (!pages.includes(category)) acc[category] = data.data[category];
         else
-          acc[category] = data.data[category].map((tweet, i) => {
+          acc[category] = data.data[category].map((tweet) => {
             if (tweetIndx <= maxIndx) {
               const tweetId = tweet.postId ?? tweet.originalPostData?.postId;
               const newTweetId =
@@ -185,8 +185,7 @@ function updateTweetPersonalizedInterestsData(
 function updateTweet(
   type: string,
   tweet: TimelineFeed,
-  userId: number,
-  tweetId?: number
+  userId: number
 ): TimelineFeed {
   let updatedTweet = { ...tweet };
   switch (type) {
@@ -293,11 +292,6 @@ function updateTweet(
       updatedTweet = { ...newTweet, originalPostData: originalPostData };
       return updatedTweet;
 
-    // case OPTIMISTIC_TYPES.DELETE:
-    //   let newOriginalTweet: TimelineFeed = tweet;
-    //   let neworiginalPostData: TimelineTweet | undefined =
-    //     tweet.originalPostData;
-
     case OPTIMISTIC_TYPES.BLOCK:
     case OPTIMISTIC_TYPES.MUTE:
       // happens in updateTweetInInfiniteData with shouldRemove flag
@@ -355,7 +349,7 @@ function handleOldTweets(
       default:
         return { oldTweets: undefined, pages };
     }
-  } catch (e) {
+  } catch {
     return { oldTweets: undefined, pages };
   }
 }
@@ -421,7 +415,7 @@ function handleDeleteTweets(
       })
     );
     return { oldTweets, pages };
-  } catch (e) {
+  } catch {
     return { oldTweets: undefined, pages };
   }
 }
@@ -433,7 +427,7 @@ function handleDeleteInterestsTweets(
   try {
     const oldTweets: TimelineFeed[] = [];
     Object.keys(feed.data).map((category) =>
-      feed.data[category].forEach((post, i) => {
+      feed.data[category].forEach((post) => {
         if (
           (post?.isQuote || post?.type === ADD_TWEET.REPLY) &&
           post.originalPostData
@@ -489,7 +483,7 @@ function handleDeleteInterestsTweets(
       })
     );
     return { oldTweets, pages };
-  } catch (e) {
+  } catch {
     return { oldTweets: undefined, pages };
   }
 }
@@ -546,7 +540,7 @@ function handleOldInterestsTweets(
       default:
         return { oldTweets: undefined, pages };
     }
-  } catch (e) {
+  } catch {
     return { oldTweets: undefined, pages };
   }
 }
@@ -760,7 +754,7 @@ export function useOptimisticTweet() {
             const newTweets: TimelineFeed[] = [];
             if (deletedOriginal) {
               deletedOriginal.forEach((tweet) => {
-                newTweets.push(updateTweet(type, tweet, userId, tweetId));
+                newTweets.push(updateTweet(type, tweet, userId));
               });
               timelineFeed = updateTweetPersonalizedInterestsData(
                 timelineFeed,
@@ -862,7 +856,7 @@ export function useOptimisticTweet() {
             const newTweets: TimelineFeed[] = [];
             if (deletedOriginal) {
               deletedOriginal.forEach((tweet) => {
-                newTweets.push(updateTweet(type, tweet, userId, tweetId));
+                newTweets.push(updateTweet(type, tweet, userId));
               });
               timelineFeed = updateTweetInInfiniteData(
                 timelineFeed,
