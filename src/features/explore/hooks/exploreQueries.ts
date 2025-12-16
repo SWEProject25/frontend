@@ -129,9 +129,11 @@ export const useTrendingFeed = () => {
     case FOR_YOU_TAB:
       queryKey = EXPLORE_QUERY_KEYS.EXPLORE_TRENDS_FOR_YOU;
       limit = 5;
+      break;
     default:
       queryKey = EXPLORE_QUERY_KEYS.EXPLORE_TRENDS_FOR_YOU;
       limit = 5;
+      break;
   }
 
   return useQuery<
