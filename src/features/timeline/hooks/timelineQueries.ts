@@ -18,7 +18,6 @@ import toasterMessage from '@/components/ui/home/ToasterMessage';
 
 import {
   useFetchAvatars,
-  useNewTweets,
   useSearch,
   useSelectedTab,
 } from '../store/useTimelineStore';
@@ -31,7 +30,6 @@ import {
   ProfileResponseDto,
 } from '@/features/profile';
 import { useAddPostContext } from '../store/AddPostContext';
-import { useOptimisticTweet } from '../optimistics/Tweets';
 import { ADD_TWEET } from '../constants/tweetConstants';
 import useDebounce from './useDebounce';
 export const TIMELINE_QUERY_KEYS = {
@@ -71,10 +69,7 @@ export const useAddTweet = (label: string) => {
       }
     },
     onSuccess: async (data) => {
-      console.log('app', user, label);
-
       if (user && label !== ADD_TWEET.REPLY) {
-        console.log('quote');
         await queryClient.refetchQueries({
           queryKey: PROFILE_QUERY_KEYS.profilePosts(user),
         });
@@ -262,7 +257,7 @@ export const useAvatarsPopUp = () => {
     queryFn: ({ pageParam }) =>
       timelineApi.getTimelineFeed(pageParam, queryEndPoint, 3),
     initialPageParam: 1,
-    getNextPageParam: (lastPage, pages) => undefined,
+    getNextPageParam: () => undefined,
     staleTime: 0,
   });
 };

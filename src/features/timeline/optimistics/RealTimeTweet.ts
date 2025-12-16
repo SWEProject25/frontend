@@ -287,6 +287,8 @@ export function useRealTimeTweet() {
   const isInterest = path?.startsWith('/explore/');
   const isProfile = path?.startsWith(`/${username}`);
   const interest = useInterest();
+  const isFullTweet = path?.startsWith('/home/');
+  const extractedId = isFullTweet && path ? parseInt(path.split('/')[2]) : -1;
 
   const onMutate = async (
     type: string,
@@ -302,24 +304,43 @@ export function useRealTimeTweet() {
     }[];
     oldTweet: TimelineFeed | undefined;
   }> => {
-    if (tweetId) {
+    if (extractedId !== -1 && isFullTweet) {
       queryClient.setQueryData(
-        TWEET_QUERY_KEYS.tweetById(tweetId),
+        TWEET_QUERY_KEYS.tweetById(extractedId),
         (old: any) => {
           if (!old) return old;
-          const updatedTweet = updateTweet(type, old.data[0], count);
+
+          if (
+            isFullTweet &&
+            old?.data[0]?.originalPostData?.postId === tweetId
+          ) {
+            const newOriginalData = updateTweet(
+              type,
+              old.data[0].originalPostData,
+              count
+            );
+            return {
+              ...old,
+              data: [
+                {
+                  ...old.data[0],
+                  originalPostData: newOriginalData,
+                },
+              ],
+            };
+          }
           return {
             ...old,
-            data: [updatedTweet],
+            data: [updateTweet(type, old.data[0], count)],
           };
         }
       );
     }
+
     if (type === OPTIMISTIC_TYPES.REPLY) {
       queryClient.refetchQueries({
         queryKey: TWEET_QUERY_KEYS.getRepliesByTweetId(tweetId),
       });
-      console.log('ds');
     }
 
     const tabsFeeds: {
@@ -357,7 +378,6 @@ export function useRealTimeTweet() {
       queryKeys.unshift(currentKey);
     }
 
-    console.log(queryKeys);
     for (const queryKey of queryKeys) {
       if (queryKey === EXPLORE_QUERY_KEYS.EXPLORE_FEED_FOR_YOU) {
         await optimisticsInterests(type, queryKey, tweetId, userId, count);

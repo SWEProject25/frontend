@@ -1,9 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import React from 'react';
 
+// Mock next/navigation
+const mockReplace = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: mockReplace,
+  })),
+}));
+
 // Mock AddPostContext
+const mockOpen = vi.fn();
+const mockClose = vi.fn();
 vi.mock('../store/AddPostContext', () => ({
   useAddPostContext: vi.fn(() => ({
     useMedia: () => [],
@@ -12,32 +23,54 @@ vi.mock('../store/AddPostContext', () => ({
       addMedia: vi.fn(),
       addGifs: vi.fn(),
       setEmoji: vi.fn(),
-      open: vi.fn(),
-      close: vi.fn(),
+      open: mockOpen,
+      close: mockClose,
     }),
-  })),
-}));
-
-// Mock next/navigation
-vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(() => ({
-    push: vi.fn(),
-    replace: vi.fn(),
   })),
 }));
 
 // Mock Icon
 vi.mock('@/components/ui/home/Icon', () => ({
-  default: ({ title, ...props }: any) => (
-    <button data-testid={`icon-${title}`} {...props}>
+  default: ({
+    title,
+    disabled,
+    onClick,
+    ...props
+  }: {
+    title?: string;
+    disabled?: boolean;
+    onClick?: () => void;
+  }) => (
+    <button
+      data-testid={`icon-${title}`}
+      data-disabled={disabled}
+      onClick={onClick}
+      disabled={disabled}
+      {...props}
+    >
       {title}
     </button>
   ),
 }));
 
 vi.mock('../../../components/ui/home/Icon', () => ({
-  default: ({ title, ...props }: any) => (
-    <button data-testid={`icon-${title}`} {...props}>
+  default: ({
+    title,
+    disabled,
+    onClick,
+    ...props
+  }: {
+    title?: string;
+    disabled?: boolean;
+    onClick?: () => void;
+  }) => (
+    <button
+      data-testid={`icon-${title}`}
+      data-disabled={disabled}
+      onClick={onClick}
+      disabled={disabled}
+      {...props}
+    >
       {title}
     </button>
   ),
@@ -58,6 +91,7 @@ vi.mock('@/features/media/components/Emoji', () => ({
 }));
 
 import TweetOptionsBar from '../components/TweetOptionsBar';
+import { useAddPostContext } from '../store/AddPostContext';
 
 describe('TweetOptionsBar', () => {
   beforeEach(() => {
@@ -71,7 +105,6 @@ describe('TweetOptionsBar', () => {
 
   it('should render GIF icon', () => {
     render(<TweetOptionsBar />);
-    // The icon renders with title "GIF"
     expect(screen.getByText('GIF')).toBeInTheDocument();
   });
 
@@ -85,9 +118,85 @@ describe('TweetOptionsBar', () => {
     expect(screen.getByTestId('emoji')).toBeInTheDocument();
   });
 
-  it('should hide GIF icon when showGif is false', () => {
-    render(<TweetOptionsBar showGif={false} />);
-    // When showGif is false, GIF icon should still render but may be hidden via CSS
-    expect(screen.getByTestId('tweet-options-bar')).toBeInTheDocument();
+  it('should open GIF when clicking GIF icon and not open', () => {
+    render(<TweetOptionsBar />);
+
+    fireEvent.click(screen.getByTestId('tweet-option-gif'));
+
+    expect(mockOpen).toHaveBeenCalled();
+  });
+
+  it('should close GIF and replace route when clicking GIF icon while open', () => {
+    vi.mocked(useAddPostContext).mockReturnValue({
+      useMedia: () => [],
+      useGifVisibility: () => true,
+      useActions: () => ({
+        addMedia: vi.fn(),
+        addGifs: vi.fn(),
+        setEmoji: vi.fn(),
+        open: mockOpen,
+        close: mockClose,
+      }),
+    } as ReturnType<typeof useAddPostContext>);
+
+    render(<TweetOptionsBar />);
+
+    fireEvent.click(screen.getByTestId('tweet-option-gif'));
+
+    expect(mockClose).toHaveBeenCalled();
+    expect(mockReplace).toHaveBeenCalledWith('home', { scroll: false });
+  });
+
+  it('should not open GIF when max media reached', () => {
+    vi.mocked(useAddPostContext).mockReturnValue({
+      useMedia: () => [{}, {}, {}, {}],
+      useGifVisibility: () => false,
+      useActions: () => ({
+        addMedia: vi.fn(),
+        addGifs: vi.fn(),
+        setEmoji: vi.fn(),
+        open: mockOpen,
+        close: mockClose,
+      }),
+    } as ReturnType<typeof useAddPostContext>);
+
+    render(<TweetOptionsBar />);
+
+    const gifButton = screen.getByTestId('tweet-option-gif');
+    fireEvent.click(gifButton);
+
+    expect(mockOpen).not.toHaveBeenCalled();
+  });
+
+  it('should disable GIF icon when max media reached', () => {
+    vi.mocked(useAddPostContext).mockReturnValue({
+      useMedia: () => [{}, {}, {}, {}],
+      useGifVisibility: () => false,
+      useActions: () => ({
+        addMedia: vi.fn(),
+        addGifs: vi.fn(),
+        setEmoji: vi.fn(),
+        open: mockOpen,
+        close: mockClose,
+      }),
+    } as ReturnType<typeof useAddPostContext>);
+
+    render(<TweetOptionsBar />);
+
+    const gifIcon = screen.getByTestId('tweet-option-gif');
+    expect(gifIcon.getAttribute('data-disabled')).toBe('true');
+  });
+
+  it('should render location icon as disabled', () => {
+    render(<TweetOptionsBar />);
+    const locationIcon = screen.getByTestId('tweet-option-location');
+    expect(locationIcon).toBeInTheDocument();
+  });
+
+  it('should have correct layout classes', () => {
+    render(<TweetOptionsBar />);
+    const optionsBar = screen.getByTestId('tweet-options-bar');
+    expect(optionsBar.className).toContain('flex');
+    expect(optionsBar.className).toContain('items-center');
   });
 });

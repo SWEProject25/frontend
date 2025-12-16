@@ -133,7 +133,6 @@ export default function Actions({
       case 'quote_post':
         setPostType(ADD_TWEET.QUOTE);
         setParentId(stats.postId);
-        console.log(stats.postId);
         setIsQuoteOpen(true);
 
         if (modalClick) modalClick();
@@ -156,7 +155,6 @@ export default function Actions({
             color={actionsMeta[0].color}
             onClick={() => {
               setPostType(ADD_TWEET.REPLY);
-              console.log(stats.postId);
               setParentId(stats.postId);
               setIsReplyOpen(true);
               if (modalClick) modalClick();

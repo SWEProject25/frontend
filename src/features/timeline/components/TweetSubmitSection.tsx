@@ -1,5 +1,4 @@
 import Button from '@/components/ui/home/Button';
-import Icon from '@/components/ui/home/Icon';
 import TypingProgressCircle from './TypingProgressCircle';
 
 interface SubmitInterface {

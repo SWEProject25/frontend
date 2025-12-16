@@ -610,7 +610,6 @@ export function useOptimisticTweet() {
   const isHome = path?.startsWith('/home');
   const isFullTweet = path?.startsWith('/home/');
 
-  // Extract the tweet ID from the path (e.g., /home/123 -> 123)
   const extractedId = isFullTweet && path ? parseInt(path.split('/')[2]) : -1;
 
   const isInterest = path?.startsWith('/explore/');
@@ -636,12 +635,10 @@ export function useOptimisticTweet() {
         TWEET_QUERY_KEYS.tweetById(extractedId),
         (old: any) => {
           if (!old) return old;
-          console.log('isFullTweet', isFullTweet);
           if (
             isFullTweet &&
             old?.data[0]?.originalPostData?.postId === tweetId
           ) {
-            console.log('here');
             const newOriginalData = updateTweet(
               type,
               old.data[0].originalPostData,
@@ -709,7 +706,6 @@ export function useOptimisticTweet() {
       queryKeys.unshift(currentKey);
     }
     // }
-    console.log(queryKeys);
     for (const queryKey of queryKeys) {
       let result;
       if (queryKey === EXPLORE_QUERY_KEYS.EXPLORE_FEED_FOR_YOU) {
@@ -811,7 +807,6 @@ export function useOptimisticTweet() {
               } else return false;
             });
             if (tweets.length > 0) {
-              console.log(tweets);
               timelineFeed = updateTweetPersonalizedInterestsData(
                 timelineFeed,
                 pages,
@@ -913,7 +908,6 @@ export function useOptimisticTweet() {
               } else return false;
             });
             if (tweets.length > 0) {
-              console.log(tweets);
               timelineFeed = updateTweetInInfiniteData(
                 timelineFeed,
                 pages,

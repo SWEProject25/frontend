@@ -14,20 +14,20 @@ const mockSocket = {
   connected: true,
 };
 
+let shouldThrowSocketError = false;
+
 // Mock socket service
 vi.mock('@/features/messages/services/socket', () => ({
-  getSocket: () => mockSocket,
+  getSocket: () => {
+    if (shouldThrowSocketError) {
+      throw new Error('Socket not initialized');
+    }
+    return mockSocket;
+  },
 }));
 
 // Mock optimistic hooks
-const mockOptimisticOnMutate = vi.fn();
 const mockRealTimeOnMutate = vi.fn();
-
-vi.mock('../optimistics/Tweets', () => ({
-  useOptimisticTweet: vi.fn(() => ({
-    onMutate: mockOptimisticOnMutate,
-  })),
-}));
 
 vi.mock('../optimistics/RealTimeTweet', () => ({
   useRealTimeTweet: vi.fn(() => ({
@@ -69,6 +69,7 @@ describe('useRealTimeTweets', () => {
     mockSocket.off.mockReset();
     mockSocket.emit.mockReset();
     mockSocket.connected = true;
+    shouldThrowSocketError = false;
   });
 
   afterEach(() => {
@@ -116,6 +117,25 @@ describe('useRealTimeTweets', () => {
       expect(callback).toHaveBeenCalledWith({ status: 'success' });
     });
 
+    it('should warn when join post fails', () => {
+      const wrapper = createWrapper();
+      const { result } = renderHook(() => useRealTimeTweets(), { wrapper });
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation();
+
+      mockSocket.emit.mockImplementation((event, postId, cb) => {
+        cb({ status: 'error' });
+      });
+
+      act(() => {
+        result.current.joinPost(123);
+      });
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith('failed to join post', {
+        status: 'error',
+      });
+      consoleWarnSpy.mockRestore();
+    });
+
     it('should not emit when socket is disconnected', () => {
       mockSocket.connected = false;
       const wrapper = createWrapper();
@@ -126,6 +146,23 @@ describe('useRealTimeTweets', () => {
       });
 
       expect(mockSocket.emit).not.toHaveBeenCalled();
+    });
+
+    it('should handle socket error gracefully', () => {
+      shouldThrowSocketError = true;
+      const wrapper = createWrapper();
+      const { result } = renderHook(() => useRealTimeTweets(), { wrapper });
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation();
+
+      act(() => {
+        result.current.joinPost(123);
+      });
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Socket not initialized, cannot join post:',
+        123
+      );
+      consoleWarnSpy.mockRestore();
     });
   });
 
@@ -161,6 +198,25 @@ describe('useRealTimeTweets', () => {
       expect(callback).toHaveBeenCalledWith({ status: 'success' });
     });
 
+    it('should warn when leave post fails', () => {
+      const wrapper = createWrapper();
+      const { result } = renderHook(() => useRealTimeTweets(), { wrapper });
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation();
+
+      mockSocket.emit.mockImplementation((event, postId, cb) => {
+        cb({ status: 'error' });
+      });
+
+      act(() => {
+        result.current.leavePost(123);
+      });
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith('failed to leave post', {
+        status: 'error',
+      });
+      consoleWarnSpy.mockRestore();
+    });
+
     it('should not emit when socket is disconnected', () => {
       mockSocket.connected = false;
       const wrapper = createWrapper();
@@ -171,6 +227,23 @@ describe('useRealTimeTweets', () => {
       });
 
       expect(mockSocket.emit).not.toHaveBeenCalled();
+    });
+
+    it('should handle socket error gracefully', () => {
+      shouldThrowSocketError = true;
+      const wrapper = createWrapper();
+      const { result } = renderHook(() => useRealTimeTweets(), { wrapper });
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation();
+
+      act(() => {
+        result.current.leavePost(123);
+      });
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Socket not initialized, cannot leave post:',
+        123
+      );
+      consoleWarnSpy.mockRestore();
     });
   });
 
@@ -236,15 +309,21 @@ describe('useRealTimeTweets socket event handlers', () => {
     mockSocket.off.mockReset();
     mockSocket.emit.mockReset();
     mockSocket.connected = true;
+    shouldThrowSocketError = false;
   });
 
-  it('should handle like update event', () => {
+  it('should handle like update event with matching postId', () => {
     const wrapper = createWrapper();
-    let likeHandler: ((...args: unknown[]) => void) | undefined;
+    let likeHandler:
+      | ((data: { postId: number; count: number }) => void)
+      | undefined;
 
     mockSocket.on.mockImplementation(
-      (event: string, handler: (...args: unknown[]) => void) => {
-        if (event === 'post:like:update') {
+      (
+        event: string,
+        handler: (data: { postId: number; count: number }) => void
+      ) => {
+        if (event === 'likeUpdate') {
           likeHandler = handler;
         }
       }
@@ -260,20 +339,32 @@ describe('useRealTimeTweets socket event handlers', () => {
 
     if (likeHandler) {
       act(() => {
-        likeHandler({ postId: 123, count: 10 });
+        likeHandler!({ postId: 123, count: 10 });
       });
 
-      expect(mockRealTimeOnMutate).toHaveBeenCalled();
+      expect(mockRealTimeOnMutate).toHaveBeenCalledWith(
+        'like',
+        123,
+        456,
+        10,
+        'Post',
+        -1
+      );
     }
   });
 
-  it('should handle comment update event', () => {
+  it('should handle comment update event with matching postId', () => {
     const wrapper = createWrapper();
-    let commentHandler: ((...args: unknown[]) => void) | undefined;
+    let commentHandler:
+      | ((data: { postId: number; count: number }) => void)
+      | undefined;
 
     mockSocket.on.mockImplementation(
-      (event: string, handler: (...args: unknown[]) => void) => {
-        if (event === 'post:comment:update') {
+      (
+        event: string,
+        handler: (data: { postId: number; count: number }) => void
+      ) => {
+        if (event === 'commentUpdate') {
           commentHandler = handler;
         }
       }
@@ -289,20 +380,32 @@ describe('useRealTimeTweets socket event handlers', () => {
 
     if (commentHandler) {
       act(() => {
-        commentHandler({ postId: 123, count: 5 });
+        commentHandler!({ postId: 123, count: 5 });
       });
 
-      expect(mockRealTimeOnMutate).toHaveBeenCalled();
+      expect(mockRealTimeOnMutate).toHaveBeenCalledWith(
+        'reply',
+        123,
+        456,
+        5,
+        'Post',
+        -1
+      );
     }
   });
 
-  it('should handle repost update event', () => {
+  it('should handle repost update event with matching postId', () => {
     const wrapper = createWrapper();
-    let repostHandler: ((...args: unknown[]) => void) | undefined;
+    let repostHandler:
+      | ((data: { postId: number; count: number }) => void)
+      | undefined;
 
     mockSocket.on.mockImplementation(
-      (event: string, handler: (...args: unknown[]) => void) => {
-        if (event === 'post:repost:update') {
+      (
+        event: string,
+        handler: (data: { postId: number; count: number }) => void
+      ) => {
+        if (event === 'repostUpdate') {
           repostHandler = handler;
         }
       }
@@ -318,20 +421,32 @@ describe('useRealTimeTweets socket event handlers', () => {
 
     if (repostHandler) {
       act(() => {
-        repostHandler({ postId: 123, count: 3 });
+        repostHandler!({ postId: 123, count: 3 });
       });
 
-      expect(mockRealTimeOnMutate).toHaveBeenCalled();
+      expect(mockRealTimeOnMutate).toHaveBeenCalledWith(
+        'repost',
+        123,
+        456,
+        3,
+        'Post',
+        -1
+      );
     }
   });
 
-  it('should not call onMutate for different postId', () => {
+  it('should not call onMutate for different postId on like', () => {
     const wrapper = createWrapper();
-    let likeHandler: ((...args: unknown[]) => void) | undefined;
+    let likeHandler:
+      | ((data: { postId: number; count: number }) => void)
+      | undefined;
 
     mockSocket.on.mockImplementation(
-      (event: string, handler: (...args: unknown[]) => void) => {
-        if (event === 'post:like:update') {
+      (
+        event: string,
+        handler: (data: { postId: number; count: number }) => void
+      ) => {
+        if (event === 'likeUpdate') {
           likeHandler = handler;
         }
       }
@@ -347,11 +462,147 @@ describe('useRealTimeTweets socket event handlers', () => {
 
     if (likeHandler) {
       act(() => {
-        // Different postId
-        likeHandler({ postId: 999, count: 10 });
+        likeHandler!({ postId: 999, count: 10 });
       });
 
       expect(mockRealTimeOnMutate).not.toHaveBeenCalled();
     }
+  });
+
+  it('should not call onMutate for different postId on comment', () => {
+    const wrapper = createWrapper();
+    let commentHandler:
+      | ((data: { postId: number; count: number }) => void)
+      | undefined;
+
+    mockSocket.on.mockImplementation(
+      (
+        event: string,
+        handler: (data: { postId: number; count: number }) => void
+      ) => {
+        if (event === 'commentUpdate') {
+          commentHandler = handler;
+        }
+      }
+    );
+
+    const TestComponent = () => {
+      const { usePostUpdates } = useRealTimeTweets();
+      usePostUpdates(123, 456, 'Post', -1);
+      return null;
+    };
+
+    render(<TestComponent />, { wrapper });
+
+    if (commentHandler) {
+      act(() => {
+        commentHandler!({ postId: 999, count: 5 });
+      });
+
+      expect(mockRealTimeOnMutate).not.toHaveBeenCalled();
+    }
+  });
+
+  it('should not call onMutate for different postId on repost', () => {
+    const wrapper = createWrapper();
+    let repostHandler:
+      | ((data: { postId: number; count: number }) => void)
+      | undefined;
+
+    mockSocket.on.mockImplementation(
+      (
+        event: string,
+        handler: (data: { postId: number; count: number }) => void
+      ) => {
+        if (event === 'repostUpdate') {
+          repostHandler = handler;
+        }
+      }
+    );
+
+    const TestComponent = () => {
+      const { usePostUpdates } = useRealTimeTweets();
+      usePostUpdates(123, 456, 'Post', -1);
+      return null;
+    };
+
+    render(<TestComponent />, { wrapper });
+
+    if (repostHandler) {
+      act(() => {
+        repostHandler!({ postId: 999, count: 3 });
+      });
+
+      expect(mockRealTimeOnMutate).not.toHaveBeenCalled();
+    }
+  });
+
+  it('should handle socket disconnected for listeners', () => {
+    mockSocket.connected = false;
+    const wrapper = createWrapper();
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation();
+
+    const TestComponent = () => {
+      const { usePostUpdates } = useRealTimeTweets();
+      usePostUpdates(123, 456, 'Post', -1);
+      return null;
+    };
+
+    render(<TestComponent />, { wrapper });
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      'Socket not connected, cannot listen to post like:',
+      123
+    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      'Socket not connected, cannot listen to post Reply:',
+      123
+    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      'Socket not connected, cannot listen to post repost:',
+      123
+    );
+    consoleWarnSpy.mockRestore();
+  });
+
+  it('should handle socket error for listeners', () => {
+    shouldThrowSocketError = true;
+    const wrapper = createWrapper();
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation();
+
+    const TestComponent = () => {
+      const { usePostUpdates } = useRealTimeTweets();
+      usePostUpdates(123, 456, 'Post', -1);
+      return null;
+    };
+
+    render(<TestComponent />, { wrapper });
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      'Socket not initialized, cannot listen to post like:',
+      123
+    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      'Socket not initialized, cannot listen to post reply:',
+      123
+    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      'Socket not initialized, cannot listen to post repost:',
+      123
+    );
+    consoleWarnSpy.mockRestore();
+  });
+
+  it('should use default type value', () => {
+    const wrapper = createWrapper();
+
+    const TestComponent = () => {
+      const { usePostUpdates } = useRealTimeTweets();
+      usePostUpdates(123, 456);
+      return null;
+    };
+
+    render(<TestComponent />, { wrapper });
+    expect(mockSocket.on).toHaveBeenCalled();
   });
 });

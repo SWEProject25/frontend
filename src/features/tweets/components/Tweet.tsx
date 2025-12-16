@@ -90,26 +90,18 @@ export default function Tweet({
         if (hasJoined.current !== dataViewd.postId) {
           joinPost(dataViewd.postId, (resp) => {
             if (resp?.status === 'success') {
-              console.log('Join post response:', resp);
               hasJoined.current = dataViewd.postId;
             } else {
-              console.warn('Join post response:', resp);
             }
           });
         } else {
-          console.log('kk', data.text);
         }
       } else {
-        console.log('not visible', data.text);
         if (hasJoined.current === dataViewd.postId) {
-          console.log('not visible leave', data.text);
-
           leavePost(dataViewd.postId, (resp) => {
             if (resp?.status === 'success') {
-              console.log('Leave post response:', resp);
               hasJoined.current = null;
             } else {
-              console.warn('Leave post response:', resp);
             }
           });
         }

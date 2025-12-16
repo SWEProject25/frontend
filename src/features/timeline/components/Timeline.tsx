@@ -2,8 +2,6 @@
 import Icon from '@/components/ui/home/Icon';
 import AddTweet from './AddTweet';
 import Header from './Header';
-import ShowTweets from './ShowTweets';
-// import TweetFeed from './TweetFeed';
 import TweetList from './TweetList';
 import { Avatar } from '@/components/generic';
 import {
@@ -33,13 +31,16 @@ export default function Timeline() {
   const isPopUpVisible = useFetchAvatars();
   const interval = useRef<NodeJS.Timeout | null>(null);
   const newTweets = useNewTweets();
-  const { data, error, isError, isLoading } = useAvatarsPopUp();
+  const { data } = useAvatarsPopUp();
   useEffect(
     function () {
       if (data && data.pages[0]?.data?.posts?.length > 0) {
         console.log(data);
-        // if (newTweets.length === 0) {
-        const posts = data.pages[0].data.posts;
+        const end =
+          data.pages[0].data.posts.length > 3
+            ? 3
+            : data.pages[0].data.posts.length;
+        const posts = data.pages[0].data.posts.slice(0, end);
         const images = posts.map((post) =>
           post.isRepost
             ? post.originalPostData

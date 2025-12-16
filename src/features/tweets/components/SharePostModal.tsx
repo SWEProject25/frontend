@@ -8,7 +8,7 @@ import {
   createConversation,
   fetchConversations,
 } from '@/features/messages/api/messages';
-import { getSocket, initSocket } from '@/features/messages/services/socket';
+import { initSocket } from '@/features/messages/services/socket';
 import { MESSAGES_SOCKET_EVENTS } from '@/features/messages/constants/api';
 import { useMessageStore } from '@/features/messages/store/useMessageStore';
 import { useRouter } from 'next/navigation';

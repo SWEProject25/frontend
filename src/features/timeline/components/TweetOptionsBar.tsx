@@ -6,11 +6,7 @@ import { MAX_MEDIA_NUM } from '@/features/media/constants/mediaConstants';
 import { useRouter } from 'next/navigation';
 import Emoji from '@/features/media/components/Emoji';
 import { useAddPostContext } from '../store/AddPostContext';
-export default function TweetOptionsBar({
-  showGif = true,
-}: {
-  showGif?: boolean;
-}) {
+export default function TweetOptionsBar() {
   const selectors = useAddPostContext();
 
   const { open: openGif, close: closeGif } = selectors.useActions();

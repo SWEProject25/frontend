@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -15,15 +15,21 @@ vi.mock('@/features/explore/store/useExploreStore', () => ({
   useActions: vi.fn(() => ({ setSearchQuery: vi.fn() })),
 }));
 
+const mockSelectTab = vi.fn();
+const mockSetFetchAvatars = vi.fn();
+const mockSetNewTweets = vi.fn();
+const mockSetPopUpAvatars = vi.fn();
+const mockSetTabsScroll = vi.fn();
+
 vi.mock('../store/useTimelineStore', () => ({
-  useSelectedTab: vi.fn(() => 'forYou'),
+  useSelectedTab: vi.fn(() => 'For you'),
   useTabsScroll: vi.fn(() => [0, 0]),
   useActions: vi.fn(() => ({
-    selectTab: vi.fn(),
-    setFetchAvatars: vi.fn(),
-    setNewTweets: vi.fn(),
-    setPopUpAvatars: vi.fn(),
-    setTabsScroll: vi.fn(),
+    selectTab: mockSelectTab,
+    setFetchAvatars: mockSetFetchAvatars,
+    setNewTweets: mockSetNewTweets,
+    setPopUpAvatars: mockSetPopUpAvatars,
+    setTabsScroll: mockSetTabsScroll,
   })),
 }));
 
@@ -66,17 +72,33 @@ vi.mock('@/components/generic/Avatar', () => ({
 }));
 
 vi.mock('@/components/generic/Tabs', () => ({
-  default: ({ tabs }: any) => (
-    <div data-testid="tabs">
-      {tabs?.map((tab: any) => (
-        <div key={tab.value}>{tab.title}</div>
+  default: ({
+    tabs,
+    onClick,
+    selectedValue,
+  }: {
+    tabs: { title: string; value: string }[];
+    onClick: (value: string) => void;
+    selectedValue: string;
+  }) => (
+    <div data-testid="tabs" data-selected={selectedValue}>
+      {tabs?.map((tab) => (
+        <button key={tab.value} onClick={() => onClick(tab.value)}>
+          {tab.title}
+        </button>
       ))}
     </div>
   ),
 }));
 
 vi.mock('@/features/layout/components/MobileSidebar', () => ({
-  default: () => <div data-testid="mobile-sidebar">MobileSidebar</div>,
+  default: ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => (
+    <div data-testid="mobile-sidebar" data-open={isOpen}>
+      <button onClick={onClose} data-testid="close-sidebar">
+        Close
+      </button>
+    </div>
+  ),
 }));
 
 vi.mock('@/components/ui/icons/BrandIcons', () => ({
@@ -88,7 +110,7 @@ vi.mock('@/components/ui/icons/BrandIcons', () => ({
 }));
 
 vi.mock('@/components/ui/home/Icon', () => ({
-  default: ({ path }: any) => (
+  default: ({ path }: { path: string }) => (
     <svg data-testid="icon">
       <path d={path} />
     </svg>
@@ -96,6 +118,8 @@ vi.mock('@/components/ui/home/Icon', () => ({
 }));
 
 import Header from '../components/Header';
+import { useSelectedTab, useTabsScroll } from '../store/useTimelineStore';
+import { useMyProfile } from '@/features/profile/hooks';
 
 const createTestQueryClient = () =>
   new QueryClient({
@@ -113,6 +137,11 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 describe('Header', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    window.scrollTo = vi.fn();
+    Object.defineProperty(document.documentElement, 'scrollTop', {
+      value: 100,
+      writable: true,
+    });
   });
 
   it('should render header component', () => {
@@ -155,5 +184,95 @@ describe('Header', () => {
   it('should render X logo', () => {
     render(<Header />, { wrapper });
     expect(screen.getByTestId('x-logo')).toBeInTheDocument();
+  });
+
+  it('should scroll to top when clicking same tab', () => {
+    vi.mocked(useSelectedTab).mockReturnValue('ForYou');
+
+    render(<Header />, { wrapper });
+
+    fireEvent.click(screen.getByText('For you'));
+
+    expect(window.scrollTo).toHaveBeenCalledWith({
+      top: 0,
+      behavior: 'smooth',
+    });
+    expect(mockSelectTab).toHaveBeenCalledWith('ForYou');
+  });
+
+  it('should switch to Following tab and save scroll position', () => {
+    vi.mocked(useSelectedTab).mockReturnValue('ForYou');
+    vi.mocked(useTabsScroll).mockReturnValue([0, 200]);
+
+    render(<Header />, { wrapper });
+
+    fireEvent.click(screen.getByText('Following'));
+
+    expect(mockSetTabsScroll).toHaveBeenCalled();
+    expect(mockSelectTab).toHaveBeenCalledWith('Following');
+    expect(mockSetFetchAvatars).toHaveBeenCalledWith(false);
+    expect(mockSetNewTweets).toHaveBeenCalledWith([]);
+    expect(mockSetPopUpAvatars).toHaveBeenCalledWith([]);
+  });
+
+  it('should switch to For you tab and restore scroll position', () => {
+    vi.mocked(useSelectedTab).mockReturnValue('Following');
+    vi.mocked(useTabsScroll).mockReturnValue([150, 0]);
+
+    render(<Header />, { wrapper });
+
+    fireEvent.click(screen.getByText('For you'));
+
+    expect(mockSetTabsScroll).toHaveBeenCalled();
+    expect(mockSelectTab).toHaveBeenCalledWith('ForYou');
+  });
+
+  it('should open sidebar when clicking avatar', () => {
+    render(<Header />, { wrapper });
+
+    const avatar = screen.getByTestId('avatar');
+    fireEvent.click(avatar.parentElement!);
+
+    const sidebar = screen.getByTestId('mobile-sidebar');
+    expect(sidebar.getAttribute('data-open')).toBe('true');
+  });
+
+  it('should close sidebar when clicking close button', () => {
+    render(<Header />, { wrapper });
+
+    const avatar = screen.getByTestId('avatar');
+    fireEvent.click(avatar.parentElement!);
+
+    fireEvent.click(screen.getByTestId('close-sidebar'));
+
+    const sidebar = screen.getByTestId('mobile-sidebar');
+    expect(sidebar.getAttribute('data-open')).toBe('false');
+  });
+
+  it('should use fallback name when profile name is null', () => {
+    vi.mocked(useMyProfile).mockReturnValue({
+      data: {
+        data: {
+          profile_image_url: null,
+          name: null,
+        },
+      },
+    } as ReturnType<typeof useMyProfile>);
+
+    render(<Header />, { wrapper });
+
+    expect(screen.getByTestId('avatar')).toBeInTheDocument();
+  });
+
+  it('should refetch queries when tab changes', () => {
+    vi.mocked(useSelectedTab).mockReturnValue('For you');
+
+    render(<Header />, { wrapper });
+
+    fireEvent.click(screen.getByText('Following'));
+
+    expect(mockSetFetchAvatars).toHaveBeenCalledWith(false);
+    expect(mockSetNewTweets).toHaveBeenCalledWith([]);
+    expect(mockSetPopUpAvatars).toHaveBeenCalledWith([]);
   });
 });
