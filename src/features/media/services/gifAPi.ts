@@ -13,7 +13,6 @@ class ApiError extends Error {
 }
 
 async function handleResponse<T>(response: Response): Promise<T> {
-  console.log(response);
   if (!response.ok) {
     let errorMessage = 'An error occurred';
     const statusCode = response.status;
@@ -63,7 +62,7 @@ export const gifApi = {
     );
     // Wait for all promises to resolve
     const results = await Promise.all(promises);
-    console.log(results);
+
     return results.map((res) => res.data[0]);
   },
   async searchGif(

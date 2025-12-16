@@ -15,7 +15,6 @@ export default function MediaItem({
   const selectors = useAddPostContext();
 
   const { removeMedia } = selectors.useActions();
-  console.log(media);
   return (
     <div className="flex flex-col ">
       <div className={`relative  aspect-square bg-black `}>

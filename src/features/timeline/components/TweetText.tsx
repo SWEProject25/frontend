@@ -1,6 +1,6 @@
 'use client';
 
-import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   MAX_TWEET_LENGTH,
   MAX_WARNING_TWEET_LENGTH,
@@ -12,7 +12,6 @@ const startRedText = MAX_TWEET_LENGTH + MAX_WARNING_TWEET_LENGTH;
 function getCurrCursorPos(div: HTMLDivElement) {
   const selection = window.getSelection();
   if (!selection || !selection.anchorNode) return 0;
-  console.log(selection);
 
   const range = document.createRange();
   range.setStart(div, 0);
@@ -42,7 +41,7 @@ export type notMentionType = mentionType & {
 };
 export default function TweetText({ placeHolder }: { placeHolder: string }) {
   const selectors = useAddPostContext();
-  console.log(placeHolder);
+
   const divRef = useRef<null | HTMLDivElement>(null);
 
   const isSuccess = selectors.useIsSuccess();
@@ -76,9 +75,7 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
   );
   const { data } = useCheckValidUser(lastMention?.username.slice(1) ?? '');
   const isOpen = selectors.useIsOpen();
-  console.log(notMentions.current);
-  console.log(completedMentions.current);
-  console.log(checkValidUsers);
+
   useEffect(function () {
     if (firstTweetText) {
       if (divRef.current) {
@@ -94,10 +91,7 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
     function handelCusror() {
       if (divRef.current && divRef.current === document.activeElement) {
         cursorPos.current = getCurrCursorPos(divRef.current);
-        console.log(cursorPos.current);
-        console.log('em');
       }
-      console.log('SAsa');
     }
     document.addEventListener('mousedown', handelCusror);
     return () => document.removeEventListener('mousedown', handelCusror);
@@ -105,13 +99,7 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
 
   useEffect(
     function () {
-      console.log('dattttttttta155', data);
       if (data?.data && lastKey) {
-        console.log(notMentions.current);
-
-        console.log('dattttttttta1', data);
-
-        console.log('dattttttttta0', data);
         const mention = notMentions.current.find(
           (men) => `${men.username}-${men.indx}` === lastKey
         );
@@ -136,8 +124,6 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
           return set;
         });
         span.textContent = mention.username;
-        console.log(notMentions.current);
-        console.log(completedMentions.current);
       }
     },
     [checkValidUsers, data, lastKey]
@@ -145,11 +131,7 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
 
   const emoji = selectors.useEmoji();
   const handleChangeText = useCallback(
-    (text: string, lastData: string = '') => {
-      const lastMatch = text.match(
-        /(?<=^|\s)@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+$/
-      ) ?? [''];
-      const index = lastMatch.index;
+    (text: string) => {
       let isActiveMention = false;
       let lastMention = '';
 
@@ -176,28 +158,19 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
         spanRef1.current.innerHTML = '';
         const displayedText = text.slice(0, startRedText);
         let lastIndex = 0;
-        let tweetText = '';
 
         const matchRegex = /(?<=^|\s)@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+/g;
         let match;
         let cursor = 0;
         if (divRef.current) cursor = getCurrCursorPos(divRef.current);
-        console.log(cursor);
 
-        console.log(
-          completedMentions,
-          completedMentions.current.filter((ment) => ment.checked)
-        );
         completedMentions.current = completedMentions.current.map(
           (mention) => ({
             ...mention,
             checked: false,
           })
         );
-        console.log(
-          completedMentions,
-          completedMentions.current.filter((ment) => ment.checked)
-        );
+
         while ((match = matchRegex.exec(displayedText)) !== null) {
           const mentionIndex = match.index;
           const mentionText = match[0];
@@ -207,7 +180,6 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
               displayedText.slice(lastIndex, mentionIndex)
             );
             spanRef1.current.appendChild(node);
-            tweetText += displayedText.slice(lastIndex, mentionIndex);
           }
           let currIndx = 0;
           const isCompleted = completedMentions.current.some((ment, index) => {
@@ -229,14 +201,6 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
             };
 
           const isActive = cursor >= mentionIndex && cursor <= mentionEndIndx;
-          console.log(
-            isActive,
-            isCompleted,
-            mentionIndex,
-            mentionEndIndx,
-            cursor
-          );
-          tweetText += mentionText;
 
           const span = document.createElement('span');
           span.textContent = mentionText;
@@ -256,13 +220,10 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
               isActiveMention = true;
               lastMention = mentionText.slice(1);
             }
-            if (isCompleted) {
-              tweetText += '$';
-            }
+
             spanRef1.current.appendChild(span);
           } else {
             span.className = 'text-active';
-            console.log(notMentions.current);
             const mentionKey = `${mentionText}-${mentionIndex}`;
             const notCompleted = notMentions.current.some(
               (ment) => `${ment.username}-${ment.indx}` === mentionKey
@@ -275,13 +236,11 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
                 indx: mentionIndex,
                 id: mentionIndex,
               });
-              console.log(notMentions);
               setCheckValidUsers((check) => {
                 const set = new Set(check);
                 set.add(mentionKey);
                 return set;
               });
-              console.log('enterre');
             }
             spanRef1.current.appendChild(span);
           }
@@ -296,16 +255,14 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
         setMentions(completedMentions.current);
 
         if (prevLength !== completedMentions.current.length) {
-          console.log('s');
           if (spanMention.current)
             spanMention.current.style.color = 'var( --color-mention-progress)';
         }
-        console.log(completedMentions);
+
         if (lastIndex < displayedText.length) {
           spanRef1.current.appendChild(
             document.createTextNode(displayedText.slice(lastIndex))
           );
-          tweetText += displayedText.slice(lastIndex);
         }
 
         if (isActiveMention) {
@@ -324,7 +281,6 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
         } else {
           setSpanText2('');
         }
-        console.log(tweetText);
       }
     },
     [
@@ -354,16 +310,11 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
         if (spanMention.current && spanMention.current.textContent)
           spanMention.current.textContent = `@` + currMention[0] + ` `;
 
-        const matches = divRef.current?.innerText.matchAll(
-          /(?<=^|\s)@[a-zA-Z](?!.*[_.]{2})[a-zA-Z0-9._]+/g
-        ) ?? [''];
         const indx = +(spanMention.current?.getAttribute('data-indx') ?? 0);
 
-        console.log(indx);
         if (indx !== undefined) {
           const text = divRef.current?.innerText;
-          console.log(mention, mentionIsDone, text, indx);
-          console.log(currMention, mentionIsDone);
+
           const newText =
             text?.slice(0, indx) +
             `@` +
@@ -454,13 +405,12 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
     [emoji, divRef, handleChangeText, clearEmoji]
   );
 
-  function handleInput(e: React.ChangeEvent<HTMLDivElement>) {
+  function handleInput() {
     if (divRef.current && divRef.current.innerHTML === '<br>') {
       divRef.current.innerHTML = '';
     }
-    const input = e.nativeEvent as InputEvent;
     if (divRef.current) {
-      handleChangeText(divRef.current.innerText, input.data ?? '');
+      handleChangeText(divRef.current.innerText);
     }
   }
   function handleKeyDown(e: React.KeyboardEvent) {

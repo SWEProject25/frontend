@@ -44,14 +44,12 @@ export const EXPLORE_QUERY_KEYS = {
 export const useExploreSearchFeed = () => {
   const selectedTab = useSelectedSearchTab();
   const search = useSearch();
-  console.log(search.length);
   const searchDate = useSearchDate();
   const isHash =
     search.trimStart().startsWith('#') &&
     !search.trimStart().includes(' ') &&
     !search.trimStart().slice(1).includes('#');
   const type = isHash ? 'hashtag' : 'searchQuery';
-  console.log(isHash);
   const queryKey:
     | ReturnType<typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_SEARCH_TOP>
     | ReturnType<typeof EXPLORE_QUERY_KEYS.EXPLORE_FEED_SEARCH_LATEST> =
@@ -107,7 +105,6 @@ export const useTrendingFeed = () => {
   const selectedTab = useSelectedTab();
   const path = usePathname();
   const valid = path?.startsWith('/explore');
-  console.log(path, valid);
   let queryKey;
   let limit;
   switch (selectedTab) {

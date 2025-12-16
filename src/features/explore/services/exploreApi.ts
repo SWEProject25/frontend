@@ -46,7 +46,6 @@ async function handleResponse<T>(response: Response): Promise<T> {
     throw new ApiError(errorMessage, statusCode);
   }
   const data = await response.json();
-  console.log(data);
   return data;
 }
 export const exploreApi = {
@@ -149,7 +148,6 @@ export const exploreApi = {
             limit: `${limit}`,
             sortBy: `latest`,
           });
-    console.log(tab);
     const response = await fetch(
       `${API_CONFIG.BASE_URL}${EXPLORE_ENDPOINTS.EXPLORE_FEED_INTEREST}?` +
         params,

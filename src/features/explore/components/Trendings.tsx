@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 export default function Trendings() {
   const { data, error, isError, isLoading } = useTrendingFeed();
   const router = useRouter();
-  console.log(data?.metadata.HashtagsCount);
   const renderTrends = data?.data.trending.map((trend, ind) => (
     <Trend
       data-testid={`explore-feed-trend-${trend.tag}`}

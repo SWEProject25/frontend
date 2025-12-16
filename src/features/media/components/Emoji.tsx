@@ -19,7 +19,6 @@ export default function Emoji() {
   const { setEmoji } = selectors.useActions();
 
   function hanldePickEmoji(emojiData: EmojiClickData) {
-    console.log(emojiData.emoji);
     setEmoji(emojiData.emoji);
   }
   return (

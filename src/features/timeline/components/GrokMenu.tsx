@@ -11,8 +11,6 @@ const PANEL_HEIGHT = 88;
 export default function GrokMenu() {
   const selectors = useAddPostContext();
 
-  const [grokOption, setgrokOption] = useState(0);
-
   const canEnhanceTweet = selectors.useTweetText().length > 0;
   return (
     <XMenu>
@@ -38,7 +36,6 @@ export default function GrokMenu() {
                 disabled={index === 1 ? !canEnhanceTweet : false}
                 type="button"
                 onClick={() => {
-                  setgrokOption(opt.id);
                   onClose();
                 }}
                 className={`h-full cursor-pointer w-full flex items-center gap-2 pl-2 outline-none ${

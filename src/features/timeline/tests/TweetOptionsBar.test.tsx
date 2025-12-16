@@ -84,10 +84,4 @@ describe('TweetOptionsBar', () => {
     render(<TweetOptionsBar />);
     expect(screen.getByTestId('emoji')).toBeInTheDocument();
   });
-
-  it('should hide GIF icon when showGif is false', () => {
-    render(<TweetOptionsBar showGif={false} />);
-    // When showGif is false, GIF icon should still render but may be hidden via CSS
-    expect(screen.getByTestId('tweet-options-bar')).toBeInTheDocument();
-  });
 });

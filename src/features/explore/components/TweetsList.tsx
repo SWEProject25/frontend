@@ -13,7 +13,6 @@ export default function TweetsList() {
   const { data, error, isError, isLoading } = useExplorePosts();
   const router = useRouter();
 
-  console.log(data);
   if (isLoading)
     return (
       <div
