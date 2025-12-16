@@ -255,8 +255,9 @@ describe('useOnboarding hooks', () => {
     });
 
     it('should clear user cache on success', async () => {
-      const { authApi } =
-        await import('@/features/authentication/services/authApi');
+      const { authApi } = await import(
+        '@/features/authentication/services/authApi'
+      );
       (onboardingApi.updateDateOfBirth as any).mockResolvedValueOnce(
         mockResponse
       );
@@ -332,8 +333,9 @@ describe('useOnboarding hooks', () => {
     });
 
     it('should clear user cache on success', async () => {
-      const { authApi } =
-        await import('@/features/authentication/services/authApi');
+      const { authApi } = await import(
+        '@/features/authentication/services/authApi'
+      );
       (onboardingApi.updateInterests as any).mockResolvedValueOnce(
         mockResponse
       );

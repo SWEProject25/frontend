@@ -92,7 +92,9 @@ export interface FormHandlers {
 }
 
 export interface FormContainerProps
-  extends GenericAuthFormProps, FormState, FormHandlers {
+  extends GenericAuthFormProps,
+    FormState,
+    FormHandlers {
   displayMode: 'modal' | 'fullpage';
   onClose?: () => void;
   className?: string;
@@ -136,7 +138,9 @@ export interface SocialLoginSectionProps {
 }
 
 export interface FormContentProps
-  extends GenericAuthFormProps, FormState, FormHandlers {
+  extends GenericAuthFormProps,
+    FormState,
+    FormHandlers {
   onSwitchModal?: (newType: AuthModalType) => void;
   loading: boolean;
   isFormValid: boolean;
