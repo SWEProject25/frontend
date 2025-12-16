@@ -41,23 +41,16 @@ export const useSearchGif = () => {
   >({
     queryKey: GIF_QUERY_KEYS.SEARCH_GIF(search),
     queryFn: ({ pageParam }) => {
-      console.log('Fetching page:', pageParam);
       return gifApi.searchGif(search, pageParam, 20);
     },
     initialPageParam: 0,
     enabled: !!search,
     getNextPageParam: (lastPage, pages) => {
       const { offset, count, total_count } = lastPage.pagination;
-      console.log('Pagination info:', {
-        offset,
-        count,
-        total_count,
-        pagesLength: pages.length,
-      });
+
       // Check if there are more results to fetch
       const hasMore = offset + count < total_count;
       const nextPage = hasMore ? pages.length : undefined;
-      console.log('Next page:', nextPage);
       return nextPage;
     },
   });

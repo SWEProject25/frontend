@@ -319,7 +319,6 @@ export function useRealTimeTweet() {
       queryClient.refetchQueries({
         queryKey: TWEET_QUERY_KEYS.getRepliesByTweetId(tweetId),
       });
-      console.log('ds');
     }
 
     const tabsFeeds: {
@@ -357,7 +356,6 @@ export function useRealTimeTweet() {
       queryKeys.unshift(currentKey);
     }
 
-    console.log(queryKeys);
     for (const queryKey of queryKeys) {
       if (queryKey === EXPLORE_QUERY_KEYS.EXPLORE_FEED_FOR_YOU) {
         await optimisticsInterests(type, queryKey, tweetId, userId, count);

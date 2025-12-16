@@ -27,7 +27,7 @@ export default function Mention() {
     isFetchingNextPage,
     hasNextPage,
   } = useSearchProfile(debouncedMention);
-  console.log(profiles, mention);
+
   const pages = profiles?.pages.flat();
   const divRef = useRef<HTMLDivElement | null>(null);
 
@@ -65,22 +65,15 @@ export default function Mention() {
               setIsDone(
                 pages[0].data[0].User.username + ' ' + pages[0].data[0].user_id
               );
-
-              console.log(pages[0].data[0].User.username);
             }
           } else {
             if (pages) {
               const limit = pages[0].metadata.limit;
-              console.log(limit);
               const index = selectedTab % limit;
               const page = Math.floor(selectedTab / limit);
-              console.log(page, index, selectedTab);
               const profile = pages[page].data[index];
-              console.log(profile);
 
-              console.log(profile.User.username + ' ' + profile.user_id);
               setIsDone(profile.User.username + ' ' + profile.user_id);
-              console.log(profile.User.username);
             }
           }
           setIsOpen(false);
@@ -92,7 +85,6 @@ export default function Mention() {
       }
       handleKeyDown(currentKey);
       setKeyDown('');
-      console.log(currentKey);
     },
     [currentKey, setKeyDown, profiles, pages]
   );
@@ -119,7 +111,6 @@ export default function Mention() {
           key={profile.user_id}
           className={`flex w-full  ${profile.is_followed_by_me ? 'h-20' : ' h-16'} p-3 ${selectedTab === i * group.metadata.limit + indx && 'bg-white/12'} hover:cursor-pointer hover:bg-white/12`}
           onClick={() => {
-            console.log(profile.User.username);
             setIsOpen(false);
 
             setIsDone(profile.User.username + ' ' + profile.user_id);

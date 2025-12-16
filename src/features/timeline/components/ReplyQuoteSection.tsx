@@ -18,7 +18,6 @@ export default function ReplyQuoteSections({ label }: { label: string }) {
   const media = selectors.useMedia();
   const mentions = selectors.useMentions();
   const parentId = useParentId();
-  console.log(parentId);
   const mutate = useAddTweet(label);
 
   const enableAddTweet =
@@ -35,20 +34,14 @@ export default function ReplyQuoteSections({ label }: { label: string }) {
         const res = await fetch(med.data.images.original.url);
         const blob = await res.blob();
         const gifFile = new File([blob], med.data.title, { type: 'image/gif' });
-        console.log(gifFile);
         tweetFormData.append('media', gifFile);
       }
-      console.log('media appended');
     }
-    console.log(tweetFormData.getAll('media'));
-    console.log(media);
-    console.log(mentions);
+
     const mentionsId = mentions.map((mention) => mention.id);
 
     const allMentions = mentionsId.join(',');
     tweetFormData.append(TweetFormDataKeys.MENTIONS, allMentions);
-
-    console.log('mentionsIds:', tweetFormData.getAll('mentionsIds'));
 
     if (tweetText.trim().length !== 0) {
       tweetFormData.append(TweetFormDataKeys.CONTENT, tweetText);

@@ -1,12 +1,5 @@
 import '@testing-library/jest-dom';
-import {
-  fireEvent,
-  getAllByTestId,
-  render,
-  renderHook,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { fireEvent, render, renderHook, waitFor } from '@testing-library/react';
 import Header from '../components/Header';
 import { useSelectedTab } from '../store/useTimelineStore';
 import { FOLLOWING_TAB, FOR_YOU_TAB } from '../constants/menuName';
@@ -18,9 +11,6 @@ import ProfileLogo from '@/components/ui/home/ProfileLogo';
 import { useAuth } from '@/features/authentication/hooks';
 import AddTweet from '../components/AddTweet';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-// import { options } from '../constants/replySettingsOptions';
-import { useTimelineComposerStore } from '../store/useTimelineComposer';
-import { useAddTweet } from '../hooks/timelineQueries';
 import { image1, image2, image3, image4, image5, tweet } from '../mocks/data';
 import {
   ADD_TWEET,
@@ -28,11 +18,6 @@ import {
   MAX_WARNING_TWEET_LENGTH,
 } from '../constants/tweetConstants';
 import { vi, beforeAll } from 'vitest';
-
-// npx jest pathToFoler
-// vi.mock('next/navigation', () => ({
-//   useRouter: vi.fn(),
-// }));
 
 vi.mock('next/navigation', async (importOriginal) => {
   const actual = await importOriginal<typeof import('next/navigation')>();
@@ -48,12 +33,6 @@ vi.mock('next/navigation', async (importOriginal) => {
     useSearchParams: vi.fn(() => new URLSearchParams()),
   };
 });
-// vi.mock('../store/useTimelineComposerStore.tsx', async () => {
-//   const actualModule = await vi.importActual<
-//     typeof import('../store/useTimelineComposerStore')
-//   >('../store/useTimelineComposerStore.tsx');
-//   return actualModule;
-// });
 
 beforeAll(() => {
   process.env.NEXT_PUBLIC_API_BASE_URL = 'localhost/500';
@@ -151,59 +130,6 @@ describe('test add tweet component', () => {
     expect(link).toBeInTheDocument();
     expect(link.getAttribute('href')).toBe(`./${mockUser.username}`);
   });
-
-  // it('check default selected option and should appear after first click', () => {
-  //   const { getByTestId, queryByTestId } = render(<AddTweet />, {
-  //     wrapper,
-  //   });
-  //   const { result } = renderHook(() => useAddTweetStore(), { wrapper });
-  //   const addTweetContainer = getByTestId('add-tweet-container');
-  //   expect(addTweetContainer).toBeInTheDocument();
-  //   expect(queryByTestId('tweet-reply-settings')).not.toBeInTheDocument();
-  //   expect(result.current.selectedReplyOption).toBe(0);
-  //   fireEvent.click(addTweetContainer);
-  //   expect(result.current.selectedReplyOption).toBe(1);
-  //   const reply = getByTestId('tweet-reply-settings');
-  //   expect(reply).toBeInTheDocument();
-  // });
-
-  // it('check selecting reply option ', () => {
-  //   const { getByTestId, queryByTestId } = render(<AddTweet />, {
-  //     wrapper,
-  //   });
-  //   const { result } = renderHook(() => useAddTweetStore(), { wrapper });
-  //   expect(queryByTestId('reply-menu-list')).not.toBeInTheDocument();
-  //   const replyButton = getByTestId('tweet-reply-settings-button');
-  //   expect(replyButton).toBeInTheDocument();
-  //   const selectedReply = getByTestId('selected-reply');
-  //   expect(selectedReply.innerHTML).toBe(options[0].value + ' can reply');
-  //   fireEvent.click(replyButton);
-  //   expect(getByTestId('reply-menu-list')).toBeInTheDocument();
-  //   const replyList = getByTestId('reply-menu-items');
-  //   expect(replyList).toBeInTheDocument();
-  //   expect(replyList.childNodes.length).toBe(4);
-  //   expect(result.current.selectedReplyOption).toBe(1);
-  //   expect(
-  //     getByTestId(
-  //       'selected-reply-' + options[0].value.toLowerCase().replace(/\s+/g, '-')
-  //     )
-  //   ).toBeInTheDocument();
-  //   options.forEach((option) => {
-  //     fireEvent.click(
-  //       getByTestId(
-  //         'reply-option-' + option.value.toLowerCase().replace(/\s+/g, '-')
-  //       )
-  //     );
-  //     expect(result.current.selectedReplyOption).toBe(option.id);
-  //     expect(selectedReply.innerHTML).toBe(option.value + ' can reply');
-  //     fireEvent.click(replyButton);
-  //     expect(
-  //       getByTestId(
-  //         'selected-reply-' + option.value.toLowerCase().replace(/\s+/g, '-')
-  //       )
-  //     ).toBeInTheDocument();
-  //   });
-  // });
 });
 
 describe('send post', () => {
@@ -212,10 +138,7 @@ describe('send post', () => {
     const { getByTestId } = render(<AddTweet type={ADD_TWEET.POST} />, {
       wrapper,
     });
-    const { result } = renderHook(() => useTimelineComposerStore(), {
-      wrapper,
-    });
-    console.log(result.current.isSending);
+
     const submitButton = getByTestId('button-Post');
     fireEvent.click(submitButton);
     expect(submitButton).toBeInTheDocument();

@@ -45,7 +45,6 @@ export default function GifModal() {
     isFetchingNextPage,
     hasNextPage,
   } = useSearchGif();
-  console.log(searchGif, hasNextPage);
   const pages = searchGif?.pages;
 
   const renderSearchedGifs = pages?.map((group, i) => (

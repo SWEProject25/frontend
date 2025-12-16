@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import Loader from '@/components/generic/Loader';
 import LayoutWrapper from '@/features/layout/components/LayoutWrapper';
 export default function Page() {
-  // const { open } = useGifACtions();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   useEffect(

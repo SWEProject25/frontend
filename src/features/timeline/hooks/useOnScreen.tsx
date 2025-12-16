@@ -1,5 +1,5 @@
 'use client';
-import React, { Ref, useEffect, useRef, useState } from 'react';
+import { Ref, useEffect, useRef, useState } from 'react';
 
 export default function useOnScreen(
   options?: IntersectionObserverInit

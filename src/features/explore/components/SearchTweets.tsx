@@ -18,7 +18,6 @@ export default function SearchTweets() {
     hasNextPage,
   } = useExploreSearchFeed();
 
-  console.log(data);
   const pages = data?.pages.flat();
 
   const renderTweets = pages?.map((group, i) => (

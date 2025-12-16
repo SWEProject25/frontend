@@ -23,7 +23,7 @@ export const useRealTimeTweets = () => {
           cb?.(resp);
         }
       );
-    } catch (err) {
+    } catch {
       console.warn('Socket not initialized, cannot join post:', postId);
     }
   }, []);
@@ -44,7 +44,7 @@ export const useRealTimeTweets = () => {
           cb?.(resp);
         }
       );
-    } catch (err) {
+    } catch {
       console.warn('Socket not initialized, cannot leave post:', postId);
     }
   }, []);
@@ -80,7 +80,6 @@ export const useRealTimeTweets = () => {
           return;
         }
         const onLike = (data: { postId: number; count: number }) => {
-          console.log(data, 'Likkkkkkkeeeeeeee', type);
           if (postId === data.postId)
             onMutate(
               OPTIMISTIC_TYPES.LIKE,
@@ -96,7 +95,7 @@ export const useRealTimeTweets = () => {
         return () => {
           socket.off(REAL_TIME_TWEETS_SOCKET_EVENTS.LIKE_UPDATE, onLike);
         };
-      } catch (err) {
+      } catch {
         console.warn(
           'Socket not initialized, cannot listen to post like:',
           postId
@@ -126,7 +125,6 @@ export const useRealTimeTweets = () => {
           return;
         }
         const onComment = (data: { postId: number; count: number }) => {
-          console.log(data, 'COmmment');
           if (postId === data.postId)
             onMutate(
               OPTIMISTIC_TYPES.REPLY,
@@ -142,7 +140,7 @@ export const useRealTimeTweets = () => {
         return () => {
           socket.off(REAL_TIME_TWEETS_SOCKET_EVENTS.COMMENT_UPDATE, onComment);
         };
-      } catch (err) {
+      } catch {
         console.warn(
           'Socket not initialized, cannot listen to post reply:',
           postId
@@ -172,7 +170,6 @@ export const useRealTimeTweets = () => {
           return;
         }
         const onRepost = (data: { postId: number; count: number }) => {
-          console.log(data, 'reposssst');
           if (postId === data.postId)
             onMutate(
               OPTIMISTIC_TYPES.REPOST,
@@ -188,7 +185,7 @@ export const useRealTimeTweets = () => {
         return () => {
           socket.off(REAL_TIME_TWEETS_SOCKET_EVENTS.REPOST_UPDATE, onRepost);
         };
-      } catch (err) {
+      } catch {
         console.warn(
           'Socket not initialized, cannot listen to post repost:',
           postId

@@ -76,6 +76,7 @@ vi.mock('@/components/ui/home/XMenu', () => {
 vi.mock('@/components/ui/input', () => ({
   SearchInput: ({ value, onChange }: any) => (
     <input
+      aria-label="test-search-profile"
       data-testid="search-input"
       value={value}
       onChange={(e) => onChange(e.target.value)}

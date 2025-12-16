@@ -70,7 +70,6 @@ export default function AddTweet({
   useEffect(() => {
     const unloadCallback = (event: BeforeUnloadEvent) => {
       if (hasText || hasmMedia) {
-        console.log(event);
         event.preventDefault();
         return '';
       }

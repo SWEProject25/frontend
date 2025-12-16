@@ -683,7 +683,6 @@ export function useOptimisticTweet() {
       queryKeys.unshift(currentKey);
     }
     // }
-    console.log(queryKeys);
     for (const queryKey of queryKeys) {
       let result;
       if (queryKey === EXPLORE_QUERY_KEYS.EXPLORE_FEED_FOR_YOU) {
@@ -785,7 +784,6 @@ export function useOptimisticTweet() {
               } else return false;
             });
             if (tweets.length > 0) {
-              console.log(tweets);
               timelineFeed = updateTweetPersonalizedInterestsData(
                 timelineFeed,
                 pages,
@@ -887,7 +885,6 @@ export function useOptimisticTweet() {
               } else return false;
             });
             if (tweets.length > 0) {
-              console.log(tweets);
               timelineFeed = updateTweetInInfiniteData(
                 timelineFeed,
                 pages,

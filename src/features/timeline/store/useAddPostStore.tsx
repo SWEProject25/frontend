@@ -2,7 +2,6 @@
 import { create, UseBoundStore, StoreApi } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { mentionType } from '../components/TweetText';
-import { ADD_TWEET } from '../constants/tweetConstants';
 import GifData, { mediaType } from '@/features/media/types/components';
 import {
   EXTERNAL_GIF,
