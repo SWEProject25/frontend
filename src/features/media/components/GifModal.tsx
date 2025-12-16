@@ -107,7 +107,7 @@ export default function GifModal() {
         ) : status === 'pending' ? (
           <Loader />
         ) : search === '' ? (
-          <div className="p-1 grid grid-cols-2 gap-1 grid-rows-4  inset-0 py-1 w-full h-full h-[600px] ">
+          <div className="p-1 grid grid-cols-2 gap-1 grid-rows-4  inset-0 py-1 w-full h-[600px] ">
             {gifs?.map((gif, indx) => (
               <div
                 key={gif.id + indx}

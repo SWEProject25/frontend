@@ -1,17 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { http, HttpResponse } from 'msw';
 import { server } from '@/mocks/server';
-import {
-  fetchConversations,
-  fetchMessages,
-  createMessage,
-  createConversation,
-  deleteMessage,
-  markMessagesSeen,
-  getUnseenCount,
-  getConversationUnseenCount,
-  fetchConversationById,
-} from '../api/messages';
 import { MESSAGES_API_CONFIG } from '../constants/api';
 
 describe('Messages API', () => {

@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/test/test-utils';
 import ProfileSection from '../components/ProfileSection';
-import { useAuthStore } from '@/features/authentication/store/authStore';
 
 vi.mock('@/features/authentication/store/authStore');
 

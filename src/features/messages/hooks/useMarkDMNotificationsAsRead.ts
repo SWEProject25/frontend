@@ -73,7 +73,7 @@ export const useMarkDMNotificationsAsRead = (
           queryKey: ['messages', 'unseen', 'total'],
         });
       })
-      .catch((error) => {
+      .catch(() => {
         // On error, invalidate to refetch correct data (rollback optimistic update)
         queryClient.invalidateQueries({
           queryKey: ['messages', 'unseen', numericConversationId],

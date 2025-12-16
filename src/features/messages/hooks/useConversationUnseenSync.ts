@@ -40,7 +40,7 @@ export const useConversationUnseenSync = (conversationId: number) => {
       try {
         const count = await getConversationUnseenCount(conversationId);
         updateConversationUnseenCount(conversationId, count);
-      } catch (error) {
+      } catch {
         // Failed to fetch unseen count
       }
     };

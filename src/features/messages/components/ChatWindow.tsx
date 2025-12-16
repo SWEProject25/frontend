@@ -17,7 +17,6 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
     message,
     setMessage,
     loading,
-    error,
     messages,
     conversationDetails,
     isTyping,

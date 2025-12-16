@@ -19,7 +19,7 @@ export default function MessagesLayout() {
 
   const setConversations = useMessageStore((s) => s.setConversations);
 
-  useMessages((err) => {
+  useMessages(() => {
     // Socket connection error handled
   });
 
@@ -58,6 +58,7 @@ export default function MessagesLayout() {
           }
         } catch (refreshError) {
           // Failed to refresh conversations
+          console.error('Failed to refresh conversations', refreshError);
         }
 
         router.push(`/messages/${conversationId}`);
