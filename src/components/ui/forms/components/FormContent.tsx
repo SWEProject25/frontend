@@ -28,7 +28,7 @@ export function FormContent({
   onClearState,
   isFormValid,
   onEmailValidationChange,
-}: FormContentProps) {
+}: Readonly<FormContentProps>) {
   return (
     <>
       <FormHeader title={title} subtitle={subtitle} />
@@ -55,7 +55,7 @@ export function FormContent({
 
         {/* General form errors */}
         {/* Success message for forgot-password (backend response) */}
-        {errors && errors.forgotPasswordSuccess && (
+        {errors?.forgotPasswordSuccess && (
           <div className="text-center">
             <p className="text-sm text-success">
               {errors.forgotPasswordSuccess}
