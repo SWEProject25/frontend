@@ -15,10 +15,9 @@ const UserPage = () => {
   const { profile, username } = useProfileContext();
   const { setCurrentProfile } = useProfileStore();
   const currentUser = useAuthStore((s) => s.user);
-  const isMine = Boolean(currentUser && currentUser.username === username);
+  const isMine = Boolean(currentUser?.username === username);
   const [showBlockedPosts, setShowBlockedPosts] = useState(false);
   const router = useRouter();
-  // Update page title with unread count (uses "H" branding, static favicon)
   usePageTitleNotifications('H', false);
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const UserPage = () => {
   }, [profile, setCurrentProfile]);
 
   const handleBack = () => {
-    window.history.back();
+    router.push('/home');
   };
 
   if (!profile) {

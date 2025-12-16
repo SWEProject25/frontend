@@ -34,19 +34,10 @@ export const useMarkDMNotificationsAsRead = (
         )?.unseenCount ||
       0;
 
-    console.log(
-      `📊 Current unseen count for conversation ${numericConversationId}: ${currentUnseenCount}`
-    );
-
     // If no unseen messages, nothing to do
     if (currentUnseenCount === 0) {
       return;
     }
-
-    // 🚀 OPTIMISTIC UPDATE: Immediately update UI before API calls
-    console.log(
-      `🚀 Optimistic update: Setting unseen count to 0 for conversation ${numericConversationId}`
-    );
 
     // 1. Update conversation unseen count to 0 immediately
     updateConversationUnseenCount(numericConversationId, 0);
@@ -59,9 +50,6 @@ export const useMarkDMNotificationsAsRead = (
       ['messages', 'unseen', 'total'],
       (oldCount: number | undefined) => {
         const newCount = Math.max(0, (oldCount || 0) - currentUnseenCount);
-        console.log(
-          `🚀 Optimistic: Total unseen count ${oldCount} → ${newCount} (decremented by ${currentUnseenCount})`
-        );
         return newCount;
       }
     );
@@ -70,9 +58,6 @@ export const useMarkDMNotificationsAsRead = (
     queryClient.setQueryData(
       ['messages', 'unseen', numericConversationId],
       () => {
-        console.log(
-          `🚀 Optimistic: Conversation ${numericConversationId} unseen count → 0`
-        );
         return 0;
       }
     );
@@ -80,10 +65,6 @@ export const useMarkDMNotificationsAsRead = (
     // Now mark messages as seen in the backend
     markMessagesSeen(numericConversationId)
       .then(() => {
-        console.log(
-          `✅ Marked messages as seen in backend for conversation ${numericConversationId}`
-        );
-
         // Invalidate queries to refetch and confirm the optimistic update
         queryClient.invalidateQueries({
           queryKey: ['messages', 'unseen', numericConversationId],
@@ -92,9 +73,7 @@ export const useMarkDMNotificationsAsRead = (
           queryKey: ['messages', 'unseen', 'total'],
         });
       })
-      .catch((error) => {
-        console.error(`❌ Failed to mark messages as seen in backend:`, error);
-
+      .catch(() => {
         // On error, invalidate to refetch correct data (rollback optimistic update)
         queryClient.invalidateQueries({
           queryKey: ['messages', 'unseen', numericConversationId],

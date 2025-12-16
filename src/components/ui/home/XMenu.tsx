@@ -25,7 +25,7 @@ const useXMenu = create<XMenuState>()(
 interface XMenuProps {
   children: ReactNode;
 }
-export default function XMenu({ children }: XMenuProps) {
+export default function XMenu({ children }: Readonly<XMenuProps>) {
   return <div className="relative">{children}</div>;
 }
 
@@ -34,7 +34,7 @@ interface ButtonProp {
   panelHeight: number;
   name: string;
 }
-function Button({ panelHeight, children, name }: ButtonProp) {
+function Button({ panelHeight, children, name }: Readonly<ButtonProp>) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuName = useXMenu((state) => state.menuName);
   const open = useXMenu((state) => state.open);
@@ -107,15 +107,15 @@ function List({
   // Close modal on scroll
   useEffect(() => {
     if (menuName !== name || menuName === '' || preventScroll || scroll) return;
-    window.getSelection()?.removeAllRanges();
+    globalThis.getSelection()?.removeAllRanges();
 
     const handleScroll = () => {
       close();
     };
 
-    window.addEventListener('scroll', handleScroll, true); // Use capture phase
+    globalThis.addEventListener('scroll', handleScroll, true); // Use capture phase
     return () => {
-      window.removeEventListener('scroll', handleScroll, true);
+      globalThis.removeEventListener('scroll', handleScroll, true);
     };
   }, [menuName, name, close, preventScroll, scroll]);
 
@@ -124,6 +124,16 @@ function List({
       close();
     }
   };
+
+  const handleOverlayKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (closeOnOverlayClick && (e.key === 'Enter' || e.key === ' ')) {
+      if (e.target === e.currentTarget) {
+        e.preventDefault();
+        close();
+      }
+    }
+  };
+
   useEffect(() => {
     if (!closeOnEscape || menuName !== name || menuName === '') return;
 
@@ -163,13 +173,18 @@ function List({
     <div
       className={`fixed inset-0 z-50   ${overlayColor}`}
       onClick={handleOverlayClick}
+      onKeyDown={handleOverlayKeyDown}
       role="dialog"
       aria-modal="true"
+      tabIndex={0}
       data-testid={`overlay-xmenu${menuName}`}
     >
       <div
         ref={menuRef}
-        className={`fixed z-50 ${width} ${height} ${maxHeight}  bg-black border-border border-[1px] shadow-[0_0_20px_rgba(255,255,255,0.15)] rounded-2xl overflow-hidden`}
+        className={`fixed z-50 ${width} ${height} ${maxHeight}  bg-black border-border border shadow-[0_0_20px_rgba(255,255,255,0.15)] rounded-2xl overflow-hidden`}
+        role="document"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
       >
         {children}
       </div>

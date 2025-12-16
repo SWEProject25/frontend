@@ -8,7 +8,7 @@ export function SocialLoginSection({
   showDivider,
   loading,
   onSocialLogin,
-}: SocialLoginSectionProps) {
+}: Readonly<SocialLoginSectionProps>) {
   if (socialProviders.length === 0) {
     return null;
   }

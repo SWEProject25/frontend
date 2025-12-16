@@ -144,7 +144,7 @@ describe('FullTweet Component', () => {
   it('should render tweet content', () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <FullTweet data={mockData} id={1} />
+        <FullTweet data={mockData} id={1} isReply={false} />
       </QueryClientProvider>
     );
 
@@ -155,7 +155,7 @@ describe('FullTweet Component', () => {
   it('should show loader when data is null', () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <FullTweet data={null} id={1} />
+        <FullTweet data={null} id={1} isReply={false} />
       </QueryClientProvider>
     );
 

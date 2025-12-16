@@ -14,6 +14,7 @@ interface UploadImageProps {
 const UploadImage: React.FC<UploadImageProps> = ({
   label,
   onFileSelect,
+  previewUrl,
   showClearButton = false,
   onClear,
   'data-testid': dataTestId,
@@ -40,6 +41,25 @@ const UploadImage: React.FC<UploadImageProps> = ({
       className="flex flex-col items-center gap-2"
       data-testid={dataTestId || 'upload-image-container'}
     >
+      {previewUrl && (
+        <div
+          className="relative"
+          data-testid={
+            dataTestId ? `${dataTestId}-preview` : 'upload-image-preview'
+          }
+        >
+          <img
+            src={previewUrl}
+            alt="Preview"
+            className="max-w-full max-h-64 rounded-lg object-cover"
+            data-testid={
+              dataTestId
+                ? `${dataTestId}-preview-image`
+                : 'upload-image-preview-image'
+            }
+          />
+        </div>
+      )}
       <div
         className="flex flex-row items-center gap-2"
         data-testid={

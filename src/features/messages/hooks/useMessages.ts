@@ -17,7 +17,6 @@ export const useMessages = (onError?: (err: any) => void) => {
   const markAllMessagesAsSeen = useMessageStore((s) => s.markAllMessagesAsSeen);
   const typingTimeoutRef = useRef<number | null>(null);
   const currentUserIdRef = useRef<number | null>(null);
-  const lastErrorLogRef = useRef<number>(0);
 
   // Helper to get current user ID
   const getCurrentUserId = useCallback(() => {
@@ -49,25 +48,16 @@ export const useMessages = (onError?: (err: any) => void) => {
     };
 
     const handleConnectError = (err: any) => {
-      // Reduce error spam - only log once every 10 seconds
-      const now = Date.now();
-      if (now - lastErrorLogRef.current > 10000) {
-        console.error(
-          '❌ WebSocket connection failed. Please check your authentication.'
-        );
-        lastErrorLogRef.current = now;
-      }
       onError?.(err);
     };
 
     const handleError = (err: any) => {
-      // Only log authentication errors
+      // Only handle authentication errors
       if (
         err.message?.includes('unauthorized') ||
         err.message?.includes('401') ||
         err.message?.includes('403')
       ) {
-        console.error('🚫 Authentication error - please log in again');
         onError?.(err);
       }
       // Silently ignore other errors (like transport errors)
@@ -98,8 +88,8 @@ export const useMessages = (onError?: (err: any) => void) => {
           const { fetchConversationById } = await import('../api/messages');
           const conversation = await fetchConversationById(msg.conversationId);
           addConversation(conversation);
-        } catch (error) {
-          console.error('❌ Failed to fetch conversation:', error);
+        } catch {
+          // Failed to fetch conversation
         }
       }
 
@@ -121,10 +111,8 @@ export const useMessages = (onError?: (err: any) => void) => {
           socket.emit(
             MESSAGES_SOCKET_EVENTS.MARK_SEEN,
             { conversationId: msg.conversationId, userId: currentUserId },
-            (resp: any) => {
-              if (resp?.status !== 'success') {
-                console.warn('⚠️ Backend failed to mark as seen:', resp);
-              }
+            () => {
+              // Mark seen response handled
             }
           );
         }, 50);
@@ -211,8 +199,8 @@ export const useMessages = (onError?: (err: any) => void) => {
               message.conversationId
             );
             addConversation(conversation);
-          } catch (error) {
-            console.error('❌ Failed to fetch conversation:', error);
+          } catch {
+            // Failed to fetch conversation
           }
         }
 
@@ -296,9 +284,6 @@ export const useMessages = (onError?: (err: any) => void) => {
         MESSAGES_SOCKET_EVENTS.JOIN_CONVERSATION,
         conversationId,
         (resp: any) => {
-          if (resp?.status !== 'success') {
-            console.warn('⚠️ Failed to join conversation:', resp);
-          }
           cb?.(resp);
         }
       );
@@ -339,7 +324,6 @@ export const useMessages = (onError?: (err: any) => void) => {
           }
         }
       } catch (error: any) {
-        console.error('❌ Failed to create message:', error.message);
         cb?.({ status: 'error', error });
       }
     },
@@ -350,13 +334,9 @@ export const useMessages = (onError?: (err: any) => void) => {
     (conversationId: number, userId: number, cb?: (resp: any) => void) => {
       const socket = getSocket();
 
-      // 🚀 OPTIMISTIC UPDATE: Get current unseen count before marking
+      // OPTIMISTIC UPDATE: Get current unseen count before marking
       const currentUnseenCount =
         useMessageStore.getState().unseenCounts[conversationId] || 0;
-
-      console.log(
-        `🚀 Optimistic: Marking conversation ${conversationId} as seen (was ${currentUnseenCount} unseen)`
-      );
 
       // 1. Immediately update local state - mark all messages as seen
       markAllMessagesAsSeen(conversationId);
@@ -371,16 +351,12 @@ export const useMessages = (onError?: (err: any) => void) => {
         ['messages', 'unseen', 'total'],
         (oldCount: number | undefined) => {
           const newCount = Math.max(0, (oldCount || 0) - currentUnseenCount);
-          console.log(
-            `🚀 Optimistic: Total unseen ${oldCount} → ${newCount} (decremented by ${currentUnseenCount})`
-          );
           return newCount;
         }
       );
 
       // 4. Optimistically update per-conversation unseen count in cache
       queryClient.setQueryData(['messages', 'unseen', conversationId], () => {
-        console.log(`🚀 Optimistic: Conversation ${conversationId} unseen → 0`);
         return 0;
       });
 
@@ -390,10 +366,6 @@ export const useMessages = (onError?: (err: any) => void) => {
         { conversationId, userId },
         (resp: any) => {
           if (resp?.status === 'success') {
-            console.log(
-              `✅ Backend confirmed: Conversation ${conversationId} marked as seen`
-            );
-
             // Invalidate to refetch and confirm the optimistic update
             queryClient.invalidateQueries({
               queryKey: ['messages', 'unseen', conversationId],
@@ -402,8 +374,6 @@ export const useMessages = (onError?: (err: any) => void) => {
               queryKey: ['messages', 'unseen', 'total'],
             });
           } else {
-            console.warn('⚠️ Failed to mark messages as seen:', resp);
-
             // On error, invalidate to refetch correct data (rollback optimistic update)
             queryClient.invalidateQueries({
               queryKey: ['messages', 'unseen', conversationId],

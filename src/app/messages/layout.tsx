@@ -5,7 +5,7 @@ import LayoutWrapper from '@/features/layout/components/LayoutWrapper';
 export default function MessagesRootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }) {
   const pathname = usePathname();
   const isConversationView = pathname !== '/messages';

@@ -25,7 +25,7 @@ export default function ConfirmModal({
   cancelText = 'Cancel',
   confirmButtonClass = 'bg-error hover:bg-error/90 text-white',
   isLoading = false,
-}: ConfirmModalProps) {
+}: Readonly<ConfirmModalProps>) {
   const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();

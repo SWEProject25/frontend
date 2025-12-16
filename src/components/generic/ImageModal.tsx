@@ -1,22 +1,19 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import Icon from '@/components/ui/home/Icon';
 
-type MediaItem = {
-  url: string;
-  type: string | 'image' | 'video';
-};
+import Icon from '@/components/ui/home/Icon';
+import type { MediaItem } from '@/features/tweets/types';
 
 interface ImageModalProps {
-  isOpen: boolean;
-  onClose: (e: React.MouseEvent) => void;
-  media: MediaItem[];
-  currentIndex: number;
-  onNext?: (e: React.MouseEvent) => void;
-  onPrev?: (e: React.MouseEvent) => void;
-  showNavigation?: boolean;
-  showCounter?: boolean;
+  readonly isOpen: boolean;
+  readonly onClose: (e: React.MouseEvent) => void;
+  readonly media: MediaItem[];
+  readonly currentIndex: number;
+  readonly onNext?: (e: React.MouseEvent) => void;
+  readonly onPrev?: (e: React.MouseEvent) => void;
+  readonly showNavigation?: boolean;
+  readonly showCounter?: boolean;
 }
 
 export default function ImageModal({
@@ -38,8 +35,17 @@ export default function ImageModal({
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      tabIndex={-1}
       className="fixed inset-0 z-[9999] bg-black flex items-center justify-center"
       onClick={onClose}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          onClose(e as any);
+        }
+      }}
+      aria-label="Image viewer"
       data-testid="image-modal"
     >
       {/* Close button */}
@@ -95,8 +101,10 @@ export default function ImageModal({
 
       {/* Image container */}
       <div
+        role="presentation"
         className="max-w-[95vw] max-h-[95vh] flex items-center justify-center"
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
         data-testid="image-modal-content"
       >
         {currentMedia?.type.toLowerCase() === 'image' ? (
@@ -122,7 +130,9 @@ export default function ImageModal({
             src={currentMedia?.url}
             onClick={(e) => e.stopPropagation()}
             data-testid="image-modal-video"
-          />
+          >
+            <track kind="captions" />
+          </video>
         )}
       </div>
     </div>

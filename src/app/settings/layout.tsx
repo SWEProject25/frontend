@@ -4,7 +4,7 @@ import { SettingsLayout } from '@/features/settings/components';
 export default function SettingsRootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }) {
   return (
     <LayoutWrapper showRightSidebar={false}>

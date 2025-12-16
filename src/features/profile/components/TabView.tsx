@@ -1,17 +1,12 @@
 'use client';
 import Tabs from '@/components/generic/Tabs';
 import { userTabs, myTabs, MEDIA_TAB, REPLIES_TAB } from '../constants/tabs';
-import {
-  useActions,
-  useProfileStore,
-  useSelectedTab,
-} from '../store/profileStore';
+import { useActions, useSelectedTab } from '../store/profileStore';
 import BlockedByUserNotice from './BlockedByUserNotice';
 import Tweets from './Tweets';
 import { useAuthStore } from '@/features/authentication/store/authStore';
 import MediaTweets from './MediaTweets';
 import { useProfileContext } from '@/app/[username]/ProfileProvider';
-import Reply from '@/features/timeline/components/Reply';
 import RepliesList from './RepliesList';
 
 const TabView = () => {

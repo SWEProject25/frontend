@@ -1,8 +1,77 @@
-import { describe, it, expect } from 'vitest';
-// import { render, screen } from '@/test/test-utils';
-// import MobileBottomBar from '../components/MobileBottomBar';
-it('always passes', () => {
-  expect(true).toBe(true);
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@/test/test-utils';
+import MobileBottomBar from '../components/MobileBottomBar';
+import { usePathname } from 'next/navigation';
+import { useAuthStore } from '@/features/authentication/store/authStore';
+
+vi.mock('next/navigation', () => ({
+  usePathname: vi.fn(),
+}));
+
+vi.mock('@/features/authentication/store/authStore');
+
+describe('MobileBottomBar', () => {
+  beforeEach(() => {
+    vi.mocked(usePathname).mockReturnValue('/home');
+    vi.mocked(useAuthStore).mockReturnValue({
+      user: { username: 'testuser', id: 1 },
+    } as any);
+  });
+
+  it('should render mobile navigation bar', () => {
+    const { container } = render(<MobileBottomBar />);
+    const nav = container.querySelector('nav');
+
+    expect(nav).toBeInTheDocument();
+    expect(nav).toHaveClass('fixed', 'bottom-0');
+  });
+
+  it('should render navigation links', () => {
+    render(<MobileBottomBar />);
+
+    const links = screen.getAllByRole('link');
+    expect(links.length).toBeGreaterThan(0);
+  });
+
+  it('should have proper z-index for mobile navigation', () => {
+    const { container } = render(<MobileBottomBar />);
+    const nav = container.querySelector('nav');
+
+    expect(nav).toHaveClass('z-50');
+  });
+
+  it('should render home link', () => {
+    const { container } = render(<MobileBottomBar />);
+    const homeLink = container.querySelector('a[href="/home"]');
+
+    expect(homeLink).toBeInTheDocument();
+  });
+
+  it('should render notifications link', () => {
+    const { container } = render(<MobileBottomBar />);
+    const notificationsLink = container.querySelector(
+      'a[href="/notifications"]'
+    );
+
+    expect(notificationsLink).toBeInTheDocument();
+  });
+
+  it('should render messages link', () => {
+    const { container } = render(<MobileBottomBar />);
+    const messagesLink = container.querySelector('a[href="/messages"]');
+
+    expect(messagesLink).toBeInTheDocument();
+  });
+
+  it('should render with updated username', () => {
+    vi.mocked(useAuthStore).mockReturnValue({
+      user: { username: 'johndoe', id: 1 },
+    } as any);
+
+    const { container } = render(<MobileBottomBar />);
+
+    expect(container).toBeInTheDocument();
+  });
 });
 // describe('MobileBottomBar', () => {
 //   it('should render mobile navigation bar', () => {

@@ -30,21 +30,22 @@ export default function InfiniteScroll({
   noMoreDataMessage = 'You have reached the end',
   noDataMessage = 'No data available',
   showNoMoreData = true,
-}: InfiniteScrollProps) {
+}: Readonly<InfiniteScrollProps>) {
   const observerElement = useRef<HTMLDivElement | null>(null);
   useEffect(
     function () {
       const element = observerElement.current;
       if (!element) return;
       function handleIntersection(entries: IntersectionObserverEntry[]) {
-        entries.forEach((entry) => {
+        for (const entry of entries) {
           if (
             entry.isIntersecting &&
             hasMoreData &&
             (!isLoadingMore || !isLoadingInitial)
-          )
+          ) {
             loadMore();
-        });
+          }
+        }
       }
       const observer = new IntersectionObserver(handleIntersection, {
         root: null,
@@ -61,7 +62,7 @@ export default function InfiniteScroll({
   );
   return (
     <div data-testid={testId} className="w-full">
-      <>{children}</>
+      {children}
       <div ref={observerElement}>
         {isLoadingMore && !isLoadingInitial && (
           <div

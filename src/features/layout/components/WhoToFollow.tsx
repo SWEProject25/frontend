@@ -6,14 +6,10 @@ import { useSuggestedUsers } from '../hooks/useSuggestedUsers';
 import Loader from '@/components/generic/Loader';
 
 export default function WhoToFollow() {
-  // Fetch suggested users with excludeFollowed=true (backend filters out followed users)
   const { data: suggestedUsersResponse, isLoading } = useSuggestedUsers(5);
 
   const suggestedUsers = suggestedUsersResponse?.data?.users || [];
 
-  // Map users to UserCard format
-  // Note: Backend already filters out followed users via excludeFollowed=true parameter
-  // isFollowed is set to false since these are users we don't follow
   const suggestions = suggestedUsers.map((user) => ({
     name: user.profile.name,
     id: user.id,

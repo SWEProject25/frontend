@@ -24,7 +24,7 @@ export default function AnimatedSummary({
       let i = 0;
       setDisplayed('');
       const typeInterval = setInterval(() => {
-        setDisplayed((prev) => (content ? content.slice(0, i) : ''));
+        setDisplayed(content ? content.slice(0, i) : '');
         i++;
         if (!content || i > content.length) clearInterval(typeInterval);
       }, 12); // high speed

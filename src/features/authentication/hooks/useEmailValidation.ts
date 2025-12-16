@@ -19,11 +19,21 @@ const getFriendlyErrorMessage = (backendMessage: string): string => {
   const message = backendMessage.toLowerCase();
 
   if (message.includes('email must be an email')) {
-    return 'Please enter a valid email';
+    return 'Please enter a valid email.';
   }
+  if (message.includes('email has already been taken')) {
+    return 'Email has already been taken.';
+  }
+  if (message.includes('invalid email format')) {
+    return 'Invalid email format.';
+  }
+  if (message.includes('email is required')) {
+    return 'Email is required.';
+  }
+  // Add more mappings as needed
 
   // Default fallback for other validation errors
-  return 'Please enter a valid email';
+  return 'An unknown error occurred. Please check your email.';
 };
 
 export function useEmailValidation({

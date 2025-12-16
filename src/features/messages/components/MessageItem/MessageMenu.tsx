@@ -1,5 +1,3 @@
-import { Trash2 } from 'lucide-react';
-
 interface MessageMenuProps {
   show: boolean;
   onDelete: () => void;

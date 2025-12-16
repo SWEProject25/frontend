@@ -1,11 +1,9 @@
 'use client';
 import { useProfileMedia } from '../hooks/profileQueries';
-import Tweet from '@/features/tweets/components/Tweet';
 import Loader from '@/components/generic/Loader';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import React, { useState } from 'react';
 import Image from 'next/image';
-import Video from '@/features/media/components/Video';
 import { MediaFeed } from '../types/api';
 import { formatVideoTime } from '@/features/media/utils/formatVideoTime';
 
@@ -40,7 +38,7 @@ export default function MediaTweets() {
   const pages = data?.pages.flat();
   const renderMedia = pages?.map((group, i) => (
     <React.Fragment key={i}>
-      {group.data.map((media, ind) => (
+      {group.data.map((media) => (
         <div key={media.id} className={`relative  aspect-square bg-black `}>
           {media.type.toLowerCase() === 'image' ? (
             <Image
@@ -105,7 +103,6 @@ export default function MediaTweets() {
       hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
       hasInitialData={hasInitialData}
       noDataMessage="No Media"
-      // showNoMoreData={false}
       noMoreDataMessage=""
     >
       <div className="grid grid-cols-3  p-1 gap-2 w-full">{renderMedia} </div>

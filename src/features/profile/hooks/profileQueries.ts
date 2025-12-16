@@ -11,15 +11,12 @@ import {
   SearchProfilesParams,
   ProfileResponseDto,
   ProfileSearchResponseDto,
-  ProfileFeedDtoResponse,
   ProfileMediaFeedDtoResponse,
 } from '../types/api';
 import { useProfileStore, useSelectedTab } from '../store/profileStore';
 import { useAuthStore } from '@/features/authentication/store/authStore';
-import { PROFILE_ENDPOINTS } from '../constants/api';
 import {
   LIKES_TAB,
-  MEDIA_TAB,
   MENTIONS_TAB,
   POSTS_TAB,
   REPLIES_TAB,
@@ -417,49 +414,17 @@ export const useProfileFeed = () => {
       default:
         return profilePosts;
     }
-    // if (selectedTab === POSTS_TAB) {
-    //   queryKey = PROFILE_QUERY_KEYS.profilePosts(profile.User.id);
-    //   queryEndPoint = PROFILE_ENDPOINTS.PROFILE_POSTS(user);
-    // } else if (selectedTab === REPLIES_TAB) {
-    //   queryKey = PROFILE_QUERY_KEYS.profileReplies(profile.User.id);
-    //   queryEndPoint = PROFILE_ENDPOINTS.PROFILE_REPLIES(user);
-    // } else if (selectedTab === LIKES_TAB) {
-    //   queryKey = PROFILE_QUERY_KEYS.profileLikes(profile.User.id);
-    //   queryEndPoint = PROFILE_ENDPOINTS.PROFILE_LIKES(user);
-    // } else if (selectedTab === LIKES_TAB) {
-    // } else {
-    //   queryKey = PROFILE_QUERY_KEYS.profileMedia(profile.User.id);
-    //   queryEndPoint = PROFILE_ENDPOINTS.PROFILE_MEDIA(user);
-    // }
   } else {
     throw new Error('Profile called without userId');
   }
-  // return useInfiniteQuery<
-  //   ProfileFeedDtoResponse,
-  //   Error,
-  //   InfiniteData<ProfileFeedDtoResponse, number>,
-  //   | ReturnType<typeof PROFILE_QUERY_KEYS.profilePosts>
-  //   | ReturnType<typeof PROFILE_QUERY_KEYS.profileReplies>
-  //   | ReturnType<typeof PROFILE_QUERY_KEYS.profileLikes>,
-  //   number
-  // >({
-  //   queryKey: queryKey,
-  //   queryFn: ({ pageParam }) =>
-  //     profileApi.getProfileFeed(pageParam, queryEndPoint),
-  //   initialPageParam: 1,
-  //   getNextPageParam: (lastPage, pages) =>
-  //     lastPage.data.length ? pages.length + 1 : undefined,
-  // });
 };
 
 const useProfilePosts = () => {
-  const selectedTab = useSelectedTab();
   const { profile } = useProfileContext();
   const myProfile = useAuthStore((state) => state.user);
   const user = profile?.User.id === myProfile?.id ? 'me' : profile?.User.id;
   if (!(profile?.User.id && user))
     throw new Error('Profile called without userId');
-  const valid = selectedTab === POSTS_TAB;
   return useInfiniteQuery<
     TimelineFeedDtoResponse,
     Error,
@@ -467,7 +432,6 @@ const useProfilePosts = () => {
     ReturnType<typeof PROFILE_QUERY_KEYS.profilePosts>,
     number
   >({
-    // enabled: valid,
     queryKey: PROFILE_QUERY_KEYS.profilePosts(profile.User.id),
     queryFn: ({ pageParam }) =>
       profileApi.getProfilePostsFeed(pageParam, user, profile),
@@ -479,11 +443,9 @@ const useProfilePosts = () => {
 };
 
 const useProfileMention = () => {
-  const selectedTab = useSelectedTab();
   const { profile } = useProfileContext();
   const user = profile?.User.id;
   if (!user) throw new Error('Profile called without userId');
-  const valid = selectedTab === MENTIONS_TAB;
   return useInfiniteQuery<
     TimelineFeedDtoResponse,
     Error,
@@ -503,11 +465,9 @@ const useProfileMention = () => {
 };
 
 const useProfilelikes = () => {
-  const selectedTab = useSelectedTab();
   const myProfile = useAuthStore((state) => state.user);
   const user = myProfile?.id;
   if (!user) throw new Error('Profile called without userId');
-  const valid = selectedTab === LIKES_TAB;
   return useInfiniteQuery<
     TimelineFeedDtoResponse,
     Error,
@@ -527,14 +487,12 @@ const useProfilelikes = () => {
 };
 
 export const useProfileMedia = () => {
-  const selectedTab = useSelectedTab();
   const { profile } = useProfileContext();
 
   const myProfile = useAuthStore((state) => state.user);
   const user = profile?.User.id === myProfile?.id ? 'me' : profile?.User.id;
   if (!(profile?.User.id && user))
     throw new Error('Profile called without userId');
-  const valid = selectedTab === MEDIA_TAB;
   return useInfiniteQuery<
     ProfileMediaFeedDtoResponse,
     Error,
@@ -553,13 +511,11 @@ export const useProfileMedia = () => {
 };
 
 const useProfileReplies = () => {
-  const selectedTab = useSelectedTab();
   const { profile } = useProfileContext();
   const myProfile = useAuthStore((state) => state.user);
   const user = profile?.User.id === myProfile?.id ? 'me' : profile?.User.id;
   if (!(profile?.User.id && user))
     throw new Error('Profile called without userId');
-  const valid = selectedTab === REPLIES_TAB;
   return useInfiniteQuery<
     TimelineFeedDtoResponse,
     Error,

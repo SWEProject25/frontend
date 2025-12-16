@@ -23,13 +23,9 @@ export const useSyncDMNotifications = () => {
 
   const syncConversations = useCallback(async () => {
     try {
-      console.log('🔄 Syncing conversations due to DM notification...');
       const conversations = await fetchConversations();
 
-      console.log('📦 Fetched conversations:', conversations.length);
-
       if (!Array.isArray(conversations) || conversations.length === 0) {
-        console.warn('⚠️ No conversations returned from API');
         return;
       }
 
@@ -38,14 +34,8 @@ export const useSyncDMNotifications = () => {
         const conversationId = conv.conversationId || conv.id;
         const unseenCount = conv.unseenCount ?? 0;
 
-        // Log the lastMessage for debugging
+        // Add last message if present
         if (conv.lastMessage) {
-          console.log(`📨 Conversation ${conversationId} lastMessage:`, {
-            id: conv.lastMessage.id,
-            text: conv.lastMessage.text?.substring(0, 50),
-            createdAt: conv.lastMessage.createdAt,
-          });
-
           const messageWithConversationId = {
             id: conv.lastMessage.id,
             senderId: conv.lastMessage.senderId,
@@ -74,7 +64,6 @@ export const useSyncDMNotifications = () => {
       });
 
       // Now set all conversations at once
-      console.log('💾 Setting conversations in store...');
       setConversations(processedConversations);
 
       // Invalidate queries after everything is set
@@ -87,10 +76,8 @@ export const useSyncDMNotifications = () => {
       queryClient.invalidateQueries({
         queryKey: ['messages', 'unseen', 'total'],
       });
-
-      console.log('✅ Conversations synced successfully');
-    } catch (error) {
-      console.error('❌ Failed to sync conversations:', error);
+    } catch {
+      // Failed to sync conversations
     }
   }, [
     setConversations,
@@ -106,9 +93,6 @@ export const useSyncDMNotifications = () => {
     onNewNotification: (notification) => {
       // Only sync when it's a DM notification
       if (notification.type === 'DM') {
-        console.log(
-          '📬 DM notification received via Firebase - syncing conversations from API'
-        );
         syncConversations();
       }
     },

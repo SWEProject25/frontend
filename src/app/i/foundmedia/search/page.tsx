@@ -18,12 +18,11 @@ export default function Page() {
         'navigation'
       )[0] as PerformanceNavigationTiming;
       if (navEntry?.type === 'reload') {
-        // setIsReload(true);
         handleOpenSchedule();
         setIsLoading(false);
       } else router.push('/home');
     },
-    [open, router]
+    [router]
   );
   if (isLoading)
     return (

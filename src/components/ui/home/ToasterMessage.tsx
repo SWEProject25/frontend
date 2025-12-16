@@ -12,6 +12,8 @@ export default function toasterMessage(
       <div
         data-testid={`toaster-message-${state}`}
         onMouseLeave={() => toast.dismiss(t.id)}
+        role="alert"
+        aria-live="polite"
         className={`${
           t.visible ? 'animate-custom-enter' : 'animate-custom-leave'
         }  max-w-max w-full p-2 px-4 ${state === 'success' ? 'bg-primary' : 'bg-error-message'} shadow-lg rounded-lg pointer-events-auto flex just ring-1 ring-offset-primary ring-opacity-5`}

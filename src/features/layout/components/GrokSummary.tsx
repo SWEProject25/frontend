@@ -1,7 +1,7 @@
 'use client';
 import { GrokIcon } from '@/components/ui/icons';
 import AnimatedSummary from './AnimatedSummary';
-import { CollapseIcon, AutoIcon } from '@/components/ui/icons/UIIcons';
+import { CollapseIcon } from '@/components/ui/icons/UIIcons';
 import { useTweetStore } from '@/features/tweets/store/tweetStore';
 import SubTweet from '@/features/tweets/components/SubTweet';
 import { useRouter } from 'next/navigation';
@@ -93,7 +93,7 @@ function SummarySubTweet({
 function SummaryButton({ setOpened }: { setOpened: (val: boolean) => void }) {
   return (
     <button
-      className="hidden sm:block fixed bottom-20 right-8 z-50 w-14 h-14 bg-black rounded-2xl flex items-center justify-center border border-gray-600 hover:bg-[#101a2b]"
+      className="hidden sm:flex fixed bottom-20 right-8 z-50 w-14 h-14 bg-black rounded-2xl items-center justify-center border border-gray-600 hover:bg-[#101a2b]"
       onClick={() => setOpened(true)}
     >
       <div className="flex items-center justify-center">

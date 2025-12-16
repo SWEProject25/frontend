@@ -120,7 +120,9 @@ export function useMultiStepForm({
   return {
     currentStep,
     handleStepSubmit,
-    handleClose,
+    handleClose: () => {
+      void handleClose();
+    },
     getInitialFormValues,
   };
 }

@@ -15,7 +15,7 @@ export default function Button({
   height = 'h-10',
   width = 'w-20',
   size = 'text-lg',
-}: ButtonProps) {
+}: Readonly<ButtonProps>) {
   return (
     <div className="flex items-center ">
       <button

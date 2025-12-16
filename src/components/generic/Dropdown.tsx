@@ -1,6 +1,5 @@
 'use client';
-import React, { ReactNode } from 'react';
-import { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import {
   Dropdown,
   DropdownTrigger,
@@ -24,13 +23,13 @@ export type DropdownItemType = {
 };
 
 type GenericDropdownProps = {
-  children: ReactNode;
-  items: DropdownItemType[];
-  onOpened?: (opened: boolean) => void;
-  testId?: string;
-  menuClassName?: string;
-  triggerClassName?: string;
-  showBackdrop?: boolean;
+  readonly children: ReactNode;
+  readonly items: readonly DropdownItemType[];
+  readonly onOpened?: (opened: boolean) => void;
+  readonly testId?: string;
+  readonly menuClassName?: string;
+  readonly triggerClassName?: string;
+  readonly showBackdrop?: boolean;
 };
 
 export default function GenericDropdown({
@@ -52,16 +51,24 @@ export default function GenericDropdown({
   };
 
   return (
-    <div className="relative" data-testid={testId}>
+    <div className="relative">
       {/* Backdrop to prevent clicks from propagating */}
       {isOpened && showBackdrop && (
         <div
+          role="button"
+          tabIndex={0}
           onClick={(e) => {
             e.stopPropagation();
             setIsOpened(false);
           }}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+              setIsOpened(false);
+            }
+          }}
           className="fixed inset-0 bg-transparent z-40 cursor-default pointer-events-auto"
-          style={{ pointerEvents: isOpened ? 'auto' : 'none' }}
+          aria-label="Close dropdown"
         />
       )}
       <Dropdown
@@ -75,11 +82,22 @@ export default function GenericDropdown({
       >
         <DropdownTrigger>
           <span
+            role="button"
+            tabIndex={0}
             className={`h-auto w-auto ${triggerClassName}`}
             onClick={(e) => {
               e.stopPropagation();
               setIsOpened(true);
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsOpened(true);
+              }
+            }}
+            aria-haspopup="menu"
+            aria-expanded={isOpened}
           >
             {children}
           </span>

@@ -19,8 +19,8 @@ export default function MessagesLayout() {
 
   const setConversations = useMessageStore((s) => s.setConversations);
 
-  useMessages((err) => {
-    console.error('Socket connection error:', err);
+  useMessages(() => {
+    // Socket connection error handled
   });
 
   // Sync DM notifications with message store
@@ -57,7 +57,8 @@ export default function MessagesLayout() {
             setConversations(normalizedConversations);
           }
         } catch (refreshError) {
-          console.error('Failed to refresh conversations:', refreshError);
+          // Failed to refresh conversations
+          console.error('Failed to refresh conversations', refreshError);
         }
 
         router.push(`/messages/${conversationId}`);
@@ -69,8 +70,6 @@ export default function MessagesLayout() {
       setShowNewConvoModal(false);
       setNewUserId('');
     } catch (error: any) {
-      console.error('Failed to create conversation:', error);
-
       // If conversation already exists (409), try to navigate anyway
       if (error.message?.includes('already exists')) {
         router.push(`/messages/${newUserId}`);

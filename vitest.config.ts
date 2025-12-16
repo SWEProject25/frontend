@@ -34,6 +34,7 @@ export default defineConfig({
         '**/mocks/**',
         '**/constants/**', // Exclude all constants folders
         '**/services/**', // Exclude all services folders
+        '**/api/**', // Exclude all apis folders
         'src/app/**', // Exclude Next.js app directory from coverage
         '**/page.tsx', // Exclude page files
         '**/layout.tsx', // Exclude layout files

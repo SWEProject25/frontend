@@ -1,6 +1,5 @@
 'use client';
 import { useProfileFeed } from '../hooks/profileQueries';
-import Tweet from '@/features/tweets/components/Tweet';
 import Loader from '@/components/generic/Loader';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
 import React from 'react';
@@ -25,7 +24,7 @@ export default function RepliesList() {
   const renderTweets = pages?.map((group, i) => (
     <React.Fragment key={i}>
       {group.data.posts.length >= 1 &&
-        group.data.posts.map((tweet, ind) => (
+        group.data.posts.map((tweet) => (
           <Reply
             data-testid={`${tweet.postId}${tweet.userId}${tweet.isRepost ? 1 : 0}${tweet.isQuote ? 1 : 0}`}
             data={tweet}

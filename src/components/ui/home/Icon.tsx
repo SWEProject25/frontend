@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 interface IconOptions {
   path: string;
@@ -22,18 +21,28 @@ export default function Icon({
   title = '',
   disabled = false,
   color = disabled ? 'text-primary/50' : 'text-primary',
-  hoverColor = !disabled ? 'bg-icon-hover' : '',
+  hoverColor = disabled ? '' : 'bg-icon-hover',
   width = 'h-9',
   height = 'w-9',
   onClick,
   dataTestId = 'icon',
   center = false,
-}: IconOptions) {
+}: Readonly<IconOptions>) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   const icon = (
     <div
       data-testid={dataTestId}
       onClick={onClick}
-      className={`${center && 'self-center'} relative flex items-center justify-center ${width} ${height}  ${!disabled && 'hover:cursor-pointer'} rounded-full  hover:${hoverColor} transition-colors`}
+      onKeyDown={handleKeyDown}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick && !disabled ? 0 : undefined}
+      className={`${center && 'self-center'} relative flex items-center justify-center ${width} ${height}  ${disabled ? '' : 'hover:cursor-pointer'} rounded-full  hover:${hoverColor} transition-colors`}
     >
       <svg
         viewBox={`0 0 ${viewBox} ${viewBox}`}
@@ -49,7 +58,9 @@ export default function Icon({
 
   return (
     <>
-      {!disabled ? (
+      {disabled ? (
+        icon
+      ) : (
         <div className={`flex items-center justify-center ${width}  ${height}`}>
           <Tooltip
             // enterTouchDelay={1000}
@@ -72,8 +83,6 @@ export default function Icon({
             {icon}
           </Tooltip>
         </div>
-      ) : (
-        icon
       )}
     </>
   );

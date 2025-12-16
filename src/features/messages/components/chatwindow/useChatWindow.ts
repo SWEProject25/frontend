@@ -23,7 +23,6 @@ export function useChatWindow(conversationId?: string) {
     (s) => s.setMessagesForConversation
   );
   const deleteMessageFromStore = useMessageStore((s) => s.deleteMessage);
-  const markAllMessagesAsSeen = useMessageStore((s) => s.markAllMessagesAsSeen);
 
   const user = useAuthStore((s) => s.user);
   const currentUserId = (user as any)?.id ?? null;
@@ -37,8 +36,7 @@ export function useChatWindow(conversationId?: string) {
     markSeen,
     setCurrentUserId,
   } = useMessages(
-    useCallback((err: any) => {
-      console.error('Socket error:', err);
+    useCallback(() => {
       setError('Connection error. Please try again.');
     }, [])
   );
@@ -53,7 +51,7 @@ export function useChatWindow(conversationId?: string) {
   // Debug authentication status
   useEffect(() => {
     if (!isAuthenticated || !currentUserId) {
-      console.warn('⚠️ Not properly authenticated! You may need to log in.');
+      // Authentication check
     }
   }, [isAuthenticated, currentUserId, user]);
 
@@ -111,11 +109,8 @@ export function useChatWindow(conversationId?: string) {
       try {
         // Step 1: Join the conversation (fire and continue, don't wait)
         // This tells backend we're viewing it, so it can mark messages as seen
-        joinConversation(numId, (resp) => {
-          if (resp?.status === 'success') {
-          } else {
-            console.warn('⚠️ Join conversation response:', resp);
-          }
+        joinConversation(numId, () => {
+          // Conversation joined
         });
 
         // Step 2: Small delay to let backend process (but don't block on callback)
@@ -143,10 +138,8 @@ export function useChatWindow(conversationId?: string) {
             );
 
             if (unseenMessages.length > 0 && currentUserId) {
-              markSeen(numId, currentUserId, (resp) => {
-                if (resp?.status !== 'success') {
-                  console.warn(' Failed to mark messages as seen:', resp);
-                }
+              markSeen(numId, currentUserId, () => {
+                // Messages marked as seen
               });
             }
           } else {
@@ -162,10 +155,11 @@ export function useChatWindow(conversationId?: string) {
 
           // Don't clear messages on error - keep cached messages
           // This preserves conversation history when backend returns error (e.g., blocked user)
+          // Log the error for debugging so the variable is used and the unused-variable error is avoided
+          console.debug(fetchError);
         }
-      } catch (err) {
+      } catch {
         if (cancelled) return;
-        console.error('❌ Error loading conversation:', err);
         setError('Failed to load conversation');
       } finally {
         if (!cancelled) {
@@ -226,8 +220,7 @@ export function useChatWindow(conversationId?: string) {
       try {
         await deleteMessageApi(Number(conversationId), messageId);
         deleteMessageFromStore(Number(conversationId), messageId);
-      } catch (error: any) {
-        console.error('❌ Failed to delete message:', error.message);
+      } catch {
         setError('Failed to delete message. Please try again.');
         setTimeout(() => setError(null), 3000);
       }

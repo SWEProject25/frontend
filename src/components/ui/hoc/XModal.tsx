@@ -77,14 +77,26 @@ export default function XModal({
     }
   };
 
+  const handleOverlayKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (closeOnOverlayClick && (e.key === 'Enter' || e.key === ' ')) {
+      if (e.target === e.currentTarget) {
+        e.preventDefault();
+        onClose();
+      }
+    }
+  };
+
   return createPortal(
     <div>
       <div
         className={`fixed inset-0 z-50 flex items-center justify-center overflow-y-clip ${overlayColor}`}
         onClick={handleOverlayClick}
+        onKeyDown={handleOverlayKeyDown}
         data-testid={`overlay-xmodal`}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={title ? 'modal-title' : undefined}
+        tabIndex={0}
       >
         <div
           className={`
@@ -96,6 +108,9 @@ export default function XModal({
               animate-in fade-in zoom-in-95 duration-200
                ${sizeClasses[size]}
               `}
+          role="document"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
         >
           {customLayout && (
             <>
@@ -118,7 +133,10 @@ export default function XModal({
 
               {title && (
                 <div className="px-8 pt-2 pb-4">
-                  <h2 className="text-2xl font-bold text-text-active text-center">
+                  <h2
+                    id="modal-title"
+                    className="text-2xl font-bold text-text-active text-center"
+                  >
                     {title}
                   </h2>
                 </div>

@@ -49,16 +49,20 @@ const Avatar = ({
 
   const initial = getInitial();
 
-  const positionStyle =
-    position === 'absolute' && !customPosition
-      ? { left: '12px', top: '80px', zIndex: 1 }
-      : position === 'absolute'
-        ? { zIndex: 1 }
-        : {};
+  let positionStyle: React.CSSProperties = {};
+  if (position === 'absolute' && !customPosition) {
+    positionStyle = { left: '12px', top: '80px', zIndex: 1 };
+  } else if (position === 'absolute') {
+    positionStyle = { zIndex: 1 };
+  }
+
+  const borderClass = className.includes('border-')
+    ? className
+    : `border-2 sm:border-4 ${className}`;
 
   return (
     <div
-      className={`${position} ${sizeClasses[size]} rounded-full border-[#15202B] ${className.includes('border-') ? className : `border-2 sm:border-4 ${className}`}`}
+      className={`${position} ${sizeClasses[size]} rounded-full border-[#15202B] ${borderClass}`}
       style={positionStyle}
     >
       <div
