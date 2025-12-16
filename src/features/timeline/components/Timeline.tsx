@@ -35,7 +35,11 @@ export default function Timeline() {
   useEffect(
     function () {
       if (data && data.pages[0]?.data?.posts?.length > 0) {
-        const posts = data.pages[0].data.posts;
+        const end =
+          data.pages[0].data.posts.length > 3
+            ? 3
+            : data.pages[0].data.posts.length;
+        const posts = data.pages[0].data.posts.slice(0, end);
         const images = posts.map((post) =>
           post.isRepost
             ? post.originalPostData
