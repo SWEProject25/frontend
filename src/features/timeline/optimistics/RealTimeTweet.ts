@@ -3,16 +3,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { TIMELINE_QUERY_KEYS } from '../hooks/timelineQueries';
 import { useSelectedTab } from '../store/useTimelineStore';
 import { FOLLOWING_TAB } from '../constants/menuName';
-import {
-  FeedType,
-  QueryKeyType,
-  TimelineFeed,
-  TimelineTweet,
-} from '../types/api';
+import { FeedType, QueryKeyType, TimelineFeed } from '../types/api';
 import { OPTIMISTIC_TYPES } from '../constants/api';
-import { useTweetStore } from '@/features/tweets/store/tweetStore';
 import { TWEET_QUERY_KEYS } from '@/features/tweets/hooks/tweetQueries';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { EXPLORE_QUERY_KEYS } from '@/features/explore/hooks/exploreQueries';
 import { ExplorePersonalizedFeedDtoResponse } from '@/features/explore/types/api';
 import {
@@ -75,8 +69,7 @@ function updateTweetInInfiniteData(
 function updateTweetPersonalizedInterestsData(
   data: ExplorePersonalizedFeedDtoResponse,
   pages: string[],
-  Tweets: TimelineFeed[],
-  count: number
+  Tweets: TimelineFeed[]
 ): ExplorePersonalizedFeedDtoResponse {
   let tweetIndx = 0;
   const maxIndx = Tweets.length - 1;
@@ -84,7 +77,7 @@ function updateTweetPersonalizedInterestsData(
     (acc, category) => {
       if (!pages.includes(category)) acc[category] = data.data[category];
       else
-        acc[category] = data.data[category].map((tweet, i) => {
+        acc[category] = data.data[category].map((tweet) => {
           if (tweetIndx <= maxIndx) {
             const tweetId = tweet.postId ?? tweet.originalPostData?.postId;
             const newTweetId =
@@ -178,11 +171,7 @@ function handleOldTweets(
     const oldTweets = feed.pages.flatMap((page, indx) =>
       page.data.posts?.filter((post) => {
         if (post.isRepost && post.originalPostData) {
-          if (
-            post.originalPostData.postId === tweetId
-            // &&
-            // post.userId === userId
-          ) {
+          if (post.originalPostData.postId === tweetId) {
             if (!pages.includes(indx)) pages.push(indx);
             return true;
           } else return false;
@@ -195,7 +184,7 @@ function handleOldTweets(
       })
     );
     return { oldTweets, pages };
-  } catch (e) {
+  } catch {
     return { oldTweets: undefined, pages: [] };
   }
 }
@@ -229,7 +218,7 @@ function handleOldInterestsTweets(
     );
 
     return { oldTweets, pages };
-  } catch (e) {
+  } catch {
     return { oldTweets: undefined, pages: [] };
   }
 }
@@ -367,7 +356,6 @@ export function useRealTimeTweet() {
       );
       queryKeys.unshift(currentKey);
     }
-    // }
 
     console.log(queryKeys);
     for (const queryKey of queryKeys) {
@@ -395,19 +383,13 @@ export function useRealTimeTweet() {
         previousFeed,
         tweetId
       );
-      // console.log(oldTweets, pages);
       if (oldTweets) {
         const newTweets: TimelineFeed[] = [];
         oldTweets.forEach((tweet) => {
           newTweets.push(updateTweet(type, tweet, count));
         });
         const timelineFeed: ExplorePersonalizedFeedDtoResponse =
-          updateTweetPersonalizedInterestsData(
-            previousFeed,
-            pages,
-            newTweets,
-            count
-          );
+          updateTweetPersonalizedInterestsData(previousFeed, pages, newTweets);
 
         queryClient.setQueryData<ExplorePersonalizedFeedDtoResponse>(
           queryKey,
@@ -438,15 +420,6 @@ export function useRealTimeTweet() {
         oldTweets.forEach((tweet) => {
           newTweets.push(updateTweet(type, tweet, count));
         });
-        // console.log(
-        //   pages,
-        //   previousFeed,
-        //   newTweets,
-        //   count,
-        //   tweetId,
-        //   userId,
-        //   oldTweets
-        // );
         const timelineFeed: FeedType = updateTweetInInfiniteData(
           previousFeed,
           pages,

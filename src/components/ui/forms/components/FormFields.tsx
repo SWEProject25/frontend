@@ -6,6 +6,10 @@ import { OTPInput } from '@/features/authentication/components/OTPInput';
 import { EmailInputField } from '@/features/authentication/components/EmailInputField';
 import { FormFieldsProps } from '../types';
 
+type FormChangeEvent = React.ChangeEvent<
+  HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+>;
+
 export function FormFields({
   fields,
   formData,
@@ -16,7 +20,7 @@ export function FormFields({
   onClearState,
   onEmailValidationChange,
   loading = false,
-}: FormFieldsProps) {
+}: Readonly<FormFieldsProps>) {
   // Group fields by their group.id
   const fieldGroups = fields.reduce(
     (groups, field) => {
@@ -80,9 +84,7 @@ export function FormFields({
             if (isValid) {
               onInputChange(field.name)({
                 target: { value: 'verified' },
-              } as React.ChangeEvent<
-                HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-              >);
+              } as FormChangeEvent);
             }
           }}
         />
@@ -97,18 +99,14 @@ export function FormFields({
             // Only update form data when OTP is complete (all 6 digits)
             onInputChange(field.name)({
               target: { value: otp },
-            } as React.ChangeEvent<
-              HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-            >);
+            } as FormChangeEvent);
           }}
           onChange={(otp) => {
             // Clear form data if OTP is incomplete
             if (otp.length < 6) {
               onInputChange(field.name)({
                 target: { value: '' },
-              } as React.ChangeEvent<
-                HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-              >);
+              } as FormChangeEvent);
             }
           }}
           email={formData.email}

@@ -54,19 +54,35 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
         .trim()
         .replace(/\s+/g, '-')
         .replace(/[^a-z0-9-_]/g, '');
-    const computedTestId =
-      providedTestId ??
-      (nameAttr
-        ? `auth-select-${nameAttr}`
-        : label
-          ? `auth-select-${slug(label)}`
-          : undefined);
+
+    // Extract nested ternary into independent statement for better readability
+    let fallbackTestId: string | undefined;
+    if (nameAttr) {
+      fallbackTestId = `auth-select-${nameAttr}`;
+    } else if (label) {
+      fallbackTestId = `auth-select-${slug(label)}`;
+    } else {
+      fallbackTestId = undefined;
+    }
+
+    const computedTestId = providedTestId ?? fallbackTestId;
 
     const handleLabelClick = (e: React.MouseEvent) => {
       e.preventDefault();
       const selectEl = e.currentTarget.parentElement?.querySelector('select');
       if (selectEl) {
         selectEl.focus();
+      }
+    };
+
+    const handleLabelKeyDown = (e: React.KeyboardEvent) => {
+      // Handle Enter and Space keys for accessibility
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const selectEl = e.currentTarget.parentElement?.querySelector('select');
+        if (selectEl) {
+          selectEl.focus();
+        }
       }
     };
 
@@ -116,8 +132,8 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectProps>(
         {/* Floating Label - matches InputField behavior */}
         {label && (
           <label
-            className={cn(getLabelStyles(styleProps), 'cursor-text')}
-            onClick={handleLabelClick}
+            className={cn(getLabelStyles(styleProps), 'cursor-pointer')}
+            htmlFor={props.id}
           >
             {label}
           </label>

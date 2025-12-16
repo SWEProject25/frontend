@@ -22,7 +22,7 @@ import { getAddReplyStore } from '../store/replyRegistry';
 import QuoteTweet, {
   quoteProps,
 } from '@/features/tweets/components/QuoteTweet';
-import { useAuth } from '@/features/authentication/hooks';
+
 import { useActions } from '../store/useTimelineStore';
 
 interface AddTweetProps {
@@ -55,7 +55,7 @@ export default function AddTweet({
 
   const isSending = selectors.useIsSending();
   const isOpen = selectors.useGifVisibility();
-  // const error = useError();
+
   const { setShowCheckModal } = useActions();
   const ref = useRef<HTMLDivElement>(null);
   const hasText = selectors.useTweetText().length > 0 || false;
@@ -86,16 +86,8 @@ export default function AddTweet({
         id="Add tweet"
         ref={ref}
         data-testid="add-tweet-container"
-        className={` relative flex flex-col items-start w-full ${showBorder && 'border-b border-border'} `}
+        className={` relative flex flex-col items-start w-full h-full flex-1  ${showBorder && 'border-b border-border'} `}
       >
-        {/* {error && (
-        <div className="flex w-full  p-1 bg-error-message rounded-xs h-8">
-        <span className="text-base">
-            somthing wnet wrong, but don&apos;t fret —— let&apos;s give it
-            another shot.
-          </span>
-        </div>
-      )} */}
         {isSending && (
           <div
             data-testid="tweet-sending-progress"
@@ -103,7 +95,6 @@ export default function AddTweet({
           ></div>
         )}
 
-        {/* Overlay when sending */}
         {isSending && (
           <div
             data-testid="tweet-sending-overlay"
@@ -112,7 +103,7 @@ export default function AddTweet({
         )}
         <div
           data-testid="add-tweet-content"
-          className={` relative flex  items-start w-full justify-center  ${showBorder && 'border-b border-border px-4'} `}
+          className={` relative flex  items-start w-full justify-center flex-1  ${showBorder && 'border-b border-border px-4'} `}
         >
           <div className="pt-1" data-testid="tweet-profile-logo">
             <ProfileLogo />
@@ -138,7 +129,6 @@ export default function AddTweet({
             </div>
             {!(isSending && type === ADD_TWEET.POST) && (
               <div>
-                {/* <TweetReplySettings /> */}
                 <Mention />
                 {type === ADD_TWEET.QUOTE && data !== undefined && (
                   <div className="flex pb-3">

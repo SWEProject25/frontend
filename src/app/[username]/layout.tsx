@@ -2,8 +2,8 @@ import LayoutWrapper from '@/features/layout/components/LayoutWrapper';
 import { ProfileProvider } from './ProfileProvider';
 
 interface UsernameLayoutProps {
-  children: React.ReactNode;
-  params: Promise<{ username: string }>;
+  readonly children: React.ReactNode;
+  readonly params: Promise<{ username: string }>;
 }
 
 export default function UsernameLayout({

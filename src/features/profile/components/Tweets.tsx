@@ -23,7 +23,7 @@ export default function Tweets() {
   const pages = data?.pages.flat();
   const renderTweets = pages?.map((group, i) => (
     <React.Fragment key={i}>
-      {group.data.posts.map((tweet, ind) => (
+      {group.data.posts.map((tweet) => (
         <Tweet
           data-testid={`${tweet.postId}${tweet.userId}${tweet.isRepost ? 1 : 0}${tweet.isQuote ? 1 : 0}`}
           data={tweet}

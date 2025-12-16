@@ -8,7 +8,7 @@ import React, { useEffect } from 'react';
 export default function Page({
   params,
 }: {
-  params: Promise<{ interest: string; tab: string }>;
+  readonly params: Promise<{ interest: string; tab: string }>;
 }) {
   const { tab, interest } = React.use(params);
   const { selectInterestTab, setInterest } = useActions();

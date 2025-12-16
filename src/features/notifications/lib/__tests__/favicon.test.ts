@@ -7,12 +7,9 @@ import {
 } from '../favicon';
 
 describe('favicon utilities', () => {
-  let originalHead: HTMLHeadElement;
-
   beforeEach(() => {
     // Setup DOM
     document.head.innerHTML = '';
-    originalHead = document.head;
   });
 
   afterEach(() => {

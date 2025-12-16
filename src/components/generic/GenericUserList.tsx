@@ -16,8 +16,8 @@ interface UserListItem {
 }
 
 interface GenericUserListProps {
-  query: any;
-  'data-testid'?: string;
+  readonly query: any;
+  readonly 'data-testid'?: string;
 }
 
 export default function GenericUserList({

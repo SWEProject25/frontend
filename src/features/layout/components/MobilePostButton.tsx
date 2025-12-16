@@ -11,10 +11,10 @@ export default function MobilePostButton() {
       <button
         data-testid="mobile-post-button"
         onClick={() => setIsComposeOpen(true)}
-        className="fixed bottom-20 right-4 bg-primary hover:bg-primary-hover text-white font-bold rounded-full transition-colors w-14 h-14 flex items-center justify-center shadow-lg z-40"
+        className="fixed bottom-20 right-4 bg-primary hover:bg-primary-hover hover:cursor-pointer text-white font-bold rounded-full transition-colors w-14 h-14 flex items-center justify-center shadow-lg z-40"
         aria-label="Create post"
       >
-        <PencilIcon className="w-6 h-6 text-white" />
+        <PencilIcon className="w-6 h-6 cursor-pointer text-white" />
       </button>
 
       <ComposeModal

@@ -6,7 +6,6 @@ import BlockBtn from '@/components/generic/buttons/BlockBtn';
 import MuteBtn from '@/components/generic/buttons/MuteBtn';
 import { VerifiedIcon } from '@/components/ui/icons/BrandIcons';
 import { LikeIconFilled, RetweetIcon } from '@/components/ui/icons/UIIcons';
-import Icon from './home/Icon';
 
 export interface UserCardProps {
   name: string;
@@ -45,7 +44,45 @@ export default function UserCard({
 
   'data-testid': testId,
   fontSize = 'text-sm',
-}: UserCardProps) {
+}: Readonly<UserCardProps>) {
+  const renderActionButton = () => {
+    if (!actionType) return null;
+
+    if (actionType === 'block') {
+      return <BlockBtn userId={userId} isBlocked={isBlocked} />;
+    }
+
+    if (actionType === 'mute') {
+      return <MuteBtn userId={userId} isMuted={isMuted} />;
+    }
+
+    if (actionType === 'like') {
+      return (
+        <div className="p-2">
+          <LikeIconFilled className="w-5 h-5 text-rose-400" />
+        </div>
+      );
+    }
+
+    if (actionType === 'repost') {
+      return (
+        <div className="p-2">
+          <RetweetIcon className="w-5 h-5 text-green-500" />
+        </div>
+      );
+    }
+
+    // Default: follow action
+    return (
+      <FollowBtn
+        userId={userId}
+        isFollowed={isFollowed}
+        isFollowingMe={isFollowingMe}
+        onFollowChange={onFollowChange}
+      />
+    );
+  };
+
   const userInfoContent = (
     <>
       {/* Avatar */}
@@ -97,28 +134,7 @@ export default function UserCard({
 
       {/* Action Button */}
       {actionType && (
-        <div className="ml-3 shrink-0 self-start">
-          {actionType === 'block' ? (
-            <BlockBtn userId={userId} isBlocked={isBlocked} />
-          ) : actionType === 'mute' ? (
-            <MuteBtn userId={userId} isMuted={isMuted} />
-          ) : actionType === 'like' ? (
-            <div className="p-2">
-              <LikeIconFilled className="w-5 h-5 text-rose-400" />
-            </div>
-          ) : actionType === 'repost' ? (
-            <div className="p-2">
-              <RetweetIcon className="w-5 h-5 text-green-500" />
-            </div>
-          ) : (
-            <FollowBtn
-              userId={userId}
-              isFollowed={isFollowed}
-              isFollowingMe={isFollowingMe}
-              onFollowChange={onFollowChange}
-            />
-          )}
-        </div>
+        <div className="ml-3 shrink-0 self-start">{renderActionButton()}</div>
       )}
     </div>
   );

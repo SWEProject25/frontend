@@ -20,14 +20,11 @@ import {
   useFetchAvatars,
   useNewTweets,
   useSearch,
-  useSearchIsopen,
-  useSearchUser,
   useSelectedTab,
 } from '../store/useTimelineStore';
 import { FOLLOWING_TAB } from '../constants/menuName';
-import { OPTIMISTIC_TYPES, TIMELINE_ENDPOINTS } from '../constants/api';
+import { TIMELINE_ENDPOINTS } from '../constants/api';
 import { useAuth } from '@/features/authentication/hooks';
-import { Search } from 'lucide-react';
 import {
   PROFILE_QUERY_KEYS,
   profileApi,
@@ -49,7 +46,6 @@ export const TIMELINE_QUERY_KEYS = {
 };
 export const useAddTweet = (label: string) => {
   const selectors = useAddPostContext();
-  const { onMutate, handleErrorOptimisticTweet } = useOptimisticTweet();
 
   const { onSuccess, startSending, seterror, clearMedia, clearEmoji } =
     selectors.useActions();
@@ -75,16 +71,6 @@ export const useAddTweet = (label: string) => {
       }
     },
     onSuccess: async (data) => {
-      // // queryClient.invalidateQueries({ queryKey: [''] });
-      // if (label === ADD_TWEET.QUOTE) {
-      //   onMutate(
-      //     OPTIMISTIC_TYPES.Quote,
-      //     data.data.originalPostData?.userId ?? data.data.userId,
-      //     data.data.originalPostData?.postId,
-      //     data.data.originalPostData?.type,
-      //     data.data.originalPostData?.parentId
-      //   );
-      // }
       console.log('app', user, label);
 
       if (user && label !== ADD_TWEET.REPLY) {
@@ -109,7 +95,6 @@ export const useAddTweet = (label: string) => {
       const newTweet: TimelineFeed = {
         ...data.data,
         flagReply: label === ADD_TWEET.REPLY,
-        // originalPostData: undefined,
       };
       toasterMessage(
         'Your post was sent.',
@@ -202,15 +187,9 @@ export const useTimelineFeed = () => {
     getNextPageParam: (lastPage, pages) =>
       lastPage.data.posts.length ? pages.length + 1 : undefined,
     staleTime: Infinity,
-    // Show loading state while refetching to avoid flash of empty content
-    // refetchOnMount: 'always',
   });
 };
 export const useSearchProfile = (searchUser: string) => {
-  // const search = useSearch();
-  // const isSearch = useSearchIsopen();
-  // const mention = useMention();
-  // const searchUser = isSearch ? search : mention;
   return useInfiniteQuery<
     ProfileSearchDtoResponse,
     Error,
@@ -257,7 +236,7 @@ export const useCheckValidUser = (username: string) => {
 };
 export const useAvatarsPopUp = () => {
   const selectedTab = useSelectedTab();
-  const newTweets = useNewTweets();
+
   const isPopUpVisible = useFetchAvatars();
   let queryKey,
     queryEndPoint:
@@ -279,7 +258,6 @@ export const useAvatarsPopUp = () => {
     number
   >({
     enabled: isPopUpVisible,
-    // enabled: isPopUpVisible && newTweets.length === 0,
     queryKey: queryKey,
     queryFn: ({ pageParam }) =>
       timelineApi.getTimelineFeed(pageParam, queryEndPoint, 3),

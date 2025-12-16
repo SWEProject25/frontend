@@ -4,10 +4,9 @@ import { useTimelineFeed } from '../hooks/timelineQueries';
 import React from 'react';
 import Tweet from '@/features/tweets/components/Tweet';
 import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
-import { useTweetStore } from '@/features/tweets/store/tweetStore';
-// import InfiniteScrollContainer from '@/components/generic/InfiniteScrollContainer';
+
 import Loader from '@/components/generic/Loader';
-import { TimelineFeedDtoResponse } from '../types/api';
+
 import toasterMessage from '@/components/ui/home/ToasterMessage';
 
 export default function TweetList() {
@@ -40,7 +39,6 @@ export default function TweetList() {
 
   const hasInitialData = pages ? pages[0].data.posts.length > 0 : false;
 
-  // Show loader when initially loading OR when refetching without data
   const shouldShowLoader = isLoading || (isFetching && !hasInitialData);
 
   return isError ? (

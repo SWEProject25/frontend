@@ -45,7 +45,6 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
   console.log(placeHolder);
   const divRef = useRef<null | HTMLDivElement>(null);
 
-  // const placeHolder = selectors.usePlaceHolder();
   const isSuccess = selectors.useIsSuccess();
   const spanRef1 = useRef<null | HTMLSpanElement>(null);
   const [spanText1, setSpanText1] = useState(placeHolder);
@@ -83,7 +82,6 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
   useEffect(function () {
     if (firstTweetText) {
       if (divRef.current) {
-        // completedMentions.current = [];
         notMentions.current = [];
         setCheckValidUsers(new Set());
         divRef.current.textContent = firstTweetText;
@@ -444,8 +442,6 @@ export default function TweetText({ placeHolder }: { placeHolder: string }) {
     function () {
       if (emoji) {
         if (divRef.current) {
-          // divRef.current.innerText = divRef.current.innerText + emoji;
-          // const pos = getCurrCursorPos(divRef.current)
           divRef.current.innerText =
             divRef.current.innerText.slice(0, cursorPos.current) +
             emoji +

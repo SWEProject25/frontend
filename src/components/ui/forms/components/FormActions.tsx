@@ -8,7 +8,7 @@ export function FormActions({
   showForgotPassword,
   onForgotPassword,
   isFormValid,
-}: FormActionsProps) {
+}: Readonly<FormActionsProps>) {
   return (
     <>
       {/* Submit Button */}

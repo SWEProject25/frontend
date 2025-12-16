@@ -76,7 +76,7 @@ export const useSyncDMNotifications = () => {
       queryClient.invalidateQueries({
         queryKey: ['messages', 'unseen', 'total'],
       });
-    } catch (error) {
+    } catch {
       // Failed to sync conversations
     }
   }, [

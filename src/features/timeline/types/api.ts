@@ -3,10 +3,7 @@ import { TIMELINE_QUERY_KEYS } from '../hooks/timelineQueries';
 import { EXPLORE_QUERY_KEYS } from '@/features/explore/hooks/exploreQueries';
 import { InfiniteData } from '@tanstack/react-query';
 import { ReplyDto } from '@/features/tweets/types';
-import {
-  ExplorePersonalizedFeedDtoResponse,
-  ExploreSearchFeedDtoResponse,
-} from '@/features/explore/types/api';
+import { ExploreSearchFeedDtoResponse } from '@/features/explore/types/api';
 import { PROFILE_QUERY_KEYS } from '@/features/profile';
 export const TweetFormDataKeys = {
   CONTENT: 'content',
@@ -52,10 +49,6 @@ export interface TimelineTweet {
   isDeleted?: boolean;
   flagReply?: boolean;
   isRepost?: boolean;
-
-  // created_at?: string;
-  // user_id?: number;
-  // post_id?: number;
 }
 interface Mention {
   userId: number;
@@ -127,4 +120,3 @@ export type FeedType =
   | InfiniteData<TimelineFeedDtoResponse, number>
   | InfiniteData<ExploreSearchFeedDtoResponse, number>
   | InfiniteData<ReplyDto, number>;
-// | ExplorePersonalizedFeedDtoResponse

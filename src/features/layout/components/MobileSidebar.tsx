@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { X, User, Settings } from 'lucide-react';
+import { User, Settings } from 'lucide-react';
 import Link from 'next/link';
 import Avatar from '@/components/generic/Avatar';
 import { useAuth } from '@/features/authentication/hooks/useAuth';

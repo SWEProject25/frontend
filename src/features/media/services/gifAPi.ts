@@ -57,8 +57,7 @@ export const gifApi = {
             'Content-Type': 'application/json',
           },
         });
-        // const data = await singleResponse.json();
-        // return data;
+
         return handleResponse<GifResponse>(response);
       }
     );

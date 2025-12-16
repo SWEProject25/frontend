@@ -17,7 +17,6 @@ export const useMessages = (onError?: (err: any) => void) => {
   const markAllMessagesAsSeen = useMessageStore((s) => s.markAllMessagesAsSeen);
   const typingTimeoutRef = useRef<number | null>(null);
   const currentUserIdRef = useRef<number | null>(null);
-  const lastErrorLogRef = useRef<number>(0);
 
   // Helper to get current user ID
   const getCurrentUserId = useCallback(() => {
@@ -89,7 +88,7 @@ export const useMessages = (onError?: (err: any) => void) => {
           const { fetchConversationById } = await import('../api/messages');
           const conversation = await fetchConversationById(msg.conversationId);
           addConversation(conversation);
-        } catch (error) {
+        } catch {
           // Failed to fetch conversation
         }
       }
@@ -112,7 +111,7 @@ export const useMessages = (onError?: (err: any) => void) => {
           socket.emit(
             MESSAGES_SOCKET_EVENTS.MARK_SEEN,
             { conversationId: msg.conversationId, userId: currentUserId },
-            (resp: any) => {
+            () => {
               // Mark seen response handled
             }
           );
@@ -200,7 +199,7 @@ export const useMessages = (onError?: (err: any) => void) => {
               message.conversationId
             );
             addConversation(conversation);
-          } catch (error) {
+          } catch {
             // Failed to fetch conversation
           }
         }

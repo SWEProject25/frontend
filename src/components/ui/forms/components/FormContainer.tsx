@@ -251,11 +251,15 @@ export function FormContainer(
       )}
       onClick={(e) => onClose && handleOverlayClick(e, onClose)}
       onKeyDown={(e) => onClose && handleModalKeyDown(e, onClose)}
-      tabIndex={-1}
+      role="dialog"
+      aria-modal="true"
+      tabIndex={0}
     >
       <div
         className="bg-background rounded-2xl w-full max-w-[600px] max-h-[90vh] overflow-y-auto relative shadow-2xl mx-4 sm:mx-0"
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+        role="document"
       >
         {/* Close Button */}
         {onClose && (

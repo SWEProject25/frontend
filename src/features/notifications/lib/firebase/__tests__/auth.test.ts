@@ -70,8 +70,6 @@ describe('Firebase Auth', () => {
       vi.resetModules();
       vi.mocked(isFirebaseConfigured).mockReturnValue(false);
 
-      const result = getAuthInstance();
-
       // Should handle unconfigured state
       expect(initializeFirebase).not.toHaveBeenCalled();
     });
@@ -168,7 +166,7 @@ describe('Firebase Auth', () => {
     it('should log success message', async () => {
       const authWithUser = { ...mockAuth, currentUser: mockUser };
       vi.mocked(getAuth).mockReturnValue(authWithUser as any);
-      mockAuth.signOut.mockResolvedValue();
+      mockAuth.signOut.mockResolvedValue(undefined);
 
       const consoleSpy = vi.spyOn(console, 'log');
 

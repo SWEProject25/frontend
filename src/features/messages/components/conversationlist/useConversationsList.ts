@@ -97,7 +97,7 @@ export function useConversationsList(
           );
           setConversations(normalizedConversations);
         }
-      } catch (err) {
+      } catch {
         setError('Failed to load conversations');
       } finally {
         setLoading(false);

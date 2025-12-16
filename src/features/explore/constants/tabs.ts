@@ -1,4 +1,3 @@
-// export const FOR_YOU_TAB = 'personalized';
 export const FOR_YOU_TAB = 'personalized';
 export const TRENDING_TAB = 'general';
 export const TOP_TAB = 'top';

@@ -1,5 +1,4 @@
 'use client';
-import XMenu from '@/components/ui/home/XMenu';
 import { SearchInput } from '@/components/ui/input';
 import React, { useState, useRef, useEffect } from 'react';
 import UserCard from '@/components/ui/UserCard';
@@ -38,7 +37,6 @@ export default function SearchProfile() {
     setSearch(text);
   }
   function handleFocus() {
-    // console.log('focus');
     setUnFocus(false);
     setIsOpen(true);
     setSelectedTab(-1);
@@ -73,31 +71,21 @@ export default function SearchProfile() {
         });
     } else if (e.key === 'Enter') {
       console.log(selectedTab);
-      // e.preventDefault();
+
       let path = '';
       if (selectedTab === -1) {
-        // const searchQuery = startWithHash ? '%23' + search.replace('#', '') : search;
         path = `/search?q=${encodeURIComponent(search)}`;
       } else if (selectedTab === 1) {
-        //go to search for string
-        // setSearchExplore(search);
-
         path = `/search?q=${search}`;
       } else if (selectedTab === totalProfiles + 2) {
-        // go to page with @string
-
         path = startWithMention ? `./${search.slice(1)}` : `./${search}`;
       } else if (selectedTab === 0 && hasHashtag) {
-        // go to hasthag if exist
-        // setSearchExplore('#' + search);
-
         const searchQuery = startWithHash
           ? search.trim().replace('#', '')
           : search.trim();
         console.log(search);
         path = `/search?q=%23${encodeURIComponent(searchQuery)}`;
       } else {
-        // go to profile number selectedTab -1
         console.log('path');
         if (pages) {
           const limit = pages[0].metadata.limit;
@@ -232,10 +220,6 @@ export default function SearchProfile() {
               className="flex flex-col w-full  "
               data-testid="render-search-profile-list"
             >
-              {
-                // for just testing but i will show only hashtag if they exist in
-                //final
-              }
               {!hasSpace && hasHashtag && (
                 <div
                   className={`flex w-full h-16 items-center gap-x-2 p-3 py-6 border-b  border-border ${hasHashtag && 'hover:cursor-pointer hover:bg-white/12'} ${selectedTab === 0 && 'bg-white/12'}`}
@@ -250,7 +234,6 @@ export default function SearchProfile() {
                   }}
                 >
                   {
-                    // hasHashtag ?
                     <>
                       <Icon
                         viewBox={21}
@@ -263,11 +246,6 @@ export default function SearchProfile() {
                         {search.trimStart()}
                       </span>
                     </>
-                    // : (
-                    //   <span className="font-semibold text-xl break-all">
-                    //     there is no hashtag with #{searchUser}
-                    //   </span>
-                    // )
                   }
                 </div>
               )}

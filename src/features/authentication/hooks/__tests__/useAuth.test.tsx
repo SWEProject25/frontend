@@ -240,7 +240,7 @@ describe('useAuth Hooks', () => {
       await act(async () => {
         try {
           await result.current.mutateAsync();
-        } catch (e) {
+        } catch {
           // Expected to throw
         }
       });

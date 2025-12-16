@@ -18,7 +18,7 @@ export function MultiStepForm({
   formState,
   onClearState,
   type,
-}: MultiStepFormProps) {
+}: Readonly<MultiStepFormProps>) {
   const { currentStep, handleStepSubmit, handleClose, getInitialFormValues } =
     useMultiStepForm({
       type,

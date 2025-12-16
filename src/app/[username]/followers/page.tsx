@@ -1,6 +1,5 @@
 'use client';
-import React from 'react';
-import { use } from 'react';
+import React, { use } from 'react';
 import { useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { Tabs, GenericUserList } from '@/components/generic';
@@ -10,7 +9,7 @@ import { useAuthStore } from '@/features/authentication/store/authStore';
 import Loader from '@/components/generic/Loader';
 
 interface FollowersPageProps {
-  params: Promise<{
+  readonly params: Promise<{
     username: string;
   }>;
 }
