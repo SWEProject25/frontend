@@ -35,6 +35,7 @@ export default function Timeline() {
   useEffect(
     function () {
       if (data && data.pages[0]?.data?.posts?.length > 0) {
+        console.log(data);
         const end =
           data.pages[0].data.posts.length > 3
             ? 3
@@ -83,14 +84,14 @@ export default function Timeline() {
             if (!interval.current)
               interval.current = setTimeout(
                 () => setFetchAvatars(true),
-                1000 * 60
+                10 * 60
               );
           }
         });
       }
       const observer = new IntersectionObserver(handleIntersection, {
         root: null,
-        rootMargin: `1000px`,
+        rootMargin: `100px`,
         threshold: 0,
       });
       observer.observe(element);
