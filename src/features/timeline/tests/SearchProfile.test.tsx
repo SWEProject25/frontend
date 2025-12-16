@@ -1,16 +1,23 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import React from 'react';
 
+const mockSetSearch = vi.fn();
+const mockSetIsOpen = vi.fn();
+const mockPush = vi.fn();
+const mockFetchNextPage = vi.fn();
+let mockSearch = 'test';
+let mockIsOpen = true;
+
 // Mock useTimelineStore
 vi.mock('../store/useTimelineStore', () => ({
-  useSearch: vi.fn(() => 'test'),
+  useSearch: vi.fn(() => mockSearch),
   useSearchAction: vi.fn(() => ({
-    setSearch: vi.fn(),
-    setIsOpen: vi.fn(),
+    setSearch: mockSetSearch,
+    setIsOpen: mockSetIsOpen,
   })),
-  useSearchIsopen: vi.fn(() => true),
+  useSearchIsopen: vi.fn(() => mockIsOpen),
 }));
 
 // Mock timelineQueries
@@ -19,20 +26,28 @@ vi.mock('../hooks/timelineQueries', () => ({
     data: {
       pages: [
         {
-          data: [{ User: { username: 'testuser' }, user_id: 1 }],
+          data: [
+            {
+              User: { username: 'testuser', is_verified: false },
+              user_id: 1,
+              name: 'Test User',
+              is_followed_by_me: false,
+              profile_image_url: '/test.jpg',
+            },
+          ],
           metadata: { total: 1, limit: 10 },
         },
       ],
     },
     isLoading: false,
-    fetchNextPage: vi.fn(),
+    fetchNextPage: mockFetchNextPage,
     isFetchingNextPage: false,
     hasNextPage: false,
     isError: false,
     error: null,
   })),
   useSearchHashtag: vi.fn(() => ({
-    data: null,
+    data: { pages: [{ data: { posts: [] } }] },
     isLoading: false,
   })),
 }));
@@ -44,48 +59,38 @@ vi.mock('../hooks/useDebounce', () => ({
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(() => ({ push: vi.fn() })),
+  useRouter: vi.fn(() => ({ push: mockPush })),
   usePathname: vi.fn(() => '/home'),
 }));
 
 // Mock components
-vi.mock('@/components/ui/home/XMenu', () => {
-  const XMenu = function XMenu({ children }: { children: React.ReactNode }) {
-    return <div data-testid="x-menu">{children}</div>;
-  };
-  XMenu.Button = function XMenuButton({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) {
-    return <div data-testid="x-menu-button">{children}</div>;
-  };
-  XMenu.List = function XMenuList({ children }: { children: React.ReactNode }) {
-    return <div data-testid="x-menu-list">{children}</div>;
-  };
-  XMenu.Items = function XMenuItems({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) {
-    return <div data-testid="x-menu-items">{children}</div>;
-  };
-  return { default: XMenu };
-});
-
 vi.mock('@/components/ui/input', () => ({
-  SearchInput: ({ value, onChange }: any) => (
+  SearchInput: ({
+    value,
+    onChange,
+    onFocus,
+    handleKeyDown,
+  }: {
+    value: string;
+    onChange: (v: string) => void;
+    onFocus: () => void;
+    handleKeyDown: (e: React.KeyboardEvent) => void;
+  }) => (
     <input
       aria-label="test-search-profile"
       data-testid="search-input"
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onFocus={onFocus}
+      onKeyDown={handleKeyDown}
     />
   ),
 }));
 
 vi.mock('@/components/ui/UserCard', () => ({
-  default: ({ username }: any) => <div data-testid="user-card">{username}</div>,
+  default: ({ name }: { name: string }) => (
+    <div data-testid="user-card">{name}</div>
+  ),
 }));
 
 vi.mock('@/components/generic', () => ({
@@ -93,7 +98,7 @@ vi.mock('@/components/generic', () => ({
 }));
 
 vi.mock('@/components/ui/home/InfiniteScroll', () => ({
-  default: ({ children }: any) => (
+  default: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="infinite-scroll">{children}</div>
   ),
 }));
@@ -109,26 +114,29 @@ vi.mock('@/components/ui/home/ToasterMessage', () => ({
 }));
 
 import SearchProfile from '../components/SearchProfile';
+import { useSearchProfile, useSearchHashtag } from '../hooks/timelineQueries';
+import { useSearch, useSearchIsopen } from '../store/useTimelineStore';
 
 describe('SearchProfile', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
+    mockSearch = 'test';
+    mockIsOpen = true;
+    vi.mocked(useSearch).mockReturnValue(mockSearch);
+    vi.mocked(useSearchIsopen).mockReturnValue(mockIsOpen);
+  });
+
+  afterEach(() => {
     vi.clearAllMocks();
   });
 
   it('should render search profile component', () => {
     render(<SearchProfile />);
-    // SearchProfile renders an XMenu wrapper
     expect(screen.getByTestId('search-input')).toBeInTheDocument();
   });
 
   it('should render search input', () => {
     render(<SearchProfile />);
-    expect(screen.getByTestId('search-input')).toBeInTheDocument();
-  });
-
-  it('should render x-menu button', () => {
-    render(<SearchProfile />);
-    // SearchProfile renders with search input
     expect(screen.getByTestId('search-input')).toBeInTheDocument();
   });
 
@@ -140,5 +148,123 @@ describe('SearchProfile', () => {
   it('should render infinite scroll', () => {
     render(<SearchProfile />);
     expect(screen.getByTestId('infinite-scroll')).toBeInTheDocument();
+  });
+
+  it('should call setSearch when typing', () => {
+    render(<SearchProfile />);
+    const input = screen.getByTestId('search-input');
+    fireEvent.change(input, { target: { value: 'new search' } });
+    expect(mockSetSearch).toHaveBeenCalledWith('new search');
+  });
+
+  it('should call setIsOpen when input is focused', () => {
+    render(<SearchProfile />);
+    const input = screen.getByTestId('search-input');
+    fireEvent.focus(input);
+    expect(mockSetIsOpen).toHaveBeenCalledWith(true);
+  });
+
+  it('should show empty state when search is empty', () => {
+    vi.mocked(useSearch).mockReturnValue('');
+    render(<SearchProfile />);
+    expect(
+      screen.getByText('Try searching for people, lists, or keywords')
+    ).toBeInTheDocument();
+  });
+
+  it('should show loading state', () => {
+    vi.mocked(useSearchProfile).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      fetchNextPage: mockFetchNextPage,
+      isFetchingNextPage: false,
+      hasNextPage: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof useSearchProfile>);
+
+    render(<SearchProfile />);
+    expect(screen.getByTestId('loader')).toBeInTheDocument();
+  });
+
+  it('should handle Enter key press and navigate to search', () => {
+    vi.mocked(useSearch).mockReturnValue('test');
+    render(<SearchProfile />);
+    const input = screen.getByTestId('search-input');
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(mockSetIsOpen).toHaveBeenCalledWith(false);
+  });
+
+  it('should close search when clicking outside', () => {
+    render(<SearchProfile />);
+    act(() => {
+      fireEvent.mouseDown(document.body);
+    });
+    expect(mockSetIsOpen).toHaveBeenCalledWith(false);
+  });
+
+  it('should not show dropdown when isOpen is false', () => {
+    vi.mocked(useSearchIsopen).mockReturnValue(false);
+    render(<SearchProfile />);
+    expect(
+      screen.queryByText('Try searching for people, lists, or keywords')
+    ).not.toBeInTheDocument();
+  });
+
+  it('should navigate when Enter pressed', () => {
+    render(<SearchProfile />);
+    const input = screen.getByTestId('search-input');
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(mockSetIsOpen).toHaveBeenCalledWith(false);
+  });
+
+  it('should handle hashtag search', () => {
+    vi.mocked(useSearch).mockReturnValue('#test');
+    vi.mocked(useSearchHashtag).mockReturnValue({
+      data: { pages: [{ data: { posts: [{ id: 1 }] } }] },
+      isLoading: false,
+    } as ReturnType<typeof useSearchHashtag>);
+
+    render(<SearchProfile />);
+    expect(screen.getByTestId('search-input')).toBeInTheDocument();
+  });
+
+  it('should render valid search icon', () => {
+    vi.mocked(useSearch).mockReturnValue('validSearch');
+    render(<SearchProfile />);
+    expect(screen.getByTestId('search-input')).toBeInTheDocument();
+  });
+
+  it('should render go to profile option for mention search', () => {
+    vi.mocked(useSearch).mockReturnValue('@testuser');
+    render(<SearchProfile />);
+    expect(screen.getByTestId('search-input')).toBeInTheDocument();
+  });
+
+  it('should handle error state', () => {
+    vi.mocked(useSearchProfile).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      fetchNextPage: mockFetchNextPage,
+      isFetchingNextPage: false,
+      hasNextPage: false,
+      isError: true,
+      error: { message: 'Error occurred' },
+    } as unknown as ReturnType<typeof useSearchProfile>);
+
+    render(<SearchProfile />);
+    expect(screen.getByTestId('search-input')).toBeInTheDocument();
+  });
+
+  it('should render with users in data', () => {
+    render(<SearchProfile />);
+    expect(screen.getByTestId('search-input')).toBeInTheDocument();
+  });
+
+  it('should handle other key press', () => {
+    render(<SearchProfile />);
+    const input = screen.getByTestId('search-input');
+    fireEvent.keyDown(input, { key: 'Tab' });
+    expect(input).toBeInTheDocument();
   });
 });

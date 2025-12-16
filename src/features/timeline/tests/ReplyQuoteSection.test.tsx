@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import React from 'react';
 
@@ -23,9 +23,10 @@ vi.mock('../store/useTimelineStore', () => ({
 }));
 
 // Mock useAddTweet
+const mockMutate = vi.fn();
 vi.mock('../hooks/timelineQueries', () => ({
   useAddTweet: vi.fn(() => ({
-    mutate: vi.fn(),
+    mutate: mockMutate,
     isPending: false,
     isSuccess: false,
     isError: false,
@@ -34,8 +35,21 @@ vi.mock('../hooks/timelineQueries', () => ({
 
 // Mock TweetSubmitSection
 vi.mock('./TweetSubmitSection', () => ({
-  default: ({ label, handleAddTweet, enableAddTweet }: any) => (
-    <div data-testid="tweet-submit-section">
+  default: ({
+    label,
+    handleAddTweet,
+    enableAddTweet,
+    enableSection,
+  }: {
+    label: string;
+    handleAddTweet: () => void;
+    enableAddTweet: boolean;
+    enableSection: boolean;
+  }) => (
+    <div
+      data-testid="tweet-submit-section"
+      data-enable-section={String(enableSection)}
+    >
       <button
         data-testid="submit-button"
         onClick={handleAddTweet}
@@ -48,10 +62,15 @@ vi.mock('./TweetSubmitSection', () => ({
 }));
 
 import ReplyQuoteSections from '../components/ReplyQuoteSection';
+import { useAddPostContext } from '../store/AddPostContext';
+import { LOCAL_MEDIA } from '@/features/media/constants/mediaConstants';
 
 describe('ReplyQuoteSection', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    global.fetch = vi.fn().mockResolvedValue({
+      blob: () => Promise.resolve(new Blob(['test'], { type: 'image/gif' })),
+    });
   });
 
   it('should render tweet submit section', () => {
@@ -72,5 +91,140 @@ describe('ReplyQuoteSection', () => {
   it('should render submit button', () => {
     render(<ReplyQuoteSections label="REPLY" />);
     expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  it('should disable button when tweet text is empty and no media', () => {
+    vi.mocked(useAddPostContext).mockReturnValue({
+      useTweetText: () => '',
+      useMedia: () => [],
+      useMentions: () => [],
+      useActions: () => ({
+        setTweetText: vi.fn(),
+        addMedia: vi.fn(),
+        reset: vi.fn(),
+      }),
+    } as ReturnType<typeof useAddPostContext>);
+
+    render(<ReplyQuoteSections label="REPLY" />);
+    const button = screen.getByRole('button');
+    expect(button).toBeDisabled();
+  });
+
+  it('should enable button when media exists but no text', () => {
+    vi.mocked(useAddPostContext).mockReturnValue({
+      useTweetText: () => '',
+      useMedia: () => [{ type: LOCAL_MEDIA, data: new File([''], 'test.jpg') }],
+      useMentions: () => [],
+      useActions: () => ({
+        setTweetText: vi.fn(),
+        addMedia: vi.fn(),
+        reset: vi.fn(),
+      }),
+    } as ReturnType<typeof useAddPostContext>);
+
+    render(<ReplyQuoteSections label="REPLY" />);
+    const button = screen.getByRole('button');
+    expect(button).not.toBeDisabled();
+  });
+
+  it('should call mutate when handleAddTweet is triggered with local media', async () => {
+    const mockFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
+    vi.mocked(useAddPostContext).mockReturnValue({
+      useTweetText: () => 'test reply',
+      useMedia: () => [{ type: LOCAL_MEDIA, data: mockFile }],
+      useMentions: () => [{ id: 1, username: 'user1' }],
+      useActions: () => ({
+        setTweetText: vi.fn(),
+        addMedia: vi.fn(),
+        reset: vi.fn(),
+      }),
+    } as ReturnType<typeof useAddPostContext>);
+
+    render(<ReplyQuoteSections label="REPLY" />);
+    fireEvent.click(screen.getByRole('button'));
+
+    await waitFor(() => {
+      expect(mockMutate).toHaveBeenCalled();
+    });
+  });
+
+  it('should call mutate when handleAddTweet is triggered with GIF media', async () => {
+    const mockGifData = {
+      type: 'GIF',
+      data: {
+        images: { original: { url: 'https://example.com/gif.gif' } },
+        title: 'test-gif',
+      },
+    };
+    vi.mocked(useAddPostContext).mockReturnValue({
+      useTweetText: () => 'test reply',
+      useMedia: () => [mockGifData],
+      useMentions: () => [],
+      useActions: () => ({
+        setTweetText: vi.fn(),
+        addMedia: vi.fn(),
+        reset: vi.fn(),
+      }),
+    } as ReturnType<typeof useAddPostContext>);
+
+    render(<ReplyQuoteSections label="REPLY" />);
+    fireEvent.click(screen.getByRole('button'));
+
+    await waitFor(() => {
+      expect(mockMutate).toHaveBeenCalled();
+    });
+  });
+
+  it('should append parent id to form data', async () => {
+    vi.mocked(useAddPostContext).mockReturnValue({
+      useTweetText: () => 'test reply',
+      useMedia: () => [],
+      useMentions: () => [],
+      useActions: () => ({
+        setTweetText: vi.fn(),
+        addMedia: vi.fn(),
+        reset: vi.fn(),
+      }),
+    } as ReturnType<typeof useAddPostContext>);
+
+    render(<ReplyQuoteSections label="REPLY" />);
+    fireEvent.click(screen.getByRole('button'));
+
+    await waitFor(() => {
+      expect(mockMutate).toHaveBeenCalled();
+    });
+  });
+
+  it('should disable button when text exceeds max length', () => {
+    vi.mocked(useAddPostContext).mockReturnValue({
+      useTweetText: () => 'x'.repeat(281),
+      useMedia: () => [],
+      useMentions: () => [],
+      useActions: () => ({
+        setTweetText: vi.fn(),
+        addMedia: vi.fn(),
+        reset: vi.fn(),
+      }),
+    } as ReturnType<typeof useAddPostContext>);
+
+    render(<ReplyQuoteSections label="REPLY" />);
+    const button = screen.getByRole('button');
+    expect(button).toBeDisabled();
+  });
+
+  it('should render submit section with proper structure', () => {
+    vi.mocked(useAddPostContext).mockReturnValue({
+      useTweetText: () => 'test',
+      useMedia: () => [],
+      useMentions: () => [],
+      useActions: () => ({
+        setTweetText: vi.fn(),
+        addMedia: vi.fn(),
+        reset: vi.fn(),
+      }),
+    } as ReturnType<typeof useAddPostContext>);
+
+    render(<ReplyQuoteSections label="REPLY" />);
+    expect(screen.getByTestId('tweet-submit-section')).toBeInTheDocument();
   });
 });

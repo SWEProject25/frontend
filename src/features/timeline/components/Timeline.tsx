@@ -84,14 +84,14 @@ export default function Timeline() {
             if (!interval.current)
               interval.current = setTimeout(
                 () => setFetchAvatars(true),
-                10 * 60
+                1000 * 60
               );
           }
         });
       }
       const observer = new IntersectionObserver(handleIntersection, {
         root: null,
-        rootMargin: `100px`,
+        rootMargin: `1000px`,
         threshold: 0,
       });
       observer.observe(element);

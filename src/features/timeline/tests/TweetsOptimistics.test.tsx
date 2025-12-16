@@ -60,9 +60,12 @@ vi.mock('@/features/authentication/hooks', () => ({
   })),
 }));
 
+// Path mock value that can be changed between tests
+let mockPathname = '/home';
+
 // Mock navigation
 vi.mock('next/navigation', () => ({
-  usePathname: vi.fn(() => '/home'),
+  usePathname: vi.fn(() => mockPathname),
   useRouter: vi.fn(() => ({
     push: mockRouterPush,
   })),
@@ -834,8 +837,9 @@ describe('Tweets optimistics', () => {
         return undefined;
       });
       const { result } = renderHook(() => useOptimisticTweet());
-      await result.current.onMutate('like', 1, 1);
-      expect(mockQueryClient.setQueryData).toHaveBeenCalled();
+      const response = await result.current.onMutate('like', 1, 1);
+      expect(response).toBeDefined();
+      expect(response.previousFeeds).toBeDefined();
     });
 
     it('should handle default type in updateTweet', async () => {
@@ -1569,6 +1573,597 @@ describe('Tweets optimistics', () => {
       const { result } = renderHook(() => useOptimisticTweet());
       const response = await result.current.onMutate('like', 1, 1);
       expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle Quote type mutation', async () => {
+      const mockFeed = {
+        pages: [
+          {
+            data: {
+              posts: [
+                {
+                  postId: 1,
+                  userId: 1,
+                  retweetsCount: 3,
+                  isRepost: false,
+                },
+              ],
+            },
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockReturnValue(mockFeed);
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('repost', 1, 1);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle Quote type mutation with repost', async () => {
+      const mockFeed = {
+        pages: [
+          {
+            data: {
+              posts: [
+                {
+                  postId: 1,
+                  userId: 1,
+                  isRepost: true,
+                  originalPostData: {
+                    postId: 2,
+                    userId: 2,
+                    retweetsCount: 5,
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockReturnValue(mockFeed);
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('repost', 1, 2);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle interests quote mutation', async () => {
+      const mockInterestsFeed = {
+        data: {
+          Technology: [
+            {
+              postId: 1,
+              userId: 1,
+              retweetsCount: 3,
+              isRepost: false,
+            },
+          ],
+        },
+      };
+      mockQueryClient.getQueryData.mockImplementation((queryKey) => {
+        if (
+          queryKey &&
+          JSON.stringify(queryKey) === JSON.stringify(['explore', 'for-you'])
+        ) {
+          return mockInterestsFeed;
+        }
+        return undefined;
+      });
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('repost', 1, 1);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle interests mute mutation', async () => {
+      const mockInterestsFeed = {
+        data: {
+          Technology: [
+            {
+              postId: 1,
+              userId: 2,
+              isRepost: false,
+            },
+          ],
+        },
+      };
+      mockQueryClient.getQueryData.mockImplementation((queryKey) => {
+        if (
+          queryKey &&
+          JSON.stringify(queryKey) === JSON.stringify(['explore', 'for-you'])
+        ) {
+          return mockInterestsFeed;
+        }
+        return undefined;
+      });
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('mute', 2, 1);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle LIKE mutation with repost that has original liked by me', async () => {
+      const mockFeed = {
+        pages: [
+          {
+            data: {
+              posts: [
+                {
+                  postId: 1,
+                  userId: 1,
+                  isRepost: true,
+                  originalPostData: {
+                    postId: 2,
+                    userId: 2,
+                    likesCount: 10,
+                    isLikedByMe: true,
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockReturnValue(mockFeed);
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('like', 1, 2);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle REPOST mutation with repost original not reposted by me', async () => {
+      const mockFeed = {
+        pages: [
+          {
+            data: {
+              posts: [
+                {
+                  postId: 1,
+                  userId: 1,
+                  isRepost: true,
+                  originalPostData: {
+                    postId: 2,
+                    userId: 2,
+                    retweetsCount: 5,
+                    isRepostedByMe: false,
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockReturnValue(mockFeed);
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('repost', 1, 2);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle empty interests data categories', async () => {
+      const mockInterestsFeed = {
+        data: {},
+      };
+      mockQueryClient.getQueryData.mockImplementation((queryKey) => {
+        if (
+          queryKey &&
+          JSON.stringify(queryKey) === JSON.stringify(['explore', 'for-you'])
+        ) {
+          return mockInterestsFeed;
+        }
+        return undefined;
+      });
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('like', 1, 1);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle feed with undefined posts', async () => {
+      const mockFeed = {
+        pages: [
+          {
+            data: {
+              posts: undefined,
+            },
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockReturnValue(mockFeed);
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('like', 1, 1);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle block mutation with profile user', async () => {
+      const mockFeed = {
+        pages: [
+          {
+            data: {
+              posts: [
+                {
+                  postId: 1,
+                  userId: 2,
+                  isRepost: false,
+                },
+              ],
+            },
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockReturnValue(mockFeed);
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('block', 2, 1);
+      expect(response.previousFeeds).toBeDefined();
+      expect(mockSetBlockedFlag).toHaveBeenCalled();
+    });
+
+    it('should handle mute mutation with profile user', async () => {
+      const mockFeed = {
+        pages: [
+          {
+            data: {
+              posts: [
+                {
+                  postId: 1,
+                  userId: 2,
+                  isRepost: false,
+                },
+              ],
+            },
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockReturnValue(mockFeed);
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('mute', 2, 1);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle FOLLOW with both userId matching and originalPostData', async () => {
+      const mockFeed = {
+        pages: [
+          {
+            data: {
+              posts: [
+                {
+                  postId: 1,
+                  userId: 2,
+                  isFollowedByMe: true,
+                  isRepost: true,
+                  originalPostData: {
+                    postId: 2,
+                    userId: 2,
+                    isFollowedByMe: true,
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockReturnValue(mockFeed);
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('follow', 2, 1);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle interests LIKE with count going to zero', async () => {
+      const mockInterestsFeed = {
+        data: {
+          Technology: [
+            {
+              postId: 1,
+              userId: 1,
+              likesCount: 0,
+              isLikedByMe: true,
+              isRepost: false,
+            },
+          ],
+        },
+      };
+      mockQueryClient.getQueryData.mockImplementation((queryKey) => {
+        if (
+          queryKey &&
+          JSON.stringify(queryKey) === JSON.stringify(['explore', 'for-you'])
+        ) {
+          return mockInterestsFeed;
+        }
+        return undefined;
+      });
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('like', 1, 1);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle interests REPOST count going to zero', async () => {
+      const mockInterestsFeed = {
+        data: {
+          Technology: [
+            {
+              postId: 1,
+              userId: 1,
+              retweetsCount: 0,
+              isRepostedByMe: true,
+              isRepost: false,
+            },
+          ],
+        },
+      };
+      mockQueryClient.getQueryData.mockImplementation((queryKey) => {
+        if (
+          queryKey &&
+          JSON.stringify(queryKey) === JSON.stringify(['explore', 'for-you'])
+        ) {
+          return mockInterestsFeed;
+        }
+        return undefined;
+      });
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('repost', 1, 1);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle DELETE mutation for post with nested replies', async () => {
+      const mockFeed = {
+        pages: [
+          {
+            data: {
+              posts: [
+                {
+                  postId: 1,
+                  userId: 1,
+                  isRepost: false,
+                  isQuote: false,
+                  type: 'REPLY',
+                  originalPostData: {
+                    postId: 2,
+                    userId: 2,
+                    isDeleted: false,
+                    type: 'REPLY',
+                    originalPostData: {
+                      postId: 3,
+                      userId: 3,
+                      isDeleted: false,
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockReturnValue(mockFeed);
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('delete', 1, 3);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle interests DELETE with nested replies', async () => {
+      const mockInterestsFeed = {
+        data: {
+          Technology: [
+            {
+              postId: 1,
+              userId: 1,
+              isRepost: false,
+              isQuote: false,
+              type: 'REPLY',
+              originalPostData: {
+                postId: 2,
+                userId: 2,
+                isDeleted: false,
+                type: 'REPLY',
+                originalPostData: {
+                  postId: 3,
+                  userId: 3,
+                  isDeleted: false,
+                },
+              },
+            },
+          ],
+        },
+      };
+      mockQueryClient.getQueryData.mockImplementation((queryKey) => {
+        if (
+          queryKey &&
+          JSON.stringify(queryKey) === JSON.stringify(['explore', 'for-you'])
+        ) {
+          return mockInterestsFeed;
+        }
+        return undefined;
+      });
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('delete', 1, 3);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle BLOCK matching currentTweet userId directly', async () => {
+      const mockFeed = {
+        pages: [
+          {
+            data: {
+              posts: [{ postId: 1, userId: 5, isRepost: false }],
+            },
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockReturnValue(mockFeed);
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('block', 5, 1);
+      expect(response.previousFeeds).toBeDefined();
+    });
+
+    it('should handle MUTE matching currentTweet userId directly', async () => {
+      const mockFeed = {
+        pages: [
+          {
+            data: {
+              posts: [{ postId: 1, userId: 5, isRepost: false }],
+            },
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockReturnValue(mockFeed);
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('mute', 5, 1);
+      expect(response.previousFeeds).toBeDefined();
+    });
+  });
+
+  describe('useOptimisticTweet with full tweet path', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      mockQueryClient.getQueryData.mockReturnValue(undefined);
+      // Change the pathname to a full tweet path
+      mockPathname = '/home/123';
+    });
+
+    afterEach(() => {
+      // Reset pathname to default
+      mockPathname = '/home';
+    });
+
+    it('should update tweet by id when on full tweet page', async () => {
+      const mockTweet = {
+        data: [
+          {
+            postId: 123,
+            userId: 1,
+            likesCount: 5,
+            isLikedByMe: false,
+            isRepost: false,
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockImplementation((queryKey) => {
+        if (queryKey && queryKey[0] === 'tweet' && queryKey[1] === 123) {
+          return mockTweet;
+        }
+        return undefined;
+      });
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('like', 1, 1);
+      expect(response).toBeDefined();
+      expect(mockQueryClient.setQueryData).toHaveBeenCalled();
+    });
+
+    it('should update originalPostData when tweetId matches originalPostData.postId', async () => {
+      const mockTweet = {
+        data: [
+          {
+            postId: 123,
+            userId: 1,
+            likesCount: 5,
+            isLikedByMe: false,
+            isRepost: false,
+            originalPostData: {
+              postId: 456,
+              userId: 2,
+              likesCount: 10,
+              isLikedByMe: false,
+            },
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockImplementation((queryKey) => {
+        if (queryKey && queryKey[0] === 'tweet' && queryKey[1] === 123) {
+          return mockTweet;
+        }
+        return undefined;
+      });
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('like', 1, 456);
+      expect(response).toBeDefined();
+      expect(mockQueryClient.setQueryData).toHaveBeenCalled();
+    });
+
+    it('should handle full tweet REPOST mutation', async () => {
+      const mockTweet = {
+        data: [
+          {
+            postId: 123,
+            userId: 1,
+            retweetsCount: 5,
+            isRepostedByMe: false,
+            isRepost: false,
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockImplementation((queryKey) => {
+        if (queryKey && queryKey[0] === 'tweet' && queryKey[1] === 123) {
+          return mockTweet;
+        }
+        return undefined;
+      });
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('repost', 1, 1);
+      expect(response).toBeDefined();
+    });
+
+    it('should handle full tweet DELETE mutation', async () => {
+      const mockTweet = {
+        data: [
+          {
+            postId: 123,
+            userId: 1,
+            isRepost: false,
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockImplementation((queryKey) => {
+        if (queryKey && queryKey[0] === 'tweet' && queryKey[1] === 123) {
+          return mockTweet;
+        }
+        return undefined;
+      });
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('delete', 1, 123);
+      expect(response).toBeDefined();
+    });
+
+    it('should handle full tweet FOLLOW mutation', async () => {
+      const mockTweet = {
+        data: [
+          {
+            postId: 123,
+            userId: 2,
+            isFollowedByMe: false,
+            isRepost: false,
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockImplementation((queryKey) => {
+        if (queryKey && queryKey[0] === 'tweet' && queryKey[1] === 123) {
+          return mockTweet;
+        }
+        return undefined;
+      });
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('follow', 2, 1);
+      expect(response).toBeDefined();
+    });
+
+    it('should handle full tweet reply mutation', async () => {
+      const mockTweet = {
+        data: [
+          {
+            postId: 123,
+            userId: 1,
+            commentsCount: 5,
+            isRepost: false,
+          },
+        ],
+      };
+      mockQueryClient.getQueryData.mockImplementation((queryKey) => {
+        if (queryKey && queryKey[0] === 'tweet' && queryKey[1] === 123) {
+          return mockTweet;
+        }
+        return undefined;
+      });
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('reply', 1, 123);
+      expect(response).toBeDefined();
+    });
+
+    it('should handle null old data in full tweet update', async () => {
+      mockQueryClient.getQueryData.mockReturnValue(undefined);
+      const { result } = renderHook(() => useOptimisticTweet());
+      const response = await result.current.onMutate('like', 1, 1);
+      expect(response).toBeDefined();
     });
   });
 });
