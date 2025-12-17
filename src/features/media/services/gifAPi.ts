@@ -1,0 +1,84 @@
+import { GIF_ENDPOINTS } from '../constants/api';
+import { GifResponse } from '../types/api';
+
+class ApiError extends Error {
+  constructor(
+    message: string,
+    public statusCode: unknown,
+    public response?: unknown
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+async function handleResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    let errorMessage = 'An error occurred';
+    const statusCode = response.status;
+
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.meta.msg || errorMessage;
+    } catch {
+      // If response is not JSON, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+
+    // Provide user-friendly error messages for common errors
+    if (statusCode === 401) {
+      errorMessage = errorMessage || 'Invalid token in query';
+    }
+
+    // Handle registration errors
+    if (statusCode === 429) {
+      errorMessage = errorMessage || 'API rate limit exceeded';
+    }
+
+    if (statusCode === 400) {
+      errorMessage =
+        errorMessage ||
+        'Invalid input data. Please check your information and try again.';
+    }
+
+    throw new ApiError(errorMessage, statusCode);
+  }
+
+  return response.json();
+}
+
+export const gifApi = {
+  async getCategories() {
+    const promises: Promise<GifResponse>[] = GIF_ENDPOINTS.searchCategories.map(
+      async (cat): Promise<GifResponse> => {
+        const response = await fetch(`${cat}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        return handleResponse<GifResponse>(response);
+      }
+    );
+    // Wait for all promises to resolve
+    const results = await Promise.all(promises);
+
+    return results.map((res) => res.data[0]);
+  },
+  async searchGif(
+    searchText: string,
+    page = 0,
+    limit = 10
+  ): Promise<GifResponse> {
+    const response = await fetch(
+      `${GIF_ENDPOINTS.search(searchText)}&` +
+        new URLSearchParams({ offset: `${page * limit}`, limit: `${limit}` }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return handleResponse<GifResponse>(response);
+  },
+};

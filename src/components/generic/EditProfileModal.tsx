@@ -1,0 +1,221 @@
+import React, { useEffect, useState } from 'react';
+import XModal from '@/components/ui/hoc/XModal';
+import {
+  compareDatesOrUndefined,
+  isoStringToDatePickerValue,
+  getBirthDateOrNull,
+  datePickerValueToISOString,
+  validateProfileForm,
+} from '@/utils';
+import { DatePickerValue } from '@/components/ui/DatePicker';
+import EditProfileHeader from './components/EditProfileHeader';
+import EditProfileAvatar from './components/EditProfileAvatar';
+import EditProfileCover from './components/EditProfileCover';
+import EditProfileForm from './components/EditProfileForm';
+
+interface EditProfileModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialData: {
+    name: string;
+    bio: string | null;
+    profileImage: string | null;
+    bannerImage: string | null;
+    location: string | null;
+    website: string | null;
+    birthDate: string; // ISO string
+  };
+  onSave: (data: {
+    name?: string;
+    bio?: string;
+    profileImage?: File | null;
+    bannerImage?: File | null;
+    location?: string | null;
+    website?: string | null;
+    birthDate?: string | null;
+  }) => void;
+  isUpdating?: boolean;
+}
+
+const EditProfileModal: React.FC<EditProfileModalProps> = ({
+  isOpen,
+  onClose,
+  initialData,
+  onSave,
+  isUpdating = false,
+}) => {
+  const [name, setName] = useState(initialData.name);
+  const [bio, setBio] = useState(initialData.bio ?? '');
+  const [location, setLocation] = useState(initialData.location ?? '');
+  const [website, setWebsite] = useState(initialData.website ?? '');
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [bannerImage, setBannerImage] = useState<File | null>(null);
+  const [profilePreview, setProfilePreview] = useState<string | undefined>(
+    initialData.profileImage ?? undefined
+  );
+  const [bannerPreview, setBannerPreview] = useState<string | undefined>(
+    initialData.bannerImage ?? undefined
+  );
+  const [birth, setBirth] = useState<DatePickerValue>(() => {
+    return isoStringToDatePickerValue(initialData.birthDate) ?? {};
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleSave = () => {
+    // Validate form before saving
+    const validation = validateProfileForm({
+      name,
+      bio,
+      location,
+      website,
+    });
+
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+      return;
+    }
+
+    // Clear errors if validation passes
+    setErrors({});
+    const computeImagePayload = (
+      file: File | null,
+      preview: string | undefined,
+      initial?: string | null
+    ): File | null | undefined => {
+      if (file) return file;
+      if (preview === '') return null;
+      if (preview === initial) return undefined;
+      return undefined;
+    };
+
+    const fieldPayload = (value: string, initial?: string | null) => {
+      const v = value?.trim();
+      const init = initial?.trim() ?? '';
+      if (v === init) return undefined;
+      return v; // Return trimmed value instead of original
+    };
+
+    onSave({
+      name: fieldPayload(name, initialData.name),
+      bio: fieldPayload(bio, initialData.bio ?? undefined),
+      location: fieldPayload(location, initialData.location ?? undefined),
+      website: fieldPayload(website, initialData.website ?? undefined),
+      birthDate: (() => {
+        const selected = getBirthDateOrNull(birth);
+        const initial = initialData.birthDate;
+        if (!selected) return selected; // undefined/null
+        const composedIso = datePickerValueToISOString(selected);
+        if (!composedIso) return undefined;
+        return compareDatesOrUndefined(composedIso, initial);
+      })(),
+      profileImage: computeImagePayload(
+        profileImage,
+        profilePreview,
+        initialData.profileImage ?? undefined
+      ),
+      bannerImage: computeImagePayload(
+        bannerImage,
+        bannerPreview,
+        initialData.bannerImage ?? undefined
+      ),
+    });
+    onCloseModal();
+  };
+
+  const handleProfileImageChange = (file: File | null) => {
+    setProfileImage(file);
+    if (file) {
+      setProfilePreview(URL.createObjectURL(file));
+    } else {
+      setProfilePreview('');
+    }
+  };
+
+  const handleBannerImageChange = (file: File | null) => {
+    setBannerImage(file);
+    if (file) {
+      setBannerPreview(URL.createObjectURL(file));
+    } else {
+      setBannerPreview('');
+    }
+  };
+
+  const resetToInitial = () => {
+    setName(initialData.name);
+    setBio(initialData.bio ?? '');
+    setLocation(initialData.location ?? '');
+    setWebsite(initialData.website ?? '');
+    setProfileImage(null);
+    setBannerImage(null);
+    setProfilePreview(initialData.profileImage ?? undefined);
+    setBannerPreview(initialData.bannerImage ?? undefined);
+    setBirth(isoStringToDatePickerValue(initialData.birthDate) ?? {});
+    setErrors({});
+  };
+
+  const onCloseModal = () => {
+    resetToInitial();
+    onClose();
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      setName(initialData.name);
+      setBio(initialData.bio ?? '');
+      setLocation(initialData.location ?? '');
+      setWebsite(initialData.website ?? '');
+      setProfileImage(null);
+      setBannerImage(null);
+      setProfilePreview(initialData.profileImage ?? undefined);
+      setBannerPreview(initialData.bannerImage ?? undefined);
+      setBirth(isoStringToDatePickerValue(initialData.birthDate) ?? {});
+      setErrors({});
+    }
+  }, [isOpen, initialData]);
+
+  return (
+    <XModal
+      isOpen={isOpen}
+      onClose={onCloseModal}
+      size="xl"
+      customLayout={false}
+      overlayColor="bg-modal-overlay"
+      data-testid="edit-profile-modal"
+    >
+      <EditProfileHeader
+        onClose={onCloseModal}
+        onSave={handleSave}
+        isUpdating={isUpdating}
+      />
+      <div className="flex flex-col w-full" data-testid="edit-profile-content">
+        <EditProfileCover
+          coverImage={bannerPreview}
+          onFileSelect={handleBannerImageChange}
+          showClearButton={!!bannerPreview}
+          onClear={() => handleBannerImageChange(null)}
+        />
+        <div className="relative pb-4">
+          <EditProfileAvatar
+            avatarImage={profilePreview}
+            onFileSelect={handleProfileImageChange}
+          />
+          <EditProfileForm
+            name={name}
+            setName={setName}
+            bio={bio}
+            setBio={setBio}
+            location={location}
+            setLocation={setLocation}
+            website={website}
+            setWebsite={setWebsite}
+            birth={birth}
+            setBirth={(v) => setBirth(v ?? {})}
+            errors={errors}
+          />
+        </div>
+      </div>
+    </XModal>
+  );
+};
+
+export default EditProfileModal;

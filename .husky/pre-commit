@@ -1,2 +1,37 @@
+#!/bin/sh
 
-npx lint-staged
+# Function to ask yes/no question
+ask() {
+  while true; do
+    printf "%s (y/n): " "$1"
+    read yn < /dev/tty
+    case $yn in
+      [Yy]* ) return 0;;
+      [Nn]* ) return 1;;
+      * ) echo "Please answer y or n.";;
+    esac
+  done
+}
+
+# Run lint-staged
+if ask "Run lint-staged?"; then
+  npx lint-staged || exit 1
+fi
+
+# Run prettier
+if ask "Run prettier?"; then
+  npx prettier --write .
+  git add .
+fi
+
+# Run build
+if ask "Run build?"; then
+  npm run build || exit 1
+fi
+
+# Run tests
+if ask "Run tests?"; then
+  npm test -- --bail=1 || exit 1
+fi
+
+echo "Pre-commit checks completed!"
