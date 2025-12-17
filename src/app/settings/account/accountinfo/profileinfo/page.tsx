@@ -1,0 +1,269 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Breadcrumb from '@/components/ui/Breadcrumb';
+import Button from '@/components/ui/Button';
+import {
+  compareDatesOrUndefined,
+  isoStringToDatePickerValue,
+  getBirthDateOrNull,
+  datePickerValueToISOString,
+  validateProfileForm,
+} from '@/utils';
+import { DatePickerValue } from '@/components/ui/DatePicker';
+import EditProfileAvatar from '@/components/generic/components/EditProfileAvatar';
+import EditProfileCover from '@/components/generic/components/EditProfileCover';
+import EditProfileForm from '@/components/generic/components/EditProfileForm';
+import { useMyProfile } from '@/features/profile/hooks';
+import { useProfile } from '@/features/profile/hooks/useProfile';
+
+export default function ProfileInfoPage() {
+  const router = useRouter();
+  const { data: profileData, isLoading } = useMyProfile();
+  const { handleSaveProfile, isUpdating } = useProfile();
+
+  const [name, setName] = useState('');
+  const [bio, setBio] = useState('');
+  const [location, setLocation] = useState('');
+  const [website, setWebsite] = useState('');
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [bannerImage, setBannerImage] = useState<File | null>(null);
+  const [profilePreview, setProfilePreview] = useState<string | undefined>(
+    undefined
+  );
+  const [bannerPreview, setBannerPreview] = useState<string | undefined>(
+    undefined
+  );
+  const [birth, setBirth] = useState<DatePickerValue>({});
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
+
+  // Initialize form with profile data
+  useEffect(() => {
+    if (profileData?.data) {
+      const profile = profileData.data;
+      setName(profile.name);
+      setBio(profile.bio ?? '');
+      setLocation(profile.location ?? '');
+      setWebsite(profile.website ?? '');
+      setProfilePreview(profile.profile_image_url ?? undefined);
+      setBannerPreview(profile.banner_image_url ?? undefined);
+      setBirth(isoStringToDatePickerValue(profile.birth_date) ?? {});
+    }
+  }, [profileData]);
+
+  const handleBack = () => {
+    router.back();
+  };
+
+  const handleSave = async () => {
+    if (!profileData?.data) return;
+
+    const profile = profileData.data;
+
+    // Clear previous messages
+    setSuccess('');
+    setError('');
+    setValidationErrors({});
+
+    // Validate form before saving
+    const validation = validateProfileForm({
+      name,
+      bio,
+      location,
+      website,
+    });
+
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      setError('Please fix the validation errors below');
+      return;
+    }
+
+    const computeImagePayload = (
+      file: File | null,
+      preview: string | undefined,
+      initial?: string | null
+    ): File | null | undefined => {
+      if (file) return file;
+      if (preview === '') return null;
+      if (preview === initial) return undefined;
+      return undefined;
+    };
+
+    const fieldPayload = (value: string, initial?: string | null) => {
+      const v = value?.trim();
+      const init = initial?.trim() ?? '';
+      if (v === init) return undefined;
+      return v;
+    };
+
+    const birthDateValue = (() => {
+      const selected = getBirthDateOrNull(birth);
+      const initial = profile.birth_date;
+      if (!selected) return selected; // undefined/null
+      const composedIso = datePickerValueToISOString(selected);
+      if (!composedIso) return undefined;
+      return compareDatesOrUndefined(composedIso, initial);
+    })();
+
+    const updateData = {
+      name: fieldPayload(name, profile.name),
+      bio: fieldPayload(bio, profile.bio ?? undefined),
+      location: fieldPayload(location, profile.location ?? undefined),
+      website: fieldPayload(website, profile.website ?? undefined),
+      birthDate: birthDateValue === null ? undefined : birthDateValue,
+      profileImage: computeImagePayload(
+        profileImage,
+        profilePreview,
+        profile.profile_image_url ?? undefined
+      ),
+      bannerImage: computeImagePayload(
+        bannerImage,
+        bannerPreview,
+        profile.banner_image_url ?? undefined
+      ),
+    };
+
+    try {
+      await handleSaveProfile(updateData);
+      setSuccess('Profile updated successfully!');
+    } catch (err) {
+      console.error('Update profile error:', err);
+      if (err instanceof Error) {
+        setError(err.message || 'Failed to update profile');
+      } else {
+        setError('Failed to update profile. Please try again.');
+      }
+    }
+  };
+
+  const handleProfileImageChange = (file: File | null) => {
+    setProfileImage(file);
+    if (file) {
+      setProfilePreview(URL.createObjectURL(file));
+    } else {
+      setProfilePreview('');
+    }
+  };
+
+  const handleBannerImageChange = (file: File | null) => {
+    setBannerImage(file);
+    if (file) {
+      setBannerPreview(URL.createObjectURL(file));
+    } else {
+      setBannerPreview('');
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div
+        className="border-r border-border min-h-screen"
+        data-testid="profile-info-page-loading"
+      >
+        <Breadcrumb
+          title="Profile information"
+          onBack={handleBack}
+          showArrow={true}
+          data-testid="profile-info-breadcrumb"
+        />
+        <div className="flex justify-center items-center h-64">
+          <div
+            className="text-text-secondary"
+            data-testid="profile-info-loading-text"
+          >
+            Loading...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="border-r border-border min-h-screen"
+      data-testid="profile-info-page"
+    >
+      <div
+        className="sticky top-0 z-10 bg-background/95 backdrop-blur"
+        data-testid="profile-info-header"
+      >
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <Breadcrumb
+            title="Profile information"
+            onBack={handleBack}
+            showArrow={true}
+            data-testid="profile-info-breadcrumb"
+          />
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={handleSave}
+            loading={isUpdating}
+            disabled={isUpdating}
+            data-testid="profile-info-save-button"
+          >
+            Save
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex flex-col w-full" data-testid="profile-info-content">
+        <EditProfileCover
+          coverImage={bannerPreview}
+          onFileSelect={handleBannerImageChange}
+          showClearButton={!!bannerPreview}
+          onClear={() => handleBannerImageChange(null)}
+          data-testid="profile-info-cover"
+        />
+        <div
+          className="relative pb-4"
+          data-testid="profile-info-form-container"
+        >
+          <EditProfileAvatar
+            avatarImage={profilePreview}
+            onFileSelect={handleProfileImageChange}
+            data-testid="profile-info-avatar"
+          />
+          <EditProfileForm
+            name={name}
+            setName={setName}
+            bio={bio}
+            setBio={setBio}
+            location={location}
+            setLocation={setLocation}
+            website={website}
+            setWebsite={setWebsite}
+            birth={birth}
+            setBirth={(v) => setBirth(v ?? {})}
+            errors={validationErrors}
+            data-testid="profile-info-form"
+          />
+        </div>
+
+        {success && (
+          <div
+            className="mx-4 mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg"
+            data-testid="profile-info-success-message"
+          >
+            <p className="text-sm text-green-500">{success}</p>
+          </div>
+        )}
+
+        {error && !success && (
+          <div
+            className="mx-4 mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg"
+            data-testid="profile-info-error-message"
+          >
+            <p className="text-sm text-red-500">{error}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

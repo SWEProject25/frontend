@@ -1,0 +1,69 @@
+'use client';
+
+import { useTimelineFeed } from '../hooks/timelineQueries';
+import React from 'react';
+import Tweet from '@/features/tweets/components/Tweet';
+import InfiniteScroll from '@/components/ui/home/InfiniteScroll';
+
+import Loader from '@/components/generic/Loader';
+
+import toasterMessage from '@/components/ui/home/ToasterMessage';
+
+export default function TweetList() {
+  const {
+    data,
+    error,
+    isError,
+    isLoading,
+    isFetching,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+  } = useTimelineFeed();
+
+  const pages = data?.pages.flat();
+
+  const renderTweets = pages?.map((group, i) => (
+    <React.Fragment key={i}>
+      {group.data.posts.map((tweet, ind) => {
+        return (
+          <Tweet
+            data-testid={`${tweet.userId}${tweet.postId}${tweet.date}`}
+            data={tweet}
+            key={ind}
+          />
+        );
+      })}
+    </React.Fragment>
+  ));
+
+  const hasInitialData = pages ? pages[0].data.posts.length > 0 : false;
+
+  const shouldShowLoader = isLoading || (isFetching && !hasInitialData);
+
+  return isError ? (
+    <>{toasterMessage(error.message, 'bottom-center', 'error')}</>
+  ) : shouldShowLoader ? (
+    <div
+      className="flex justify-center items-center h-64 mx-4"
+      data-testid="tweet-list-loading"
+    >
+      <Loader />
+    </div>
+  ) : (
+    <div className="flex flex-col w-full" data-testid="tweet-list-container">
+      <InfiniteScroll
+        data-testid="tweet-list"
+        isLoadingInitial={isLoading}
+        isLoadingMore={isFetchingNextPage}
+        loadMore={() => hasNextPage && fetchNextPage()}
+        hasMoreData={hasNextPage && !isFetchingNextPage && !isLoading}
+        hasInitialData={hasInitialData}
+      >
+        <div className="flex flex-col w-full" data-testid="render-tweet-list">
+          {renderTweets}
+        </div>
+      </InfiniteScroll>
+    </div>
+  );
+}

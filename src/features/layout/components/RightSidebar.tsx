@@ -1,0 +1,27 @@
+'use client';
+import React from 'react';
+import WhatIsHappening from './WhatIsHappening';
+import WhoToFollow from './WhoToFollow';
+import Footer from './Footer';
+import SearchProfile from '@/features/timeline/components/SearchProfile';
+
+export default function RightSidebar({
+  hasSearch = true,
+  hideWhatIsHappening = false,
+}: {
+  hasSearch?: boolean;
+  hideWhatIsHappening?: boolean;
+}) {
+  return (
+    <aside className="hidden lg:flex sticky right-0 top-0 w-full h-screen flex-col gap-4 px-4 pt-1 bg-black overflow-y-auto overflow-x-hidden">
+      {hasSearch && (
+        <div className="z-10 flex sticky top-0 pt-px w-full h-auto bg-black/50 backdrop-blur-md">
+          <SearchProfile />
+        </div>
+      )}
+      {!hideWhatIsHappening && <WhatIsHappening />}
+      <WhoToFollow />
+      <Footer />
+    </aside>
+  );
+}
